@@ -181,28 +181,28 @@ extension CompanyMapViewController {
                     if let jibeonAddress = companyMapResponse.documents.first?.address?.addressName,
                        let roadAddress = companyMapResponse.documents.first?.roadAddress?.addressName {
                         let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: jibeonAddress, road: roadAddress)) {
+                            self.mapView.removeAnnotations(self.mapView.annotations)
                             
+                            self.setPointAnnotation(center: center, title: jibeonAddress)
                         }
-                        
-                        self.setPointAnnotation(center: center, title: jibeonAddress)
 
                         self.present(alertVC, animated: false, completion: nil)
                         
                     } else if let jibeonAddress = companyMapResponse.documents.first?.address?.addressName {
                         let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: jibeonAddress, road: "")) {
+                            self.mapView.removeAnnotations(self.mapView.annotations)
                             
+                            self.setPointAnnotation(center: center, title: jibeonAddress)
                         }
-                        
-                        self.setPointAnnotation(center: center, title: jibeonAddress)
                         
                         self.present(alertVC, animated: false, completion: nil)
                         
                     } else if let roadAddress = companyMapResponse.documents.first?.roadAddress?.addressName {
                         let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: "", road: roadAddress)) {
+                            self.mapView.removeAnnotations(self.mapView.annotations)
                             
+                            self.setPointAnnotation(center: center, title: roadAddress)
                         }
-                        
-                        self.setPointAnnotation(center: center, title: roadAddress)
                         
                         self.present(alertVC, animated: false, completion: nil)
                     }
@@ -227,8 +227,6 @@ extension CompanyMapViewController {
     
     @objc func longPressGesture(_ gesture: UILongPressGestureRecognizer) {
         if gesture.state == .began {
-            self.mapView.removeAnnotations(self.mapView.annotations)
-            
             let gesturedPoint = gesture.location(in: self.mapView)
             let newCenter = self.mapView.convert(gesturedPoint, toCoordinateFrom: self.mapView)
             
