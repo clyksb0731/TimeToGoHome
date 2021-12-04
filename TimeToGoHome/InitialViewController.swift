@@ -219,8 +219,8 @@ class InitialViewController: UIViewController {
     
     var entryDateEffectView: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = 5
-        view.backgroundColor = UIColor.useRGB(red: 153, green: 153, blue: 153)
+        view.layer.cornerRadius = 15
+        view.backgroundColor = UIColor.useRGB(red: 200, green: 200, blue: 200)
         view.alpha = 0
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -775,25 +775,37 @@ extension InitialViewController {
         if self.upperViewTopAnchorConstant.constant == 0 {
             self.upperViewTopAnchorConstant.constant = -200
             
-            UIView.animate(withDuration: 0.2, animations: {
+            UIView.animate(withDuration: 0.2) {
                 self.view.layoutIfNeeded()
                 
                 self.entryDatePicker.alpha = 1
-            }, completion: nil)
+                
+            } completion: { finished in
+                if finished {
+                    
+                }
+            }
             
         } else {
             self.upperViewTopAnchorConstant.constant = 0
+            self.entryDatePicker.alpha = 0
             
-            UIView.animate(withDuration: 0.2, animations: {
+            UIView.animate(withDuration: 0.2) {
                 self.view.layoutIfNeeded()
                 
-                self.entryDatePicker.alpha = 0
-            }, completion: nil)
+            } completion: { finished in
+                if finished {
+                    
+                }
+            }
         }
     }
     
     @objc func entryDatePicker(_ sender: UIDatePicker) {
-        let calendar = Calendar(identifier: .gregorian)
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone.current
+        calendar.locale = Locale.current
+        
         let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: sender.date)
         
         self.yearLabel.text = "\(todayDateComponents.year!)"

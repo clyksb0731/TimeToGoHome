@@ -28,6 +28,18 @@ class CompanyMapViewController: UIViewController {
         return mapView
     }()
     
+    var currentLocationButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "currentLocationButtonImage"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.isEnabled = false
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    var currentLocation: CLLocationCoordinate2D!
+    
     var address: CompanyAddressResponse.Document!
     
     var apiRequest: DataRequest!
@@ -98,13 +110,13 @@ extension CompanyMapViewController {
     
     // Set targets
     func setTargets() {
-        
+        self.currentLocationButton.addTarget(self, action: #selector(currentLocationButton(_:)), for: .touchUpInside)
     }
     
     // Set gestures
     func setGestures() {
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressGesture(_:)))
-        longPressGesture.minimumPressDuration = 1
+        longPressGesture.minimumPressDuration = 0.5 // default
         self.mapView.addGestureRecognizer(longPressGesture)
     }
     
@@ -122,7 +134,8 @@ extension CompanyMapViewController {
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
             //self.topLineView,
-            self.mapView
+            self.mapView,
+            self.currentLocationButton
         ], to: self.view)
     }
     
@@ -144,6 +157,14 @@ extension CompanyMapViewController {
             self.mapView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
             self.mapView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             self.mapView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+        ])
+        
+        // Current location button layout
+        NSLayoutConstraint.activate([
+            self.currentLocationButton.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 20),
+            self.currentLocationButton.heightAnchor.constraint(equalToConstant: 46),
+            self.currentLocationButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16),
+            self.currentLocationButton.widthAnchor.constraint(equalToConstant: 46)
         ])
     }
 }
@@ -225,6 +246,16 @@ extension CompanyMapViewController {
         // right bar button
     }
     
+    @objc func currentLocationButton(_ sender: UIButton) {
+        guard let currentLocation = self.currentLocation else {
+            return
+        }
+        
+        let region = MKCoordinateRegion(center: currentLocation, latitudinalMeters: 300, longitudinalMeters: 300)
+        
+        self.mapView.setRegion(region, animated: true)
+    }
+    
     @objc func longPressGesture(_ gesture: UILongPressGestureRecognizer) {
         if gesture.state == .began {
             let gesturedPoint = gesture.location(in: self.mapView)
@@ -240,6 +271,9 @@ extension CompanyMapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
         print("Current Latitude: \(userLocation.coordinate.latitude)")
         print("Current Longitude: \(userLocation.coordinate.longitude)")
+        
+        self.currentLocation = userLocation.coordinate
+        self.currentLocationButton.isEnabled = true
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {

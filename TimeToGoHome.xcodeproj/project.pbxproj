@@ -352,6 +352,7 @@
 				DEVELOPMENT_TEAM = X947N5A32A;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TimeToGoHome/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -381,6 +382,7 @@
 				DEVELOPMENT_TEAM = X947N5A32A;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TimeToGoHome/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
