@@ -140,6 +140,25 @@ extension SupportingMethods {
 }
 
 // MARK: - Other Extensions
+// MARK: UIDevice haptics
+extension UIDevice {
+    // MARK: Make Haptic Effect
+    static func softHaptic() {
+        let haptic = UIImpactFeedbackGenerator(style: .soft)
+        haptic.impactOccurred()
+    }
+    
+    static func lightHaptic() {
+        let haptic = UIImpactFeedbackGenerator(style: .light)
+        haptic.impactOccurred()
+    }
+    
+    static func heavyHaptic() {
+        let haptic = UIImpactFeedbackGenerator(style: .heavy)
+        haptic.impactOccurred()
+    }
+}
+
 // MARK: UIColor to be possible to get color using 0 ~ 255 integer
 extension UIColor {
     class func useRGB(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat = 1) -> UIColor {
