@@ -15,7 +15,6 @@ class TemplateViewController: UIViewController {
         self.initializeViews()
         self.setTargets()
         self.setGestures()
-        self.setDelegates()
         self.setNotificationCenters()
         self.setSubviews()
         self.setLayouts()
@@ -66,11 +65,6 @@ extension TemplateViewController {
     
     // Set gestures
     func setGestures() {
-        
-    }
-    
-    // Set delegates
-    func setDelegates() {
         
     }
     

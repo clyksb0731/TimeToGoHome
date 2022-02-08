@@ -12,18 +12,112 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        self.initializeViews()
+        self.setTargets()
+        self.setGestures()
+        self.setNotificationCenters()
+        self.setSubviews()
+        self.setLayouts()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.setViewFoundation()
     }
-    */
+    
+    deinit {
+            print("----------------------------------- MainViewController disposed -----------------------------------")
+    }
+}
 
+// MARK: - Extension for override methods
+extension MainViewController {
+    override var prefersStatusBarHidden: Bool {
+        return false
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .default
+    }
+    
+    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+        return .portrait
+    }
+}
+
+// MARK: - Extension for essential methods
+extension MainViewController {
+    // Set view foundation
+    func setViewFoundation() {
+        self.view.backgroundColor = .white
+        
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithTransparentBackground()
+        navigationBarAppearance.backgroundColor = .white
+        navigationBarAppearance.titleTextAttributes = [
+            .foregroundColor : UIColor.black,
+            .font : UIFont.systemFont(ofSize: 22, weight: .semibold)
+        ]
+        
+        self.navigationItem.scrollEdgeAppearance = navigationBarAppearance
+        self.navigationItem.standardAppearance = navigationBarAppearance
+        self.navigationItem.compactAppearance = navigationBarAppearance
+        
+        self.navigationController?.setNavigationBarHidden(false, animated: true);
+        self.navigationController?.navigationBar.isTranslucent = true
+        
+        self.navigationItem.title = "Work Schedule"
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "menuBarButton"), style: .plain, target: self, action: #selector(leftBarButtonItem(_:)))
+        self.navigationItem.leftBarButtonItem?.tintColor = UIColor.useRGB(red: 151, green: 151, blue: 151)
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "settingBarButton"), style: .plain, target: self, action: #selector(rightBarButtonItem(_:)))
+        self.navigationItem.rightBarButtonItem?.tintColor = .black
+    }
+    
+    // Initialize views
+    func initializeViews() {
+        
+    }
+    
+    // Set targets
+    func setTargets() {
+        
+    }
+    
+    // Set gestures
+    func setGestures() {
+        
+    }
+    
+    // Set notificationCenters
+    func setNotificationCenters() {
+        
+    }
+    
+    // Set subviews
+    func setSubviews() {
+        
+    }
+    
+    // Set layouts
+    func setLayouts() {
+        
+    }
+}
+
+// MARK: - Extension for methods added
+extension MainViewController {
+    
+}
+
+// MARK: - Extension for Selector methods
+extension MainViewController {
+    @objc func leftBarButtonItem(_ sender: UIBarButtonItem) {
+        // left bar button
+    }
+    
+    @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
+        // right bar button
+    }
 }

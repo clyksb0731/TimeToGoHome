@@ -64,6 +64,12 @@ class CompanyMapViewController: UIViewController {
         self.setRegion(center: self.initializeCenter().0)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        print("MapView Height: \(self.mapView.frame.height)")
+    }
+    
     deinit {
             print("----------------------------------- CompanyMapViewController disposed -----------------------------------")
     }
@@ -90,11 +96,20 @@ extension CompanyMapViewController {
     func setViewFoundation() {
         self.view.backgroundColor = .white
         
-        //self.navigationController?.navigationBar.isTranslucent = false
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithTransparentBackground()
+        navigationBarAppearance.backgroundColor = .white
+        navigationBarAppearance.titleTextAttributes = [
+            .foregroundColor : UIColor.black,
+            .font : UIFont.systemFont(ofSize: 17, weight: .semibold)
+        ]
+        
+        self.navigationItem.scrollEdgeAppearance = navigationBarAppearance
+        self.navigationItem.standardAppearance = navigationBarAppearance
+        self.navigationItem.compactAppearance = navigationBarAppearance
+        
         self.navigationController?.setNavigationBarHidden(false, animated: true);
         
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.useRGB(red: 0, green: 0, blue: 0),
-                                                                        .font:UIFont.systemFont(ofSize: 18, weight: .medium)]
         self.navigationItem.title = "지도에서 지정"
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "backButtonItemImage"), style: .plain, target: self, action: #selector(leftBarButtonItem(_:)))
         self.navigationItem.leftBarButtonItem?.tintColor = .black
