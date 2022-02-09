@@ -27,6 +27,7 @@
 		CAB7CF442750CD01005C9232 /* CompanyDetailedAddressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF432750CD01005C9232 /* CompanyDetailedAddressViewController.swift */; };
 		CAB7CF462750CD66005C9232 /* WorkTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF452750CD66005C9232 /* WorkTypeViewController.swift */; };
 		CAB7CF482750CDCE005C9232 /* DayButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF472750CDCE005C9232 /* DayButtonView.swift */; };
+		CAFA9F3627B3FCB00088003A /* WhiteButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFA9F3527B3FCB00088003A /* WhiteButtonView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,7 @@
 		CAB7CF432750CD01005C9232 /* CompanyDetailedAddressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyDetailedAddressViewController.swift; sourceTree = "<group>"; };
 		CAB7CF452750CD66005C9232 /* WorkTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkTypeViewController.swift; sourceTree = "<group>"; };
 		CAB7CF472750CDCE005C9232 /* DayButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayButtonView.swift; sourceTree = "<group>"; };
+		CAFA9F3527B3FCB00088003A /* WhiteButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteButtonView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +98,7 @@
 				CAB7CF452750CD66005C9232 /* WorkTypeViewController.swift */,
 				CAB7CF472750CDCE005C9232 /* DayButtonView.swift */,
 				CAB7CF322750B5C7005C9232 /* MainViewController.swift */,
+				CAFA9F3527B3FCB00088003A /* WhiteButtonView.swift */,
 				CAB7CF282750B0FA005C9232 /* LocationManager.swift */,
 				CAB7CF2A2750B146005C9232 /* SupportingMethods.swift */,
 				CAB7CF2C2750B280005C9232 /* ReferenceValues.swift */,
@@ -199,6 +202,7 @@
 				CAB7CF392750C5C9005C9232 /* CompanyMapViewController.swift in Sources */,
 				CAB7CF422750CBFD005C9232 /* CompanyAddressResponse.swift in Sources */,
 				CA226762274402D50035663D /* AppDelegate.swift in Sources */,
+				CAFA9F3627B3FCB00088003A /* WhiteButtonView.swift in Sources */,
 				CAB7CF2D2750B280005C9232 /* ReferenceValues.swift in Sources */,
 				CAB7CF3B2750C5F2005C9232 /* CompanyMapResponse.swift in Sources */,
 			);
