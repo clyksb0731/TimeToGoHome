@@ -8,6 +8,36 @@
 import UIKit
 
 class MainViewController: UIViewController {
+    lazy var mainTimeView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .black
+        view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
+        view.layer.cornerRadius = 16
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var leftTimeButtonView: WhiteButtonView = {
+        let buttonView = WhiteButtonView()
+        buttonView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return buttonView
+    }()
+    
+    lazy var progressTimeButtonView: WhiteButtonView = {
+        let buttonView = WhiteButtonView()
+        buttonView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return buttonView
+    }()
+    
+    lazy var progressRateButtonView: WhiteButtonView = {
+        let buttonView = WhiteButtonView()
+        buttonView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return buttonView
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
