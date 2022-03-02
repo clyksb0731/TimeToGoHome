@@ -20,6 +20,9 @@ class MainViewController: UIViewController {
     
     lazy var leftTimeButtonView: WhiteButtonView = {
         let buttonView = WhiteButtonView()
+        buttonView.title = "남은 시간"
+        buttonView.isSelected = true
+        buttonView.addTarget(self, action: #selector(leftTimeButtonView(_:)), for: .touchUpInside)
         buttonView.translatesAutoresizingMaskIntoConstraints = false
         
         return buttonView
@@ -27,6 +30,9 @@ class MainViewController: UIViewController {
     
     lazy var progressTimeButtonView: WhiteButtonView = {
         let buttonView = WhiteButtonView()
+        buttonView.title = "진행 시간"
+        buttonView.isSelected = false
+        buttonView.addTarget(self, action: #selector(progressTimeButtonView(_:)), for: .touchUpInside)
         buttonView.translatesAutoresizingMaskIntoConstraints = false
         
         return buttonView
@@ -34,9 +40,88 @@ class MainViewController: UIViewController {
     
     lazy var progressRateButtonView: WhiteButtonView = {
         let buttonView = WhiteButtonView()
+        buttonView.title = "진행률"
+        buttonView.isSelected = false
+        buttonView.addTarget(self, action: #selector(progressRateButtonView(_:)), for: .touchUpInside)
         buttonView.translatesAutoresizingMaskIntoConstraints = false
         
         return buttonView
+    }()
+    
+    lazy var mainTimeViewValueLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 43)
+        label.textAlignment = .center
+        label.text = "88:88:88"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var startWorkTimeMarkLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 12)
+        label.textAlignment = .center
+        label.text = "출근 시간"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var startWorkTimeLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 12)
+        label.textAlignment = .center
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.5
+        label.text = "88:88"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var startWorkTimeLabelLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.isHidden = false
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var startWorkTimeLabelButton: UIButton = {
+        let button = UIButton()
+        button.addTarget(self, action: #selector(startWorkTimeLabelButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var mainTimeCoverView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 16
+        view.clipsToBounds = true
+        view.isHidden = false
+        view.translatesAutoresizingMaskIntoConstraints = false;
+        
+        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.layer.cornerRadius = 16
+        blurEffectView.translatesAutoresizingMaskIntoConstraints = false
+
+        view.addSubview(blurEffectView)
+
+        NSLayoutConstraint.activate([
+            blurEffectView.topAnchor.constraint(equalTo: view.topAnchor),
+            blurEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            blurEffectView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            blurEffectView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+        
+        return view
     }()
 
     override func viewDidLoad() {
@@ -54,6 +139,11 @@ class MainViewController: UIViewController {
         super.viewWillAppear(animated)
         
         self.setViewFoundation()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
     }
     
     deinit {
@@ -127,12 +217,106 @@ extension MainViewController {
     
     // Set subviews
     func setSubviews() {
+        SupportingMethods.shared.addSubviews([
+            self.mainTimeView
+        ], to: self.view)
         
+        SupportingMethods.shared.addSubviews([
+            self.leftTimeButtonView,
+            self.progressTimeButtonView,
+            self.progressRateButtonView,
+            self.mainTimeViewValueLabel,
+            self.startWorkTimeMarkLabel,
+            self.startWorkTimeLabel,
+            self.startWorkTimeLabelLineView,
+            self.startWorkTimeLabelButton,
+            self.mainTimeCoverView
+        ], to: self.mainTimeView)
     }
     
     // Set layouts
     func setLayouts() {
+        let safeArea = self.view.safeAreaLayoutGuide
         
+        // Main time view layout
+        NSLayoutConstraint.activate([
+            self.mainTimeView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            self.mainTimeView.heightAnchor.constraint(equalToConstant: 180),
+            self.mainTimeView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 5),
+            self.mainTimeView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -5)
+        ])
+        
+        // Left time button view layout
+        NSLayoutConstraint.activate([
+            self.leftTimeButtonView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 18),
+            self.leftTimeButtonView.heightAnchor.constraint(equalToConstant: 28),
+            self.leftTimeButtonView.trailingAnchor.constraint(equalTo: self.progressTimeButtonView.leadingAnchor, constant: -5),
+            self.leftTimeButtonView.widthAnchor.constraint(equalToConstant: 61)
+        ])
+        
+        // Progress time button view layout
+        NSLayoutConstraint.activate([
+            self.progressTimeButtonView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 18),
+            self.progressTimeButtonView.heightAnchor.constraint(equalToConstant: 28),
+            self.progressTimeButtonView.trailingAnchor.constraint(equalTo: self.progressRateButtonView.leadingAnchor, constant: -5),
+            self.progressTimeButtonView.widthAnchor.constraint(equalToConstant: 61)
+        ])
+        
+        // Progress rate button view layout
+        NSLayoutConstraint.activate([
+            self.progressRateButtonView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 18),
+            self.progressRateButtonView.heightAnchor.constraint(equalToConstant: 28),
+            self.progressRateButtonView.trailingAnchor.constraint(equalTo: self.mainTimeView.trailingAnchor, constant: -31),
+            self.progressRateButtonView.widthAnchor.constraint(equalToConstant: 61)
+        ])
+        
+        // Main time view value label layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewValueLabel.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 77),
+            self.mainTimeViewValueLabel.heightAnchor.constraint(equalToConstant: 52),
+            self.mainTimeViewValueLabel.centerXAnchor.constraint(equalTo: self.mainTimeView.centerXAnchor),
+            self.mainTimeViewValueLabel.widthAnchor.constraint(equalToConstant: 200)
+        ])
+        
+        // Start work time mark label layout
+        NSLayoutConstraint.activate([
+            self.startWorkTimeMarkLabel.bottomAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: -17),
+            self.startWorkTimeMarkLabel.heightAnchor.constraint(equalToConstant: 15),
+            self.startWorkTimeMarkLabel.trailingAnchor.constraint(equalTo: self.startWorkTimeLabel.leadingAnchor, constant: -8),
+            self.startWorkTimeMarkLabel.widthAnchor.constraint(equalToConstant: 46)
+        ])
+        
+        // Start work time label layout
+        NSLayoutConstraint.activate([
+            self.startWorkTimeLabel.bottomAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: -17),
+            self.startWorkTimeLabel.heightAnchor.constraint(equalToConstant: 15),
+            self.startWorkTimeLabel.trailingAnchor.constraint(equalTo: self.mainTimeView.trailingAnchor, constant: -31),
+            self.startWorkTimeLabel.widthAnchor.constraint(equalToConstant: 34)
+        ])
+        
+        // Start work time label line view layout
+        NSLayoutConstraint.activate([
+            self.startWorkTimeLabelLineView.bottomAnchor.constraint(equalTo: self.startWorkTimeLabel.bottomAnchor),
+            self.startWorkTimeLabelLineView.heightAnchor.constraint(equalToConstant: 1),
+            self.startWorkTimeLabelLineView.leadingAnchor.constraint(equalTo: self.startWorkTimeLabel.leadingAnchor),
+            self.startWorkTimeLabelLineView.trailingAnchor.constraint(equalTo: self.startWorkTimeLabel.trailingAnchor)
+        ])
+        
+        // Start work time label button layout
+        NSLayoutConstraint.activate([
+            self.startWorkTimeLabelButton.topAnchor.constraint(equalTo: self.startWorkTimeLabel.topAnchor),
+            self.startWorkTimeLabelButton.bottomAnchor.constraint(equalTo: self.startWorkTimeLabel.bottomAnchor),
+            self.startWorkTimeLabelButton.leadingAnchor.constraint(equalTo: self.startWorkTimeLabel.leadingAnchor),
+            self.startWorkTimeLabelButton.trailingAnchor.constraint(equalTo: self.startWorkTimeLabel.trailingAnchor)
+        ])
+        
+        // Main time cover view layout
+        NSLayoutConstraint.activate([
+            self.mainTimeCoverView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor),
+            self.mainTimeCoverView.bottomAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor),
+            self.mainTimeCoverView.leadingAnchor.constraint(equalTo: self.mainTimeView.leadingAnchor),
+            self.mainTimeCoverView.trailingAnchor.constraint(equalTo: self.mainTimeView.trailingAnchor)
+        ])
     }
 }
 
@@ -149,5 +333,21 @@ extension MainViewController {
     
     @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
         // right bar button
+    }
+    
+    @objc func leftTimeButtonView(_ sender: UIButton) {
+        
+    }
+    
+    @objc func progressTimeButtonView(_ sender: UIButton) {
+        
+    }
+    
+    @objc func progressRateButtonView(_ sender: UIButton) {
+        
+    }
+    
+    @objc func startWorkTimeLabelButton(_ sender: UIButton) {
+        
     }
 }

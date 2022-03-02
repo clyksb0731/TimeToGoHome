@@ -12,6 +12,7 @@ class WhiteButtonView: UIView {
         let label = UILabel()
         label.textColor = .white
         label.textAlignment = .center
+        label.font = .systemFont(ofSize: 14)
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -24,9 +25,9 @@ class WhiteButtonView: UIView {
         return button
     }()
     
-    var font: UIFont? {
+    var font: UIFont {
         set {
-            self.label.font = newValue ?? .systemFont(ofSize: 14)
+            self.label.font = newValue
         }
         
         get {
@@ -34,9 +35,9 @@ class WhiteButtonView: UIView {
         }
     }
     
-    var textAlignment: NSTextAlignment? {
+    var textAlignment: NSTextAlignment {
         set {
-            self.label.textAlignment = newValue ?? .center
+            self.label.textAlignment = newValue
         }
         
         get {
@@ -101,8 +102,8 @@ extension WhiteButtonView {
         NSLayoutConstraint.activate([
             self.label.topAnchor.constraint(equalTo: self.topAnchor),
             self.label.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            self.label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 4),
-            self.label.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -4)
+            self.label.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            self.label.trailingAnchor.constraint(equalTo: self.trailingAnchor)
         ])
         
         // Button layout
