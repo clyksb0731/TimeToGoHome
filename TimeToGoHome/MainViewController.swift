@@ -59,6 +59,17 @@ class MainViewController: UIViewController {
         return label
     }()
     
+    lazy var changeScheduleButton: UIButton = {
+        let button = UIButton()
+        button.titleLabel?.font = .systemFont(ofSize: 12)
+        button.setTitleColor(.white, for: .normal)
+        button.setTitle("일정 수정", for: .normal)
+        button.addTarget(self, action: #selector(changeScheduleButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     lazy var startWorkTimeMarkLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
@@ -104,7 +115,7 @@ class MainViewController: UIViewController {
         let view = UIView()
         view.layer.cornerRadius = 16
         view.clipsToBounds = true
-        view.isHidden = false
+        view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false;
         
         let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
@@ -122,6 +133,28 @@ class MainViewController: UIViewController {
         ])
         
         return view
+    }()
+    
+    lazy var cancelChangingScheduleButtonView: WhiteButtonView = {
+        let buttonView = WhiteButtonView()
+        buttonView.font = .systemFont(ofSize: 17)
+        buttonView.title = "취소"
+        buttonView.isSelected = true
+        buttonView.addTarget(self, action: #selector(cancelChangingScheduleButtonView(_:)), for: .touchUpInside)
+        buttonView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return buttonView
+    }()
+    
+    lazy var completeChangingScheduleButtonView: WhiteButtonView = {
+        let buttonView = WhiteButtonView()
+        buttonView.font = .systemFont(ofSize: 17)
+        buttonView.title = "완료"
+        buttonView.isSelected = true
+        buttonView.addTarget(self, action: #selector(completeChangingScheduleButtonView(_:)), for: .touchUpInside)
+        buttonView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return buttonView
     }()
 
     override func viewDidLoad() {
@@ -226,12 +259,18 @@ extension MainViewController {
             self.progressTimeButtonView,
             self.progressRateButtonView,
             self.mainTimeViewValueLabel,
+            self.changeScheduleButton,
             self.startWorkTimeMarkLabel,
             self.startWorkTimeLabel,
             self.startWorkTimeLabelLineView,
             self.startWorkTimeLabelButton,
             self.mainTimeCoverView
         ], to: self.mainTimeView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.cancelChangingScheduleButtonView,
+            self.completeChangingScheduleButtonView
+        ], to: self.mainTimeCoverView)
     }
     
     // Set layouts
@@ -278,6 +317,14 @@ extension MainViewController {
             self.mainTimeViewValueLabel.widthAnchor.constraint(equalToConstant: 200)
         ])
         
+        // Change schedule button layout
+        NSLayoutConstraint.activate([
+            self.changeScheduleButton.bottomAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: -17),
+            self.changeScheduleButton.heightAnchor.constraint(equalToConstant: 15),
+            self.changeScheduleButton.leadingAnchor.constraint(equalTo: self.mainTimeView.leadingAnchor, constant: 31),
+            self.changeScheduleButton.widthAnchor.constraint(equalToConstant: 46)
+        ])
+        
         // Start work time mark label layout
         NSLayoutConstraint.activate([
             self.startWorkTimeMarkLabel.bottomAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: -17),
@@ -317,6 +364,22 @@ extension MainViewController {
             self.mainTimeCoverView.leadingAnchor.constraint(equalTo: self.mainTimeView.leadingAnchor),
             self.mainTimeCoverView.trailingAnchor.constraint(equalTo: self.mainTimeView.trailingAnchor)
         ])
+        
+        // Cancel changing schedule button view layout
+        NSLayoutConstraint.activate([
+            self.cancelChangingScheduleButtonView.centerYAnchor.constraint(equalTo: self.mainTimeCoverView.centerYAnchor),
+            self.cancelChangingScheduleButtonView.heightAnchor.constraint(equalToConstant: 25),
+            self.cancelChangingScheduleButtonView.trailingAnchor.constraint(equalTo: self.mainTimeCoverView.centerXAnchor, constant: -15),
+            self.cancelChangingScheduleButtonView.widthAnchor.constraint(equalToConstant: 45)
+        ])
+        
+        // Complete changing schedule button view layout
+        NSLayoutConstraint.activate([
+            self.completeChangingScheduleButtonView.centerYAnchor.constraint(equalTo: self.mainTimeCoverView.centerYAnchor),
+            self.completeChangingScheduleButtonView.heightAnchor.constraint(equalToConstant: 25),
+            self.completeChangingScheduleButtonView.leadingAnchor.constraint(equalTo: self.mainTimeCoverView.centerXAnchor, constant: 15),
+            self.completeChangingScheduleButtonView.widthAnchor.constraint(equalToConstant: 45)
+        ])
     }
 }
 
@@ -349,5 +412,17 @@ extension MainViewController {
     
     @objc func startWorkTimeLabelButton(_ sender: UIButton) {
         
+    }
+    
+    @objc func changeScheduleButton(_ sender: UIButton) {
+        self.mainTimeCoverView.isHidden = false
+    }
+    
+    @objc func cancelChangingScheduleButtonView(_ sender: UIButton) {
+        self.mainTimeCoverView.isHidden = true
+    }
+    
+    @objc func completeChangingScheduleButtonView(_ sender: UIButton) {
+        self.mainTimeCoverView.isHidden = true
     }
 }
