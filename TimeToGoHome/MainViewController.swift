@@ -156,6 +156,8 @@ class MainViewController: UIViewController {
         
         return buttonView
     }()
+    
+    var schedule: WorkSchedule = WorkSchedule.today
 
     override func viewDidLoad() {
         super.viewDidLoad()

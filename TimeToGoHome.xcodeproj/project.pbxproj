@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA12806C27D1A64800CAFCE8 /* WorkScheduleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA12806B27D1A64800CAFCE8 /* WorkScheduleModel.swift */; };
 		CA226762274402D50035663D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA226761274402D50035663D /* AppDelegate.swift */; };
 		CA226769274402D50035663D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA226767274402D50035663D /* Main.storyboard */; };
 		CA22676B274402D60035663D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA22676A274402D60035663D /* Assets.xcassets */; };
@@ -31,6 +32,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CA12806B27D1A64800CAFCE8 /* WorkScheduleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkScheduleModel.swift; sourceTree = "<group>"; };
 		CA22675E274402D50035663D /* TimeToGoHome.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeToGoHome.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA226761274402D50035663D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CA226768274402D50035663D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -99,6 +101,7 @@
 				CAB7CF472750CDCE005C9232 /* DayButtonView.swift */,
 				CAB7CF322750B5C7005C9232 /* MainViewController.swift */,
 				CAFA9F3527B3FCB00088003A /* WhiteButtonView.swift */,
+				CA12806B27D1A64800CAFCE8 /* WorkScheduleModel.swift */,
 				CAB7CF282750B0FA005C9232 /* LocationManager.swift */,
 				CAB7CF2A2750B146005C9232 /* SupportingMethods.swift */,
 				CAB7CF2C2750B280005C9232 /* ReferenceValues.swift */,
@@ -203,6 +206,7 @@
 				CAB7CF422750CBFD005C9232 /* CompanyAddressResponse.swift in Sources */,
 				CA226762274402D50035663D /* AppDelegate.swift in Sources */,
 				CAFA9F3627B3FCB00088003A /* WhiteButtonView.swift in Sources */,
+				CA12806C27D1A64800CAFCE8 /* WorkScheduleModel.swift in Sources */,
 				CAB7CF2D2750B280005C9232 /* ReferenceValues.swift in Sources */,
 				CAB7CF3B2750C5F2005C9232 /* CompanyMapResponse.swift in Sources */,
 			);
