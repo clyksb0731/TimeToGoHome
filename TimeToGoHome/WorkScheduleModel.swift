@@ -43,16 +43,25 @@ struct WorkSchedule {
     
     mutating func updateScheduleForDateId(_ dateId: String, morning: ScheduleType, afternoon: ScheduleType, overtime: ScheduleType) {
         // Find schedule from DB and update it.
+        if case .scheduling = morning, case .holiday = morning, case .work = morning, case .vacation = morning,
+           case .scheduling = afternoon, case .holiday = afternoon, case .work = afternoon, case .vacation = afternoon,
+           case .overtime(let overtimeValue) = overtime {
+            // Update morning & afternoon & overtime
+        }
     }
     
     mutating func updateRegularScheduleForDateId(_ dateId: String, morning: ScheduleType, afternoon: ScheduleType) {
         // Find schedule from DB and update it.
+        if case .scheduling = morning, case .holiday = morning, case .work = morning, case .vacation = morning,
+           case .scheduling = afternoon, case .holiday = afternoon, case .work = afternoon, case .vacation = afternoon {
+            // Update morning & afternoon
+        }
     }
     
     mutating func updateOvertimeScheduleForDateId(_ dateId: String, overtime: ScheduleType) {
         // Find schedule from DB and update it.
-        if case let .overtime(overtimeValue) = overtime {
-            
+        if case .overtime(let overtimeValue) = overtime {
+            // Update overtime
         }
     }
     
