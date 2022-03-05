@@ -157,6 +157,13 @@ class MainViewController: UIViewController {
         return buttonView
     }()
     
+    lazy var scheduleTable: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return tableView
+    }()
+    
     var schedule: WorkSchedule = WorkSchedule.today
 
     override func viewDidLoad() {
