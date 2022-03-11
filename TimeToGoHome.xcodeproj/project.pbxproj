@@ -12,6 +12,7 @@
 		CA226769274402D50035663D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA226767274402D50035663D /* Main.storyboard */; };
 		CA22676B274402D60035663D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA22676A274402D60035663D /* Assets.xcassets */; };
 		CA22676E274402D60035663D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA22676C274402D60035663D /* LaunchScreen.storyboard */; };
+		CA79A8E627D85550000F58E2 /* TemplateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA79A8E527D85550000F58E2 /* TemplateCell.swift */; };
 		CAB7CF292750B0FA005C9232 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF282750B0FA005C9232 /* LocationManager.swift */; };
 		CAB7CF2B2750B146005C9232 /* SupportingMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF2A2750B146005C9232 /* SupportingMethods.swift */; };
 		CAB7CF2D2750B280005C9232 /* ReferenceValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF2C2750B280005C9232 /* ReferenceValues.swift */; };
@@ -29,6 +30,8 @@
 		CAB7CF462750CD66005C9232 /* WorkTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF452750CD66005C9232 /* WorkTypeViewController.swift */; };
 		CAB7CF482750CDCE005C9232 /* DayButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF472750CDCE005C9232 /* DayButtonView.swift */; };
 		CAFA9F3627B3FCB00088003A /* WhiteButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFA9F3527B3FCB00088003A /* WhiteButtonView.swift */; };
+		CAFD580027DACDFD0027811C /* ScheduleTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFD57FF27DACDFD0027811C /* ScheduleTypeCell.swift */; };
+		CAFD580227DB2D0E0027811C /* SchedulingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFD580127DB2D0E0027811C /* SchedulingCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +42,7 @@
 		CA22676A274402D60035663D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA22676D274402D60035663D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CA22676F274402D60035663D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CA79A8E527D85550000F58E2 /* TemplateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateCell.swift; sourceTree = "<group>"; };
 		CAB7CF282750B0FA005C9232 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		CAB7CF2A2750B146005C9232 /* SupportingMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportingMethods.swift; sourceTree = "<group>"; };
 		CAB7CF2C2750B280005C9232 /* ReferenceValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceValues.swift; sourceTree = "<group>"; };
@@ -55,6 +59,8 @@
 		CAB7CF452750CD66005C9232 /* WorkTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkTypeViewController.swift; sourceTree = "<group>"; };
 		CAB7CF472750CDCE005C9232 /* DayButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayButtonView.swift; sourceTree = "<group>"; };
 		CAFA9F3527B3FCB00088003A /* WhiteButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteButtonView.swift; sourceTree = "<group>"; };
+		CAFD57FF27DACDFD0027811C /* ScheduleTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTypeCell.swift; sourceTree = "<group>"; };
+		CAFD580127DB2D0E0027811C /* SchedulingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulingCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,11 +107,14 @@
 				CAB7CF472750CDCE005C9232 /* DayButtonView.swift */,
 				CAB7CF322750B5C7005C9232 /* MainViewController.swift */,
 				CAFA9F3527B3FCB00088003A /* WhiteButtonView.swift */,
+				CAFD57FF27DACDFD0027811C /* ScheduleTypeCell.swift */,
+				CAFD580127DB2D0E0027811C /* SchedulingCell.swift */,
 				CA12806B27D1A64800CAFCE8 /* WorkScheduleModel.swift */,
 				CAB7CF282750B0FA005C9232 /* LocationManager.swift */,
 				CAB7CF2A2750B146005C9232 /* SupportingMethods.swift */,
 				CAB7CF2C2750B280005C9232 /* ReferenceValues.swift */,
 				CAB7CF2E2750B2FE005C9232 /* TemplateViewController.swift */,
+				CA79A8E527D85550000F58E2 /* TemplateCell.swift */,
 				CA226767274402D50035663D /* Main.storyboard */,
 				CA22676A274402D60035663D /* Assets.xcassets */,
 				CA22676C274402D60035663D /* LaunchScreen.storyboard */,
@@ -195,11 +204,13 @@
 				CAB7CF332750B5C7005C9232 /* MainViewController.swift in Sources */,
 				CAB7CF292750B0FA005C9232 /* LocationManager.swift in Sources */,
 				CAB7CF482750CDCE005C9232 /* DayButtonView.swift in Sources */,
+				CAFD580227DB2D0E0027811C /* SchedulingCell.swift in Sources */,
 				CAB7CF2F2750B2FE005C9232 /* TemplateViewController.swift in Sources */,
 				CAB7CF2B2750B146005C9232 /* SupportingMethods.swift in Sources */,
 				CAB7CF312750B5B9005C9232 /* InitialViewController.swift in Sources */,
 				CAB7CF3D2750C7F3005C9232 /* CompanyLocationAlertViewController.swift in Sources */,
 				CAB7CF462750CD66005C9232 /* WorkTypeViewController.swift in Sources */,
+				CAFD580027DACDFD0027811C /* ScheduleTypeCell.swift in Sources */,
 				CAB7CF442750CD01005C9232 /* CompanyDetailedAddressViewController.swift in Sources */,
 				CAB7CF352750C084005C9232 /* CompanyLocationViewController.swift in Sources */,
 				CAB7CF392750C5C9005C9232 /* CompanyMapViewController.swift in Sources */,
@@ -207,6 +218,7 @@
 				CA226762274402D50035663D /* AppDelegate.swift in Sources */,
 				CAFA9F3627B3FCB00088003A /* WhiteButtonView.swift in Sources */,
 				CA12806C27D1A64800CAFCE8 /* WorkScheduleModel.swift in Sources */,
+				CA79A8E627D85550000F58E2 /* TemplateCell.swift in Sources */,
 				CAB7CF2D2750B280005C9232 /* ReferenceValues.swift in Sources */,
 				CAB7CF3B2750C5F2005C9232 /* CompanyMapResponse.swift in Sources */,
 			);

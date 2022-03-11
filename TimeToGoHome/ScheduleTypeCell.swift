@@ -1,5 +1,5 @@
 //
-//  ScheduleCell.swift
+//  ScheduleTypeCell.swift
 //  TimeToGoHome
 //
 //  Created by Yongseok Choi on 2022/03/11.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ScheduleCell: UITableViewCell {
+class ScheduleTypeCell: UITableViewCell {
     lazy var baseView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -18,7 +18,6 @@ class ScheduleCell: UITableViewCell {
     
     lazy var scheduleView: UIView = {
         let view = UIView()
-        view.backgroundColor = .useRGB(red: 125, green: 243, blue: 110)
         view.layer.cornerRadius = 16
         view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -55,6 +54,8 @@ class ScheduleCell: UITableViewCell {
         return label
     }()
     
+    var timeTypeLabelTopAnchor: NSLayoutConstraint!
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -83,7 +84,7 @@ class ScheduleCell: UITableViewCell {
 }
 
 // MARK: Extension for essential methods
-extension ScheduleCell {
+extension ScheduleTypeCell {
     // Set view foundation
     func setCellFoundation() {
         self.selectionStyle = .none
@@ -163,73 +164,67 @@ extension ScheduleCell {
 }
 
 // MARK: - Methods added
-extension ScheduleCell {
+extension ScheduleTypeCell {
     func setCell(scheduleType type: ScheduleType, isEditingMode: Bool) {
+        self.timeTypeLabelTopAnchor.constant = 16
+        
         switch type {
         case .morning(let workType):
+            self.timeTypeLabel.text = "오전"
+            self.removeScheduleButton.isHidden = isEditingMode
+            
             switch workType {
-            case .scheduling:
-                self.scheduleView.backgroundColor = .useRGB(red: 221, green: 221, blue: 221)
-                self.timeTypeLabel.isHidden = true
-                self.scheduleTypeLabel.text = "오전 일정"
-                self.scheduleTypeLabel.textColor = .useRGB(red: 209, green: 209, blue: 209)
-                
-                self.removeScheduleButton.isHidden = true
+            case .holiday:
+                self.scheduleView.backgroundColor = .useRGB(red: 252, green: 247, blue: 143)
+                self.timeTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
+                self.scheduleTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
+                self.scheduleTypeLabel.text = "휴일"
                 
             case .work:
                 self.scheduleView.backgroundColor = .useRGB(red: 125, green: 243, blue: 110)
-                self.timeTypeLabel.isHidden = false
-                self.timeTypeLabel.text = "오전"
-                self.scheduleTypeLabel.text = "근무"
+                self.timeTypeLabel.textColor = .white
                 self.scheduleTypeLabel.textColor = .white
-                
-                self.removeScheduleButton.isHidden = isEditingMode
+                self.scheduleTypeLabel.text = "근무"
                 
             case .vacation:
                 self.scheduleView.backgroundColor = .useRGB(red: 120, green: 223, blue: 238)
-                self.timeTypeLabel.isHidden = false
-                self.timeTypeLabel.text = "오전"
-                self.scheduleTypeLabel.text = "휴가"
+                self.timeTypeLabel.textColor = .white
                 self.scheduleTypeLabel.textColor = .white
-                
-                self.removeScheduleButton.isHidden = isEditingMode
+                self.scheduleTypeLabel.text = "휴가"
             }
             
         case .afternoon(let workType):
+            self.timeTypeLabel.text = "오후"
+            self.removeScheduleButton.isHidden = isEditingMode
+            
             switch workType {
-            case .scheduling:
-                self.scheduleView.backgroundColor = .useRGB(red: 221, green: 221, blue: 221)
-                self.timeTypeLabel.isHidden = true
-                self.scheduleTypeLabel.text = "오후 일정"
-                self.scheduleTypeLabel.textColor = .useRGB(red: 209, green: 209, blue: 209)
-                
-                self.removeScheduleButton.isHidden = true
+            case .holiday:
+                self.scheduleView.backgroundColor = .useRGB(red: 252, green: 247, blue: 143)
+                self.timeTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
+                self.scheduleTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
+                self.scheduleTypeLabel.text = "휴일"
                 
             case .work:
                 self.scheduleView.backgroundColor = .useRGB(red: 125, green: 243, blue: 110)
-                self.timeTypeLabel.isHidden = false
-                self.timeTypeLabel.text = "오후"
-                self.scheduleTypeLabel.text = "근무"
+                self.timeTypeLabel.textColor = .white
                 self.scheduleTypeLabel.textColor = .white
-                
-                self.removeScheduleButton.isHidden = isEditingMode
+                self.scheduleTypeLabel.text = "근무"
                 
             case .vacation:
                 self.scheduleView.backgroundColor = .useRGB(red: 120, green: 223, blue: 238)
-                self.timeTypeLabel.isHidden = false
-                self.timeTypeLabel.text = "오후"
-                self.scheduleTypeLabel.text = "휴가"
+                self.timeTypeLabel.textColor = .white
                 self.scheduleTypeLabel.textColor = .white
-                
-                self.removeScheduleButton.isHidden = isEditingMode
+                self.scheduleTypeLabel.text = "휴가"
             }
             
         case .overtime(let overTimeMinute):
-            self.scheduleView.backgroundColor = .useRGB(red: 239, green: 119, blue: 119)
-            self.timeTypeLabel.isHidden = false
+            self.timeTypeLabelTopAnchor.constant = 10
             self.timeTypeLabel.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingMinute(overTimeMinute))"
-            self.scheduleTypeLabel.text = "추가 근무"
+            
+            self.scheduleView.backgroundColor = .useRGB(red: 239, green: 119, blue: 119)
+            self.timeTypeLabel.textColor = .white
             self.scheduleTypeLabel.textColor = .white
+            self.scheduleTypeLabel.text = "추가 근무"
             
             self.removeScheduleButton.isHidden = isEditingMode
         }
