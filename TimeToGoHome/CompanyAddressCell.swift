@@ -6,8 +6,6 @@
 //
 
 import UIKit
-import CoreLocation
-import Contacts
 
 class CompanyAddressCell: UITableViewCell {
     // FIXME: need font scale / multi-line
