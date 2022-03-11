@@ -137,6 +137,13 @@ extension SupportingMethods {
             }
         }
     }
+    
+    func determineAdditionalHourAndMinuteUsingMinute(_ minutes: Int) -> String {
+        let hours = minutes / 60
+        let minuteLeft = minutes % 60
+        
+        return "+ \(hours)시간 \(minuteLeft)분"
+    }
 }
 
 // MARK: - Other Extensions
