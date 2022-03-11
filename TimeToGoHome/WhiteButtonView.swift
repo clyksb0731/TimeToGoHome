@@ -64,6 +64,13 @@ class WhiteButtonView: UIView {
             self.alpha = self.isSelected ? 1.0 : 0.5
         }
     }
+    
+    var isEnadble: Bool = true {
+        didSet {
+            self.button.isEnabled = self.isEnadble
+            self.isSelected = self.isEnadble;
+        }
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
