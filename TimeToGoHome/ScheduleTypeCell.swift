@@ -145,8 +145,10 @@ extension ScheduleTypeCell {
         
         // Time type label layout
         self.timeTypeLabelTopAnchor = self.timeTypeLabel.topAnchor.constraint(equalTo: self.scheduleView.topAnchor, constant: 16)
+        self.timeTypeLabelTopAnchor.priority = UILayoutPriority(750)
         NSLayoutConstraint.activate([
             self.timeTypeLabelTopAnchor,
+            self.timeTypeLabel.centerYAnchor.constraint(lessThanOrEqualTo: self.scheduleView.centerYAnchor),
             self.timeTypeLabel.trailingAnchor.constraint(equalTo: self.scheduleView.trailingAnchor, constant: -30)
         ])
         
