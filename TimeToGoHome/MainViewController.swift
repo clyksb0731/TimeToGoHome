@@ -140,30 +140,45 @@ class MainViewController: UIViewController {
         return buttonView
     }()
     
-    lazy var scheduleTable: UITableView = {
+    lazy var scheduleTableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .white
         tableView.register(ScheduleTypeCell.self, forCellReuseIdentifier: "ScheduleTypeCell")
         tableView.register(SchedulingCell.self, forCellReuseIdentifier: "SchedulingCell")
+        tableView.separatorStyle = .none
+        tableView.bounces = false
+        tableView.delegate = self
+        tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         return tableView
     }()
     
-    lazy var changeScheduleDescription: UILabel = {
+    lazy var changeScheduleDescriptionLabel: UILabel = {
         let label = UILabel()
         label.textColor = .useRGB(red: 220, green: 220, blue: 220)
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 15, weight: .bold)
         label.text = "길게 눌러서 일정 수정"
-        label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
     }()
     
+    let workScheduleViewHeight = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + UIWindow().safeAreaInsets.bottom)) * 0.2
+    let overWorkScheduleViewHeight = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + UIWindow().safeAreaInsets.bottom)) * 0.1
+    var scheduleTableViewHeightAnchor: NSLayoutConstraint!
+    
     var schedule: WorkSchedule = WorkSchedule.today
-    var isEditingMode: Bool = false
+    var isEditingMode: Bool = true {
+        willSet {
+            
+        }
+        
+        didSet {
+            self.changeScheduleDescriptionLabel.isHidden = self.isEditingMode
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -211,8 +226,10 @@ extension MainViewController {
 extension MainViewController {
     // Set view foundation
     func setViewFoundation() {
+        // Backgroud color
         self.view.backgroundColor = .white
         
+        // Navigation bar appearance
         let navigationBarAppearance = UINavigationBarAppearance()
         navigationBarAppearance.configureWithTransparentBackground()
         navigationBarAppearance.backgroundColor = .white
@@ -234,6 +251,9 @@ extension MainViewController {
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "settingBarButton"), style: .plain, target: self, action: #selector(rightBarButtonItem(_:)))
         self.navigationItem.rightBarButtonItem?.tintColor = .black
+        
+        // Table view height
+        self.calculateTableViewHeight()
     }
     
     // Initialize views
@@ -259,7 +279,9 @@ extension MainViewController {
     // Set subviews
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
-            self.mainTimeView
+            self.mainTimeView,
+            self.scheduleTableView,
+            self.changeScheduleDescriptionLabel
         ], to: self.view)
         
         SupportingMethods.shared.addSubviews([
@@ -370,12 +392,48 @@ extension MainViewController {
             self.completeChangingScheduleButtonView.leadingAnchor.constraint(equalTo: self.mainTimeCoverView.centerXAnchor, constant: 15),
             self.completeChangingScheduleButtonView.widthAnchor.constraint(equalToConstant: 45)
         ])
+        
+        // Schedule table view layout
+        self.scheduleTableViewHeightAnchor = self.scheduleTableView.heightAnchor.constraint(equalToConstant: 2 * self.workScheduleViewHeight + self.overWorkScheduleViewHeight)
+        NSLayoutConstraint.activate([
+            self.scheduleTableView.topAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: 7),
+            self.scheduleTableViewHeightAnchor,
+            self.scheduleTableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            self.scheduleTableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+        ])
+        
+        // Change schedule description label layout
+        NSLayoutConstraint.activate([
+            self.changeScheduleDescriptionLabel.topAnchor.constraint(equalTo: self.scheduleTableView.bottomAnchor, constant: 20),
+            self.changeScheduleDescriptionLabel.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor)
+        ])
     }
 }
 
 // MARK: - Extension for methods added
 extension MainViewController {
-    
+    func calculateTableViewHeight() {
+        if self.schedule.count == 0 {
+            self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight
+        }
+        
+        if self.schedule.count == 1 {
+            self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2
+        }
+        
+        if self.schedule.count == 2 {
+            if self.isEditingMode {
+                self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2 + self.overWorkScheduleViewHeight
+                
+            } else {
+                self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2
+            }
+        }
+        
+        if self.schedule.count == 3 {
+            self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2 + self.overWorkScheduleViewHeight
+        }
+    }
 }
 
 // MARK: - Extension for Selector methods
@@ -442,98 +500,113 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if self.schedule.count > 0 {
+        if self.schedule.count == 1 {
+            return 2 // because only editing mode possible
+            
+        } else if self.schedule.count == 2 {
             if self.isEditingMode {
-                return self.schedule.count + 1
+                return 3
                 
             } else {
-                return self.schedule.count
+                return 2
             }
             
+        } else if self.schedule.count == 3 {
+            return 3
+            
         } else {
-            if self.isEditingMode {
-                return 1
-                
-            } else {
-                return 0
-            }
+            return 1 // because only editing mode possible
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.row == 0 {
+            return self.workScheduleViewHeight
+            
+        } else if indexPath.row == 1 {
+            return self.workScheduleViewHeight
+            
+        } else { // 2
+            return self.overWorkScheduleViewHeight
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = UITableViewCell()
-        
-        if self.isEditingMode {
+        if self.schedule.count == 1 {
             if indexPath.row == 0 {
-                if self.schedule.count > 0 {
-                    let scheduleTypeCell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
-                    scheduleTypeCell.setCell(scheduleType: self.schedule.morning!, isEditingMode: true)
+                let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
+                cell.setCell(scheduleType: self.schedule.morning!, isEditingMode: true)
+                
+                return cell
+                
+            } else { // row 1
+                let cell = tableView.dequeueReusableCell(withIdentifier: "SchedulingCell") as! SchedulingCell
+                cell.setCell(scheduleTypeText: "오후 일정", width: UIScreen.main.bounds.width - 10, height: self.workScheduleViewHeight)
+                
+                return cell
+            }
+            
+        } else if self.schedule.count == 2 {
+            if self.isEditingMode {
+                if indexPath.row == 0 {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
+                    cell.setCell(scheduleType: self.schedule.morning!, isEditingMode: false)
                     
-                    cell = scheduleTypeCell
+                    return cell
                     
-                } else {
-                    let schedulingCell = tableView.dequeueReusableCell(withIdentifier: "SchedulingCell") as! SchedulingCell
-                    schedulingCell.setCell(scheduleTypeText: "오전 일정")
+                } else if indexPath.row == 1 {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
+                    cell.setCell(scheduleType: self.schedule.afternoon!, isEditingMode: true)
                     
-                    cell = schedulingCell
+                    return cell
+                    
+                } else { // row 2
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "SchedulingCell") as! SchedulingCell
+                    cell.setCell(scheduleTypeText: "추가 일정", width: UIScreen.main.bounds.width - 10, height: self.overWorkScheduleViewHeight)
+                    
+                    return cell
+                }
+                
+            } else {
+                if indexPath.row == 0 {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
+                    cell.setCell(scheduleType: self.schedule.morning!, isEditingMode: false)
+                    
+                    return cell
+                    
+                } else { // row 1
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
+                    cell.setCell(scheduleType: self.schedule.afternoon!, isEditingMode: false)
+                    
+                    return cell
                 }
             }
             
-            if indexPath.row == 1 {
-                if self.schedule.count > 1 {
-                    let scheduleTypeCell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
-                    scheduleTypeCell.setCell(scheduleType: self.schedule.afternoon!, isEditingMode: true)
-                    
-                    cell = scheduleTypeCell
-                    
-                } else {
-                    let schedulingCell = tableView.dequeueReusableCell(withIdentifier: "SchedulingCell") as! SchedulingCell
-                    schedulingCell.setCell(scheduleTypeText: "오후 일정")
-                    
-                    cell = schedulingCell
-                }
-            }
-            
-            if indexPath.row == 2 {
-                if self.schedule.count > 2 {
-                    let scheduleTypeCell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
-                    scheduleTypeCell.setCell(scheduleType: self.schedule.overtime!, isEditingMode: true)
-                    
-                    cell = scheduleTypeCell
-                    
-                } else {
-                    let schedulingCell = tableView.dequeueReusableCell(withIdentifier: "SchedulingCell") as! SchedulingCell
-                    schedulingCell.setCell(scheduleTypeText: "추가 일정")
-                    
-                    cell = schedulingCell
-                }
+        } else if self.schedule.count == 3 {
+            if indexPath.row == 0 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
+                cell.setCell(scheduleType: self.schedule.morning!, isEditingMode: false)
+                
+                return cell
+                
+            } else if indexPath.row == 1 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
+                cell.setCell(scheduleType: self.schedule.afternoon!, isEditingMode: false)
+                
+                return cell
+                
+            } else { // row 2
+                let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
+                cell.setCell(scheduleType: self.schedule.overtime!, isEditingMode: self.isEditingMode)
+                
+                return cell
             }
             
         } else {
-            if indexPath.row == 0 {
-                let scheduleTypeCell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
-                scheduleTypeCell.setCell(scheduleType: self.schedule.morning!, isEditingMode: false)
-                
-                cell = scheduleTypeCell
-            }
+            let cell = tableView.dequeueReusableCell(withIdentifier: "SchedulingCell") as! SchedulingCell
+            cell.setCell(scheduleTypeText: "오전 일정", width: UIScreen.main.bounds.width - 10, height: self.workScheduleViewHeight)
             
-            if indexPath.row == 1 {
-                let scheduleTypeCell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
-                scheduleTypeCell.setCell(scheduleType: self.schedule.afternoon!, isEditingMode: false)
-                
-                cell = scheduleTypeCell
-            }
-            
-            if indexPath.row == 2 {
-                let scheduleTypeCell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
-                scheduleTypeCell.setCell(scheduleType: self.schedule.overtime!, isEditingMode: false)
-                
-                cell = scheduleTypeCell
-            }
+            return cell
         }
-        
-        return cell
     }
-    
-    
 }

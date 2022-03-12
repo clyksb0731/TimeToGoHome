@@ -144,8 +144,9 @@ extension ScheduleTypeCell {
         ])
         
         // Time type label layout
+        self.timeTypeLabelTopAnchor = self.timeTypeLabel.topAnchor.constraint(equalTo: self.scheduleView.topAnchor, constant: 16)
         NSLayoutConstraint.activate([
-            self.timeTypeLabel.topAnchor.constraint(equalTo: self.scheduleView.topAnchor, constant: 16),
+            self.timeTypeLabelTopAnchor,
             self.timeTypeLabel.trailingAnchor.constraint(equalTo: self.scheduleView.trailingAnchor, constant: -30)
         ])
         
@@ -171,7 +172,7 @@ extension ScheduleTypeCell {
         switch type {
         case .morning(let workType):
             self.timeTypeLabel.text = "오전"
-            self.removeScheduleButton.isHidden = isEditingMode
+            self.removeScheduleButton.isHidden = !isEditingMode
             
             switch workType {
             case .holiday:
@@ -195,7 +196,7 @@ extension ScheduleTypeCell {
             
         case .afternoon(let workType):
             self.timeTypeLabel.text = "오후"
-            self.removeScheduleButton.isHidden = isEditingMode
+            self.removeScheduleButton.isHidden = !isEditingMode
             
             switch workType {
             case .holiday:
@@ -226,7 +227,7 @@ extension ScheduleTypeCell {
             self.scheduleTypeLabel.textColor = .white
             self.scheduleTypeLabel.text = "추가 근무"
             
-            self.removeScheduleButton.isHidden = isEditingMode
+            self.removeScheduleButton.isHidden = !isEditingMode
         }
     }
 }

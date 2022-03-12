@@ -87,8 +87,8 @@ struct WorkSchedule {
         // Check DB if there is already today schedule.
         // &&
         // Check tody schedule condition for initial setting.
-        self.morning = .morning(.vacation) // FIXME: Temp
-        self.afternoon = .afternoon(.work) // FIXME: Temp
-        self.overtime = nil // FIXME: Temp
+        self.morning = nil //.morning(.holiday) // FIXME: Temp
+        self.afternoon = nil //.afternoon(.work) // FIXME: Temp
+        self.overtime = nil //.overtime(60) // FIXME: Temp
     }
 }

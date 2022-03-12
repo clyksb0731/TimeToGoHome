@@ -143,7 +143,12 @@ extension SupportingMethods {
         let minuteLeft = minutes % 60
         
         if hours > 0 {
-            return "+ \(hours)시간 \(minuteLeft)분"
+            if minuteLeft == 0 {
+                return "+ \(hours)시간"
+                
+            } else {
+                return "+ \(hours)시간 \(minuteLeft)분"
+            }
             
         } else {
             return "+ \(minuteLeft)분"
