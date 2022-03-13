@@ -185,7 +185,7 @@ class MainViewController: UIViewController {
         return view
     }()
     
-    lazy var recessTimeButtonView: UIView = {
+    lazy var vacationTimeButtonView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.useRGB(red: 120, green: 223, blue: 238)
         view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
@@ -195,7 +195,7 @@ class MainViewController: UIViewController {
         return view
     }()
     
-    lazy var addRecessTimeButtonImageView: UIImageView = {
+    lazy var addvacationTimeButtonImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "addScheduleWhiteButtonImage"))
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -203,7 +203,7 @@ class MainViewController: UIViewController {
         return imageView
     }()
     
-    lazy var recessTimeButtonViewLabel: UILabel = {
+    lazy var vacationTimeButtonViewLabel: UILabel = {
         let label = UILabel()
         label.layer.cornerRadius = 7
         label.layer.borderColor = UIColor.white.cgColor
@@ -217,9 +217,9 @@ class MainViewController: UIViewController {
         return label
     }()
     
-    lazy var recessTimeButton: UIButton = {
+    lazy var vacationTimeButton: UIButton = {
         let button = UIButton()
-        button.addTarget(self, action: #selector(recessTimeButton(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(vacationTimeButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -305,6 +305,46 @@ class MainViewController: UIViewController {
         return button
     }()
     
+    lazy var overtimeButtonView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.useRGB(red: 239, green: 119, blue: 119)
+        view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
+        view.layer.cornerRadius = 2
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var addOvertimeButtonImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "addScheduleWhiteButtonImage"))
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
+    lazy var overtimeButtonViewLabel: UILabel = {
+        let label = UILabel()
+        label.layer.cornerRadius = 7
+        label.layer.borderColor = UIColor.white.cgColor
+        label.layer.borderWidth = 1
+        label.font = .systemFont(ofSize: 10)
+        label.textColor = .white
+        label.textAlignment = .center
+        label.text = "휴일"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var overtimeButton: UIButton = {
+        let button = UIButton()
+        button.addTarget(self, action: #selector(overtimeButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.currentPage = 0
@@ -326,6 +366,7 @@ class MainViewController: UIViewController {
     var scheduleTableViewHeightAnchor: NSLayoutConstraint!
     
     var schedule: WorkSchedule = WorkSchedule.today
+    var tempSchedule: WorkSchedule?
     
     var isEditingMode: Bool = false {
         willSet {
@@ -333,7 +374,14 @@ class MainViewController: UIViewController {
         }
         
         didSet {
+            self.determineCompleteChangingScheduleButton()
+            self.mainTimeCoverView.isHidden = !self.isEditingMode
+            
+            self.calculateTableViewHeight()
             self.scheduleTableView.reloadData()
+            
+            self.determineScheduleButtonState()
+            
             self.changeScheduleDescriptionLabel.isHidden = self.isEditingMode
         }
     }
@@ -356,11 +404,12 @@ class MainViewController: UIViewController {
         super.viewWillAppear(animated)
         
         self.setViewFoundation()
+        self.determineScheduleButtonState()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        print(":::::::::::: \(self.changeScheduleDescriptionLabelHeight)")
+        
     }
     
     deinit {
@@ -444,7 +493,8 @@ extension MainViewController {
             self.scheduleTableView,
             self.changeScheduleDescriptionLabel,
             self.buttonsScrollView,
-            self.pageControl
+            self.pageControl,
+            self.overtimeButtonView
         ], to: self.view)
         
         SupportingMethods.shared.addSubviews([
@@ -468,16 +518,16 @@ extension MainViewController {
         ], to: self.buttonsScrollView)
         
         SupportingMethods.shared.addSubviews([
-            self.recessTimeButtonView,
+            self.vacationTimeButtonView,
             self.workTimeButtonView,
             self.holidayButtonView
         ], to: self.contentView)
         
         SupportingMethods.shared.addSubviews([
-            self.addRecessTimeButtonImageView,
-            self.recessTimeButtonViewLabel,
-            self.recessTimeButton
-        ], to: self.recessTimeButtonView)
+            self.addvacationTimeButtonImageView,
+            self.vacationTimeButtonViewLabel,
+            self.vacationTimeButton
+        ], to: self.vacationTimeButtonView)
         
         SupportingMethods.shared.addSubviews([
             self.addWorkTimeButtonImageView,
@@ -490,6 +540,12 @@ extension MainViewController {
             self.holidayButtonViewLabel,
             self.holidayButton
         ], to: self.holidayButtonView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.addOvertimeButtonImageView,
+            self.overtimeButtonViewLabel,
+            self.overtimeButton
+        ], to: self.overtimeButtonView)
     }
     
     // Set layouts
@@ -623,43 +679,11 @@ extension MainViewController {
         
         let pageWidth = UIScreen.main.bounds.width
         
-        // Recess time button view layout
-        NSLayoutConstraint.activate([
-            self.recessTimeButtonView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
-            self.recessTimeButtonView.heightAnchor.constraint(equalToConstant: 70),
-            self.recessTimeButtonView.centerXAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: pageWidth/2),
-            self.recessTimeButtonView.widthAnchor.constraint(equalToConstant: pageWidth - 40)
-        ])
-        
-        // Add recess time button image view layout
-        NSLayoutConstraint.activate([
-            self.addRecessTimeButtonImageView.centerYAnchor.constraint(equalTo: self.recessTimeButtonView.centerYAnchor),
-            self.addRecessTimeButtonImageView.heightAnchor.constraint(equalToConstant: 34),
-            self.addRecessTimeButtonImageView.centerXAnchor.constraint(equalTo: self.recessTimeButtonView.centerXAnchor),
-            self.addRecessTimeButtonImageView.widthAnchor.constraint(equalToConstant: 34)
-        ])
-        
-        // Recess time button view label layout
-        NSLayoutConstraint.activate([
-            self.recessTimeButtonViewLabel.centerYAnchor.constraint(equalTo: self.recessTimeButtonView.centerYAnchor),
-            self.recessTimeButtonViewLabel.heightAnchor.constraint(equalToConstant: 21),
-            self.recessTimeButtonViewLabel.trailingAnchor.constraint(equalTo: self.recessTimeButtonView.trailingAnchor, constant: -34),
-            self.recessTimeButtonViewLabel.widthAnchor.constraint(equalToConstant: 61)
-        ])
-        
-        // Recess time button layout
-        NSLayoutConstraint.activate([
-            self.recessTimeButton.topAnchor.constraint(equalTo: self.recessTimeButtonView.topAnchor),
-            self.recessTimeButton.bottomAnchor.constraint(equalTo: self.recessTimeButtonView.bottomAnchor),
-            self.recessTimeButton.leadingAnchor.constraint(equalTo: self.recessTimeButtonView.leadingAnchor),
-            self.recessTimeButton.trailingAnchor.constraint(equalTo: self.recessTimeButtonView.trailingAnchor)
-        ])
-        
         // Work time button view layout
         NSLayoutConstraint.activate([
             self.workTimeButtonView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
             self.workTimeButtonView.heightAnchor.constraint(equalToConstant: 70),
-            self.workTimeButtonView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor),
+            self.workTimeButtonView.centerXAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: pageWidth/2),
             self.workTimeButtonView.widthAnchor.constraint(equalToConstant: pageWidth - 40)
         ])
         
@@ -685,6 +709,38 @@ extension MainViewController {
             self.workTimeButton.bottomAnchor.constraint(equalTo: self.workTimeButtonView.bottomAnchor),
             self.workTimeButton.leadingAnchor.constraint(equalTo: self.workTimeButtonView.leadingAnchor),
             self.workTimeButton.trailingAnchor.constraint(equalTo: self.workTimeButtonView.trailingAnchor)
+        ])
+        
+        // Vacation time button view layout
+        NSLayoutConstraint.activate([
+            self.vacationTimeButtonView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
+            self.vacationTimeButtonView.heightAnchor.constraint(equalToConstant: 70),
+            self.vacationTimeButtonView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor),
+            self.vacationTimeButtonView.widthAnchor.constraint(equalToConstant: pageWidth - 40)
+        ])
+        
+        // Add vacation time button image view layout
+        NSLayoutConstraint.activate([
+            self.addvacationTimeButtonImageView.centerYAnchor.constraint(equalTo: self.vacationTimeButtonView.centerYAnchor),
+            self.addvacationTimeButtonImageView.heightAnchor.constraint(equalToConstant: 34),
+            self.addvacationTimeButtonImageView.centerXAnchor.constraint(equalTo: self.vacationTimeButtonView.centerXAnchor),
+            self.addvacationTimeButtonImageView.widthAnchor.constraint(equalToConstant: 34)
+        ])
+        
+        // Vacation time button view label layout
+        NSLayoutConstraint.activate([
+            self.vacationTimeButtonViewLabel.centerYAnchor.constraint(equalTo: self.vacationTimeButtonView.centerYAnchor),
+            self.vacationTimeButtonViewLabel.heightAnchor.constraint(equalToConstant: 21),
+            self.vacationTimeButtonViewLabel.trailingAnchor.constraint(equalTo: self.vacationTimeButtonView.trailingAnchor, constant: -34),
+            self.vacationTimeButtonViewLabel.widthAnchor.constraint(equalToConstant: 61)
+        ])
+        
+        // Vacation time button layout
+        NSLayoutConstraint.activate([
+            self.vacationTimeButton.topAnchor.constraint(equalTo: self.vacationTimeButtonView.topAnchor),
+            self.vacationTimeButton.bottomAnchor.constraint(equalTo: self.vacationTimeButtonView.bottomAnchor),
+            self.vacationTimeButton.leadingAnchor.constraint(equalTo: self.vacationTimeButtonView.leadingAnchor),
+            self.vacationTimeButton.trailingAnchor.constraint(equalTo: self.vacationTimeButtonView.trailingAnchor)
         ])
         
         // Holiday button view layout
@@ -718,6 +774,38 @@ extension MainViewController {
             self.holidayButton.leadingAnchor.constraint(equalTo: self.holidayButtonView.leadingAnchor),
             self.holidayButton.trailingAnchor.constraint(equalTo: self.holidayButtonView.trailingAnchor)
         ])
+        
+        // Overtime button view layout
+        NSLayoutConstraint.activate([
+            self.overtimeButtonView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -31),
+            self.overtimeButtonView.heightAnchor.constraint(equalToConstant: 70),
+            self.overtimeButtonView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            self.overtimeButtonView.widthAnchor.constraint(equalToConstant: pageWidth - 40)
+        ])
+        
+        // Add overtime button image view layout
+        NSLayoutConstraint.activate([
+            self.addOvertimeButtonImageView.centerYAnchor.constraint(equalTo: self.overtimeButtonView.centerYAnchor),
+            self.addOvertimeButtonImageView.heightAnchor.constraint(equalToConstant: 34),
+            self.addOvertimeButtonImageView.centerXAnchor.constraint(equalTo: self.overtimeButtonView.centerXAnchor),
+            self.addOvertimeButtonImageView.widthAnchor.constraint(equalToConstant: 34)
+        ])
+        
+        // Overtime button view label layout
+        NSLayoutConstraint.activate([
+            self.overtimeButtonViewLabel.centerYAnchor.constraint(equalTo: self.overtimeButtonView.centerYAnchor),
+            self.overtimeButtonViewLabel.heightAnchor.constraint(equalToConstant: 21),
+            self.overtimeButtonViewLabel.trailingAnchor.constraint(equalTo: self.overtimeButtonView.trailingAnchor, constant: -34),
+            self.overtimeButtonViewLabel.widthAnchor.constraint(equalToConstant: 61)
+        ])
+        
+        // Overtime button layout
+        NSLayoutConstraint.activate([
+            self.overtimeButton.topAnchor.constraint(equalTo: self.overtimeButtonView.topAnchor),
+            self.overtimeButton.bottomAnchor.constraint(equalTo: self.overtimeButtonView.bottomAnchor),
+            self.overtimeButton.leadingAnchor.constraint(equalTo: self.overtimeButtonView.leadingAnchor),
+            self.overtimeButton.trailingAnchor.constraint(equalTo: self.overtimeButtonView.trailingAnchor)
+        ])
     }
 }
 
@@ -743,6 +831,53 @@ extension MainViewController {
         
         if self.schedule.count == 3 {
             self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2 + self.overWorkScheduleViewHeight
+        }
+    }
+    
+    func determineScheduleButtonState() {
+        if self.schedule.count < 2 {
+            self.buttonsScrollView.isHidden = false
+            self.pageControl.isHidden = false
+            
+            self.overtimeButtonView.isHidden = true
+            
+        } else if schedule.count == 2 {
+            if case .afternoon(let workType) = self.schedule.afternoon {
+                switch workType {
+                case .holiday:
+                    self.buttonsScrollView.isHidden = true
+                    self.pageControl.isHidden = true
+                    
+                    self.overtimeButtonView.isHidden = true
+                    
+                case .vacation:
+                    self.buttonsScrollView.isHidden = true
+                    self.pageControl.isHidden = true
+                    
+                    self.overtimeButtonView.isHidden = true
+                    
+                case .work:
+                    self.buttonsScrollView.isHidden = true
+                    self.pageControl.isHidden = true
+                    
+                    self.overtimeButtonView.isHidden = false
+                }
+            }
+            
+        } else { // > 2
+            self.buttonsScrollView.isHidden = true
+            self.pageControl.isHidden = true
+            
+            self.overtimeButtonView.isHidden = true
+        }
+    }
+    
+    func determineCompleteChangingScheduleButton() {
+        if self.schedule.count < 2 {
+            self.completeChangingScheduleButtonView.isEnadble = false
+            
+        } else {
+            self.completeChangingScheduleButtonView.isEnadble = true
         }
     }
 }
@@ -786,33 +921,103 @@ extension MainViewController {
     }
     
     @objc func changeScheduleButton(_ sender: UIButton) {
-        self.mainTimeCoverView.isHidden = false
+        self.tempSchedule = self.schedule
         
         self.isEditingMode = true
     }
     
     @objc func cancelChangingScheduleButtonView(_ sender: UIButton) {
-        self.mainTimeCoverView.isHidden = true
+        if let schedule = self.tempSchedule {
+            self.schedule = schedule
+        }
         
         self.isEditingMode = false
     }
     
     @objc func completeChangingScheduleButtonView(_ sender: UIButton) {
-        self.mainTimeCoverView.isHidden = true
+        // Update data to DB
         
         self.isEditingMode = false
     }
     
-    @objc func recessTimeButton(_ sender: UIButton) {
-        print("Recess Time Button touched")
+    @objc func removeScheduleButton(_ sender: UIButton) {
+        self.schedule.removeLastSchedule()
+        
+        self.determineCompleteChangingScheduleButton()
+        
+        self.calculateTableViewHeight()
+        self.scheduleTableView.reloadData()
+        
+        self.determineScheduleButtonState()
+    }
+    
+    @objc func vacationTimeButton(_ sender: UIButton) {
+        print("Vacation Time Button touched")
+        
+        if self.schedule.count == 0 {
+            self.schedule.addNormalSchedule(.morning(.vacation))
+            
+        } else {
+            self.schedule.addNormalSchedule(.afternoon(.vacation))
+        }
+        
+        self.determineCompleteChangingScheduleButton()
+        
+        self.calculateTableViewHeight()
+        self.scheduleTableView.reloadData()
+        
+        self.determineScheduleButtonState()
     }
     
     @objc func workTimeButton(_ sender: UIButton) {
         print("Work Time Button touched")
+        
+        if self.schedule.count == 0 {
+            self.schedule.addNormalSchedule(.morning(.work))
+            
+        } else {
+            self.schedule.addNormalSchedule(.afternoon(.work))
+        }
+        
+        self.determineCompleteChangingScheduleButton()
+        
+        self.calculateTableViewHeight()
+        self.scheduleTableView.reloadData()
+        
+        self.determineScheduleButtonState()
     }
     
     @objc func holidayButton(_ sender: UIButton) {
         print("Holiday Button touched")
+        
+        if self.schedule.count == 0 {
+            self.schedule.addNormalSchedule(.morning(.holiday))
+            
+        } else {
+            self.schedule.addNormalSchedule(.afternoon(.holiday))
+        }
+        
+        self.determineCompleteChangingScheduleButton()
+        
+        self.calculateTableViewHeight()
+        self.scheduleTableView.reloadData()
+        
+        self.determineScheduleButtonState()
+    }
+    
+    @objc func overtimeButton(_ sender: UIButton) {
+        print("Overtime Button touched")
+        
+        if self.schedule.count == 2 {
+            self.schedule.addOvertimeSchedule(.overtime(45)) // FIXME: Temp code
+            
+            self.determineCompleteChangingScheduleButton()
+            
+            self.calculateTableViewHeight()
+            self.scheduleTableView.reloadData()
+            
+            self.determineScheduleButtonState()
+        }
     }
     
 //    @objc func pageControl(_ sender: UIPageControl) {
@@ -846,7 +1051,20 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             
         } else if self.schedule.count == 2 {
             if self.isEditingMode {
-                return 3
+                if case .afternoon(let workType) = self.schedule.afternoon {
+                    switch workType {
+                    case .holiday:
+                        return 2
+                        
+                    case .vacation:
+                        return 2
+                        
+                    case .work:
+                        return 3
+                    }
+                }
+                
+                return 3 // not happen
                 
             } else {
                 return 2
@@ -877,6 +1095,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             if indexPath.row == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
                 cell.setCell(scheduleType: self.schedule.morning!, isEditingMode: true)
+                cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                 
                 return cell
                 
@@ -892,12 +1111,14 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 if indexPath.row == 0 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
                     cell.setCell(scheduleType: self.schedule.morning!, isEditingMode: false)
+                    cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                     
                     return cell
                     
                 } else if indexPath.row == 1 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
                     cell.setCell(scheduleType: self.schedule.afternoon!, isEditingMode: true)
+                    cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                     
                     return cell
                     
@@ -912,12 +1133,14 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 if indexPath.row == 0 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
                     cell.setCell(scheduleType: self.schedule.morning!, isEditingMode: false)
+                    cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                     
                     return cell
                     
                 } else { // row 1
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
                     cell.setCell(scheduleType: self.schedule.afternoon!, isEditingMode: false)
+                    cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                     
                     return cell
                 }
@@ -927,18 +1150,21 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             if indexPath.row == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
                 cell.setCell(scheduleType: self.schedule.morning!, isEditingMode: false)
+                cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                 
                 return cell
                 
             } else if indexPath.row == 1 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
                 cell.setCell(scheduleType: self.schedule.afternoon!, isEditingMode: false)
+                cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                 
                 return cell
                 
             } else { // row 2
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
                 cell.setCell(scheduleType: self.schedule.overtime!, isEditingMode: self.isEditingMode)
+                cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                 
                 return cell
             }

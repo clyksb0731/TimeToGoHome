@@ -35,6 +35,8 @@ class SchedulingCell: UITableViewCell {
         return label
     }()
     
+    var dashLayer: CAShapeLayer?
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -133,12 +135,17 @@ extension SchedulingCell {
     func setCell(scheduleTypeText: String, width: CGFloat, height: CGFloat) {
         self.scheduleTypeLabel.text = scheduleTypeText
         
+        self.dashLayer?.removeFromSuperlayer()
+        
         let dashLayer = CAShapeLayer()
         dashLayer.strokeColor = UIColor.useRGB(red: 189, green: 189, blue: 189).cgColor
         dashLayer.lineWidth = 2
         dashLayer.lineDashPattern = [2,2]
         dashLayer.fillColor = nil
         dashLayer.path = UIBezierPath(roundedRect: CGRect(x: 0, y: 0, width: width, height: height), cornerRadius: 16).cgPath
+        
         self.scheduleView.layer.addSublayer(dashLayer)
+        
+        self.dashLayer = dashLayer
     }
 }

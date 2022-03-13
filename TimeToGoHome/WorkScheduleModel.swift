@@ -88,7 +88,48 @@ struct WorkSchedule {
         // &&
         // Check tody schedule condition for initial setting.
         self.morning = .morning(.holiday) // FIXME: Temp
-        self.afternoon = .afternoon(.work) // FIXME: Temp
-        self.overtime = .overtime(59) // FIXME: Temp
+        self.afternoon = .afternoon(.holiday) // FIXME: Temp
+        self.overtime = nil //.overtime(59) // FIXME: Temp
+    }
+    
+    mutating func removeLastSchedule() {
+        if self.overtime != nil {
+            self.overtime = nil
+            
+        } else {
+            if self.afternoon != nil {
+                self.afternoon = nil
+                
+            } else {
+                if self.morning != nil {
+                    self.morning = nil
+                }
+            }
+        }
+    }
+    
+    mutating func addNormalSchedule(_ schedule: ScheduleType) {
+        guard self.overtime == nil else {
+            return
+        }
+        
+        if self.afternoon == nil {
+            self.afternoon = schedule
+            
+        } else {
+            if self.morning == nil {
+                self.morning = schedule
+            }
+        }
+    }
+    
+    mutating func addOvertimeSchedule(_ schedule: ScheduleType) {
+        guard self.morning != nil && self.afternoon != nil else {
+            return
+        }
+        
+        if self.overtime == nil {
+            self.overtime = schedule
+        }
     }
 }

@@ -239,4 +239,8 @@ extension ScheduleTypeCell {
             self.removeScheduleButton.isHidden = !isEditingMode
         }
     }
+    
+    func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
+        self.removeScheduleButton.addTarget(target, action: action, for: controlEvents)
+    }
 }
