@@ -168,7 +168,7 @@ class MainViewController: UIViewController {
     lazy var buttonsScrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.bounces = false
-        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width * 2, height: 75)
+        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width * 3, height: 75) // due to button's shadow
         scrollView.isPagingEnabled = true
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
@@ -265,14 +265,55 @@ class MainViewController: UIViewController {
         return button
     }()
     
+    lazy var holidayButtonView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.useRGB(red: 252, green: 247, blue: 143)
+        view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
+        view.layer.cornerRadius = 2
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var addHolidayButtonImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "addScheduleGrayButtonImage"))
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
+    lazy var holidayButtonViewLabel: UILabel = {
+        let label = UILabel()
+        label.layer.cornerRadius = 7
+        label.layer.borderColor = UIColor.useRGB(red: 130, green: 130, blue: 130).cgColor
+        label.layer.borderWidth = 1
+        label.font = .systemFont(ofSize: 10)
+        label.textColor = .useRGB(red: 130, green: 130, blue: 130)
+        label.textAlignment = .center
+        label.text = "휴일"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var holidayButton: UIButton = {
+        let button = UIButton()
+        button.addTarget(self, action: #selector(holidayButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.currentPage = 0
         pageControl.currentPageIndicatorTintColor = .black
         pageControl.pageIndicatorTintColor = .gray
         pageControl.hidesForSinglePage = true
-        pageControl.numberOfPages = 2
-        pageControl.addTarget(self, action: #selector(pageControl(_:)), for: .valueChanged)
+        pageControl.numberOfPages = 3
+        pageControl.isEnabled = false
+        //pageControl.addTarget(self, action: #selector(pageControl(_:)), for: .valueChanged)
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         
         return pageControl
@@ -428,7 +469,8 @@ extension MainViewController {
         
         SupportingMethods.shared.addSubviews([
             self.recessTimeButtonView,
-            self.workTimeButtonView
+            self.workTimeButtonView,
+            self.holidayButtonView
         ], to: self.contentView)
         
         SupportingMethods.shared.addSubviews([
@@ -442,6 +484,12 @@ extension MainViewController {
             self.workTimeButtonViewLabel,
             self.workTimeButton
         ], to: self.workTimeButtonView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.addHolidayButtonImageView,
+            self.holidayButtonViewLabel,
+            self.holidayButton
+        ], to: self.holidayButtonView)
     }
     
     // Set layouts
@@ -611,7 +659,7 @@ extension MainViewController {
         NSLayoutConstraint.activate([
             self.workTimeButtonView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
             self.workTimeButtonView.heightAnchor.constraint(equalToConstant: 70),
-            self.workTimeButtonView.centerXAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -(pageWidth/2)),
+            self.workTimeButtonView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor),
             self.workTimeButtonView.widthAnchor.constraint(equalToConstant: pageWidth - 40)
         ])
         
@@ -637,6 +685,38 @@ extension MainViewController {
             self.workTimeButton.bottomAnchor.constraint(equalTo: self.workTimeButtonView.bottomAnchor),
             self.workTimeButton.leadingAnchor.constraint(equalTo: self.workTimeButtonView.leadingAnchor),
             self.workTimeButton.trailingAnchor.constraint(equalTo: self.workTimeButtonView.trailingAnchor)
+        ])
+        
+        // Holiday button view layout
+        NSLayoutConstraint.activate([
+            self.holidayButtonView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
+            self.holidayButtonView.heightAnchor.constraint(equalToConstant: 70),
+            self.holidayButtonView.centerXAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -(pageWidth/2)),
+            self.holidayButtonView.widthAnchor.constraint(equalToConstant: pageWidth - 40)
+        ])
+        
+        // Add holiday button image view layout
+        NSLayoutConstraint.activate([
+            self.addHolidayButtonImageView.centerYAnchor.constraint(equalTo: self.holidayButtonView.centerYAnchor),
+            self.addHolidayButtonImageView.heightAnchor.constraint(equalToConstant: 34),
+            self.addHolidayButtonImageView.centerXAnchor.constraint(equalTo: self.holidayButtonView.centerXAnchor),
+            self.addHolidayButtonImageView.widthAnchor.constraint(equalToConstant: 34)
+        ])
+        
+        // Holiday button view label layout
+        NSLayoutConstraint.activate([
+            self.holidayButtonViewLabel.centerYAnchor.constraint(equalTo: self.holidayButtonView.centerYAnchor),
+            self.holidayButtonViewLabel.heightAnchor.constraint(equalToConstant: 21),
+            self.holidayButtonViewLabel.trailingAnchor.constraint(equalTo: self.holidayButtonView.trailingAnchor, constant: -34),
+            self.holidayButtonViewLabel.widthAnchor.constraint(equalToConstant: 61)
+        ])
+        
+        // Holiday button layout
+        NSLayoutConstraint.activate([
+            self.holidayButton.topAnchor.constraint(equalTo: self.holidayButtonView.topAnchor),
+            self.holidayButton.bottomAnchor.constraint(equalTo: self.holidayButtonView.bottomAnchor),
+            self.holidayButton.leadingAnchor.constraint(equalTo: self.holidayButtonView.leadingAnchor),
+            self.holidayButton.trailingAnchor.constraint(equalTo: self.holidayButtonView.trailingAnchor)
         ])
     }
 }
@@ -731,21 +811,27 @@ extension MainViewController {
         print("Work Time Button touched")
     }
     
-    @objc func pageControl(_ sender: UIPageControl) {
-        self.previousPointX = buttonsScrollView.contentOffset.x
-        
-        if sender.currentPage == 0 {
-            self.buttonsScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
-        }
-        
-        if sender.currentPage == 1 {
-            self.buttonsScrollView.setContentOffset(CGPoint(x: UIScreen.main.bounds.width, y: 0), animated: true)
-        }
-        
-//        if sender.currentPage == 2 {
-//            self.buttonsScrollView.setContentOffset(CGPoint(x: UIScreen.main.bounds.width * 2, y: 0), animated: true)
-//        }
+    @objc func holidayButton(_ sender: UIButton) {
+        print("Holiday Button touched")
     }
+    
+//    @objc func pageControl(_ sender: UIPageControl) {
+//        self.previousPointX = buttonsScrollView.contentOffset.x
+//
+//        print("Current Page: \(sender.currentPage)")
+//
+//        if sender.currentPage == 0 {
+//            self.buttonsScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
+//        }
+//
+//        if sender.currentPage == 1 {
+//            self.buttonsScrollView.setContentOffset(CGPoint(x: UIScreen.main.bounds.width, y: 0), animated: false)
+//        }
+//
+//        if sender.currentPage == 2 {
+//            self.buttonsScrollView.setContentOffset(CGPoint(x: UIScreen.main.bounds.width * 2, y: 0), animated: false)
+//        }
+//    }
 }
 
 // MARK: - Extension for UITableViewDelegate, UITableViewDataSource
@@ -889,21 +975,50 @@ extension MainViewController: UIScrollViewDelegate {
                 self.pageControl.currentPage = 0
             }
             
-        } else {
-            if scrollView.contentOffset.x < centerXPoint {
+        } else if self.previousPointX >= scrollView.frame.width && self.previousPointX < scrollView.frame.width + centerXPoint {
+            if scrollView.contentOffset.x >= scrollView.frame.width + centerXPoint {
                 if !self.isHaptic {
                     UIDevice.softHaptic()
                     self.isHaptic = true
                 }
                 
-                self.pageControl.currentPage = 0
+                self.pageControl.currentPage = 2
+                
+            } else {
+                if scrollView.contentOffset.x < centerXPoint {
+                    if !self.isHaptic {
+                        UIDevice.softHaptic()
+                        self.isHaptic = true
+                    }
+                    
+                    self.pageControl.currentPage = 0
+                    
+                } else {
+                    self.isHaptic = false
+                    
+                    self.pageControl.currentPage = 1
+                }
+            }
+            
+        } else {
+            if scrollView.contentOffset.x < scrollView.frame.width + centerXPoint {
+                if !self.isHaptic {
+                    UIDevice.softHaptic()
+                    self.isHaptic = true
+                }
+                
+                self.pageControl.currentPage = 1
                 
             } else {
                 self.isHaptic = false
                 
-                self.pageControl.currentPage = 1
+                self.pageControl.currentPage = 2
             }
         }
+    }
+    
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        print("scrollViewDidEndScrollingAnimation: \(scrollView.contentOffset.x)")
     }
     
     func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
