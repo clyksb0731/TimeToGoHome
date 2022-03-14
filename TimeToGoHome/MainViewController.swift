@@ -1367,3 +1367,10 @@ extension MainViewController: UIScrollViewDelegate {
         }
     }
 }
+
+// MARK: Extension for MainCoverDelegate
+extension MainViewController: MainCoverDelegate {
+    func mainCoverDidSelectNormalSchedule(_ scheduleType: ScheduleType) {
+        
+    }
+}
