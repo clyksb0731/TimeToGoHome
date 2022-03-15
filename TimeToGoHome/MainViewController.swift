@@ -1022,20 +1022,18 @@ extension MainViewController {
     
     @objc func scheduleCellLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
         if let scheduleCell = gesture.view {
-            if scheduleCell.tag == 1 {
-                if gesture.state == .began {
+            if gesture.state == .began {
+                UIDevice.lightHaptic()
+                
+                if scheduleCell.tag == 1 {
                     print("Long Pressed for morning")
                     // Open schedule button list view
-                }
-                
-            } else if scheduleCell.tag == 2 {
-                if gesture.state == .began {
+                    
+                } else if scheduleCell.tag == 2 {
                     print("Long Pressed for afternoon")
                     // Open schedule button list view
-                }
-                
-            } else { // tag 3, overtime
-                if gesture.state == .began {
+                    
+                } else { // tag 3, overtime
                     print("Long Pressed for overtime")
                     // Open hour and minute picker view
                 }
