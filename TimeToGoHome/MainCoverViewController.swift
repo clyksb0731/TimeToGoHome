@@ -11,20 +11,22 @@ protocol MainCoverDelegate {
     func mainCoverDidSelectNormalSchedule(_ scheduleType: ScheduleType)
 }
 
+// Extension for Optional function effect
 extension MainCoverDelegate {
-    func mainCoverDidSelectNormalSchedule(_ scheduleType: ScheduleType) { } // Optional effect
+    func mainCoverDidSelectNormalSchedule(_ scheduleType: ScheduleType) { }
 }
 
 enum MainCoverType {
     case normalSchedule
     case overtimeSchedule
+    case startingWorkTime
 }
 
 class MainCoverViewController: UIViewController {
     
     var delegate: MainCoverDelegate?
     
-    init(_ mainCoverType: MainCoverType) {
+    init(mainCoverTypeFor: ScheduleType) {
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -35,6 +37,85 @@ class MainCoverViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        self.initializeViews()
+        self.setTargets()
+        self.setGestures()
+        self.setNotificationCenters()
+        self.setSubviews()
+        self.setLayouts()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.setViewFoundation()
+    }
+    
+    deinit {
+            print("----------------------------------- MainCoverViewController disposed -----------------------------------")
     }
 }
+
+// MARK: - Extension for override methods
+extension MainCoverViewController {
+    override var prefersStatusBarHidden: Bool {
+        return false
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .default
+    }
+    
+    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
+        return .portrait
+    }
+}
+
+// MARK: - Extension for essential methods
+extension MainCoverViewController {
+    // Set view foundation
+    func setViewFoundation() {
+        
+    }
+    
+    // Initialize views
+    func initializeViews() {
+        
+    }
+    
+    // Set targets
+    func setTargets() {
+        
+    }
+    
+    // Set gestures
+    func setGestures() {
+        
+    }
+    
+    // Set notificationCenters
+    func setNotificationCenters() {
+        
+    }
+    
+    // Set subviews
+    func setSubviews() {
+        
+    }
+    
+    // Set layouts
+    func setLayouts() {
+        
+    }
+}
+
+// MARK: - Extension for methods added
+extension MainCoverViewController {
+    
+}
+
+// MARK: - Extension for Selector methods
+extension MainCoverViewController {
+    
+}
+
