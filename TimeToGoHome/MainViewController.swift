@@ -1005,16 +1005,8 @@ extension MainViewController {
     @objc func overtimeButton(_ sender: UIButton) {
         print("Overtime Button touched")
         
-        if self.schedule.count == 2 {
-            self.schedule.addOvertimeSchedule(.overtime(45)) // FIXME: Temp code
-            
-            self.determineCompleteChangingScheduleButton()
-            
-            self.calculateTableViewHeight()
-            self.scheduleTableView.reloadData()
-            
-            self.determineScheduleButtonState()
-        }
+        let mainCoverVC = MainCoverViewController(mainCoverTypeFor: .overtimeSchedule(nil))
+        self.present(mainCoverVC, animated: false, completion: nil)
     }
     
     @objc func scheduleCellLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
@@ -1024,15 +1016,20 @@ extension MainViewController {
                 
                 if scheduleCell.tag == 1 {
                     print("Long Pressed for morning")
-                    // Open schedule button list view
+                    let mainCoverVC = MainCoverViewController(mainCoverTypeFor: .normalSchedule(self.schedule.morning!))
+                    self.present(mainCoverVC, animated: false, completion: nil)
                     
                 } else if scheduleCell.tag == 2 {
                     print("Long Pressed for afternoon")
-                    // Open schedule button list view
+                    let mainCoverVC = MainCoverViewController(mainCoverTypeFor: .normalSchedule(self.schedule.afternoon!))
+                    self.present(mainCoverVC, animated: false, completion: nil)
                     
                 } else { // tag 3, overtime
                     print("Long Pressed for overtime")
-                    // Open hour and minute picker view
+                    if case .overtime(let overtimeMinute) = self.schedule.overtime {
+                        let mainCoverVC = MainCoverViewController(mainCoverTypeFor: .overtimeSchedule(overtimeMinute))
+                        self.present(mainCoverVC, animated: false, completion: nil)
+                    }
                 }
             }
         }
@@ -1365,7 +1362,18 @@ extension MainViewController: UIScrollViewDelegate {
 
 // MARK: Extension for MainCoverDelegate
 extension MainViewController: MainCoverDelegate {
-    func mainCoverDidSelectNormalSchedule(_ scheduleType: ScheduleType) {
+    func mainCoverDidDetermineSchedule(_ scheduleType: ScheduleType) {
+        self.schedule.insertSchedule(scheduleType)
+        
+        self.determineCompleteChangingScheduleButton()
+        
+        self.calculateTableViewHeight()
+        self.scheduleTableView.reloadData()
+        
+        self.determineScheduleButtonState()
+    }
+    
+    func mianCoverDidDetermineStartingWorkTime(_ startingWorkTime: Date) {
         
     }
 }

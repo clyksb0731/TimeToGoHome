@@ -8,18 +8,20 @@
 import UIKit
 
 protocol MainCoverDelegate {
-    func mainCoverDidSelectNormalSchedule(_ scheduleType: ScheduleType)
+    func mainCoverDidDetermineSchedule(_ scheduleType: ScheduleType)
+    func mianCoverDidDetermineStartingWorkTime(_ startingWorkTime: Date)
 }
 
 // Extension for Optional function effect
 extension MainCoverDelegate {
-    func mainCoverDidSelectNormalSchedule(_ scheduleType: ScheduleType) { }
+    func mainCoverDidDetermineSchedule(_ scheduleType: ScheduleType) { }
+    func mianCoverDidDetermineStartingWorkTime(_ startingWorkTime: Date) { }
 }
 
 enum MainCoverType {
-    case normalSchedule
-    case overtimeSchedule
-    case startingWorkTime
+    case normalSchedule(ScheduleType)
+    case overtimeSchedule(Int?)
+    case startingWorkTime(Date?)
 }
 
 class MainCoverViewController: UIViewController {
@@ -266,7 +268,6 @@ class MainCoverViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         
     }
     
