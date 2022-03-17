@@ -187,13 +187,6 @@ class CompanyLocationAlertViewController: UIViewController {
         
     }
     
-    deinit {
-            print("----------------------------------- CompanyLocationAlertViewController disposed -----------------------------------")
-    }
-}
-
-// MARK: - Extension for override methods
-extension CompanyLocationAlertViewController {
     override var prefersStatusBarHidden: Bool {
         return false
     }
@@ -204,6 +197,10 @@ extension CompanyLocationAlertViewController {
     
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
         return .portrait
+    }
+    
+    deinit {
+            print("----------------------------------- CompanyLocationAlertViewController disposed -----------------------------------")
     }
 }
 

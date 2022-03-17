@@ -161,13 +161,6 @@ class MainCoverViewController: UIViewController {
         self.setViewFoundation()
     }
     
-    deinit {
-            print("----------------------------------- MainCoverViewController disposed -----------------------------------")
-    }
-}
-
-// MARK: - Extension for override methods
-extension MainCoverViewController {
     override var prefersStatusBarHidden: Bool {
         return false
     }
@@ -178,6 +171,10 @@ extension MainCoverViewController {
     
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
         return .portrait
+    }
+    
+    deinit {
+            print("----------------------------------- MainCoverViewController disposed -----------------------------------")
     }
 }
 

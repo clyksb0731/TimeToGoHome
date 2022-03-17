@@ -70,13 +70,6 @@ class CompanyMapViewController: UIViewController {
         print("MapView Height: \(self.mapView.frame.height)")
     }
     
-    deinit {
-            print("----------------------------------- CompanyMapViewController disposed -----------------------------------")
-    }
-}
-
-// MARK: - Extension for override methods
-extension CompanyMapViewController {
     override var prefersStatusBarHidden: Bool {
         return false
     }
@@ -87,6 +80,10 @@ extension CompanyMapViewController {
     
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
         return .portrait
+    }
+    
+    deinit {
+            print("----------------------------------- CompanyMapViewController disposed -----------------------------------")
     }
 }
 

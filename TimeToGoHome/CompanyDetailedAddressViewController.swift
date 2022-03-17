@@ -85,13 +85,6 @@ class CompanyDetailedAddressViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    deinit {
-            print("----------------------------------- CompanyDetailedAddressViewController disposed -----------------------------------")
-    }
-}
-
-// MARK: - Extension for override methods
-extension CompanyDetailedAddressViewController {
     override var prefersStatusBarHidden: Bool {
         return false
     }
@@ -102,6 +95,10 @@ extension CompanyDetailedAddressViewController {
     
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
         return .portrait
+    }
+    
+    deinit {
+            print("----------------------------------- CompanyDetailedAddressViewController disposed -----------------------------------")
     }
 }
 

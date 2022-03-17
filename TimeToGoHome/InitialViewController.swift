@@ -305,13 +305,6 @@ class InitialViewController: UIViewController {
         print(self.scrollView.contentSize)
     }
     
-    deinit {
-        print("----------------------------------- InitialSettingDateViewController disposed -----------------------------------")
-    }
-}
-
-// MARK: - Extension for overrided methods
-extension InitialViewController {
     override var prefersStatusBarHidden: Bool {
         return false
     }
@@ -324,6 +317,9 @@ extension InitialViewController {
         return .portrait
     }
     
+    deinit {
+        print("----------------------------------- InitialSettingDateViewController disposed -----------------------------------")
+    }
 }
 
 // MARK: - Extension for Essential Methods

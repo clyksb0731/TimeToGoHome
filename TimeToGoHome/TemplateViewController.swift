@@ -26,13 +26,6 @@ class TemplateViewController: UIViewController {
         self.setViewFoundation()
     }
     
-    deinit {
-            print("----------------------------------- TemplateViewController disposed -----------------------------------")
-    }
-}
-
-// MARK: - Extension for override methods
-extension TemplateViewController {
     override var prefersStatusBarHidden: Bool {
         return false
     }
@@ -43,6 +36,10 @@ extension TemplateViewController {
     
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
         return .portrait
+    }
+    
+    deinit {
+            print("----------------------------------- TemplateViewController disposed -----------------------------------")
     }
 }
 

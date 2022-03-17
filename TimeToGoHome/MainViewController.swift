@@ -412,13 +412,6 @@ class MainViewController: UIViewController {
         
     }
     
-    deinit {
-            print("----------------------------------- MainViewController disposed -----------------------------------")
-    }
-}
-
-// MARK: - Extension for override methods
-extension MainViewController {
     override var prefersStatusBarHidden: Bool {
         return false
     }
@@ -429,6 +422,10 @@ extension MainViewController {
     
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
         return .portrait
+    }
+    
+    deinit {
+            print("----------------------------------- MainViewController disposed -----------------------------------")
     }
 }
 

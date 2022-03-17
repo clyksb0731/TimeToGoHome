@@ -674,13 +674,6 @@ class WorkTypeViewController: UIViewController {
         
     }
     
-    deinit {
-            print("----------------------------------- WorkTypeViewController disposed -----------------------------------")
-    }
-}
-
-// MARK: - Extension for override methods
-extension WorkTypeViewController {
     override var prefersStatusBarHidden: Bool {
         return false
     }
@@ -691,6 +684,10 @@ extension WorkTypeViewController {
     
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
         return .portrait
+    }
+    
+    deinit {
+            print("----------------------------------- WorkTypeViewController disposed -----------------------------------")
     }
 }
 

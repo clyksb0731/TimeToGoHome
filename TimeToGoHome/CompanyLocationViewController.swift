@@ -141,13 +141,6 @@ class CompanyLocationViewController: UIViewController {
         LocationManager.shared.requestAuthorization()
     }
     
-    deinit {
-            print("----------------------------------- CompanyLocationViewController disposed -----------------------------------")
-    }
-}
-
-// MARK: - Extension for override methods
-extension CompanyLocationViewController {
     override var prefersStatusBarHidden: Bool {
         return false
     }
@@ -158,6 +151,10 @@ extension CompanyLocationViewController {
     
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
         return .portrait
+    }
+    
+    deinit {
+            print("----------------------------------- CompanyLocationViewController disposed -----------------------------------")
     }
 }
 
