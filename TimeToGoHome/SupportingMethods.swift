@@ -201,25 +201,3 @@ extension CALayer {
         }
     }
 }
-
-// MARK: UINavigationController to be possible contained view controllers to be overrided
-extension UINavigationController {
-    open override var childForStatusBarStyle: UIViewController? {
-        return self.visibleViewController
-    }
-    
-    open override var childForStatusBarHidden: UIViewController? {
-        return self.visibleViewController
-    }
-}
-
-// MARK: UITabBarController to be possible contained view controllers to be overrided
-extension UITabBarController {
-    open override var childForStatusBarStyle: UIViewController? {
-        return self.selectedViewController
-    }
-    
-    open override var childForStatusBarHidden: UIViewController? {
-        return self.selectedViewController
-    }
-}
