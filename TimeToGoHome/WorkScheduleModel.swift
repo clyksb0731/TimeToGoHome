@@ -108,6 +108,53 @@ struct WorkSchedule {
         }
     }
     
+    mutating func addSchedule(_ schedule: ScheduleType) -> Bool {
+        switch schedule {
+        case .morning(let workType):
+            if self.overtime == nil && self.afternoon == nil && self.morning == nil {
+                self.morning = schedule
+                
+                return true
+                
+            } else {
+                return false
+            }
+            
+        case .afternoon(let workType):
+            if self.overtime == nil && self.afternoon == nil && self.morning != nil {
+                self.afternoon = schedule
+                
+                return true
+                
+            } else {
+                return false
+            }
+            
+        case .overtime(let overtimeMinute):
+            if self.overtime == nil && self.afternoon != nil && self.morning != nil {
+                self.overtime = schedule
+                
+                return true
+                
+            } else {
+                return false
+            }
+        }
+    }
+    
+    mutating func insertSchedule(_ schedule: ScheduleType) {
+        switch schedule {
+        case .morning(let workType):
+            self.morning = schedule
+            
+        case .afternoon(let workType):
+            self.afternoon = schedule
+            
+        case .overtime(let overtimeMinute):
+            self.overtime = schedule
+        }
+    }
+    
     mutating func addNormalSchedule(_ schedule: ScheduleType) {
         guard self.overtime == nil else {
             return
