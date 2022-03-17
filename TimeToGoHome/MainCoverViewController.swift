@@ -374,19 +374,29 @@ extension MainCoverViewController {
 // MARK: - UIPickerViewDelegate
 extension MainCoverViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        <#code#>
+        return 2
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        <#code#>
+        if component == 0 {
+            return 6
+            
+        } else {
+            return 59
+        }
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        <#code#>
+        if component == 0 {
+            return "\(row)"
+            
+        } else {
+            return "\(row + 1)"
+        }
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        <#code#>
+        
     }
 }
 
