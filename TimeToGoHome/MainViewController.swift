@@ -819,7 +819,18 @@ extension MainViewController {
         
         if self.schedule.count == 2 {
             if self.isEditingMode {
-                self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2 + self.overWorkScheduleViewHeight
+                if case .afternoon(let workType) = self.schedule.afternoon {
+                    switch workType {
+                    case .holiday:
+                        self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2
+                        
+                    case .vacation:
+                        self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2
+                        
+                    case .work:
+                        self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2 + self.overWorkScheduleViewHeight
+                    }
+                }
                 
             } else {
                 self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2
