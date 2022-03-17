@@ -101,7 +101,8 @@ class MainCoverViewController: UIViewController {
     
     lazy var closeNormalScheduleListViewButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "closeNormalScheduleListViewButtonImage"), for: .normal)
+        button.setImage(UIImage(named: "cancelMainCoverVCImage"), for: .normal)
+        button.addTarget(self, action: #selector(closeNormalScheduleListViewButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -118,6 +119,58 @@ class MainCoverViewController: UIViewController {
         return view
     }()
     
+    lazy var overtimeTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 21)
+        label.textAlignment = .center
+        label.textColor = .black
+        label.text = "추가 시간"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var overtimePickerView: UIPickerView = {
+        let pickerView = UIPickerView()
+        pickerView.delegate = self
+        pickerView.dataSource = self
+        pickerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return pickerView
+    }()
+    
+    lazy var overtimeBottomLeftView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var overtimeBottomRightView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var overtimeConfirmButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "completeMainCoverVCImage"), for: .normal)
+        button.addTarget(self, action: #selector(overtimeConfirmButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var overtimeDeclineButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "cancelMainCoverVCImage"), for: .normal)
+        button.addTarget(self, action: #selector(overtimeDeclineButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     // Case 3 - starting work time type
     lazy var startingWorkTimeBaseView: UIView = {
         let view = UIView()
@@ -126,6 +179,61 @@ class MainCoverViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
+    }()
+    
+    lazy var startingWorkTimeTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 21)
+        label.textAlignment = .center
+        label.textColor = .black
+        label.text = "출근 시간"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var startingWorkTimeDatePicker: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        datePicker.preferredDatePickerStyle = .wheels
+        datePicker.datePickerMode = .time
+        datePicker.timeZone = TimeZone.current
+        datePicker.locale = Locale.current
+        datePicker.addTarget(self, action: #selector(startingWorkTimeDatePicker(_:)), for: .valueChanged)
+        datePicker.translatesAutoresizingMaskIntoConstraints = false
+        
+        return datePicker
+    }()
+    
+    lazy var startingWorkTimeBottomLeftView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var startingWorkTimeBottomRightView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var startingWorkTimeConfirmButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "completeMainCoverVCImage"), for: .normal)
+        button.addTarget(self, action: #selector(startingWorkTimeConfirmButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var startingWorkTimeDeclineButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "cancelMainCoverVCImage"), for: .normal)
+        button.addTarget(self, action: #selector(startingWorkTimeDeclineButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
     }()
     
     var mainCoverType: MainCoverType
@@ -147,6 +255,7 @@ class MainCoverViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.setViewFoundation()
         self.initializeViews()
         self.setTargets()
         self.setGestures()
@@ -158,7 +267,7 @@ class MainCoverViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.setViewFoundation()
+        
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -234,6 +343,49 @@ extension MainCoverViewController {
     
     @objc func holidayButton(_ sender: UIButton) {
         
+    }
+    
+    @objc func closeNormalScheduleListViewButton(_ sender: UIButton) {
+        
+    }
+    
+    @objc func overtimeConfirmButton(_ sender: UIButton) {
+        
+    }
+    
+    @objc func overtimeDeclineButton(_ sender: UIButton) {
+        
+    }
+    
+    @objc func startingWorkTimeDatePicker(_ datePicker: UIDatePicker) {
+        
+    }
+    
+    @objc func startingWorkTimeConfirmButton(_ sender: UIButton) {
+        
+    }
+    
+    @objc func startingWorkTimeDeclineButton(_ sender: UIButton) {
+        
+    }
+}
+
+// MARK: - UIPickerViewDelegate
+extension MainCoverViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        <#code#>
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        <#code#>
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        <#code#>
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        <#code#>
     }
 }
 
