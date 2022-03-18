@@ -88,7 +88,7 @@ struct WorkSchedule {
         // &&
         // Check tody schedule condition for initial setting.
         self.morning = .morning(.holiday) // FIXME: Temp
-        self.afternoon = .afternoon(.holiday) // FIXME: Temp
+        self.afternoon = .afternoon(.work) // FIXME: Temp
         self.overtime = nil //.overtime(59) // FIXME: Temp
     }
     

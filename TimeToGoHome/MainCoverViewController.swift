@@ -245,8 +245,8 @@ class MainCoverViewController: UIViewController {
     var delegate: MainCoverDelegate?
     
     var tempMaximumOvertimeHour: Int = 6 // FIXME: Temp variable
-//    var previousPickerViewComponentIndex: Int = 0
-//    var previousPickerViewRowIndex: Int = 0
+    var previousPickerViewHourRowIndex: Int = 0
+    var previousPickerViewMinuteRowIndex: Int = 0
     
     init(_ mainCoverType: MainCoverType) {
         self.mainCoverType = mainCoverType
@@ -657,7 +657,35 @@ extension MainCoverViewController: UIPickerViewDelegate, UIPickerViewDataSource 
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        print("previous minute index: \(self.previousPickerViewMinuteRowIndex)")
         pickerView.reloadComponent(2)
+        
+        DispatchQueue.main.async {
+            if pickerView.selectedRow(inComponent: 0) != self.previousPickerViewHourRowIndex {
+                if self.previousPickerViewHourRowIndex == 0 {
+                    pickerView.selectRow(self.previousPickerViewMinuteRowIndex + 1, inComponent: 2, animated: false)
+                    print("1: \(self.previousPickerViewMinuteRowIndex + 1)")
+                    
+                } else {
+                    if pickerView.selectedRow(inComponent: 0) == 0 {
+                        if self.previousPickerViewMinuteRowIndex == 0 {
+                            pickerView.selectRow(self.previousPickerViewMinuteRowIndex, inComponent: 2, animated: false)
+                            print("2: \(self.previousPickerViewMinuteRowIndex)")
+                            
+                        } else {
+                            pickerView.selectRow(self.previousPickerViewMinuteRowIndex - 1, inComponent: 2, animated: false)
+                            print("3: \(self.previousPickerViewMinuteRowIndex - 1)")
+                        }
+                        
+                    } else {
+                        print("4: Nothing changed")
+                    }
+                }
+            }
+            
+            self.previousPickerViewHourRowIndex = pickerView.selectedRow(inComponent: 0)
+            self.previousPickerViewMinuteRowIndex = pickerView.selectedRow(inComponent: 2)
+        }
     }
 }
 
