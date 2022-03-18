@@ -963,10 +963,10 @@ extension MainViewController {
         print("Vacation Time Button touched")
         
         if self.schedule.count == 0 {
-            self.schedule.addNormalSchedule(.morning(.vacation))
+            self.schedule.addSchedule(.morning(.vacation))
             
         } else {
-            self.schedule.addNormalSchedule(.afternoon(.vacation))
+            self.schedule.addSchedule(.afternoon(.vacation))
         }
         
         self.determineCompleteChangingScheduleButton()
@@ -981,10 +981,10 @@ extension MainViewController {
         print("Work Time Button touched")
         
         if self.schedule.count == 0 {
-            self.schedule.addNormalSchedule(.morning(.work))
+            self.schedule.addSchedule(.morning(.work))
             
         } else {
-            self.schedule.addNormalSchedule(.afternoon(.work))
+            self.schedule.addSchedule(.afternoon(.work))
         }
         
         self.determineCompleteChangingScheduleButton()
@@ -999,10 +999,10 @@ extension MainViewController {
         print("Holiday Button touched")
         
         if self.schedule.count == 0 {
-            self.schedule.addNormalSchedule(.morning(.holiday))
+            self.schedule.addSchedule(.morning(.holiday))
             
         } else {
-            self.schedule.addNormalSchedule(.afternoon(.holiday))
+            self.schedule.addSchedule(.afternoon(.holiday))
         }
         
         self.determineCompleteChangingScheduleButton()
