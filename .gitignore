@@ -1,6 +1,5 @@
-
-# Created by https://www.toptal.com/developers/gitignore/api/swift,osx,cocoapods
-# Edit at https://www.toptal.com/developers/gitignore?templates=swift,osx,cocoapods
+# Created by https://www.toptal.com/developers/gitignore/api/swift,swiftpm,swiftpackagemanager,xcode,cocoapods,macos
+# Edit at https://www.toptal.com/developers/gitignore?templates=swift,swiftpm,swiftpackagemanager,xcode,cocoapods,macos
 
 ### CocoaPods ###
 ## CocoaPods GitIgnore Template
@@ -10,7 +9,7 @@
 #           - AS PER https://guides.cocoapods.org/using/using-cocoapods.html NEVER IGNORE THE LOCK FILE
 Pods/
 
-### OSX ###
+### macOS ###
 # General
 .DS_Store
 .AppleDouble
@@ -123,4 +122,25 @@ fastlane/test_output
 
 iOSInjectionProject/
 
-# End of https://www.toptal.com/developers/gitignore/api/swift,osx,cocoapods
+### SwiftPackageManager ###
+Packages
+xcuserdata
+*.xcodeproj
+
+
+### SwiftPM ###
+
+
+### Xcode ###
+
+## Xcode 8 and earlier
+
+### Xcode Patch ###
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcworkspace/contents.xcworkspacedata
+/*.gcno
+**/xcshareddata/WorkspaceSettings.xcsettings
+
+# End of https://www.toptal.com/developers/gitignore/api/swift,swiftpm,swiftpackagemanager,xcode,cocoapods,macos
