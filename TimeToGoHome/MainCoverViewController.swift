@@ -28,7 +28,7 @@ class MainCoverViewController: UIViewController {
     
     var baseView: UIView = {
         let view = UIView()
-        view.backgroundColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.3)
+        view.backgroundColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.5)
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -91,7 +91,7 @@ class MainCoverViewController: UIViewController {
     lazy var holidayButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .useRGB(red: 252, green: 247, blue: 143)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.useRGB(red: 130, green: 130, blue: 130), for: .normal)
         button.setTitle("휴일", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 24, weight: .semibold)
         button.layer.cornerRadius = 10
@@ -101,10 +101,10 @@ class MainCoverViewController: UIViewController {
         return button
     }()
     
-    lazy var closeNormalScheduleListViewButton: UIButton = {
+    lazy var closeNormalScheduleButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "cancelMainCoverVCImage"), for: .normal)
-        button.addTarget(self, action: #selector(closeNormalScheduleListViewButton(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(closeNormalScheduleButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -112,7 +112,7 @@ class MainCoverViewController: UIViewController {
     
     
     // Case 2 - overtime schedule type
-    lazy var overtimeScheduleBaseView: UIView = {
+    lazy var overtimeBaseView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
         view.layer.cornerRadius = 10
@@ -318,12 +318,202 @@ extension MainCoverViewController {
     
     // Set subviews
     func setSubviews() {
-        
+        switch self.mainCoverType {
+        case .normalSchedule:
+            SupportingMethods.shared.addSubviews([
+                self.baseView
+            ], to: self.view)
+            
+            SupportingMethods.shared.addSubviews([
+                self.normalScheduleBaseView
+            ], to: self.baseView)
+            
+            SupportingMethods.shared.addSubviews([
+                self.normalScheduleTitleLabel,
+                self.normalScheduleListView,
+                self.closeNormalScheduleButton
+            ], to: self.normalScheduleBaseView)
+            
+            SupportingMethods.shared.addSubviews([
+                self.workButton,
+                self.vacationButton,
+                self.holidayButton
+            ], to: self.normalScheduleListView)
+            
+        case .overtimeSchedule:
+            SupportingMethods.shared.addSubviews([
+                self.baseView
+            ], to: self.view)
+            
+            SupportingMethods.shared.addSubviews([
+                self.overtimeBaseView
+            ], to: self.baseView)
+            
+            SupportingMethods.shared.addSubviews([
+                self.overtimeTitleLabel,
+                self.overtimePickerView,
+                self.overtimeBottomLeftView,
+                self.overtimeConfirmButton,
+                self.overtimeBottomRightView,
+                self.overtimeDeclineButton
+            ], to: self.overtimeBaseView)
+            
+        case .startingWorkTime:
+            SupportingMethods.shared.addSubviews([
+                self.baseView
+            ], to: self.view)
+            
+            SupportingMethods.shared.addSubviews([
+                self.startingWorkTimeBaseView
+            ], to: self.baseView)
+            
+            SupportingMethods.shared.addSubviews([
+                self.startingWorkTimeTitleLabel,
+                self.startingWorkTimeDatePicker,
+                self.startingWorkTimeBottomLeftView,
+                self.startingWorkTimeConfirmButton,
+                self.startingWorkTimeBottomRightView,
+                self.overtimeDeclineButton
+            ], to: self.startingWorkTimeBaseView)
+        }
     }
     
     // Set layouts
     func setLayouts() {
+        // Base view layout
+        NSLayoutConstraint.activate([
+            self.baseView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.baseView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            self.baseView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            self.baseView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)
+        ])
         
+        switch self.mainCoverType {
+        case .normalSchedule:
+            // Normal schedule base view layout
+            NSLayoutConstraint.activate([
+                self.normalScheduleBaseView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
+                self.normalScheduleBaseView.heightAnchor.constraint(equalToConstant: 300),
+                self.normalScheduleBaseView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 32),
+                self.normalScheduleBaseView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -32)
+            ])
+            
+            // Normal schedule title label layout
+            NSLayoutConstraint.activate([
+                self.normalScheduleTitleLabel.topAnchor.constraint(equalTo: self.normalScheduleBaseView.topAnchor, constant: 17),
+                self.normalScheduleTitleLabel.heightAnchor.constraint(equalToConstant: 22),
+                self.normalScheduleTitleLabel.leadingAnchor.constraint(equalTo: self.normalScheduleBaseView.leadingAnchor),
+                self.normalScheduleTitleLabel.trailingAnchor.constraint(equalTo: self.normalScheduleBaseView.trailingAnchor)
+            ])
+            
+            // Normal schedule list view layout
+            NSLayoutConstraint.activate([
+                self.normalScheduleListView.topAnchor.constraint(equalTo: self.normalScheduleTitleLabel.bottomAnchor, constant: 15),
+                self.normalScheduleListView.heightAnchor.constraint(equalToConstant: 185),
+                self.normalScheduleListView.leadingAnchor.constraint(equalTo: self.normalScheduleBaseView.leadingAnchor, constant: 25),
+                self.normalScheduleListView.trailingAnchor.constraint(equalTo: self.normalScheduleBaseView.trailingAnchor, constant: -25)
+            ])
+            
+            // Close normal schedule button layout
+            NSLayoutConstraint.activate([
+                self.closeNormalScheduleButton.topAnchor.constraint(equalTo: self.normalScheduleListView.bottomAnchor, constant: 16),
+                self.closeNormalScheduleButton.heightAnchor.constraint(equalToConstant: 28),
+                self.closeNormalScheduleButton.centerXAnchor.constraint(equalTo: self.normalScheduleBaseView.centerXAnchor),
+                self.closeNormalScheduleButton.widthAnchor.constraint(equalToConstant: 28)
+            ])
+            
+            // Work button layout
+            NSLayoutConstraint.activate([
+                self.workButton.topAnchor.constraint(equalTo: self.normalScheduleListView.topAnchor),
+                self.workButton.heightAnchor.constraint(equalToConstant: 57),
+                self.workButton.leadingAnchor.constraint(equalTo: self.normalScheduleListView.leadingAnchor),
+                self.workButton.trailingAnchor.constraint(equalTo: self.normalScheduleListView.trailingAnchor)
+            ])
+            
+            // Vacation button layout
+            NSLayoutConstraint.activate([
+                self.vacationButton.topAnchor.constraint(equalTo: self.workButton.bottomAnchor, constant: 7),
+                self.vacationButton.heightAnchor.constraint(equalToConstant: 57),
+                self.vacationButton.leadingAnchor.constraint(equalTo: self.normalScheduleListView.leadingAnchor),
+                self.vacationButton.trailingAnchor.constraint(equalTo: self.normalScheduleListView.trailingAnchor)
+            ])
+            
+            // Holiday button layout
+            NSLayoutConstraint.activate([
+                self.holidayButton.topAnchor.constraint(equalTo: self.vacationButton.bottomAnchor, constant: 7),
+                self.holidayButton.heightAnchor.constraint(equalToConstant: 57),
+                self.holidayButton.leadingAnchor.constraint(equalTo: self.normalScheduleListView.leadingAnchor),
+                self.holidayButton.trailingAnchor.constraint(equalTo: self.normalScheduleListView.trailingAnchor)
+            ])
+            
+            
+        case .overtimeSchedule:
+            //  layout
+            NSLayoutConstraint.activate([
+                
+            ])
+            
+            //  layout
+            NSLayoutConstraint.activate([
+                
+            ])
+            
+            //  layout
+            NSLayoutConstraint.activate([
+                
+            ])
+            
+            //  layout
+            NSLayoutConstraint.activate([
+                
+            ])
+            
+            //  layout
+            NSLayoutConstraint.activate([
+                
+            ])
+            
+            //  layout
+            NSLayoutConstraint.activate([
+                
+            ])
+            
+            //  layout
+            NSLayoutConstraint.activate([
+                
+            ])
+            
+        case .startingWorkTime:
+            //  layout
+            NSLayoutConstraint.activate([
+                
+            ])
+            
+            //  layout
+            NSLayoutConstraint.activate([
+                
+            ])
+            
+            //  layout
+            NSLayoutConstraint.activate([
+                
+            ])
+            
+            //  layout
+            NSLayoutConstraint.activate([
+                
+            ])
+            
+            //  layout
+            NSLayoutConstraint.activate([
+                
+            ])
+            
+            //  layout
+            NSLayoutConstraint.activate([
+                
+            ])
+        }
     }
 }
 
@@ -346,7 +536,7 @@ extension MainCoverViewController {
         
     }
     
-    @objc func closeNormalScheduleListViewButton(_ sender: UIButton) {
+    @objc func closeNormalScheduleButton(_ sender: UIButton) {
         
     }
     
