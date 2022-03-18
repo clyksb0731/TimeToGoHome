@@ -201,3 +201,22 @@ extension CALayer {
         }
     }
 }
+
+extension UIPickerView {
+    func setPickerComponentNames(names: [Int:String]) { // [component index:component name]
+            let fontSize:CGFloat = 20
+            let labelWidth:CGFloat = self.frame.size.width / CGFloat(self.numberOfComponents)
+            //let x:CGFloat = self.frame.origin.x
+            let y:CGFloat = (self.frame.size.height / 2) - (fontSize / 2)
+
+            for (i, name) in names {
+                let label = UILabel()
+                label.frame = CGRect(x: labelWidth * CGFloat(i), y: y, width: labelWidth, height: fontSize)
+                label.font = UIFont.systemFont(ofSize: fontSize, weight: .light)
+                label.backgroundColor = .clear
+                label.textAlignment = .left
+                label.text = name
+                self.addSubview(label)
+            }
+        }
+}

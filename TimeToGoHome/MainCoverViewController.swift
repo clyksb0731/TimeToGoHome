@@ -136,6 +136,7 @@ class MainCoverViewController: UIViewController {
         let pickerView = UIPickerView()
         pickerView.delegate = self
         pickerView.dataSource = self
+        
         pickerView.translatesAutoresizingMaskIntoConstraints = false
         
         return pickerView
@@ -243,6 +244,10 @@ class MainCoverViewController: UIViewController {
     
     var delegate: MainCoverDelegate?
     
+    var tempMaximumOvertimeHour: Int = 6 // FIXME: Temp variable
+//    var previousPickerViewComponentIndex: Int = 0
+//    var previousPickerViewRowIndex: Int = 0
+    
     init(_ mainCoverType: MainCoverType) {
         self.mainCoverType = mainCoverType
         
@@ -270,6 +275,12 @@ class MainCoverViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        self.overtimePickerView.setPickerComponentNames(names: [1:"시간", 3:"분"])
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -390,7 +401,7 @@ extension MainCoverViewController {
         ])
         
         switch self.mainCoverType {
-        case .normalSchedule:
+        case .normalSchedule: // MARK: Normal schedule
             // Normal schedule base view layout
             NSLayoutConstraint.activate([
                 self.normalScheduleBaseView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
@@ -448,7 +459,7 @@ extension MainCoverViewController {
             ])
             
             
-        case .overtimeSchedule:
+        case .overtimeSchedule: // MARK: overtimeSchedule
             // Overtime base view layout
             NSLayoutConstraint.activate([
                 self.overtimeBaseView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
@@ -469,8 +480,8 @@ extension MainCoverViewController {
             NSLayoutConstraint.activate([
                 self.overtimePickerView.topAnchor.constraint(equalTo: self.overtimeTitleLabel.bottomAnchor, constant: 10),
                 self.overtimePickerView.bottomAnchor.constraint(equalTo: self.overtimeBottomLeftView.topAnchor, constant: -10),
-                self.overtimePickerView.leadingAnchor.constraint(equalTo: self.overtimeBaseView.leadingAnchor, constant: 5),
-                self.overtimePickerView.trailingAnchor.constraint(equalTo: self.overtimeBaseView.trailingAnchor, constant: -5)
+                self.overtimePickerView.leadingAnchor.constraint(equalTo: self.overtimeBaseView.leadingAnchor, constant: 15),
+                self.overtimePickerView.trailingAnchor.constraint(equalTo: self.overtimeBaseView.trailingAnchor, constant: -15)
             ])
             
             // Overtime bottom left view layout
@@ -505,7 +516,7 @@ extension MainCoverViewController {
                 self.overtimeDeclineButton.widthAnchor.constraint(equalToConstant: 28)
             ])
             
-        case .startingWorkTime:
+        case .startingWorkTime: // MARK: startingWorkTime
             // Starting work time base view layout
             NSLayoutConstraint.activate([
                 self.startingWorkTimeBaseView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
@@ -612,15 +623,21 @@ extension MainCoverViewController {
 // MARK: - UIPickerViewDelegate
 extension MainCoverViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 2
+        return 4 // To make '시간', '분' labels
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         if component == 0 {
-            return 6
+            return self.tempMaximumOvertimeHour + 1
             
-        } else {
-            return 59
+        } else if component == 1 {
+            return 1 // must be 1
+            
+        } else if component == 2 {
+            return pickerView.selectedRow(inComponent: 0) == 0 ? 59 : 60
+            
+        } else { // 3
+            return 1 // must be 1
         }
     }
     
@@ -628,13 +645,19 @@ extension MainCoverViewController: UIPickerViewDelegate, UIPickerViewDataSource 
         if component == 0 {
             return "\(row)"
             
-        } else {
-            return "\(row + 1)"
+        } else if component == 1 {
+            return ""
+            
+        } else if component == 2 {
+            return pickerView.selectedRow(inComponent: 0) == 0 ? "\(row + 1)" : "\(row)"
+            
+        } else { // 3
+            return ""
         }
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        
+        pickerView.reloadComponent(2)
     }
 }
 
