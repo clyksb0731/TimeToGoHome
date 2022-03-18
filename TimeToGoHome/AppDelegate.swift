@@ -52,7 +52,10 @@ extension AppDelegate {
             self.window?.rootViewController = mainVC
             
         } else {
-            let initialSettingDateVC = InitialViewController()
+            let mainVC = MainViewController()
+            let initialSettingDateVC = UINavigationController(rootViewController: mainVC)
+            
+            //let initialSettingDateVC = InitialViewController()
             
             self.window?.rootViewController = initialSettingDateVC
         }
