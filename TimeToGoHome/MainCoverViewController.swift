@@ -200,6 +200,7 @@ class MainCoverViewController: UIViewController {
         datePicker.datePickerMode = .time
         datePicker.timeZone = TimeZone.current
         datePicker.locale = Locale.current
+        datePicker.maximumDate = Date()
         datePicker.addTarget(self, action: #selector(startingWorkTimeDatePicker(_:)), for: .valueChanged)
         datePicker.translatesAutoresizingMaskIntoConstraints = false
         
@@ -242,8 +243,8 @@ class MainCoverViewController: UIViewController {
     
     var delegate: MainCoverDelegate?
     
-    init(mainCoverTypeFor coverType: MainCoverType) {
-        self.mainCoverType = coverType
+    init(_ mainCoverType: MainCoverType) {
+        self.mainCoverType = mainCoverType
         
         super.init(nibName: nil, bundle: nil)
         
@@ -373,7 +374,7 @@ extension MainCoverViewController {
                 self.startingWorkTimeBottomLeftView,
                 self.startingWorkTimeConfirmButton,
                 self.startingWorkTimeBottomRightView,
-                self.overtimeDeclineButton
+                self.startingWorkTimeDeclineButton
             ], to: self.startingWorkTimeBaseView)
         }
     }
@@ -448,70 +449,117 @@ extension MainCoverViewController {
             
             
         case .overtimeSchedule:
-            //  layout
+            // Overtime base view layout
             NSLayoutConstraint.activate([
-                
+                self.overtimeBaseView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
+                self.overtimeBaseView.heightAnchor.constraint(equalToConstant: 300),
+                self.overtimeBaseView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 32),
+                self.overtimeBaseView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -32)
             ])
             
-            //  layout
+            // Overtime title label layout
             NSLayoutConstraint.activate([
-                
+                self.overtimeTitleLabel.topAnchor.constraint(equalTo: self.overtimeBaseView.topAnchor, constant: 17),
+                self.overtimeTitleLabel.heightAnchor.constraint(equalToConstant: 22),
+                self.overtimeTitleLabel.leadingAnchor.constraint(equalTo: self.overtimeBaseView.leadingAnchor),
+                self.overtimeTitleLabel.trailingAnchor.constraint(equalTo: self.overtimeBaseView.trailingAnchor)
             ])
             
-            //  layout
+            // Overtime picker view layout
             NSLayoutConstraint.activate([
-                
+                self.overtimePickerView.topAnchor.constraint(equalTo: self.overtimeTitleLabel.bottomAnchor, constant: 10),
+                self.overtimePickerView.bottomAnchor.constraint(equalTo: self.overtimeBottomLeftView.topAnchor, constant: -10),
+                self.overtimePickerView.leadingAnchor.constraint(equalTo: self.overtimeBaseView.leadingAnchor, constant: 5),
+                self.overtimePickerView.trailingAnchor.constraint(equalTo: self.overtimeBaseView.trailingAnchor, constant: -5)
             ])
             
-            //  layout
+            // Overtime bottom left view layout
             NSLayoutConstraint.activate([
-                
+                self.overtimeBottomLeftView.bottomAnchor.constraint(equalTo: self.overtimeBaseView.bottomAnchor),
+                self.overtimeBottomLeftView.heightAnchor.constraint(equalToConstant: 48),
+                self.overtimeBottomLeftView.leadingAnchor.constraint(equalTo: self.overtimeBaseView.leadingAnchor),
+                self.overtimeBottomLeftView.trailingAnchor.constraint(equalTo: self.overtimeBaseView.centerXAnchor)
             ])
             
-            //  layout
+            // Overtime bottom right view layout
             NSLayoutConstraint.activate([
-                
+                self.overtimeBottomRightView.bottomAnchor.constraint(equalTo: self.overtimeBaseView.bottomAnchor),
+                self.overtimeBottomRightView.heightAnchor.constraint(equalToConstant: 48),
+                self.overtimeBottomRightView.leadingAnchor.constraint(equalTo: self.overtimeBaseView.centerXAnchor),
+                self.overtimeBottomRightView.trailingAnchor.constraint(equalTo: self.overtimeBaseView.trailingAnchor)
             ])
             
-            //  layout
+            // Overtime confirm button layout
             NSLayoutConstraint.activate([
-                
+                self.overtimeConfirmButton.centerYAnchor.constraint(equalTo: self.overtimeBottomLeftView.centerYAnchor),
+                self.overtimeConfirmButton.heightAnchor.constraint(equalToConstant: 28),
+                self.overtimeConfirmButton.centerXAnchor.constraint(equalTo: self.overtimeBottomLeftView.centerXAnchor),
+                self.overtimeConfirmButton.widthAnchor.constraint(equalToConstant: 28)
             ])
             
-            //  layout
+            // Overtime decline button layout layout
             NSLayoutConstraint.activate([
-                
+                self.overtimeDeclineButton.centerYAnchor.constraint(equalTo: self.overtimeBottomRightView.centerYAnchor),
+                self.overtimeDeclineButton.heightAnchor.constraint(equalToConstant: 28),
+                self.overtimeDeclineButton.centerXAnchor.constraint(equalTo: self.overtimeBottomRightView.centerXAnchor),
+                self.overtimeDeclineButton.widthAnchor.constraint(equalToConstant: 28)
             ])
             
         case .startingWorkTime:
-            //  layout
+            // Starting work time base view layout
             NSLayoutConstraint.activate([
-                
+                self.startingWorkTimeBaseView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
+                self.startingWorkTimeBaseView.heightAnchor.constraint(equalToConstant: 300),
+                self.startingWorkTimeBaseView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 32),
+                self.startingWorkTimeBaseView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -32)
             ])
             
-            //  layout
+            // Starting work time title label layout
             NSLayoutConstraint.activate([
-                
+                self.startingWorkTimeTitleLabel.topAnchor.constraint(equalTo: self.startingWorkTimeBaseView.topAnchor, constant: 17),
+                self.startingWorkTimeTitleLabel.heightAnchor.constraint(equalToConstant: 22),
+                self.startingWorkTimeTitleLabel.leadingAnchor.constraint(equalTo: self.startingWorkTimeBaseView.leadingAnchor),
+                self.startingWorkTimeTitleLabel.trailingAnchor.constraint(equalTo: self.startingWorkTimeBaseView.trailingAnchor)
             ])
             
-            //  layout
+            // Starting work time date picker layout
             NSLayoutConstraint.activate([
-                
+                self.startingWorkTimeDatePicker.topAnchor.constraint(equalTo: self.startingWorkTimeTitleLabel.bottomAnchor, constant: 10),
+                self.startingWorkTimeDatePicker.bottomAnchor.constraint(equalTo: self.startingWorkTimeBottomLeftView.topAnchor, constant: -10),
+                self.startingWorkTimeDatePicker.leadingAnchor.constraint(equalTo: self.startingWorkTimeBaseView.leadingAnchor, constant: 5),
+                self.startingWorkTimeDatePicker.trailingAnchor.constraint(equalTo: self.startingWorkTimeBaseView.trailingAnchor, constant: -5)
             ])
             
-            //  layout
+            // Starting work time bottom left view layout
             NSLayoutConstraint.activate([
-                
+                self.startingWorkTimeBottomLeftView.bottomAnchor.constraint(equalTo: self.startingWorkTimeBaseView.bottomAnchor),
+                self.startingWorkTimeBottomLeftView.heightAnchor.constraint(equalToConstant: 48),
+                self.startingWorkTimeBottomLeftView.leadingAnchor.constraint(equalTo: self.startingWorkTimeBaseView.leadingAnchor),
+                self.startingWorkTimeBottomLeftView.trailingAnchor.constraint(equalTo: self.startingWorkTimeBaseView.centerXAnchor)
             ])
             
-            //  layout
+            // Starting work time bottom right view layout
             NSLayoutConstraint.activate([
-                
+                self.startingWorkTimeBottomRightView.bottomAnchor.constraint(equalTo: self.startingWorkTimeBaseView.bottomAnchor),
+                self.startingWorkTimeBottomRightView.heightAnchor.constraint(equalToConstant: 48),
+                self.startingWorkTimeBottomRightView.leadingAnchor.constraint(equalTo: self.startingWorkTimeBaseView.centerXAnchor),
+                self.startingWorkTimeBottomRightView.trailingAnchor.constraint(equalTo: self.startingWorkTimeBaseView.trailingAnchor)
             ])
             
-            //  layout
+            // Starting work time confirm button layout
             NSLayoutConstraint.activate([
-                
+                self.startingWorkTimeConfirmButton.centerYAnchor.constraint(equalTo: self.startingWorkTimeBottomLeftView.centerYAnchor),
+                self.startingWorkTimeConfirmButton.heightAnchor.constraint(equalToConstant: 28),
+                self.startingWorkTimeConfirmButton.centerXAnchor.constraint(equalTo: self.startingWorkTimeBottomLeftView.centerXAnchor),
+                self.startingWorkTimeConfirmButton.widthAnchor.constraint(equalToConstant: 28)
+            ])
+            
+            // Starting work time decline button layout layout
+            NSLayoutConstraint.activate([
+                self.startingWorkTimeDeclineButton.centerYAnchor.constraint(equalTo: self.startingWorkTimeBottomRightView.centerYAnchor),
+                self.startingWorkTimeDeclineButton.heightAnchor.constraint(equalToConstant: 28),
+                self.startingWorkTimeDeclineButton.centerXAnchor.constraint(equalTo: self.startingWorkTimeBottomRightView.centerXAnchor),
+                self.startingWorkTimeDeclineButton.widthAnchor.constraint(equalToConstant: 28)
             ])
         }
     }
@@ -537,7 +585,7 @@ extension MainCoverViewController {
     }
     
     @objc func closeNormalScheduleButton(_ sender: UIButton) {
-        
+        self.dismiss(animated: false, completion: nil)
     }
     
     @objc func overtimeConfirmButton(_ sender: UIButton) {
@@ -545,7 +593,7 @@ extension MainCoverViewController {
     }
     
     @objc func overtimeDeclineButton(_ sender: UIButton) {
-        
+        self.dismiss(animated: false, completion: nil)
     }
     
     @objc func startingWorkTimeDatePicker(_ datePicker: UIDatePicker) {
@@ -557,7 +605,7 @@ extension MainCoverViewController {
     }
     
     @objc func startingWorkTimeDeclineButton(_ sender: UIButton) {
-        
+        self.dismiss(animated: false, completion: nil)
     }
 }
 
