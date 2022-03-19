@@ -658,10 +658,12 @@ extension MainCoverViewController: UIPickerViewDelegate, UIPickerViewDataSource 
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         print("previous minute index: \(self.previousPickerViewMinuteRowIndex)")
-        pickerView.reloadComponent(2)
+        if pickerView.selectedRow(inComponent: 0) != self.previousPickerViewHourRowIndex { // When component 0 has been changed.
+            pickerView.reloadComponent(2)
+        }
         
         DispatchQueue.main.async {
-            if pickerView.selectedRow(inComponent: 0) != self.previousPickerViewHourRowIndex {
+            if pickerView.selectedRow(inComponent: 0) != self.previousPickerViewHourRowIndex { // When component 0 has been changed.
                 if self.previousPickerViewHourRowIndex == 0 {
                     pickerView.selectRow(self.previousPickerViewMinuteRowIndex + 1, inComponent: 2, animated: false)
                     print("1: \(self.previousPickerViewMinuteRowIndex + 1)")
