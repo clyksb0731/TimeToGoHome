@@ -663,24 +663,30 @@ extension MainCoverViewController: UIPickerViewDelegate, UIPickerViewDataSource 
         }
         
         DispatchQueue.main.async {
-            if pickerView.selectedRow(inComponent: 0) != self.previousPickerViewHourRowIndex { // When component 0 has been changed.
-                if self.previousPickerViewHourRowIndex == 0 {
-                    pickerView.selectRow(self.previousPickerViewMinuteRowIndex + 1, inComponent: 2, animated: false)
-                    print("1: \(self.previousPickerViewMinuteRowIndex + 1)")
-                    
-                } else {
-                    if pickerView.selectedRow(inComponent: 0) == 0 {
-                        if self.previousPickerViewMinuteRowIndex == 0 {
-                            pickerView.selectRow(self.previousPickerViewMinuteRowIndex, inComponent: 2, animated: false)
-                            print("2: \(self.previousPickerViewMinuteRowIndex)")
-                            
-                        } else {
-                            pickerView.selectRow(self.previousPickerViewMinuteRowIndex - 1, inComponent: 2, animated: false)
-                            print("3: \(self.previousPickerViewMinuteRowIndex - 1)")
-                        }
+            if pickerView.selectedRow(inComponent: 0) == self.tempMaximumOvertimeHour {
+                pickerView.selectRow(0, inComponent: 2, animated: true)
+                print("Time is maximum value.")
+                
+            } else {
+                if pickerView.selectedRow(inComponent: 0) != self.previousPickerViewHourRowIndex { // When component 0 has been changed.
+                    if self.previousPickerViewHourRowIndex == 0 {
+                        pickerView.selectRow(self.previousPickerViewMinuteRowIndex + 1, inComponent: 2, animated: false)
+                        print("1: \(self.previousPickerViewMinuteRowIndex + 1)")
                         
                     } else {
-                        print("4: Nothing changed")
+                        if pickerView.selectedRow(inComponent: 0) == 0 {
+                            if self.previousPickerViewMinuteRowIndex == 0 {
+                                pickerView.selectRow(self.previousPickerViewMinuteRowIndex, inComponent: 2, animated: false)
+                                print("2: \(self.previousPickerViewMinuteRowIndex)")
+                                
+                            } else {
+                                pickerView.selectRow(self.previousPickerViewMinuteRowIndex - 1, inComponent: 2, animated: false)
+                                print("3: \(self.previousPickerViewMinuteRowIndex - 1)")
+                            }
+                            
+                        } else {
+                            print("4: Nothing changed")
+                        }
                     }
                 }
             }
