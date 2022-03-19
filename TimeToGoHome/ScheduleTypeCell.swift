@@ -172,10 +172,10 @@ extension ScheduleTypeCell {
 
 // MARK: - Methods added
 extension ScheduleTypeCell {
-    func setCell(scheduleType type: ScheduleType, isEditingMode: Bool, tag: Int) {
+    func setCell(scheduleType type: ScheduleType?, isEditingMode: Bool, tag: Int) {
         self.timeTypeLabelTopAnchor.constant = 16
         
-        switch type {
+        switch type! {
         case .morning(let workType):
             self.timeTypeLabel.text = "오전"
             self.removeScheduleButton.isHidden = !isEditingMode
@@ -244,6 +244,7 @@ extension ScheduleTypeCell {
         }
         
         self.tag = tag
+        self.removeScheduleButton.tag = tag
     }
     
     func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {

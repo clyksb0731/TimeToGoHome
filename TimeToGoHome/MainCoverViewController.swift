@@ -19,8 +19,8 @@ extension MainCoverDelegate {
 }
 
 enum MainCoverType {
-    case normalSchedule(ScheduleType)
-    case overtimeSchedule(Int?)
+    case normalSchedule(ScheduleType?)
+    case overtimeSchedule(overtimeMinute: Int?, isEditingMode: Bool)
     case startingWorkTime(Date?)
 }
 
@@ -202,8 +202,9 @@ class MainCoverViewController: UIViewController {
         datePicker.timeZone = TimeZone.current
         datePicker.locale = Locale(identifier: "ko_KR")
         if case .startingWorkTime(let today) = self.mainCoverType {
-            datePicker.maximumDate = today ?? Date()
+            datePicker.date = today ?? Date()
         }
+        datePicker.maximumDate = Date()
         //datePicker.addTarget(self, action: #selector(startingWorkTimeDatePicker(_:)), for: .valueChanged)
         datePicker.translatesAutoresizingMaskIntoConstraints = false
         
@@ -250,9 +251,15 @@ class MainCoverViewController: UIViewController {
     var previousPickerViewHourRowIndex: Int = 0
     var previousPickerViewMinuteRowIndex: Int = 0
     
+    var isEditingModeOnPreviousVCBeforePresentingCurrentVC: Bool?
+    
     init(_ mainCoverType: MainCoverType, delegate: MainCoverDelegate?) {
         self.mainCoverType = mainCoverType
         self.delegate = delegate
+        
+        if case .overtimeSchedule(_, let isEditingModeOnPreviousVCBeforePresentingCurrentVC) = mainCoverType {
+            self.isEditingModeOnPreviousVCBeforePresentingCurrentVC = isEditingModeOnPreviousVCBeforePresentingCurrentVC
+        }
         
         super.init(nibName: nil, bundle: nil)
         
@@ -582,7 +589,7 @@ extension MainCoverViewController {
 // MARK: - Extension for methods added
 extension MainCoverViewController {
     func determineOvertimePickerViewAfterViewDidAppear() {
-        if case .overtimeSchedule(let overtimeMinute) = self.mainCoverType {
+        if case .overtimeSchedule(let overtimeMinute, _) = self.mainCoverType {
             self.overtimePickerView.setPickerComponentNames(names: [1:"시간", 3:"분"])
             
             if let overtimeMinute = overtimeMinute {
@@ -673,11 +680,34 @@ extension MainCoverViewController {
         }
         
         UIDevice.lightHaptic()
-        self.dismiss(animated: false, completion: nil)
+        
+        let presentingVC = self.presentingViewController
+        let isEditingModeOnPreviousVCBeforePresentingCurrentVC = self.isEditingModeOnPreviousVCBeforePresentingCurrentVC
+        self.dismiss(animated: false) {
+            guard let isEditingModeOnPreviousVCBeforePresentingCurrentVC = isEditingModeOnPreviousVCBeforePresentingCurrentVC, !isEditingModeOnPreviousVCBeforePresentingCurrentVC else {
+                return
+            }
+            
+            if let naviVC = presentingVC as? UINavigationController,
+                let topVC = naviVC.topViewController as? MainViewController {
+                topVC.isEditingMode = false
+            }
+        }
     }
     
     @objc func overtimeDeclineButton(_ sender: UIButton) {
-        self.dismiss(animated: false, completion: nil)
+        let presentingVC = self.presentingViewController
+        let isEditingModeOnPreviousVCBeforePresentingCurrentVC = self.isEditingModeOnPreviousVCBeforePresentingCurrentVC
+        self.dismiss(animated: false) {
+            guard let isEditingModeOnPreviousVCBeforePresentingCurrentVC = isEditingModeOnPreviousVCBeforePresentingCurrentVC, !isEditingModeOnPreviousVCBeforePresentingCurrentVC else {
+                return
+            }
+            
+            if let naviVC = presentingVC as? UINavigationController,
+                let topVC = naviVC.topViewController as? MainViewController {
+                topVC.isEditingMode = false
+            }
+        }
     }
     
 //    @objc func startingWorkTimeDatePicker(_ datePicker: UIDatePicker) {
@@ -688,11 +718,11 @@ extension MainCoverViewController {
         self.delegate?.mianCoverDidDetermineStartingWorkTime(self.startingWorkTimeDatePicker.date)
         
         UIDevice.lightHaptic()
-        self.dismiss(animated: false, completion: nil)
+        self.dismiss(animated: false)
     }
     
     @objc func startingWorkTimeDeclineButton(_ sender: UIButton) {
-        self.dismiss(animated: false, completion: nil)
+        self.dismiss(animated: false)
     }
 }
 

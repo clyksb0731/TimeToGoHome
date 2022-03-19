@@ -23,9 +23,11 @@ struct WorkSchedule {
     static var today: WorkSchedule = WorkSchedule(date: Date())
     
     private(set) var dateId: String
+    private(set) var startingWorkDate: Date?
     private(set) var morning: ScheduleType?
     private(set) var afternoon: ScheduleType?
     private(set) var overtime: ScheduleType?
+    var isEditingMode: Bool = false
     
     var count: Int {
         if self.overtime != nil {
@@ -59,59 +61,56 @@ struct WorkSchedule {
         self.scheduling(dateId: dateId)
     }
     
-    mutating func updateScheduleForDateId(_ dateId: String, morning: ScheduleType, afternoon: ScheduleType, overtime: ScheduleType) {
-        // Find schedule from DB and update it.
-        if case .morning(let morningWorkType) = morning,
-            case .afternoon(let afternoonWorkType) = afternoon,
-            case .overtime(let overtimeMinute) = overtime {
-            // Update morning & afternoon & overtime
-        }
-    }
-    
-    mutating func updateRegularScheduleForDateId(_ dateId: String, morning: ScheduleType, afternoon: ScheduleType) {
-        // Find schedule from DB and update it.
-        if case .morning(let morningWorkType) = morning,
-            case .afternoon(let afternoonWorkType) = afternoon {
-            // Update morning & afternoon
-        }
-    }
-    
-    mutating func updateOvertimeScheduleForDateId(_ dateId: String, overtime: ScheduleType) {
-        // Find schedule from DB and update it.
-        if case .overtime(let overtimeMinute) = overtime {
-            // Update overtime
-        }
-    }
-    
     private mutating func scheduling(dateId: String) {
         // Check DB if there is already today schedule.
         // &&
         // Check tody schedule condition for initial setting.
         self.morning = .morning(.holiday) // FIXME: Temp
         self.afternoon = .afternoon(.work) // FIXME: Temp
-        self.overtime = nil //.overtime(59) // FIXME: Temp
+        self.overtime = .overtime(59) // FIXME: Temp
+    }
+}
+
+// MARK: - Extension for methods added
+extension WorkSchedule {
+    mutating func updateStartingWorkTime(_ timeDate: Date) {
+        print("DB - Starting work time updated")// FIXME: DB
+        self.startingWorkDate = timeDate
     }
     
-    mutating func removeLastSchedule() {
-        if self.overtime != nil {
-            self.overtime = nil
-            
-        } else {
-            if self.afternoon != nil {
-                self.afternoon = nil
-                
-            } else {
-                if self.morning != nil {
-                    self.morning = nil
-                }
-            }
+    func updateToday() {
+        // Find schedule from DB and update it.
+        
+        var morning: String = ""
+        var afternoon: String = ""
+        var overtime: Int?
+        
+        if case .morning(let morningWorkType) = self.morning, case .afternoon(let afternoonWorkType) = self.afternoon {
+            morning = morningWorkType.rawValue
+            afternoon = afternoonWorkType.rawValue
         }
+        
+        if case .overtime(let overtimeMinute) = self.overtime {
+            overtime = overtimeMinute
+        }
+        
+        print("DB - update today")
+        print("Today's morning: \(morning)")
+        print("Today's afternoon: \(afternoon)")
+        overtime != nil ? print("Today's overtime minute: \(overtime!)") : {}()
     }
     
-    @discardableResult mutating func addSchedule(_ schedule: ScheduleType) -> Bool {
+    @discardableResult mutating func addSchedule(_ schedule: ScheduleType?) -> Bool {
+        guard let schedule = schedule else {
+            return false
+        }
+
         switch schedule {
         case .morning(let workType):
             if self.overtime == nil && self.afternoon == nil && self.morning == nil {
+                if !self.isEditingMode {
+                    print("DB - workType: \(workType.rawValue)")// FIXME: DB
+                }
                 self.morning = schedule
                 
                 return true
@@ -122,6 +121,9 @@ struct WorkSchedule {
             
         case .afternoon(let workType):
             if self.overtime == nil && self.afternoon == nil && self.morning != nil {
+                if !self.isEditingMode {
+                    print("DB - workType: \(workType.rawValue)")// FIXME: DB
+                }
                 self.afternoon = schedule
                 
                 return true
@@ -130,8 +132,11 @@ struct WorkSchedule {
                 return false
             }
             
-        case .overtime(let overtimeMinute):
-            if self.overtime == nil && self.afternoon != nil && self.morning != nil {
+        case .overtime(let overtimeMinute): // Available to add and insert both
+            if self.afternoon != nil && self.morning != nil {
+                if !self.isEditingMode {
+                    print("DB - overtime: \(overtimeMinute)")// FIXME: DB
+                }
                 self.overtime = schedule
                 
                 return true
@@ -142,16 +147,93 @@ struct WorkSchedule {
         }
     }
     
-    mutating func insertSchedule(_ schedule: ScheduleType) {
+    @discardableResult mutating func removeSchedule(_ schedule: ScheduleType?) -> Bool {
+        guard let schedule = schedule else {
+            return false
+        }
+        
         switch schedule {
-        case .morning(let workType):
-            self.morning = schedule
+        case .morning:
+            if self.overtime == nil && self.afternoon == nil && self.morning != nil {
+                if !self.isEditingMode {
+                    print("Morning deleted in DB")// FIXME: DB
+                }
+                self.morning = nil
+                
+                return true
+                
+            } else {
+                return false
+            }
             
-        case .afternoon(let workType):
-            self.afternoon = schedule
+        case .afternoon:
+            if self.overtime == nil && self.morning != nil && self.afternoon != nil {
+                if !self.isEditingMode {
+                    print("Afternoon deleted in DB")// FIXME: DB
+                }
+                self.afternoon = nil
+                
+                return true
+                
+            } else {
+                return false
+            }
             
-        case .overtime(let overtimeMinute):
-            self.overtime = schedule
+        case .overtime:
+            if self.morning != nil && self.afternoon != nil && self.overtime != nil {
+                if !self.isEditingMode {
+                    print("Overtime deleted in DB")// FIXME: DB
+                }
+                self.overtime = nil
+                
+                return true
+                
+            } else {
+                return false
+            }
+        }
+    }
+    
+    func scheduleForOrder(_ order: Int) -> ScheduleType? {
+        if (order == 1) {
+            return self.morning
+        }
+        
+        if (order == 2) {
+            return self.afternoon
+        }
+        
+        if (order == 3) {
+            return self.overtime
+        }
+        
+        return nil
+    }
+    
+    func makeNewScheduleBasedOnTodayScheduleCount(_ withAssociatedValue: Any) -> ScheduleType? {
+        if self.count == 0 {
+            if let workType = withAssociatedValue as? WorkType {
+                return .morning(workType)
+            }
+            
+            return nil
+            
+        } else if self.count == 1 {
+            if let workType = withAssociatedValue as? WorkType {
+                return .afternoon(workType)
+            }
+            
+            return nil
+            
+        } else if self.count == 2 {
+            if let overtimeMinute = withAssociatedValue as? Int {
+                return .overtime(overtimeMinute)
+            }
+            
+            return nil
+            
+        } else { // 3
+            return nil
         }
     }
 }
