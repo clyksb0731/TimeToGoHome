@@ -70,7 +70,7 @@ class MainViewController: UIViewController {
         return button
     }()
     
-    lazy var startWorkTimeMarkLabel: UILabel = {
+    lazy var startWorkingTimeMarkLabel: UILabel = {
         let label = UILabel()
         label.textColor = .useRGB(red: 172, green: 172, blue: 172)
         label.font = .systemFont(ofSize: 12)
@@ -81,14 +81,14 @@ class MainViewController: UIViewController {
         return label
     }()
     
-    lazy var startWorkTimeButton: UIButton = {
+    lazy var startWorkingTimeButton: UIButton = {
         let button = UIButton()
         button.titleLabel?.font = .systemFont(ofSize: 12)
         button.setTitleColor(.white, for: .normal)
         button.setTitle("출근전", for: .normal)
         button.titleLabel?.adjustsFontSizeToFitWidth = false
         button.titleLabel?.minimumScaleFactor = 0.5
-        button.addTarget(self, action: #selector(startWorkTimeButton(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(startWorkingTimeButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -383,6 +383,7 @@ class MainViewController: UIViewController {
                 self.scheduleTableView.reloadData()
                 
                 self.determineScheduleButtonState()
+                self.determineStartingWorkTimeButton()
                 
                 self.changeScheduleDescriptionLabel.isHidden = self.isEditingMode
             }
@@ -408,6 +409,7 @@ class MainViewController: UIViewController {
         
         self.setViewFoundation()
         self.determineScheduleButtonState()
+        self.determineStartingWorkTimeButton()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -503,8 +505,8 @@ extension MainViewController {
             self.progressRateButtonView,
             self.mainTimeViewValueLabel,
             self.changeScheduleButton,
-            self.startWorkTimeMarkLabel,
-            self.startWorkTimeButton,
+            self.startWorkingTimeMarkLabel,
+            self.startWorkingTimeButton,
             self.mainTimeCoverView
         ], to: self.mainTimeView)
         
@@ -602,18 +604,18 @@ extension MainViewController {
         
         // Start work time mark label layout
         NSLayoutConstraint.activate([
-            self.startWorkTimeMarkLabel.bottomAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: -17),
-            self.startWorkTimeMarkLabel.heightAnchor.constraint(equalToConstant: 15),
-            self.startWorkTimeMarkLabel.trailingAnchor.constraint(equalTo: self.startWorkTimeButton.leadingAnchor, constant: -8),
-            self.startWorkTimeMarkLabel.widthAnchor.constraint(equalToConstant: 46)
+            self.startWorkingTimeMarkLabel.bottomAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: -17),
+            self.startWorkingTimeMarkLabel.heightAnchor.constraint(equalToConstant: 15),
+            self.startWorkingTimeMarkLabel.trailingAnchor.constraint(equalTo: self.startWorkingTimeButton.leadingAnchor, constant: -8),
+            self.startWorkingTimeMarkLabel.widthAnchor.constraint(equalToConstant: 46)
         ])
         
         // Start work time label layout
         NSLayoutConstraint.activate([
-            self.startWorkTimeButton.bottomAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: -17),
-            self.startWorkTimeButton.heightAnchor.constraint(equalToConstant: 15),
-            self.startWorkTimeButton.trailingAnchor.constraint(equalTo: self.mainTimeView.trailingAnchor, constant: -31),
-            self.startWorkTimeButton.widthAnchor.constraint(equalToConstant: 34)
+            self.startWorkingTimeButton.bottomAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: -17),
+            self.startWorkingTimeButton.heightAnchor.constraint(equalToConstant: 15),
+            self.startWorkingTimeButton.trailingAnchor.constraint(equalTo: self.mainTimeView.trailingAnchor, constant: -31),
+            self.startWorkingTimeButton.widthAnchor.constraint(equalToConstant: 34)
         ])
         
         // Main time cover view layout
@@ -852,7 +854,7 @@ extension MainViewController {
             
             self.overtimeButtonView.isHidden = true
             
-        } else if schedule.count == 2 {
+        } else if self.schedule.count == 2 {
             if case .afternoon(let workType) = self.schedule.afternoon {
                 switch workType {
                 case .holiday:
@@ -891,6 +893,20 @@ extension MainViewController {
             self.completeChangingScheduleButtonView.isEnadble = true
         }
     }
+    
+    func determineStartingWorkTimeButton() {
+        if let startingWorkingTime = self.schedule.startingWorkTime {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "HH:mm"
+            dateFormatter.timeZone = .current
+            dateFormatter.locale = Locale(identifier: "ko_KR")
+            
+            self.startWorkingTimeButton.setTitle(dateFormatter.string(from: startingWorkingTime), for: .normal)
+        }
+        
+        self.startWorkingTimeMarkLabel.isHidden = !self.schedule.isAvailableToWork
+        self.startWorkingTimeButton.isHidden = !self.schedule.isAvailableToWork
+    }
 }
 
 // MARK: - Extension for Selector methods
@@ -904,6 +920,8 @@ extension MainViewController {
     }
     
     @objc func remainingTimeButtonView(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
         self.remainingTimeButtonView.isSelected = true
         self.progressTimeButtonView.isSelected = false
         self.progressRateButtonView.isSelected = false
@@ -912,6 +930,8 @@ extension MainViewController {
     }
     
     @objc func progressTimeButtonView(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
         self.remainingTimeButtonView.isSelected = false
         self.progressTimeButtonView.isSelected = true
         self.progressRateButtonView.isSelected = false
@@ -920,6 +940,8 @@ extension MainViewController {
     }
     
     @objc func progressRateButtonView(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
         self.remainingTimeButtonView.isSelected = false
         self.progressTimeButtonView.isSelected = false
         self.progressRateButtonView.isSelected = true
@@ -927,12 +949,16 @@ extension MainViewController {
         self.mainTimeViewValueLabel.text = "88%"
     }
     
-    @objc func startWorkTimeButton(_ sender: UIButton) {
-        let mainCoverVC = MainCoverViewController(.startingWorkTime(self.schedule.startingWorkDate), delegate: self)
+    @objc func startWorkingTimeButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
+        let mainCoverVC = MainCoverViewController(.startingWorkTime(self.schedule.startingWorkTime), delegate: self)
         self.present(mainCoverVC, animated: false, completion: nil)
     }
     
     @objc func changeScheduleButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
         self.tempSchedule = self.schedule
         
         self.isEditingMode = true
@@ -949,6 +975,8 @@ extension MainViewController {
     }
     
     @objc func completeChangingScheduleButtonView(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
         self.schedule.updateToday()
         
         self.isEditingMode = false
@@ -956,6 +984,8 @@ extension MainViewController {
     }
     
     @objc func removeScheduleButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
         self.schedule.removeSchedule(self.schedule.scheduleForOrder(sender.tag))
         
         self.determineCompleteChangingScheduleButton()
@@ -964,12 +994,12 @@ extension MainViewController {
         self.scheduleTableView.reloadData()
         
         self.determineScheduleButtonState()
-        
-        UIDevice.lightHaptic()
+        self.determineStartingWorkTimeButton()
     }
     
     @objc func workTimeButton(_ sender: UIButton) {
         print("Work Time Button touched")
+        UIDevice.softHaptic()
         
         guard let newSchedule = self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.work) else {
             return
@@ -983,12 +1013,12 @@ extension MainViewController {
         self.scheduleTableView.reloadData()
         
         self.determineScheduleButtonState()
-        
-        UIDevice.lightHaptic()
+        self.determineStartingWorkTimeButton()
     }
     
     @objc func vacationTimeButton(_ sender: UIButton) {
         print("Vacation Time Button touched")
+        UIDevice.softHaptic()
         
         guard let newSchedule = self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.vacation) else {
             return
@@ -1002,12 +1032,12 @@ extension MainViewController {
         self.scheduleTableView.reloadData()
         
         self.determineScheduleButtonState()
-        
-        UIDevice.lightHaptic()
+        self.determineStartingWorkTimeButton()
     }
     
     @objc func holidayButton(_ sender: UIButton) {
         print("Holiday Button touched")
+        UIDevice.softHaptic()
         
         guard let newSchedule = self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.holiday) else {
             return
@@ -1021,12 +1051,12 @@ extension MainViewController {
         self.scheduleTableView.reloadData()
         
         self.determineScheduleButtonState()
-        
-        UIDevice.lightHaptic()
+        self.determineStartingWorkTimeButton()
     }
     
     @objc func overtimeButton(_ sender: UIButton) {
         print("Overtime Button touched")
+        UIDevice.softHaptic()
         
         let mainCoverVC = MainCoverViewController(.overtimeSchedule(nil, self.isEditingMode), delegate: self)
         self.present(mainCoverVC, animated: false) {
@@ -1150,9 +1180,11 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                         cell.removeGestureRecognizer(gesture)
                     }
                 }
-                let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
-                longGesture.minimumPressDuration = 0.5
-                cell.addGestureRecognizer(longGesture)
+                if !self.isEditingMode {
+                    let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
+                    longGesture.minimumPressDuration = 0.5
+                    cell.addGestureRecognizer(longGesture)
+                }
                 
                 return cell
                 
@@ -1175,9 +1207,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                             cell.removeGestureRecognizer(gesture)
                         }
                     }
-                    let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
-                    longGesture.minimumPressDuration = 0.5
-                    cell.addGestureRecognizer(longGesture)
                     
                     return cell
                     
@@ -1191,9 +1220,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                             cell.removeGestureRecognizer(gesture)
                         }
                     }
-                    let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
-                    longGesture.minimumPressDuration = 0.5
-                    cell.addGestureRecognizer(longGesture)
                     
                     return cell
                     
@@ -1250,9 +1276,11 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                         cell.removeGestureRecognizer(gesture)
                     }
                 }
-                let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
-                longGesture.minimumPressDuration = 0.5
-                cell.addGestureRecognizer(longGesture)
+                if !self.isEditingMode {
+                    let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
+                    longGesture.minimumPressDuration = 0.5
+                    cell.addGestureRecognizer(longGesture)
+                }
                 
                 return cell
                 
@@ -1266,9 +1294,11 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                         cell.removeGestureRecognizer(gesture)
                     }
                 }
-                let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
-                longGesture.minimumPressDuration = 0.5
-                cell.addGestureRecognizer(longGesture)
+                if !self.isEditingMode {
+                    let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
+                    longGesture.minimumPressDuration = 0.5
+                    cell.addGestureRecognizer(longGesture)
+                }
                 
                 return cell
                 
@@ -1282,9 +1312,11 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                         cell.removeGestureRecognizer(gesture)
                     }
                 }
-                let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
-                longGesture.minimumPressDuration = 0.5
-                cell.addGestureRecognizer(longGesture)
+                if !self.isEditingMode {
+                    let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
+                    longGesture.minimumPressDuration = 0.5
+                    cell.addGestureRecognizer(longGesture)
+                }
                 
                 return cell
             }
@@ -1404,6 +1436,7 @@ extension MainViewController: MainCoverDelegate {
         self.scheduleTableView.reloadData()
         
         self.determineScheduleButtonState()
+        self.determineStartingWorkTimeButton()
     }
     
     func mainCoverDidDetermineOvertimeSchedule(_ scheduleType: ScheduleType, isEditingModeBeforPresenting: Bool!) {
@@ -1422,16 +1455,12 @@ extension MainViewController: MainCoverDelegate {
         self.scheduleTableView.reloadData()
         
         self.determineScheduleButtonState()
+        self.determineStartingWorkTimeButton()
     }
     
     func mianCoverDidDetermineStartingWorkTime(_ startingWorkTime: Date) {
         self.schedule.updateStartingWorkTime(startingWorkTime)
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm"
-        dateFormatter.timeZone = .current
-        dateFormatter.locale = Locale(identifier: "ko_KR")
-        
-        self.startWorkTimeButton.setTitle(dateFormatter.string(from: startingWorkTime), for: .normal)
+        self.determineStartingWorkTimeButton()
     }
 }

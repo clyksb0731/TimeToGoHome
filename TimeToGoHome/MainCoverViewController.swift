@@ -620,6 +620,8 @@ extension MainCoverViewController {
 // MARK: - Extension for Selector methods
 extension MainCoverViewController {
     @objc func workButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
         if case .normalSchedule(let scheduleType) = self.mainCoverType {
             if case .morning = scheduleType {
                 self.delegate?.mainCoverDidDetermineNormalSchedule(.morning(.work))
@@ -630,11 +632,12 @@ extension MainCoverViewController {
             }
         }
         
-        UIDevice.lightHaptic()
-        self.dismiss(animated: false, completion: nil)
+        self.dismiss(animated: false)
     }
     
     @objc func vacationButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
         if case .normalSchedule(let scheduleType) = self.mainCoverType {
             if case .morning = scheduleType {
                 self.delegate?.mainCoverDidDetermineNormalSchedule(.morning(.vacation))
@@ -645,11 +648,12 @@ extension MainCoverViewController {
             }
         }
         
-        UIDevice.lightHaptic()
-        self.dismiss(animated: false, completion: nil)
+        self.dismiss(animated: false)
     }
     
     @objc func holidayButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
         if case .normalSchedule(let scheduleType) = self.mainCoverType {
             if case .morning = scheduleType {
                 self.delegate?.mainCoverDidDetermineNormalSchedule(.morning(.holiday))
@@ -660,15 +664,16 @@ extension MainCoverViewController {
             }
         }
         
-        UIDevice.lightHaptic()
-        self.dismiss(animated: false, completion: nil)
+        self.dismiss(animated: false)
     }
     
     @objc func closeNormalScheduleButton(_ sender: UIButton) {
-        self.dismiss(animated: false, completion: nil)
+        self.dismiss(animated: false)
     }
     
     @objc func overtimeConfirmButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
         // Calculate overtime minute
         if self.overtimePickerView.selectedRow(inComponent: 0) == 0 {
             self.delegate?.mainCoverDidDetermineOvertimeSchedule(.overtime(
@@ -681,7 +686,6 @@ extension MainCoverViewController {
             ), isEditingModeBeforPresenting: self.isEditingBeforePresented)
         }
         
-        UIDevice.lightHaptic()
         self.dismiss(animated: false)
     }
     
@@ -694,9 +698,10 @@ extension MainCoverViewController {
 //    }
     
     @objc func startingWorkTimeConfirmButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
         self.delegate?.mianCoverDidDetermineStartingWorkTime(self.startingWorkTimeDatePicker.date)
         
-        UIDevice.lightHaptic()
         self.dismiss(animated: false)
     }
     

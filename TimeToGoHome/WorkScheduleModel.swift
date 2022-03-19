@@ -23,7 +23,7 @@ struct WorkSchedule {
     static var today: WorkSchedule = WorkSchedule(date: Date())
     
     private(set) var dateId: String
-    private(set) var startingWorkDate: Date?
+    private(set) var startingWorkTime: Date?
     private(set) var morning: ScheduleType?
     private(set) var afternoon: ScheduleType?
     private(set) var overtime: ScheduleType?
@@ -41,6 +41,20 @@ struct WorkSchedule {
             
         } else {
             return 0
+        }
+    }
+    
+    var isAvailableToWork: Bool {
+        if case .morning(let morningWorkType) = self.morning, case .afternoon(let afternoonWorkType) = self.afternoon {
+            if morningWorkType == .work || afternoonWorkType == .work {
+                return true
+                
+            } else {
+                return false
+            }
+            
+        } else {
+            return false
         }
     }
     
@@ -75,7 +89,7 @@ struct WorkSchedule {
 extension WorkSchedule {
     mutating func updateStartingWorkTime(_ timeDate: Date) {
         print("DB - Starting work time updated")// FIXME: DB
-        self.startingWorkDate = timeDate
+        self.startingWorkTime = timeDate
     }
     
     func updateToday() {
