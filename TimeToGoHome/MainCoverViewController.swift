@@ -7,21 +7,23 @@
 
 import UIKit
 
+enum MainCoverType {
+    case normalSchedule(ScheduleType?)
+    case overtimeSchedule(_ overtimeMinute: Int?, _ isEditingModeBeforPresented: Bool)
+    case startingWorkTime(Date?)
+}
+
 protocol MainCoverDelegate {
-    func mainCoverDidDetermineSchedule(_ scheduleType: ScheduleType)
+    func mainCoverDidDetermineNormalSchedule(_ scheduleType: ScheduleType)
+    func mainCoverDidDetermineOvertimeSchedule(_ scheduleType: ScheduleType, isEditingModeBeforPresenting: Bool!)
     func mianCoverDidDetermineStartingWorkTime(_ startingWorkTime: Date)
 }
 
 // Extension for Optional function effect
 extension MainCoverDelegate {
-    func mainCoverDidDetermineSchedule(_ scheduleType: ScheduleType) { }
+    func mainCoverDidDetermineNormalSchedule(_ scheduleType: ScheduleType) { }
+    func mainCoverDidDetermineOvertimeSchedule(_ scheduleType: ScheduleType, isEditingModeBeforPresenting: Bool!) { }
     func mianCoverDidDetermineStartingWorkTime(_ startingWorkTime: Date) { }
-}
-
-enum MainCoverType {
-    case normalSchedule(ScheduleType?)
-    case overtimeSchedule(overtimeMinute: Int?, isEditingMode: Bool)
-    case startingWorkTime(Date?)
 }
 
 class MainCoverViewController: UIViewController {
@@ -251,14 +253,14 @@ class MainCoverViewController: UIViewController {
     var previousPickerViewHourRowIndex: Int = 0
     var previousPickerViewMinuteRowIndex: Int = 0
     
-    var isEditingModeOnPreviousVCBeforePresentingCurrentVC: Bool?
+    var isEditingBeforePresented: Bool?
     
     init(_ mainCoverType: MainCoverType, delegate: MainCoverDelegate?) {
         self.mainCoverType = mainCoverType
         self.delegate = delegate
         
-        if case .overtimeSchedule(_, let isEditingModeOnPreviousVCBeforePresentingCurrentVC) = mainCoverType {
-            self.isEditingModeOnPreviousVCBeforePresentingCurrentVC = isEditingModeOnPreviousVCBeforePresentingCurrentVC
+        if case .overtimeSchedule(_, let isEditingBeforePresented) = mainCoverType {
+            self.isEditingBeforePresented = isEditingBeforePresented
         }
         
         super.init(nibName: nil, bundle: nil)
@@ -620,11 +622,11 @@ extension MainCoverViewController {
     @objc func workButton(_ sender: UIButton) {
         if case .normalSchedule(let scheduleType) = self.mainCoverType {
             if case .morning = scheduleType {
-                self.delegate?.mainCoverDidDetermineSchedule(.morning(.work))
+                self.delegate?.mainCoverDidDetermineNormalSchedule(.morning(.work))
             }
             
             if case .afternoon = scheduleType {
-                self.delegate?.mainCoverDidDetermineSchedule(.afternoon(.work))
+                self.delegate?.mainCoverDidDetermineNormalSchedule(.afternoon(.work))
             }
         }
         
@@ -635,11 +637,11 @@ extension MainCoverViewController {
     @objc func vacationButton(_ sender: UIButton) {
         if case .normalSchedule(let scheduleType) = self.mainCoverType {
             if case .morning = scheduleType {
-                self.delegate?.mainCoverDidDetermineSchedule(.morning(.vacation))
+                self.delegate?.mainCoverDidDetermineNormalSchedule(.morning(.vacation))
             }
             
             if case .afternoon = scheduleType {
-                self.delegate?.mainCoverDidDetermineSchedule(.afternoon(.vacation))
+                self.delegate?.mainCoverDidDetermineNormalSchedule(.afternoon(.vacation))
             }
         }
         
@@ -650,11 +652,11 @@ extension MainCoverViewController {
     @objc func holidayButton(_ sender: UIButton) {
         if case .normalSchedule(let scheduleType) = self.mainCoverType {
             if case .morning = scheduleType {
-                self.delegate?.mainCoverDidDetermineSchedule(.morning(.holiday))
+                self.delegate?.mainCoverDidDetermineNormalSchedule(.morning(.holiday))
             }
             
             if case .afternoon = scheduleType {
-                self.delegate?.mainCoverDidDetermineSchedule(.afternoon(.holiday))
+                self.delegate?.mainCoverDidDetermineNormalSchedule(.afternoon(.holiday))
             }
         }
         
@@ -669,45 +671,22 @@ extension MainCoverViewController {
     @objc func overtimeConfirmButton(_ sender: UIButton) {
         // Calculate overtime minute
         if self.overtimePickerView.selectedRow(inComponent: 0) == 0 {
-            self.delegate?.mainCoverDidDetermineSchedule(.overtime(
+            self.delegate?.mainCoverDidDetermineOvertimeSchedule(.overtime(
                 self.overtimePickerView.selectedRow(inComponent: 0) * 60 + overtimePickerView.selectedRow(inComponent: 2) + 1
-            ))
+            ), isEditingModeBeforPresenting: self.isEditingBeforePresented)
             
         } else {
-            self.delegate?.mainCoverDidDetermineSchedule(.overtime(
+            self.delegate?.mainCoverDidDetermineOvertimeSchedule(.overtime(
                 self.overtimePickerView.selectedRow(inComponent: 0) * 60 + overtimePickerView.selectedRow(inComponent: 2)
-            ))
+            ), isEditingModeBeforPresenting: self.isEditingBeforePresented)
         }
         
         UIDevice.lightHaptic()
-        
-        let presentingVC = self.presentingViewController
-        let isEditingModeOnPreviousVCBeforePresentingCurrentVC = self.isEditingModeOnPreviousVCBeforePresentingCurrentVC
-        self.dismiss(animated: false) {
-            guard let isEditingModeOnPreviousVCBeforePresentingCurrentVC = isEditingModeOnPreviousVCBeforePresentingCurrentVC, !isEditingModeOnPreviousVCBeforePresentingCurrentVC else {
-                return
-            }
-            
-            if let naviVC = presentingVC as? UINavigationController,
-                let topVC = naviVC.topViewController as? MainViewController {
-                topVC.isEditingMode = false
-            }
-        }
+        self.dismiss(animated: false)
     }
     
     @objc func overtimeDeclineButton(_ sender: UIButton) {
-        let presentingVC = self.presentingViewController
-        let isEditingModeOnPreviousVCBeforePresentingCurrentVC = self.isEditingModeOnPreviousVCBeforePresentingCurrentVC
-        self.dismiss(animated: false) {
-            guard let isEditingModeOnPreviousVCBeforePresentingCurrentVC = isEditingModeOnPreviousVCBeforePresentingCurrentVC, !isEditingModeOnPreviousVCBeforePresentingCurrentVC else {
-                return
-            }
-            
-            if let naviVC = presentingVC as? UINavigationController,
-                let topVC = naviVC.topViewController as? MainViewController {
-                topVC.isEditingMode = false
-            }
-        }
+        self.dismiss(animated: false)
     }
     
 //    @objc func startingWorkTimeDatePicker(_ datePicker: UIDatePicker) {

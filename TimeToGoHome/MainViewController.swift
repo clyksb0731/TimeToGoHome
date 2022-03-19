@@ -1028,7 +1028,7 @@ extension MainViewController {
     @objc func overtimeButton(_ sender: UIButton) {
         print("Overtime Button touched")
         
-        let mainCoverVC = MainCoverViewController(.overtimeSchedule(overtimeMinute: nil, isEditingMode: self.isEditingMode), delegate: self)
+        let mainCoverVC = MainCoverViewController(.overtimeSchedule(nil, self.isEditingMode), delegate: self)
         self.present(mainCoverVC, animated: false) {
             self.isEditingMode = true
         }
@@ -1060,7 +1060,7 @@ extension MainViewController {
                 } else { // tag 3, overtime
                     print("Long Pressed for overtime")
                     if case .overtime(let overtimeMinute) = self.schedule.overtime {
-                        let mainCoverVC = MainCoverViewController(.overtimeSchedule(overtimeMinute: overtimeMinute, isEditingMode: false), delegate: self)
+                        let mainCoverVC = MainCoverViewController(.overtimeSchedule(overtimeMinute, self.isEditingMode), delegate: self)
                         self.present(mainCoverVC, animated: false, completion: nil)
                     }
                 }
@@ -1395,8 +1395,26 @@ extension MainViewController: UIScrollViewDelegate {
 
 // MARK: Extension for MainCoverDelegate
 extension MainViewController: MainCoverDelegate {
-    func mainCoverDidDetermineSchedule(_ scheduleType: ScheduleType) {
-        self.schedule.addSchedule(scheduleType)
+    func mainCoverDidDetermineNormalSchedule(_ scheduleType: ScheduleType) {
+        self.schedule.insertSchedule(scheduleType)
+        
+        self.determineCompleteChangingScheduleButton()
+        
+        self.calculateTableViewHeight()
+        self.scheduleTableView.reloadData()
+        
+        self.determineScheduleButtonState()
+    }
+    
+    func mainCoverDidDetermineOvertimeSchedule(_ scheduleType: ScheduleType, isEditingModeBeforPresenting: Bool!) {
+        if self.isEditingMode {
+            self.isEditingMode = isEditingModeBeforPresenting
+            
+            self.schedule.addSchedule(scheduleType)
+            
+        } else {
+            self.schedule.insertSchedule(scheduleType)
+        }
         
         self.determineCompleteChangingScheduleButton()
         

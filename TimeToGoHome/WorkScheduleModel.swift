@@ -109,7 +109,7 @@ extension WorkSchedule {
         case .morning(let workType):
             if self.overtime == nil && self.afternoon == nil && self.morning == nil {
                 if !self.isEditingMode {
-                    print("DB - workType: \(workType.rawValue)")// FIXME: DB
+                    print("DB - add workType: \(workType.rawValue)")// FIXME: DB
                 }
                 self.morning = schedule
                 
@@ -122,7 +122,7 @@ extension WorkSchedule {
         case .afternoon(let workType):
             if self.overtime == nil && self.afternoon == nil && self.morning != nil {
                 if !self.isEditingMode {
-                    print("DB - workType: \(workType.rawValue)")// FIXME: DB
+                    print("DB - add workType: \(workType.rawValue)")// FIXME: DB
                 }
                 self.afternoon = schedule
                 
@@ -132,11 +132,52 @@ extension WorkSchedule {
                 return false
             }
             
-        case .overtime(let overtimeMinute): // Available to add and insert both
-            if self.afternoon != nil && self.morning != nil {
+        case .overtime(let overtimeMinute):
+            if self.overtime == nil && self.afternoon != nil && self.morning != nil {
                 if !self.isEditingMode {
-                    print("DB - overtime: \(overtimeMinute)")// FIXME: DB
+                    print("DB - add overtime: \(overtimeMinute)")// FIXME: DB
                 }
+                self.overtime = schedule
+                
+                return true
+                
+            } else {
+                return false
+            }
+        }
+    }
+    
+    @discardableResult mutating func insertSchedule(_ schedule: ScheduleType?) -> Bool {
+        guard let schedule = schedule else {
+            return false
+        }
+
+        switch schedule {
+        case .morning(let workType):
+            if self.afternoon != nil {
+                print("DB - insert workType: \(workType.rawValue)")// FIXME: DB
+                self.morning = schedule
+                
+                return true
+                
+            } else {
+                return false
+            }
+            
+        case .afternoon(let workType):
+            if self.morning != nil {
+                print("DB - insert workType: \(workType.rawValue)")// FIXME: DB
+                self.afternoon = schedule
+                
+                return true
+                
+            } else {
+                return false
+            }
+            
+        case .overtime(let overtimeMinute):
+            if self.afternoon != nil && self.morning != nil {
+                print("DB - insert overtime: \(overtimeMinute)")// FIXME: DB
                 self.overtime = schedule
                 
                 return true
