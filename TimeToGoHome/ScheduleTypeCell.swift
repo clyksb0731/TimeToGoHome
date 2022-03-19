@@ -30,6 +30,8 @@ class ScheduleTypeCell: UITableViewCell {
         label.font = .systemFont(ofSize: 17, weight: .semibold)
         label.textAlignment = .right
         label.textColor = .white
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.7
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -149,6 +151,7 @@ extension ScheduleTypeCell {
         NSLayoutConstraint.activate([
             self.timeTypeLabelTopAnchor,
             self.timeTypeLabel.centerYAnchor.constraint(lessThanOrEqualTo: self.scheduleView.centerYAnchor),
+            self.timeTypeLabel.leadingAnchor.constraint(equalTo: self.scheduleTypeLabel.trailingAnchor, constant: 5),
             self.timeTypeLabel.trailingAnchor.constraint(equalTo: self.scheduleView.trailingAnchor, constant: -30)
         ])
         
@@ -161,7 +164,8 @@ extension ScheduleTypeCell {
         // Schedule type label layout
         NSLayoutConstraint.activate([
             self.scheduleTypeLabel.centerYAnchor.constraint(equalTo: self.scheduleView.centerYAnchor),
-            self.scheduleTypeLabel.centerXAnchor.constraint(equalTo: self.scheduleView.centerXAnchor)
+            self.scheduleTypeLabel.centerXAnchor.constraint(equalTo: self.scheduleView.centerXAnchor),
+            self.scheduleTypeLabel.widthAnchor.constraint(equalToConstant: 90)
         ])
     }
 }

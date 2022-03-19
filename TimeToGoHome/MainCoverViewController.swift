@@ -201,8 +201,10 @@ class MainCoverViewController: UIViewController {
         datePicker.datePickerMode = .time
         datePicker.timeZone = TimeZone.current
         datePicker.locale = Locale(identifier: "ko_KR")
-        datePicker.maximumDate = Date()
-        datePicker.addTarget(self, action: #selector(startingWorkTimeDatePicker(_:)), for: .valueChanged)
+        if case .startingWorkTime(let today) = self.mainCoverType {
+            datePicker.maximumDate = today ?? Date()
+        }
+        //datePicker.addTarget(self, action: #selector(startingWorkTimeDatePicker(_:)), for: .valueChanged)
         datePicker.translatesAutoresizingMaskIntoConstraints = false
         
         return datePicker
@@ -281,7 +283,7 @@ class MainCoverViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        self.overtimePickerView.setPickerComponentNames(names: [1:"시간", 3:"분"])
+        self.determineOvertimePickerViewAfterViewDidAppear()
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -579,7 +581,31 @@ extension MainCoverViewController {
 
 // MARK: - Extension for methods added
 extension MainCoverViewController {
-    
+    func determineOvertimePickerViewAfterViewDidAppear() {
+        if case .overtimeSchedule(let overtimeMinute) = self.mainCoverType {
+            self.overtimePickerView.setPickerComponentNames(names: [1:"시간", 3:"분"])
+            
+            if let overtimeMinute = overtimeMinute {
+                let hour = overtimeMinute / 60
+                let minute = overtimeMinute % 60
+                
+                self.overtimePickerView.selectRow(hour, inComponent: 0, animated: false)
+                self.previousPickerViewHourRowIndex = hour
+                self.overtimePickerView.reloadComponent(2)
+                
+                DispatchQueue.main.async {
+                    if hour == 0 {
+                        self.overtimePickerView.selectRow(minute - 1, inComponent: 2, animated: false) // must not be 0 minute
+                        self.previousPickerViewMinuteRowIndex = minute - 1
+                        
+                    } else {
+                        self.overtimePickerView.selectRow(minute, inComponent: 2, animated: false)
+                        self.previousPickerViewMinuteRowIndex = minute
+                    }
+                }
+            }
+        }
+    }
 }
 
 // MARK: - Extension for Selector methods
@@ -595,6 +621,7 @@ extension MainCoverViewController {
             }
         }
         
+        UIDevice.lightHaptic()
         self.dismiss(animated: false, completion: nil)
     }
     
@@ -609,6 +636,7 @@ extension MainCoverViewController {
             }
         }
         
+        UIDevice.lightHaptic()
         self.dismiss(animated: false, completion: nil)
     }
     
@@ -623,6 +651,7 @@ extension MainCoverViewController {
             }
         }
         
+        UIDevice.lightHaptic()
         self.dismiss(animated: false, completion: nil)
     }
     
@@ -631,19 +660,35 @@ extension MainCoverViewController {
     }
     
     @objc func overtimeConfirmButton(_ sender: UIButton) {
+        // Calculate overtime minute
+        if self.overtimePickerView.selectedRow(inComponent: 0) == 0 {
+            self.delegate?.mainCoverDidDetermineSchedule(.overtime(
+                self.overtimePickerView.selectedRow(inComponent: 0) * 60 + overtimePickerView.selectedRow(inComponent: 2) + 1
+            ))
+            
+        } else {
+            self.delegate?.mainCoverDidDetermineSchedule(.overtime(
+                self.overtimePickerView.selectedRow(inComponent: 0) * 60 + overtimePickerView.selectedRow(inComponent: 2)
+            ))
+        }
         
+        UIDevice.lightHaptic()
+        self.dismiss(animated: false, completion: nil)
     }
     
     @objc func overtimeDeclineButton(_ sender: UIButton) {
         self.dismiss(animated: false, completion: nil)
     }
     
-    @objc func startingWorkTimeDatePicker(_ datePicker: UIDatePicker) {
-        
-    }
+//    @objc func startingWorkTimeDatePicker(_ datePicker: UIDatePicker) {
+//
+//    }
     
     @objc func startingWorkTimeConfirmButton(_ sender: UIButton) {
+        self.delegate?.mianCoverDidDetermineStartingWorkTime(self.startingWorkTimeDatePicker.date)
         
+        UIDevice.lightHaptic()
+        self.dismiss(animated: false, completion: nil)
     }
     
     @objc func startingWorkTimeDeclineButton(_ sender: UIButton) {

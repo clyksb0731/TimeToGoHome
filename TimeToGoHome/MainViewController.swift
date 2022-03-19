@@ -1024,7 +1024,7 @@ extension MainViewController {
     @objc func scheduleCellLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
         if let scheduleCell = gesture.view {
             if gesture.state == .began {
-                UIDevice.lightHaptic()
+                UIDevice.heavyHaptic()
                 
                 if scheduleCell.tag == 1 {
                     print("Long Pressed for morning")
@@ -1033,8 +1033,16 @@ extension MainViewController {
                     
                 } else if scheduleCell.tag == 2 {
                     print("Long Pressed for afternoon")
-                    let mainCoverVC = MainCoverViewController(.normalSchedule(self.schedule.afternoon!), delegate: self)
-                    self.present(mainCoverVC, animated: false, completion: nil)
+                    if self.schedule.overtime == nil {
+                        let mainCoverVC = MainCoverViewController(.normalSchedule(self.schedule.afternoon!), delegate: self)
+                        self.present(mainCoverVC, animated: false, completion: nil)
+                        
+                    } else {
+                        let alertVC = UIAlertController(title: "변경 불가", message: "추가 근무가 있어서 변경할 수 없습니다.", preferredStyle: .alert)
+                        let action = UIAlertAction(title: "확인", style: .default)
+                        alertVC.addAction(action)
+                        self.present(alertVC, animated: true)
+                    }
                     
                 } else { // tag 3, overtime
                     print("Long Pressed for overtime")
@@ -1386,6 +1394,11 @@ extension MainViewController: MainCoverDelegate {
     }
     
     func mianCoverDidDetermineStartingWorkTime(_ startingWorkTime: Date) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"
+        dateFormatter.timeZone = .current
+        dateFormatter.locale = Locale(identifier: "ko_KR")
         
+        self.startWorkTimeButton.setTitle(dateFormatter.string(from: startingWorkTime), for: .normal)
     }
 }
