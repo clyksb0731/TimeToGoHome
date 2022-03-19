@@ -925,7 +925,7 @@ extension MainViewController {
     }
     
     @objc func startWorkTimeButton(_ sender: UIButton) {
-        let mainCoverVC = MainCoverViewController(.startingWorkTime(nil)) // FIXME: Temp code
+        let mainCoverVC = MainCoverViewController(.startingWorkTime(nil), delegate: self) // FIXME: Temp code
         self.present(mainCoverVC, animated: false, completion: nil)
     }
     
@@ -1017,7 +1017,7 @@ extension MainViewController {
     @objc func overtimeButton(_ sender: UIButton) {
         print("Overtime Button touched")
         
-        let mainCoverVC = MainCoverViewController(.overtimeSchedule(nil))
+        let mainCoverVC = MainCoverViewController(.overtimeSchedule(nil), delegate: self)
         self.present(mainCoverVC, animated: false, completion: nil)
     }
     
@@ -1028,18 +1028,18 @@ extension MainViewController {
                 
                 if scheduleCell.tag == 1 {
                     print("Long Pressed for morning")
-                    let mainCoverVC = MainCoverViewController(.normalSchedule(self.schedule.morning!))
+                    let mainCoverVC = MainCoverViewController(.normalSchedule(self.schedule.morning!), delegate: self)
                     self.present(mainCoverVC, animated: false, completion: nil)
                     
                 } else if scheduleCell.tag == 2 {
                     print("Long Pressed for afternoon")
-                    let mainCoverVC = MainCoverViewController(.normalSchedule(self.schedule.afternoon!))
+                    let mainCoverVC = MainCoverViewController(.normalSchedule(self.schedule.afternoon!), delegate: self)
                     self.present(mainCoverVC, animated: false, completion: nil)
                     
                 } else { // tag 3, overtime
                     print("Long Pressed for overtime")
                     if case .overtime(let overtimeMinute) = self.schedule.overtime {
-                        let mainCoverVC = MainCoverViewController(.overtimeSchedule(overtimeMinute))
+                        let mainCoverVC = MainCoverViewController(.overtimeSchedule(overtimeMinute), delegate: self)
                         self.present(mainCoverVC, animated: false, completion: nil)
                     }
                 }

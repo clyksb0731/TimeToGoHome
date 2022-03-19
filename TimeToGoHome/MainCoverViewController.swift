@@ -242,14 +242,15 @@ class MainCoverViewController: UIViewController {
     
     var mainCoverType: MainCoverType
     
-    var delegate: MainCoverDelegate?
+    private var delegate: MainCoverDelegate?
     
     var tempMaximumOvertimeHour: Int = 6 // FIXME: Temp variable
     var previousPickerViewHourRowIndex: Int = 0
     var previousPickerViewMinuteRowIndex: Int = 0
     
-    init(_ mainCoverType: MainCoverType) {
+    init(_ mainCoverType: MainCoverType, delegate: MainCoverDelegate?) {
         self.mainCoverType = mainCoverType
+        self.delegate = delegate
         
         super.init(nibName: nil, bundle: nil)
         
@@ -584,15 +585,45 @@ extension MainCoverViewController {
 // MARK: - Extension for Selector methods
 extension MainCoverViewController {
     @objc func workButton(_ sender: UIButton) {
+        if case .normalSchedule(let scheduleType) = self.mainCoverType {
+            if case .morning = scheduleType {
+                self.delegate?.mainCoverDidDetermineSchedule(.morning(.work))
+            }
+            
+            if case .afternoon = scheduleType {
+                self.delegate?.mainCoverDidDetermineSchedule(.afternoon(.work))
+            }
+        }
         
+        self.dismiss(animated: false, completion: nil)
     }
     
     @objc func vacationButton(_ sender: UIButton) {
+        if case .normalSchedule(let scheduleType) = self.mainCoverType {
+            if case .morning = scheduleType {
+                self.delegate?.mainCoverDidDetermineSchedule(.morning(.vacation))
+            }
+            
+            if case .afternoon = scheduleType {
+                self.delegate?.mainCoverDidDetermineSchedule(.afternoon(.vacation))
+            }
+        }
         
+        self.dismiss(animated: false, completion: nil)
     }
     
     @objc func holidayButton(_ sender: UIButton) {
+        if case .normalSchedule(let scheduleType) = self.mainCoverType {
+            if case .morning = scheduleType {
+                self.delegate?.mainCoverDidDetermineSchedule(.morning(.holiday))
+            }
+            
+            if case .afternoon = scheduleType {
+                self.delegate?.mainCoverDidDetermineSchedule(.afternoon(.holiday))
+            }
+        }
         
+        self.dismiss(animated: false, completion: nil)
     }
     
     @objc func closeNormalScheduleButton(_ sender: UIButton) {
