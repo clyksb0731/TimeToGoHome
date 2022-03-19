@@ -330,7 +330,7 @@ extension InitialViewController {
         
         // FIXME: Check calendar init & method creation for this.
         var calendar = Calendar.current
-        calendar.locale = Locale.current
+        calendar.locale = Locale(identifier: "ko_KR")
         calendar.timeZone = TimeZone.current
         
         let today: Date = Date()
@@ -800,7 +800,7 @@ extension InitialViewController {
     @objc func entryDatePicker(_ sender: UIDatePicker) {
         var calendar = Calendar.current
         calendar.timeZone = TimeZone.current
-        calendar.locale = Locale.current
+        calendar.locale = Locale(identifier: "ko_KR")
         
         let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: sender.date)
         

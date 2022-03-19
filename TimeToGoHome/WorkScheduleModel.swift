@@ -45,7 +45,7 @@ struct WorkSchedule {
     init(date: Date) {
         // Make today date id
         let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale.current
+        dateFormatter.locale = Locale(identifier: "ko_KR")
         dateFormatter.timeZone = TimeZone.current
         dateFormatter.dateFormat = "yyyyMMdd"
         self.dateId = dateFormatter.string(from: date)

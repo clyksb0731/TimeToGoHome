@@ -200,7 +200,7 @@ class MainCoverViewController: UIViewController {
         datePicker.preferredDatePickerStyle = .wheels
         datePicker.datePickerMode = .time
         datePicker.timeZone = TimeZone.current
-        datePicker.locale = Locale.current
+        datePicker.locale = Locale(identifier: "ko_KR")
         datePicker.maximumDate = Date()
         datePicker.addTarget(self, action: #selector(startingWorkTimeDatePicker(_:)), for: .valueChanged)
         datePicker.translatesAutoresizingMaskIntoConstraints = false
