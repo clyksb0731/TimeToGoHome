@@ -189,7 +189,7 @@ class MainViewController: UIViewController {
         let view = UIView()
         view.backgroundColor = UIColor.useRGB(red: 120, green: 223, blue: 238)
         view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
-        view.layer.cornerRadius = 2
+        view.layer.cornerRadius = 15
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -229,7 +229,7 @@ class MainViewController: UIViewController {
         let view = UIView()
         view.backgroundColor = UIColor.useRGB(red: 125, green: 243, blue: 110)
         view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
-        view.layer.cornerRadius = 2
+        view.layer.cornerRadius = 15
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -269,7 +269,7 @@ class MainViewController: UIViewController {
         let view = UIView()
         view.backgroundColor = UIColor.useRGB(red: 252, green: 247, blue: 143)
         view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
-        view.layer.cornerRadius = 2
+        view.layer.cornerRadius = 15
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -309,7 +309,7 @@ class MainViewController: UIViewController {
         let view = UIView()
         view.backgroundColor = UIColor.useRGB(red: 239, green: 119, blue: 119)
         view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
-        view.layer.cornerRadius = 2
+        view.layer.cornerRadius = 15
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -920,7 +920,7 @@ extension MainViewController {
     }
     
     @objc func remainingTimeButtonView(_ sender: UIButton) {
-        UIDevice.softHaptic()
+        UIDevice.lightHaptic()
         
         self.remainingTimeButtonView.isSelected = true
         self.progressTimeButtonView.isSelected = false
@@ -930,7 +930,7 @@ extension MainViewController {
     }
     
     @objc func progressTimeButtonView(_ sender: UIButton) {
-        UIDevice.softHaptic()
+        UIDevice.lightHaptic()
         
         self.remainingTimeButtonView.isSelected = false
         self.progressTimeButtonView.isSelected = true
@@ -940,7 +940,7 @@ extension MainViewController {
     }
     
     @objc func progressRateButtonView(_ sender: UIButton) {
-        UIDevice.softHaptic()
+        UIDevice.lightHaptic()
         
         self.remainingTimeButtonView.isSelected = false
         self.progressTimeButtonView.isSelected = false
@@ -975,8 +975,6 @@ extension MainViewController {
     }
     
     @objc func completeChangingScheduleButtonView(_ sender: UIButton) {
-        UIDevice.softHaptic()
-        
         self.schedule.updateToday()
         
         self.isEditingMode = false
@@ -984,7 +982,7 @@ extension MainViewController {
     }
     
     @objc func removeScheduleButton(_ sender: UIButton) {
-        UIDevice.softHaptic()
+        UIDevice.lightHaptic()
         
         self.schedule.removeSchedule(self.schedule.scheduleForOrder(sender.tag))
         
@@ -999,7 +997,7 @@ extension MainViewController {
     
     @objc func workTimeButton(_ sender: UIButton) {
         print("Work Time Button touched")
-        UIDevice.softHaptic()
+        UIDevice.lightHaptic()
         
         guard let newSchedule = self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.work) else {
             return
@@ -1018,7 +1016,7 @@ extension MainViewController {
     
     @objc func vacationTimeButton(_ sender: UIButton) {
         print("Vacation Time Button touched")
-        UIDevice.softHaptic()
+        UIDevice.lightHaptic()
         
         guard let newSchedule = self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.vacation) else {
             return
@@ -1037,7 +1035,7 @@ extension MainViewController {
     
     @objc func holidayButton(_ sender: UIButton) {
         print("Holiday Button touched")
-        UIDevice.softHaptic()
+        UIDevice.lightHaptic()
         
         guard let newSchedule = self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.holiday) else {
             return
@@ -1430,9 +1428,6 @@ extension MainViewController: MainCoverDelegate {
     func mainCoverDidDetermineNormalSchedule(_ scheduleType: ScheduleType) {
         self.schedule.insertSchedule(scheduleType)
         
-        self.determineCompleteChangingScheduleButton()
-        
-        self.calculateTableViewHeight()
         self.scheduleTableView.reloadData()
         
         self.determineScheduleButtonState()
@@ -1445,13 +1440,12 @@ extension MainViewController: MainCoverDelegate {
             
             self.schedule.addSchedule(scheduleType)
             
+            self.calculateTableViewHeight()
+            
         } else {
             self.schedule.insertSchedule(scheduleType)
         }
         
-        self.determineCompleteChangingScheduleButton()
-        
-        self.calculateTableViewHeight()
         self.scheduleTableView.reloadData()
         
         self.determineScheduleButtonState()

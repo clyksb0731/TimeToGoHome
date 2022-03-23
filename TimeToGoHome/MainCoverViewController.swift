@@ -620,7 +620,7 @@ extension MainCoverViewController {
 // MARK: - Extension for Selector methods
 extension MainCoverViewController {
     @objc func workButton(_ sender: UIButton) {
-        UIDevice.softHaptic()
+        UIDevice.lightHaptic()
         
         if case .normalSchedule(let scheduleType) = self.mainCoverType {
             if case .morning = scheduleType {
@@ -636,7 +636,7 @@ extension MainCoverViewController {
     }
     
     @objc func vacationButton(_ sender: UIButton) {
-        UIDevice.softHaptic()
+        UIDevice.lightHaptic()
         
         if case .normalSchedule(let scheduleType) = self.mainCoverType {
             if case .morning = scheduleType {
@@ -652,7 +652,7 @@ extension MainCoverViewController {
     }
     
     @objc func holidayButton(_ sender: UIButton) {
-        UIDevice.softHaptic()
+        UIDevice.lightHaptic()
         
         if case .normalSchedule(let scheduleType) = self.mainCoverType {
             if case .morning = scheduleType {
@@ -672,8 +672,6 @@ extension MainCoverViewController {
     }
     
     @objc func overtimeConfirmButton(_ sender: UIButton) {
-        UIDevice.softHaptic()
-        
         // Calculate overtime minute
         if self.overtimePickerView.selectedRow(inComponent: 0) == 0 {
             self.delegate?.mainCoverDidDetermineOvertimeSchedule(.overtime(
@@ -690,7 +688,13 @@ extension MainCoverViewController {
     }
     
     @objc func overtimeDeclineButton(_ sender: UIButton) {
-        self.dismiss(animated: false)
+        let presentingVC = self.presentingViewController
+        self.dismiss(animated: false) {
+            if let naviVC = presentingVC as? UINavigationController,
+                let mainVC = naviVC.topViewController as? MainViewController {
+                mainVC.isEditingMode = false
+            }
+        }
     }
     
 //    @objc func startingWorkTimeDatePicker(_ datePicker: UIDatePicker) {
@@ -698,8 +702,6 @@ extension MainCoverViewController {
 //    }
     
     @objc func startingWorkTimeConfirmButton(_ sender: UIButton) {
-        UIDevice.softHaptic()
-        
         self.delegate?.mianCoverDidDetermineStartingWorkTime(self.startingWorkTimeDatePicker.date)
         
         self.dismiss(animated: false)
