@@ -140,7 +140,7 @@ extension ScheduleTypeCell {
         // Schedule view layout
         NSLayoutConstraint.activate([
             self.scheduleView.topAnchor.constraint(equalTo: self.baseView.topAnchor),
-            self.scheduleView.bottomAnchor.constraint(equalTo: self.baseView.bottomAnchor, constant: -7),
+            self.scheduleView.bottomAnchor.constraint(equalTo: self.baseView.bottomAnchor, constant: -10),
             self.scheduleView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 5),
             self.scheduleView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -5)
         ])

@@ -30,6 +30,7 @@
 		CAB7CF442750CD01005C9232 /* CompanyDetailedAddressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF432750CD01005C9232 /* CompanyDetailedAddressViewController.swift */; };
 		CAB7CF462750CD66005C9232 /* WorkTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF452750CD66005C9232 /* WorkTypeViewController.swift */; };
 		CAB7CF482750CDCE005C9232 /* DayButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF472750CDCE005C9232 /* DayButtonView.swift */; };
+		CAECA69127ED982C005D7859 /* ScheduleButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAECA69027ED982C005D7859 /* ScheduleButtonView.swift */; };
 		CAFA9F3627B3FCB00088003A /* WhiteButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFA9F3527B3FCB00088003A /* WhiteButtonView.swift */; };
 		CAFD580027DACDFD0027811C /* ScheduleTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFD57FF27DACDFD0027811C /* ScheduleTypeCell.swift */; };
 		CAFD580227DB2D0E0027811C /* SchedulingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFD580127DB2D0E0027811C /* SchedulingCell.swift */; };
@@ -60,6 +61,7 @@
 		CAB7CF432750CD01005C9232 /* CompanyDetailedAddressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyDetailedAddressViewController.swift; sourceTree = "<group>"; };
 		CAB7CF452750CD66005C9232 /* WorkTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkTypeViewController.swift; sourceTree = "<group>"; };
 		CAB7CF472750CDCE005C9232 /* DayButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayButtonView.swift; sourceTree = "<group>"; };
+		CAECA69027ED982C005D7859 /* ScheduleButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleButtonView.swift; sourceTree = "<group>"; };
 		CAFA9F3527B3FCB00088003A /* WhiteButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteButtonView.swift; sourceTree = "<group>"; };
 		CAFD57FF27DACDFD0027811C /* ScheduleTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTypeCell.swift; sourceTree = "<group>"; };
 		CAFD580127DB2D0E0027811C /* SchedulingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulingCell.swift; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 				CAB7CF452750CD66005C9232 /* WorkTypeViewController.swift */,
 				CAB7CF472750CDCE005C9232 /* DayButtonView.swift */,
 				CAB7CF322750B5C7005C9232 /* MainViewController.swift */,
+				CAECA69027ED982C005D7859 /* ScheduleButtonView.swift */,
 				CAFA9F3527B3FCB00088003A /* WhiteButtonView.swift */,
 				CAFD57FF27DACDFD0027811C /* ScheduleTypeCell.swift */,
 				CAFD580127DB2D0E0027811C /* SchedulingCell.swift */,
@@ -208,6 +211,7 @@
 				CAB7CF292750B0FA005C9232 /* LocationManager.swift in Sources */,
 				CAB7CF482750CDCE005C9232 /* DayButtonView.swift in Sources */,
 				CAFD580227DB2D0E0027811C /* SchedulingCell.swift in Sources */,
+				CAECA69127ED982C005D7859 /* ScheduleButtonView.swift in Sources */,
 				CAB7CF2F2750B2FE005C9232 /* TemplateViewController.swift in Sources */,
 				CAB7CF2B2750B146005C9232 /* SupportingMethods.swift in Sources */,
 				CAB7CF312750B5B9005C9232 /* InitialViewController.swift in Sources */,
