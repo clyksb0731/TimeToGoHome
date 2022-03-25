@@ -1351,6 +1351,9 @@ extension ScheduleButtonView {
     func resetView() {
         self.timer?.invalidate()
         
+        self.previousPointX = 0
+        self.isHaptic = false
+        
         for subview in self.subviews {
             subview.removeFromSuperview()
         }
@@ -1439,10 +1442,10 @@ extension ScheduleButtonView {
 // MARK: - Extension for UIScrollViewDelegate
 extension ScheduleButtonView: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print("scrollViewDidScroll: \(scrollView.contentOffset.x)")
+        //print("scrollViewDidScroll: \(scrollView.contentOffset.x)")
         
         let centerXPoint: CGFloat = scrollView.frame.width / 2
-        print("CneterXPoint: \(centerXPoint)")
+        //print("CneterXPoint: \(centerXPoint)")
         
         if scrollView.tag == 1 {
             if self.previousPointX >= 0 && self.previousPointX < centerXPoint {
@@ -1537,31 +1540,31 @@ extension ScheduleButtonView: UIScrollViewDelegate {
     }
     
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        print("scrollViewDidEndScrollingAnimation: \(scrollView.contentOffset.x)")
+        //print("scrollViewDidEndScrollingAnimation: \(scrollView.contentOffset.x)")
     }
     
     func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
-        print("scrollViewWillBeginDecelerating: \(scrollView.contentOffset.x)")
+        //print("scrollViewWillBeginDecelerating: \(scrollView.contentOffset.x)")
     }
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        print("scrollViewDidEndDecelerating: \(scrollView.contentOffset.x)")
+        //print("scrollViewDidEndDecelerating: \(scrollView.contentOffset.x)")
         
         self.isHaptic = false
     }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        print("scrollViewWillBeginDragging: \(scrollView.contentOffset.x)")
+        //print("scrollViewWillBeginDragging: \(scrollView.contentOffset.x)")
         
         self.previousPointX = scrollView.contentOffset.x
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if decelerate {
-            print("scrollViewDidEndDragging willDecelerate: \(scrollView.contentOffset.x)")
+            //print("scrollViewDidEndDragging willDecelerate: \(scrollView.contentOffset.x)")
             
         } else {
-            print("scrollViewDidEndDragging willNotDecelerate: \(scrollView.contentOffset.x)")
+            //print("scrollViewDidEndDragging willNotDecelerate: \(scrollView.contentOffset.x)")
         }
     }
 }
