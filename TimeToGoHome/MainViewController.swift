@@ -645,7 +645,7 @@ extension MainViewController {
         // Schedule table view layout
         self.scheduleTableViewHeightAnchor = self.scheduleTableView.heightAnchor.constraint(equalToConstant: 2 * self.workScheduleViewHeight + self.overWorkScheduleViewHeight)
         NSLayoutConstraint.activate([
-            self.scheduleTableView.topAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: 7),
+            self.scheduleTableView.topAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: 10),
             self.scheduleTableViewHeightAnchor,
             self.scheduleTableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             self.scheduleTableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
@@ -1423,7 +1423,84 @@ extension MainViewController: UIScrollViewDelegate {
     }
 }
 
-// MARK: Extension for MainCoverDelegate
+// MARK: - Extension for ScheduleButtonViewDelegate
+extension MainViewController: ScheduleButtonViewDelegate {
+    func scheduleButtonViewDidTouched(_ type: ScheduleButtonViewType) {
+        switch type {
+        case .threeSchedules(let workType):
+            if let workType = workType {
+                switch workType {
+                case .work:
+                    print("")
+                    
+                case .vacation:
+                    print("")
+                    
+                case .holiday:
+                    print("")
+                }
+            }
+            
+        case .twoScheduleForVacation(let workType):
+            if let workType = workType {
+                switch workType {
+                case .work:
+                    print("")
+                    
+                case .vacation:
+                    print("")
+                }
+            }
+            
+        case .twoScheduleForHoliday(let workType):
+            if let workType = workType {
+                switch workType {
+                case .work:
+                    print("")
+                    
+                case .holiday:
+                    print("")
+                }
+            }
+            
+        case .addOvertime:
+            print("")
+            
+        case .addOvertimeOrFinishWork(let overtimeOrFinish):
+            if let overtimeOrFinish = overtimeOrFinish {
+                switch overtimeOrFinish {
+                case .overtime(let date):
+                    print("")
+                    
+                case .finishWork:
+                    print("")
+                }
+            }
+            
+        case .replaceOvertimeOrFinishWork(let overtimeOrFinish):
+            if let overtimeOrFinish = overtimeOrFinish {
+                switch overtimeOrFinish {
+                case .overtime(let date):
+                    print("")
+                    
+                case .finishWork:
+                    print("")
+                }
+            }
+            
+        case .finishWorkWithOvertime(let date):
+            print("")
+            
+        case .finishWork:
+            print("")
+            
+        case .workFinished:
+            print("Nothing happen")
+        }
+    }
+}
+
+// MARK: - Extension for MainCoverDelegate
 extension MainViewController: MainCoverDelegate {
     func mainCoverDidDetermineNormalSchedule(_ scheduleType: ScheduleType) {
         self.schedule.insertSchedule(scheduleType)

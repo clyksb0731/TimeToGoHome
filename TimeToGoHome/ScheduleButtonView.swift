@@ -24,12 +24,12 @@ enum TwoScheduleForHolidayType {
 }
 
 enum AddOvertimeOrFinishWorkType {
-    case overtime
+    case overtime(Date)
     case finishWork
 }
 
 enum ReplaceOvertimeOrFinishWorkType {
-    case overtime
+    case overtime(Date)
     case finishWork
 }
 
@@ -40,7 +40,7 @@ enum ScheduleButtonViewType {
     case addOvertime
     case addOvertimeOrFinishWork(AddOvertimeOrFinishWorkType?)
     case replaceOvertimeOrFinishWork(ReplaceOvertimeOrFinishWorkType?)
-    case finishWorkWithOvertime
+    case finishWorkWithOvertime(Date)
     case finishWork
     case workFinished
 }
@@ -1392,7 +1392,8 @@ extension ScheduleButtonView {
     
     // addOvertimeOrFinishWork
     @objc func addOvertimeOrFinishWorkOvertimeButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonViewDidTouched(.addOvertimeOrFinishWork(.overtime))
+        // FIXME: Temp date
+        self.delegate?.scheduleButtonViewDidTouched(.addOvertimeOrFinishWork(.overtime(Date())))
     }
     
     @objc func addOvertimeOrFinishWorkFinishWorkButton(_ sender: UIButton) {
@@ -1401,7 +1402,8 @@ extension ScheduleButtonView {
     
     // replaceOvertimeOrFinishWork
     @objc func replaceOvertimeOrFinishWorkOvertimeButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonViewDidTouched(.replaceOvertimeOrFinishWork(.overtime))
+        // FIXME: Temp date
+        self.delegate?.scheduleButtonViewDidTouched(.replaceOvertimeOrFinishWork(.overtime(Date())))
     }
     
     @objc func replaceOvertimeOrFinishWorkFinishWorkButton(_ sender: UIButton) {
@@ -1410,7 +1412,8 @@ extension ScheduleButtonView {
     
     // finishWorkWithOvertime
     @objc func finishWorkWithOvertimeButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonViewDidTouched(.finishWorkWithOvertime)
+        // FIXME: Temp date
+        self.delegate?.scheduleButtonViewDidTouched(.finishWorkWithOvertime(Date()))
     }
     
     // finishWork
