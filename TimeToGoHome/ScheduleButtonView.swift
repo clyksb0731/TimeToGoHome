@@ -40,7 +40,7 @@ enum ScheduleButtonViewType {
     case addOvertime
     case addOvertimeOrFinishWork(AddOvertimeOrFinishWorkType?)
     case replaceOvertimeOrFinishWork(ReplaceOvertimeOrFinishWorkType?)
-    case finishWorkWithOvertime(Date)
+    case finishWorkWithOvertime(Date?)
     case finishWork
     case workFinished
 }
@@ -56,7 +56,7 @@ extension ScheduleButtonViewDelegate {
 class ScheduleButtonView: UIView {
     weak var pageControl: UIPageControl!
     
-    var scheduleButtonViewType: ScheduleButtonViewType = .threeSchedules(nil) {
+    var buttonViewType: ScheduleButtonViewType = .threeSchedules(nil) {
         didSet {
             self.resetView()
             self.initializeViews()
@@ -73,7 +73,7 @@ class ScheduleButtonView: UIView {
     var previousPointX: CGFloat = 0
     var isHaptic: Bool = false
 
-    init(width: CGFloat, with schedule: WorkSchedule? = nil) {
+    init(width: CGFloat, schedule: WorkSchedule? = nil) {
         self.width = width
         self.schedule = schedule
         
@@ -97,7 +97,7 @@ extension ScheduleButtonView {
     
     // MARK: Initialize views with ScheduleButtonViewType
     func initializeViews() {
-        switch self.scheduleButtonViewType {
+        switch self.buttonViewType {
         case .threeSchedules:
             self.initializeThreeSchedules()
             
@@ -132,7 +132,7 @@ extension ScheduleButtonView {
 extension ScheduleButtonView {
     func initializeThreeSchedules() {
         // MARK: Initialize
-        self.pageControl = {
+        let pageControl: UIPageControl = {
             let pageControl = UIPageControl()
             pageControl.currentPage = 0
             pageControl.currentPageIndicatorTintColor = .black
@@ -144,6 +144,7 @@ extension ScheduleButtonView {
             
             return pageControl
         }()
+        self.pageControl = pageControl
         
         let scrollView:UIScrollView = {
             let scrollView = UIScrollView()
@@ -442,7 +443,7 @@ extension ScheduleButtonView {
     
     func initializeTwoScheduleForVacation() {
         // MARK: Initialize
-        self.pageControl = {
+        let pageControl: UIPageControl = {
             let pageControl = UIPageControl()
             pageControl.currentPage = 0
             pageControl.currentPageIndicatorTintColor = .black
@@ -454,6 +455,7 @@ extension ScheduleButtonView {
             
             return pageControl
         }()
+        self.pageControl = pageControl
         
         let scrollView:UIScrollView = {
             let scrollView = UIScrollView()
@@ -673,24 +675,25 @@ extension ScheduleButtonView {
     
     func initializeTwoScheduleForHoliday() {
         // MARK: Initialize
-        self.pageControl = {
+        let pageControl: UIPageControl = {
             let pageControl = UIPageControl()
             pageControl.currentPage = 0
             pageControl.currentPageIndicatorTintColor = .black
             pageControl.pageIndicatorTintColor = .gray
             pageControl.hidesForSinglePage = true
-            pageControl.numberOfPages = 3
+            pageControl.numberOfPages = 2
             pageControl.isEnabled = false
             pageControl.translatesAutoresizingMaskIntoConstraints = false
             
             return pageControl
         }()
+        self.pageControl = pageControl
         
         let scrollView:UIScrollView = {
             let scrollView = UIScrollView()
             scrollView.tag = 2
             scrollView.bounces = false
-            scrollView.contentSize = CGSize(width: self.width * 3, height: 75) // height: due to button's shadow
+            scrollView.contentSize = CGSize(width: self.width * 2, height: 75) // height: due to button's shadow
             scrollView.isPagingEnabled = true
             scrollView.showsVerticalScrollIndicator = false
             scrollView.showsHorizontalScrollIndicator = false
@@ -1066,6 +1069,7 @@ extension ScheduleButtonView {
         SupportingMethods.shared.addSubviews([
             addOvertimeButtonImageView,
             overtimeButtonViewLabel,
+            overtimeLabel,
             overtimeButton
         ], to: overtimeButtonView)
         
@@ -1199,6 +1203,7 @@ extension ScheduleButtonView {
         SupportingMethods.shared.addSubviews([
             addOvertimeButtonImageView,
             overtimeButtonViewLabel,
+            overtimeLabel,
             overtimeButton
         ], to: overtimeButtonView)
         
@@ -1364,7 +1369,7 @@ extension ScheduleButtonView {
     }
     
     @objc func threeSchedulesHolidayButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonViewDidTouched(.threeSchedules(.vacation))
+        self.delegate?.scheduleButtonViewDidTouched(.threeSchedules(.holiday))
     }
     
     // twoScheduleForVacation

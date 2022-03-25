@@ -458,10 +458,10 @@ extension MainViewController {
         self.navigationController?.navigationBar.isTranslucent = true
         
         self.navigationItem.title = "Work Schedule"
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "menuBarButton"), style: .plain, target: self, action: #selector(leftBarButtonItem(_:)))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "menuBarButton"), style: .plain, target: self, action: #selector(menuBarButtonItem(_:)))
         self.navigationItem.leftBarButtonItem?.tintColor = UIColor.useRGB(red: 151, green: 151, blue: 151)
         
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "settingBarButton"), style: .plain, target: self, action: #selector(rightBarButtonItem(_:)))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "settingBarButton"), style: .plain, target: self, action: #selector(settingBarButtonItem(_:)))
         self.navigationItem.rightBarButtonItem?.tintColor = .black
         
         // Table view height
@@ -911,12 +911,16 @@ extension MainViewController {
 
 // MARK: - Extension for Selector methods
 extension MainViewController {
-    @objc func leftBarButtonItem(_ sender: UIBarButtonItem) {
-        // left bar button
+    @objc func menuBarButtonItem(_ sender: UIBarButtonItem) {
+        
     }
     
-    @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
-        // right bar button
+    @objc func settingBarButtonItem(_ sender: UIBarButtonItem) {
+        // FIXME: Temp
+        let vc = TestViewController()
+        vc.modalPresentationStyle = .fullScreen
+        
+        self.present(vc, animated: true)
     }
     
     @objc func remainingTimeButtonView(_ sender: UIButton) {
@@ -1489,7 +1493,9 @@ extension MainViewController: ScheduleButtonViewDelegate {
             }
             
         case .finishWorkWithOvertime(let date):
-            print("")
+            if let date = date {
+                print("")
+            }
             
         case .finishWork:
             print("")
