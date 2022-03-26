@@ -579,11 +579,7 @@ extension MainViewController {
     }
     
     @objc func settingBarButtonItem(_ sender: UIBarButtonItem) {
-        // FIXME: Temp
-        let vc = TestViewController()
-        vc.modalPresentationStyle = .fullScreen
         
-        self.present(vc, animated: true)
     }
     
     @objc func remainingTimeButtonView(_ sender: UIButton) {
@@ -662,72 +658,72 @@ extension MainViewController {
         self.determineStartingWorkTimeButton()
     }
     
-    @objc func workTimeButton(_ sender: UIButton) {
-        print("Work Time Button touched")
-        UIDevice.lightHaptic()
-        
-        guard let newSchedule = self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.work) else {
-            return
-        }
-           
-        self.schedule.addSchedule(newSchedule)
-        
-        self.determineCompleteChangingScheduleButton()
-        
-        self.calculateTableViewHeight()
-        self.scheduleTableView.reloadData()
-        
-        self.determineScheduleButtonState()
-        self.determineStartingWorkTimeButton()
-    }
-    
-    @objc func vacationTimeButton(_ sender: UIButton) {
-        print("Vacation Time Button touched")
-        UIDevice.lightHaptic()
-        
-        guard let newSchedule = self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.vacation) else {
-            return
-        }
-           
-        self.schedule.addSchedule(newSchedule)
-        
-        self.determineCompleteChangingScheduleButton()
-        
-        self.calculateTableViewHeight()
-        self.scheduleTableView.reloadData()
-        
-        self.determineScheduleButtonState()
-        self.determineStartingWorkTimeButton()
-    }
-    
-    @objc func holidayButton(_ sender: UIButton) {
-        print("Holiday Button touched")
-        UIDevice.lightHaptic()
-        
-        guard let newSchedule = self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.holiday) else {
-            return
-        }
-        
-        self.schedule.addSchedule(newSchedule)
-        
-        self.determineCompleteChangingScheduleButton()
-        
-        self.calculateTableViewHeight()
-        self.scheduleTableView.reloadData()
-        
-        self.determineScheduleButtonState()
-        self.determineStartingWorkTimeButton()
-    }
-    
-    @objc func overtimeButton(_ sender: UIButton) {
-        print("Overtime Button touched")
-        UIDevice.softHaptic()
-        
-        let mainCoverVC = MainCoverViewController(.overtimeSchedule(nil, self.isEditingMode), delegate: self)
-        self.present(mainCoverVC, animated: false) {
-            self.isEditingMode = true
-        }
-    }
+//    @objc func workTimeButton(_ sender: UIButton) {
+//        print("Work Time Button touched")
+//        UIDevice.lightHaptic()
+//
+//        guard let newSchedule = self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.work) else {
+//            return
+//        }
+//
+//        self.schedule.addSchedule(newSchedule)
+//
+//        self.determineCompleteChangingScheduleButton()
+//
+//        self.calculateTableViewHeight()
+//        self.scheduleTableView.reloadData()
+//
+//        self.determineScheduleButtonState()
+//        self.determineStartingWorkTimeButton()
+//    }
+//
+//    @objc func vacationTimeButton(_ sender: UIButton) {
+//        print("Vacation Time Button touched")
+//        UIDevice.lightHaptic()
+//
+//        guard let newSchedule = self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.vacation) else {
+//            return
+//        }
+//
+//        self.schedule.addSchedule(newSchedule)
+//
+//        self.determineCompleteChangingScheduleButton()
+//
+//        self.calculateTableViewHeight()
+//        self.scheduleTableView.reloadData()
+//
+//        self.determineScheduleButtonState()
+//        self.determineStartingWorkTimeButton()
+//    }
+//
+//    @objc func holidayButton(_ sender: UIButton) {
+//        print("Holiday Button touched")
+//        UIDevice.lightHaptic()
+//
+//        guard let newSchedule = self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.holiday) else {
+//            return
+//        }
+//
+//        self.schedule.addSchedule(newSchedule)
+//
+//        self.determineCompleteChangingScheduleButton()
+//
+//        self.calculateTableViewHeight()
+//        self.scheduleTableView.reloadData()
+//
+//        self.determineScheduleButtonState()
+//        self.determineStartingWorkTimeButton()
+//    }
+//
+//    @objc func overtimeButton(_ sender: UIButton) {
+//        print("Overtime Button touched")
+//        UIDevice.softHaptic()
+//
+//        let mainCoverVC = MainCoverViewController(.overtimeSchedule(nil, self.isEditingMode), delegate: self)
+//        self.present(mainCoverVC, animated: false) {
+//            self.isEditingMode = true
+//        }
+//    }
     
     @objc func scheduleCellLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
         if let scheduleCell = gesture.view {
