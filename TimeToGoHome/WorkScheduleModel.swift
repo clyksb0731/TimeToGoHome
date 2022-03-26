@@ -8,9 +8,9 @@
 import Foundation
 
 enum WorkType: String {
-    case holiday = "holiday"
     case work = "work"
     case vacation = "vacation"
+    case holiday = "holiday"
 }
 
 enum ScheduleType {

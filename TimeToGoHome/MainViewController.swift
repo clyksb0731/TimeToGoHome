@@ -181,6 +181,7 @@ class MainViewController: UIViewController {
     
     var schedule: WorkSchedule = WorkSchedule.today
     var tempSchedule: WorkSchedule?
+    var isFinishedScheduleToday: Bool = false
     
     let secondsOfOneHour: Int = 3600
     let secondsOfFourHours: Int = 3600 * 4
@@ -194,13 +195,13 @@ class MainViewController: UIViewController {
             if self.isEditingMode != oldValue {
                 self.schedule.isEditingMode = self.isEditingMode
                 
-                self.determineCompleteChangingScheduleButton()
+                self.determineCompleteChangingScheduleButton(for: self.schedule)
                 
-                self.calculateTableViewHeight()
+                self.calculateTableViewHeight(for: self.schedule)
                 self.scheduleTableView.reloadData()
                 
-                self.determineScheduleButtonState()
-                self.determineStartingWorkTimeButton()
+                self.determineScheduleButtonState(for: self.schedule)
+                self.determineStartingWorkTimeButton(for: self.schedule)
                 
                 self.changeScheduleDescriptionLabel.isHidden = self.isEditingMode
             }
@@ -225,8 +226,8 @@ class MainViewController: UIViewController {
         super.viewWillAppear(animated)
         
         self.setViewFoundation()
-        self.determineScheduleButtonState()
-        self.determineStartingWorkTimeButton()
+        self.determineScheduleButtonState(for: self.schedule)
+        self.determineStartingWorkTimeButton(for: self.schedule)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -282,7 +283,7 @@ extension MainViewController {
         self.navigationItem.rightBarButtonItem?.tintColor = .black
         
         // Table view height
-        self.calculateTableViewHeight()
+        self.calculateTableViewHeight(for: self.schedule)
     }
     
     // Initialize views
@@ -450,18 +451,18 @@ extension MainViewController {
 
 // MARK: - Extension for methods added
 extension MainViewController {
-    func calculateTableViewHeight() {
-        if self.schedule.count == 0 {
+    func calculateTableViewHeight(for schedule: WorkSchedule) {
+        if schedule.count == 0 {
             self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight
         }
         
-        if self.schedule.count == 1 {
+        if schedule.count == 1 {
             self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2
         }
         
-        if self.schedule.count == 2 {
+        if schedule.count == 2 {
             if self.isEditingMode {
-                if case .afternoon(let workType) = self.schedule.afternoon {
+                if case .afternoon(let workType) = schedule.afternoon {
                     switch workType {
                     case .holiday:
                         self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2
@@ -479,38 +480,97 @@ extension MainViewController {
             }
         }
         
-        if self.schedule.count == 3 {
+        if schedule.count == 3 {
             self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2 + self.overWorkScheduleViewHeight
         }
     }
     
-    func determineScheduleButtonState() {
+    func determineScheduleButtonState(for schedule: WorkSchedule) {
+        let currentTimeSeconds = Int(CFAbsoluteTimeGetCurrent())
+        
         if self.isEditingMode {
-            if self.schedule.count > 2 {
+            if schedule.count > 2 { // 3
                 self.scheduleButtonView.setScheduleButtonViewType(.noButton)
                 
-            } else if self.schedule.count == 2 {
+            } else if schedule.count == 2 {
+                if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+                    self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
+                    
+                } else {
+                    self.scheduleButtonView.setScheduleButtonViewType(.noButton)
+                }
                 
+            } else if schedule.count == 1 {
+                if case .morning(let workType) = schedule.morning {
+                    switch workType {
+                    case .work:
+                        self.scheduleButtonView.setScheduleButtonViewType(.threeSchedules(nil))
+                        
+                    case .vacation:
+                        self.scheduleButtonView.setScheduleButtonViewType(.twoScheduleForVacation(nil))
+                        
+                    case .holiday:
+                        self.scheduleButtonView.setScheduleButtonViewType(.twoScheduleForHoliday(nil))
+                    }
+                }
                 
-            } else if self.schedule.count == 1 {
-                
-                
-            } else {
-                
+            } else { // 0
+                self.scheduleButtonView.setScheduleButtonViewType(.threeSchedules(nil))
             }
             
         } else {
-            if self.schedule.count > 2 {
-                
-                
-            } else if self.schedule.count == 2 {
-                
-                
-            } else if self.schedule.count == 1 {
-                
+            if self.isFinishedScheduleToday {
+                self.scheduleButtonView.setScheduleButtonViewType(.workFinished)
                 
             } else {
-                
+                if schedule.count > 2 { // 3
+                    if case .overtime(let overtime) = schedule.overtime {
+                        let regularWorkSeconds = self.whenIsRegularWorkFinish(for: schedule)!
+                        if currentTimeSeconds <= regularWorkSeconds {
+                            self.scheduleButtonView.setScheduleButtonViewType(.noButton)
+                            
+                        } else if currentTimeSeconds > regularWorkSeconds &&
+                            currentTimeSeconds <= Int(overtime.timeIntervalSinceReferenceDate) { // in overtime
+                            self.scheduleButtonView.setScheduleButtonViewType(.finishWorkWithOvertime(nil))
+                            
+                        } else { // after overtime
+                            self.scheduleButtonView.setScheduleButtonViewType(.replaceOvertimeOrFinishWork(nil))
+                        }
+                    }
+                    
+                } else { // 2
+                    if case .morning(let workType) = schedule.morning, case .work = workType,
+                       case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+                        let regularWorkSeconds = self.whenIsRegularWorkFinish(for: schedule)!
+                        if regularWorkSeconds >= currentTimeSeconds { // before overtime
+                            self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
+                            
+                        } else {
+                            self.scheduleButtonView.setScheduleButtonViewType(.addOvertimeOrFinishWork(nil))
+                        }
+                        
+                    } else if case .morning(let workType) = schedule.morning, case .work = workType {
+                        let regularWorkSeconds = self.whenIsRegularWorkFinish(for: schedule)!
+                        if regularWorkSeconds >= currentTimeSeconds { // before overtime
+                            self.scheduleButtonView.setScheduleButtonViewType(.noButton)
+                            
+                        } else {
+                            self.scheduleButtonView.setScheduleButtonViewType(.finishWork)
+                        }
+                        
+                    } else if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+                        let regularWorkSeconds = self.whenIsRegularWorkFinish(for: schedule)!
+                        if regularWorkSeconds >= currentTimeSeconds { // before overtime
+                            self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
+                            
+                        } else {
+                            self.scheduleButtonView.setScheduleButtonViewType(.addOvertimeOrFinishWork(nil))
+                        }
+                        
+                    } else {
+                        self.scheduleButtonView.setScheduleButtonViewType(.noButton)
+                    }
+                }
             }
         }
         
@@ -551,8 +611,8 @@ extension MainViewController {
 //        }
     }
     
-    func determineCompleteChangingScheduleButton() {
-        if self.schedule.count < 2 {
+    func determineCompleteChangingScheduleButton(for schedule: WorkSchedule) {
+        if schedule.count < 2 {
             self.completeChangingScheduleButtonView.isEnadble = false
             
         } else {
@@ -560,7 +620,7 @@ extension MainViewController {
         }
     }
     
-    func determineStartingWorkTimeButton() {
+    func determineStartingWorkTimeButton(for schedule: WorkSchedule) {
         if let startingWorkingTime = self.schedule.startingWorkTime {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "HH:mm"
@@ -570,8 +630,30 @@ extension MainViewController {
             self.startWorkingTimeButton.setTitle(dateFormatter.string(from: startingWorkingTime), for: .normal)
         }
         
-        self.startWorkingTimeMarkLabel.isHidden = !self.schedule.isAvailableToWork
-        self.startWorkingTimeButton.isHidden = !self.schedule.isAvailableToWork
+        self.startWorkingTimeMarkLabel.isHidden = !schedule.isAvailableToWork
+        self.startWorkingTimeButton.isHidden = !schedule.isAvailableToWork
+    }
+    
+    func whenIsRegularWorkFinish(for schedule: WorkSchedule) -> Int? {
+        guard let startingWorkTime = schedule.startingWorkTime else {
+            return nil
+        }
+        
+        let startingWorkTimeSeconds = Int(startingWorkTime.timeIntervalSinceReferenceDate)
+        
+        if case .morning(let workType) = schedule.morning, case .work = workType,
+           case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+            return startingWorkTimeSeconds + self.secondsOfFourHours + 3600 + self.secondsOfOneHour + self.secondsOfFourHours
+            
+        } else if case .morning(let workType) = schedule.morning, case .work = workType {
+            return startingWorkTimeSeconds + self.secondsOfFourHours
+            
+        } else if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+            return startingWorkTimeSeconds + self.secondsOfFourHours
+            
+        } else {
+            return nil
+        }
     }
 }
 
@@ -652,13 +734,13 @@ extension MainViewController {
         
         self.schedule.removeSchedule(self.schedule.scheduleForOrder(sender.tag))
         
-        self.determineCompleteChangingScheduleButton()
+        self.determineCompleteChangingScheduleButton(for: self.schedule)
         
-        self.calculateTableViewHeight()
+        self.calculateTableViewHeight(for: self.schedule)
         self.scheduleTableView.reloadData()
         
-        self.determineScheduleButtonState()
-        self.determineStartingWorkTimeButton()
+        self.determineScheduleButtonState(for: self.schedule)
+        self.determineStartingWorkTimeButton(for: self.schedule)
     }
     
 //    @objc func workTimeButton(_ sender: UIButton) {
@@ -1080,8 +1162,8 @@ extension MainViewController: MainCoverDelegate {
         
         self.scheduleTableView.reloadData()
         
-        self.determineScheduleButtonState()
-        self.determineStartingWorkTimeButton()
+        self.determineScheduleButtonState(for: self.schedule)
+        self.determineStartingWorkTimeButton(for: self.schedule)
     }
     
     func mainCoverDidDetermineOvertimeSchedule(_ scheduleType: ScheduleType, isEditingModeBeforPresenting: Bool!) {
@@ -1090,7 +1172,7 @@ extension MainViewController: MainCoverDelegate {
             
             self.schedule.addSchedule(scheduleType)
             
-            self.calculateTableViewHeight()
+            self.calculateTableViewHeight(for: self.schedule)
             
         } else {
             self.schedule.insertSchedule(scheduleType)
@@ -1098,13 +1180,13 @@ extension MainViewController: MainCoverDelegate {
         
         self.scheduleTableView.reloadData()
         
-        self.determineScheduleButtonState()
-        self.determineStartingWorkTimeButton()
+        self.determineScheduleButtonState(for: self.schedule)
+        self.determineStartingWorkTimeButton(for: self.schedule)
     }
     
     func mianCoverDidDetermineStartingWorkTime(_ startingWorkTime: Date) {
         self.schedule.updateStartingWorkTime(startingWorkTime)
         
-        self.determineStartingWorkTimeButton()
+        self.determineStartingWorkTimeButton(for: self.schedule)
     }
 }
