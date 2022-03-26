@@ -43,28 +43,24 @@ enum ScheduleButtonViewType {
     case finishWorkWithOvertime(Date?)
     case finishWork
     case workFinished
+    case noButton
 }
 
 protocol ScheduleButtonViewDelegate {
-    func scheduleButtonViewDidTouched(_ type: ScheduleButtonViewType)
+    func scheduleButtonView(_ scheduleButtonView: ScheduleButtonView, of type: ScheduleButtonViewType)
 }
 
 extension ScheduleButtonViewDelegate {
-    func scheduleButtonViewDidTouched(_ type: ScheduleButtonViewType) { }
+    func scheduleButtonView(_ scheduleButtonView: ScheduleButtonView, of type: ScheduleButtonViewType) { }
 }
 
 class ScheduleButtonView: UIView {
     weak var pageControl: UIPageControl!
     
-    var buttonViewType: ScheduleButtonViewType = .threeSchedules(nil) {
-        didSet {
-            self.resetView()
-            self.initializeViews()
-        }
-    }
+    var buttonViewType: ScheduleButtonViewType = .addOvertime
     
-    var width: CGFloat
-    var schedule: WorkSchedule?
+    private(set) var width: CGFloat
+    private(set) var schedule: WorkSchedule?
     
     var delegate: ScheduleButtonViewDelegate?
     
@@ -90,7 +86,17 @@ class ScheduleButtonView: UIView {
 
 // MARK: - Extension for essential methods
 extension ScheduleButtonView {
-    // Set view foundation
+    // MARK: Set schedule button view type
+    func setScheduleButtonViewType(_ buttonViewType: ScheduleButtonViewType,
+                                   with schedule: WorkSchedule? = nil) {
+        self.schedule = schedule
+        self.buttonViewType = buttonViewType
+        
+        self.resetView()
+        self.initializeViews()
+    }
+    
+    // MARK: Set view foundation
     func setViewFoundation() {
         self.backgroundColor = .white
     }
@@ -124,6 +130,9 @@ extension ScheduleButtonView {
             
         case .workFinished:
             self.initializeWorkFinished()
+            
+        case .noButton:
+            self.initializeNoButton()
         }
     }
 }
@@ -1348,6 +1357,14 @@ extension ScheduleButtonView {
         ])
     }
     
+    func initializeNoButton() {
+        // MARK: Initialize
+        
+        // MARK: Subviews
+        
+        // MARK: Layouts
+    }
+    
     func resetView() {
         self.timer?.invalidate()
         
@@ -1364,69 +1381,69 @@ extension ScheduleButtonView {
 extension ScheduleButtonView {
     // threeSchedules
     @objc func threeSchedulesWorkTimeButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonViewDidTouched(.threeSchedules(.work))
+        self.delegate?.scheduleButtonView(self, of: .threeSchedules(.work))
     }
     
     @objc func threeSchedulesVacationButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonViewDidTouched(.threeSchedules(.vacation))
+        self.delegate?.scheduleButtonView(self, of: .threeSchedules(.vacation))
     }
     
     @objc func threeSchedulesHolidayButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonViewDidTouched(.threeSchedules(.holiday))
+        self.delegate?.scheduleButtonView(self, of: .threeSchedules(.holiday))
     }
     
     // twoScheduleForVacation
     @objc func twoScheduleForVacationWorkTimeButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonViewDidTouched(.twoScheduleForVacation(.work))
+        self.delegate?.scheduleButtonView(self, of: .twoScheduleForVacation(.work))
     }
     
     @objc func twoScheduleForVacationVacationButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonViewDidTouched(.twoScheduleForVacation(.vacation))
+        self.delegate?.scheduleButtonView(self, of: .twoScheduleForVacation(.vacation))
     }
     
     // twoScheduleForHoliday
     @objc func twoScheduleForHolidayWorkTimeButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonViewDidTouched(.twoScheduleForHoliday(.work))
+        self.delegate?.scheduleButtonView(self, of: .twoScheduleForHoliday(.work))
     }
     
     @objc func twoScheduleForHolidayHolidayButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonViewDidTouched(.twoScheduleForHoliday(.holiday))
+        self.delegate?.scheduleButtonView(self, of: .twoScheduleForHoliday(.holiday))
     }
     
     // addOvertime
     @objc func addOvertimeButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonViewDidTouched(.addOvertime)
+        self.delegate?.scheduleButtonView(self, of: .addOvertime)
     }
     
     // addOvertimeOrFinishWork
     @objc func addOvertimeOrFinishWorkOvertimeButton(_ sender: UIButton) {
         // FIXME: Temp date
-        self.delegate?.scheduleButtonViewDidTouched(.addOvertimeOrFinishWork(.overtime(Date())))
+        self.delegate?.scheduleButtonView(self, of: .addOvertimeOrFinishWork(.overtime(Date())))
     }
     
     @objc func addOvertimeOrFinishWorkFinishWorkButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonViewDidTouched(.addOvertimeOrFinishWork(.finishWork))
+        self.delegate?.scheduleButtonView(self, of: .addOvertimeOrFinishWork(.finishWork))
     }
     
     // replaceOvertimeOrFinishWork
     @objc func replaceOvertimeOrFinishWorkOvertimeButton(_ sender: UIButton) {
         // FIXME: Temp date
-        self.delegate?.scheduleButtonViewDidTouched(.replaceOvertimeOrFinishWork(.overtime(Date())))
+        self.delegate?.scheduleButtonView(self, of: .replaceOvertimeOrFinishWork(.overtime(Date())))
     }
     
     @objc func replaceOvertimeOrFinishWorkFinishWorkButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonViewDidTouched(.replaceOvertimeOrFinishWork(.finishWork))
+        self.delegate?.scheduleButtonView(self, of: .replaceOvertimeOrFinishWork(.finishWork))
     }
     
     // finishWorkWithOvertime
     @objc func finishWorkWithOvertimeButton(_ sender: UIButton) {
         // FIXME: Temp date
-        self.delegate?.scheduleButtonViewDidTouched(.finishWorkWithOvertime(Date()))
+        self.delegate?.scheduleButtonView(self, of: .finishWorkWithOvertime(Date()))
     }
     
     // finishWork
     @objc func finishWorkButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonViewDidTouched(.finishWork)
+        self.delegate?.scheduleButtonView(self, of: .finishWork)
     }
     
     // timer

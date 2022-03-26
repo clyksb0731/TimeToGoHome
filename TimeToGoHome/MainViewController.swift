@@ -165,198 +165,12 @@ class MainViewController: UIViewController {
         return label
     }()
     
-    lazy var buttonsScrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.bounces = false
-        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width * 3, height: 75) // due to button's shadow
-        scrollView.isPagingEnabled = true
-        scrollView.showsVerticalScrollIndicator = false
-        scrollView.showsHorizontalScrollIndicator = false
-        scrollView.delegate = self
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
+    lazy var scheduleButtonView: ScheduleButtonView = {
+        let buttonView = ScheduleButtonView(width: UIScreen.main.bounds.width, schedule: self.schedule)
+        buttonView.delegate = self
+        buttonView.translatesAutoresizingMaskIntoConstraints = false
         
-        return scrollView
-    }()
-    
-    lazy var contentView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
-    }()
-    
-    lazy var vacationTimeButtonView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 120, green: 223, blue: 238)
-        view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
-        view.layer.cornerRadius = 15
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
-    }()
-    
-    lazy var addvacationTimeButtonImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "addScheduleWhiteButtonImage"))
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        return imageView
-    }()
-    
-    lazy var vacationTimeButtonViewLabel: UILabel = {
-        let label = UILabel()
-        label.layer.cornerRadius = 7
-        label.layer.borderColor = UIColor.white.cgColor
-        label.layer.borderWidth = 1
-        label.font = .systemFont(ofSize: 10)
-        label.textColor = .white
-        label.textAlignment = .center
-        label.text = "휴가"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        return label
-    }()
-    
-    lazy var vacationTimeButton: UIButton = {
-        let button = UIButton()
-        button.addTarget(self, action: #selector(vacationTimeButton(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        return button
-    }()
-    
-    lazy var workTimeButtonView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 125, green: 243, blue: 110)
-        view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
-        view.layer.cornerRadius = 15
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
-    }()
-    
-    lazy var addWorkTimeButtonImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "addScheduleWhiteButtonImage"))
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        return imageView
-    }()
-    
-    lazy var workTimeButtonViewLabel: UILabel = {
-        let label = UILabel()
-        label.layer.cornerRadius = 7
-        label.layer.borderColor = UIColor.white.cgColor
-        label.layer.borderWidth = 1
-        label.font = .systemFont(ofSize: 10)
-        label.textColor = .white
-        label.textAlignment = .center
-        label.text = "근무"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        return label
-    }()
-    
-    lazy var workTimeButton: UIButton = {
-        let button = UIButton()
-        button.addTarget(self, action: #selector(workTimeButton(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        return button
-    }()
-    
-    lazy var holidayButtonView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 252, green: 247, blue: 143)
-        view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
-        view.layer.cornerRadius = 15
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
-    }()
-    
-    lazy var addHolidayButtonImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "addScheduleGrayButtonImage"))
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        return imageView
-    }()
-    
-    lazy var holidayButtonViewLabel: UILabel = {
-        let label = UILabel()
-        label.layer.cornerRadius = 7
-        label.layer.borderColor = UIColor.useRGB(red: 130, green: 130, blue: 130).cgColor
-        label.layer.borderWidth = 1
-        label.font = .systemFont(ofSize: 10)
-        label.textColor = .useRGB(red: 130, green: 130, blue: 130)
-        label.textAlignment = .center
-        label.text = "휴일"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        return label
-    }()
-    
-    lazy var holidayButton: UIButton = {
-        let button = UIButton()
-        button.addTarget(self, action: #selector(holidayButton(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        return button
-    }()
-    
-    lazy var overtimeButtonView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 239, green: 119, blue: 119)
-        view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
-        view.layer.cornerRadius = 15
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
-    }()
-    
-    lazy var addOvertimeButtonImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "addScheduleWhiteButtonImage"))
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        return imageView
-    }()
-    
-    lazy var overtimeButtonViewLabel: UILabel = {
-        let label = UILabel()
-        label.layer.cornerRadius = 7
-        label.layer.borderColor = UIColor.white.cgColor
-        label.layer.borderWidth = 1
-        label.font = .systemFont(ofSize: 10)
-        label.textColor = .white
-        label.textAlignment = .center
-        label.text = "휴일"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        return label
-    }()
-    
-    lazy var overtimeButton: UIButton = {
-        let button = UIButton()
-        button.addTarget(self, action: #selector(overtimeButton(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        return button
-    }()
-    
-    lazy var pageControl: UIPageControl = {
-        let pageControl = UIPageControl()
-        pageControl.currentPage = 0
-        pageControl.currentPageIndicatorTintColor = .black
-        pageControl.pageIndicatorTintColor = .gray
-        pageControl.hidesForSinglePage = true
-        pageControl.numberOfPages = 3
-        pageControl.isEnabled = false
-        //pageControl.addTarget(self, action: #selector(pageControl(_:)), for: .valueChanged)
-        pageControl.translatesAutoresizingMaskIntoConstraints = false
-        
-        return pageControl
+        return buttonView
     }()
     
     let workScheduleViewHeight = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.27
@@ -494,9 +308,7 @@ extension MainViewController {
             self.mainTimeView,
             self.scheduleTableView,
             self.changeScheduleDescriptionLabel,
-            self.buttonsScrollView,
-            self.pageControl,
-            self.overtimeButtonView
+            self.scheduleButtonView
         ], to: self.view)
         
         SupportingMethods.shared.addSubviews([
@@ -514,40 +326,6 @@ extension MainViewController {
             self.cancelChangingScheduleButtonView,
             self.completeChangingScheduleButtonView
         ], to: self.mainTimeCoverView)
-        
-        SupportingMethods.shared.addSubviews([
-            self.contentView
-        ], to: self.buttonsScrollView)
-        
-        SupportingMethods.shared.addSubviews([
-            self.vacationTimeButtonView,
-            self.workTimeButtonView,
-            self.holidayButtonView
-        ], to: self.contentView)
-        
-        SupportingMethods.shared.addSubviews([
-            self.addvacationTimeButtonImageView,
-            self.vacationTimeButtonViewLabel,
-            self.vacationTimeButton
-        ], to: self.vacationTimeButtonView)
-        
-        SupportingMethods.shared.addSubviews([
-            self.addWorkTimeButtonImageView,
-            self.workTimeButtonViewLabel,
-            self.workTimeButton
-        ], to: self.workTimeButtonView)
-        
-        SupportingMethods.shared.addSubviews([
-            self.addHolidayButtonImageView,
-            self.holidayButtonViewLabel,
-            self.holidayButton
-        ], to: self.holidayButtonView)
-        
-        SupportingMethods.shared.addSubviews([
-            self.addOvertimeButtonImageView,
-            self.overtimeButtonViewLabel,
-            self.overtimeButton
-        ], to: self.overtimeButtonView)
     }
     
     // Set layouts
@@ -657,156 +435,12 @@ extension MainViewController {
             self.changeScheduleDescriptionLabel.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor)
         ])
         
-        // Scroll view layout
+        // Schedule button view layout
         NSLayoutConstraint.activate([
-            self.buttonsScrollView.bottomAnchor.constraint(equalTo: self.pageControl.topAnchor),
-            self.buttonsScrollView.heightAnchor.constraint(equalToConstant: 75),
-            self.buttonsScrollView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.buttonsScrollView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
-        ])
-        
-        // Page control layout
-        NSLayoutConstraint.activate([
-            self.pageControl.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
-            self.pageControl.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor)
-        ])
-        
-        // Content view layout
-        NSLayoutConstraint.activate([
-            self.contentView.topAnchor.constraint(equalTo: self.buttonsScrollView.topAnchor),
-            self.contentView.heightAnchor.constraint(equalTo: self.buttonsScrollView.heightAnchor),
-            self.contentView.leadingAnchor.constraint(equalTo: self.buttonsScrollView.leadingAnchor),
-            self.contentView.widthAnchor.constraint(equalToConstant: self.buttonsScrollView.contentSize.width)
-        ])
-        
-        let pageWidth = UIScreen.main.bounds.width
-        
-        // Work time button view layout
-        NSLayoutConstraint.activate([
-            self.workTimeButtonView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
-            self.workTimeButtonView.heightAnchor.constraint(equalToConstant: 70),
-            self.workTimeButtonView.centerXAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: pageWidth/2),
-            self.workTimeButtonView.widthAnchor.constraint(equalToConstant: pageWidth - 40)
-        ])
-        
-        // Add work time button image view layout
-        NSLayoutConstraint.activate([
-            self.addWorkTimeButtonImageView.centerYAnchor.constraint(equalTo: self.workTimeButtonView.centerYAnchor),
-            self.addWorkTimeButtonImageView.heightAnchor.constraint(equalToConstant: 34),
-            self.addWorkTimeButtonImageView.centerXAnchor.constraint(equalTo: self.workTimeButtonView.centerXAnchor),
-            self.addWorkTimeButtonImageView.widthAnchor.constraint(equalToConstant: 34)
-        ])
-        
-        // Work time button view label layout
-        NSLayoutConstraint.activate([
-            self.workTimeButtonViewLabel.centerYAnchor.constraint(equalTo: self.workTimeButtonView.centerYAnchor),
-            self.workTimeButtonViewLabel.heightAnchor.constraint(equalToConstant: 21),
-            self.workTimeButtonViewLabel.trailingAnchor.constraint(equalTo: self.workTimeButtonView.trailingAnchor, constant: -34),
-            self.workTimeButtonViewLabel.widthAnchor.constraint(equalToConstant: 61)
-        ])
-        
-        // Work time button layout
-        NSLayoutConstraint.activate([
-            self.workTimeButton.topAnchor.constraint(equalTo: self.workTimeButtonView.topAnchor),
-            self.workTimeButton.bottomAnchor.constraint(equalTo: self.workTimeButtonView.bottomAnchor),
-            self.workTimeButton.leadingAnchor.constraint(equalTo: self.workTimeButtonView.leadingAnchor),
-            self.workTimeButton.trailingAnchor.constraint(equalTo: self.workTimeButtonView.trailingAnchor)
-        ])
-        
-        // Vacation time button view layout
-        NSLayoutConstraint.activate([
-            self.vacationTimeButtonView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
-            self.vacationTimeButtonView.heightAnchor.constraint(equalToConstant: 70),
-            self.vacationTimeButtonView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor),
-            self.vacationTimeButtonView.widthAnchor.constraint(equalToConstant: pageWidth - 40)
-        ])
-        
-        // Add vacation time button image view layout
-        NSLayoutConstraint.activate([
-            self.addvacationTimeButtonImageView.centerYAnchor.constraint(equalTo: self.vacationTimeButtonView.centerYAnchor),
-            self.addvacationTimeButtonImageView.heightAnchor.constraint(equalToConstant: 34),
-            self.addvacationTimeButtonImageView.centerXAnchor.constraint(equalTo: self.vacationTimeButtonView.centerXAnchor),
-            self.addvacationTimeButtonImageView.widthAnchor.constraint(equalToConstant: 34)
-        ])
-        
-        // Vacation time button view label layout
-        NSLayoutConstraint.activate([
-            self.vacationTimeButtonViewLabel.centerYAnchor.constraint(equalTo: self.vacationTimeButtonView.centerYAnchor),
-            self.vacationTimeButtonViewLabel.heightAnchor.constraint(equalToConstant: 21),
-            self.vacationTimeButtonViewLabel.trailingAnchor.constraint(equalTo: self.vacationTimeButtonView.trailingAnchor, constant: -34),
-            self.vacationTimeButtonViewLabel.widthAnchor.constraint(equalToConstant: 61)
-        ])
-        
-        // Vacation time button layout
-        NSLayoutConstraint.activate([
-            self.vacationTimeButton.topAnchor.constraint(equalTo: self.vacationTimeButtonView.topAnchor),
-            self.vacationTimeButton.bottomAnchor.constraint(equalTo: self.vacationTimeButtonView.bottomAnchor),
-            self.vacationTimeButton.leadingAnchor.constraint(equalTo: self.vacationTimeButtonView.leadingAnchor),
-            self.vacationTimeButton.trailingAnchor.constraint(equalTo: self.vacationTimeButtonView.trailingAnchor)
-        ])
-        
-        // Holiday button view layout
-        NSLayoutConstraint.activate([
-            self.holidayButtonView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
-            self.holidayButtonView.heightAnchor.constraint(equalToConstant: 70),
-            self.holidayButtonView.centerXAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -(pageWidth/2)),
-            self.holidayButtonView.widthAnchor.constraint(equalToConstant: pageWidth - 40)
-        ])
-        
-        // Add holiday button image view layout
-        NSLayoutConstraint.activate([
-            self.addHolidayButtonImageView.centerYAnchor.constraint(equalTo: self.holidayButtonView.centerYAnchor),
-            self.addHolidayButtonImageView.heightAnchor.constraint(equalToConstant: 34),
-            self.addHolidayButtonImageView.centerXAnchor.constraint(equalTo: self.holidayButtonView.centerXAnchor),
-            self.addHolidayButtonImageView.widthAnchor.constraint(equalToConstant: 34)
-        ])
-        
-        // Holiday button view label layout
-        NSLayoutConstraint.activate([
-            self.holidayButtonViewLabel.centerYAnchor.constraint(equalTo: self.holidayButtonView.centerYAnchor),
-            self.holidayButtonViewLabel.heightAnchor.constraint(equalToConstant: 21),
-            self.holidayButtonViewLabel.trailingAnchor.constraint(equalTo: self.holidayButtonView.trailingAnchor, constant: -34),
-            self.holidayButtonViewLabel.widthAnchor.constraint(equalToConstant: 61)
-        ])
-        
-        // Holiday button layout
-        NSLayoutConstraint.activate([
-            self.holidayButton.topAnchor.constraint(equalTo: self.holidayButtonView.topAnchor),
-            self.holidayButton.bottomAnchor.constraint(equalTo: self.holidayButtonView.bottomAnchor),
-            self.holidayButton.leadingAnchor.constraint(equalTo: self.holidayButtonView.leadingAnchor),
-            self.holidayButton.trailingAnchor.constraint(equalTo: self.holidayButtonView.trailingAnchor)
-        ])
-        
-        // Overtime button view layout
-        NSLayoutConstraint.activate([
-            self.overtimeButtonView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -31),
-            self.overtimeButtonView.heightAnchor.constraint(equalToConstant: 70),
-            self.overtimeButtonView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
-            self.overtimeButtonView.widthAnchor.constraint(equalToConstant: pageWidth - 40)
-        ])
-        
-        // Add overtime button image view layout
-        NSLayoutConstraint.activate([
-            self.addOvertimeButtonImageView.centerYAnchor.constraint(equalTo: self.overtimeButtonView.centerYAnchor),
-            self.addOvertimeButtonImageView.heightAnchor.constraint(equalToConstant: 34),
-            self.addOvertimeButtonImageView.centerXAnchor.constraint(equalTo: self.overtimeButtonView.centerXAnchor),
-            self.addOvertimeButtonImageView.widthAnchor.constraint(equalToConstant: 34)
-        ])
-        
-        // Overtime button view label layout
-        NSLayoutConstraint.activate([
-            self.overtimeButtonViewLabel.centerYAnchor.constraint(equalTo: self.overtimeButtonView.centerYAnchor),
-            self.overtimeButtonViewLabel.heightAnchor.constraint(equalToConstant: 21),
-            self.overtimeButtonViewLabel.trailingAnchor.constraint(equalTo: self.overtimeButtonView.trailingAnchor, constant: -34),
-            self.overtimeButtonViewLabel.widthAnchor.constraint(equalToConstant: 61)
-        ])
-        
-        // Overtime button layout
-        NSLayoutConstraint.activate([
-            self.overtimeButton.topAnchor.constraint(equalTo: self.overtimeButtonView.topAnchor),
-            self.overtimeButton.bottomAnchor.constraint(equalTo: self.overtimeButtonView.bottomAnchor),
-            self.overtimeButton.leadingAnchor.constraint(equalTo: self.overtimeButtonView.leadingAnchor),
-            self.overtimeButton.trailingAnchor.constraint(equalTo: self.overtimeButtonView.trailingAnchor)
+            self.scheduleButtonView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
+            self.scheduleButtonView.heightAnchor.constraint(equalToConstant: 101),
+            self.scheduleButtonView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
+            self.scheduleButtonView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor)
         ])
     }
 }
@@ -848,41 +482,70 @@ extension MainViewController {
     }
     
     func determineScheduleButtonState() {
-        if self.schedule.count < 2 {
-            self.buttonsScrollView.isHidden = false
-            self.pageControl.isHidden = false
-            
-            self.overtimeButtonView.isHidden = true
-            
-        } else if self.schedule.count == 2 {
-            if case .afternoon(let workType) = self.schedule.afternoon {
-                switch workType {
-                case .holiday:
-                    self.buttonsScrollView.isHidden = true
-                    self.pageControl.isHidden = true
-                    
-                    self.overtimeButtonView.isHidden = true
-                    
-                case .vacation:
-                    self.buttonsScrollView.isHidden = true
-                    self.pageControl.isHidden = true
-                    
-                    self.overtimeButtonView.isHidden = true
-                    
-                case .work:
-                    self.buttonsScrollView.isHidden = true
-                    self.pageControl.isHidden = true
-                    
-                    self.overtimeButtonView.isHidden = false
-                }
+        if self.isEditingMode {
+            if self.schedule.count > 2 {
+                self.scheduleButtonView
+                
+            } else if self.schedule.count == 2 {
+                
+                
+            } else if self.schedule.count == 1 {
+                
+                
+            } else {
+                
             }
             
-        } else { // > 2
-            self.buttonsScrollView.isHidden = true
-            self.pageControl.isHidden = true
-            
-            self.overtimeButtonView.isHidden = true
+        } else {
+            if self.schedule.count > 2 {
+                
+                
+            } else if self.schedule.count == 2 {
+                
+                
+            } else if self.schedule.count == 1 {
+                
+                
+            } else {
+                
+            }
         }
+        
+//        if self.schedule.count < 2 {
+////            self.buttonsScrollView.isHidden = false
+////            self.pageControl.isHidden = false
+////
+////            self.overtimeButtonView.isHidden = true
+//            
+//        } else if self.schedule.count == 2 {
+//            if case .afternoon(let workType) = self.schedule.afternoon {
+//                switch workType {
+//                case .holiday:
+////                    self.buttonsScrollView.isHidden = true
+////                    self.pageControl.isHidden = true
+////
+////                    self.overtimeButtonView.isHidden = true
+//                    
+//                case .vacation:
+////                    self.buttonsScrollView.isHidden = true
+////                    self.pageControl.isHidden = true
+////
+////                    self.overtimeButtonView.isHidden = true
+//                    
+//                case .work:
+////                    self.buttonsScrollView.isHidden = true
+////                    self.pageControl.isHidden = true
+////
+////                    self.overtimeButtonView.isHidden = false
+//                }
+//            }
+//            
+//        } else { // > 2
+////            self.buttonsScrollView.isHidden = true
+////            self.pageControl.isHidden = true
+////            
+////            self.overtimeButtonView.isHidden = true
+//        }
     }
     
     func determineCompleteChangingScheduleButton() {
@@ -1332,116 +995,21 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-// MARK: - Extension for UIScrollDelegate
-extension MainViewController: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print("scrollViewDidScroll: \(scrollView.contentOffset.x)")
-        
-        let centerXPoint: CGFloat = scrollView.frame.width / 2
-        print("CneterXPoint: \(centerXPoint)")
-        
-        if self.previousPointX >= 0 && self.previousPointX < centerXPoint {
-            if scrollView.contentOffset.x >= centerXPoint {
-                if !self.isHaptic {
-                    UIDevice.softHaptic()
-                    self.isHaptic = true
-                }
-                
-                self.pageControl.currentPage = 1
-                
-            } else {
-                self.isHaptic = false
-                
-                self.pageControl.currentPage = 0
-            }
-            
-        } else if self.previousPointX >= scrollView.frame.width && self.previousPointX < scrollView.frame.width + centerXPoint {
-            if scrollView.contentOffset.x >= scrollView.frame.width + centerXPoint {
-                if !self.isHaptic {
-                    UIDevice.softHaptic()
-                    self.isHaptic = true
-                }
-                
-                self.pageControl.currentPage = 2
-                
-            } else {
-                if scrollView.contentOffset.x < centerXPoint {
-                    if !self.isHaptic {
-                        UIDevice.softHaptic()
-                        self.isHaptic = true
-                    }
-                    
-                    self.pageControl.currentPage = 0
-                    
-                } else {
-                    self.isHaptic = false
-                    
-                    self.pageControl.currentPage = 1
-                }
-            }
-            
-        } else {
-            if scrollView.contentOffset.x < scrollView.frame.width + centerXPoint {
-                if !self.isHaptic {
-                    UIDevice.softHaptic()
-                    self.isHaptic = true
-                }
-                
-                self.pageControl.currentPage = 1
-                
-            } else {
-                self.isHaptic = false
-                
-                self.pageControl.currentPage = 2
-            }
-        }
-    }
-    
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        print("scrollViewDidEndScrollingAnimation: \(scrollView.contentOffset.x)")
-    }
-    
-    func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
-        print("scrollViewWillBeginDecelerating: \(scrollView.contentOffset.x)")
-    }
-
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        print("scrollViewDidEndDecelerating: \(scrollView.contentOffset.x)")
-        
-        self.isHaptic = false
-    }
-    
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        print("scrollViewWillBeginDragging: \(scrollView.contentOffset.x)")
-        
-        self.previousPointX = scrollView.contentOffset.x
-    }
-    
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if decelerate {
-            print("scrollViewDidEndDragging willDecelerate: \(scrollView.contentOffset.x)")
-            
-        } else {
-            print("scrollViewDidEndDragging willNotDecelerate: \(scrollView.contentOffset.x)")
-        }
-    }
-}
-
 // MARK: - Extension for ScheduleButtonViewDelegate
 extension MainViewController: ScheduleButtonViewDelegate {
-    func scheduleButtonViewDidTouched(_ type: ScheduleButtonViewType) {
+    func scheduleButtonView(_ scheduleButtonView: ScheduleButtonView, of type: ScheduleButtonViewType) {
         switch type {
         case .threeSchedules(let workType):
             if let workType = workType {
                 switch workType {
                 case .work:
-                    print("")
+                    print("threeSchedules work")
                     
                 case .vacation:
-                    print("")
+                    print("threeSchedules vacation")
                     
                 case .holiday:
-                    print("")
+                    print("threeSchedules holiday")
                 }
             }
             
@@ -1449,10 +1017,10 @@ extension MainViewController: ScheduleButtonViewDelegate {
             if let workType = workType {
                 switch workType {
                 case .work:
-                    print("")
+                    print("twoScheduleForVacation work")
                     
                 case .vacation:
-                    print("")
+                    print("twoScheduleForVacation vacation")
                 }
             }
             
@@ -1460,24 +1028,24 @@ extension MainViewController: ScheduleButtonViewDelegate {
             if let workType = workType {
                 switch workType {
                 case .work:
-                    print("")
+                    print("twoScheduleForHoliday work")
                     
                 case .holiday:
-                    print("")
+                    print("twoScheduleForHoliday holiday")
                 }
             }
             
         case .addOvertime:
-            print("")
+            print("addOvertime")
             
         case .addOvertimeOrFinishWork(let overtimeOrFinish):
             if let overtimeOrFinish = overtimeOrFinish {
                 switch overtimeOrFinish {
                 case .overtime(let date):
-                    print("")
+                    print("addOvertimeOrFinishWork overtime")
                     
                 case .finishWork:
-                    print("")
+                    print("addOvertimeOrFinishWork finishWork")
                 }
             }
             
@@ -1485,22 +1053,22 @@ extension MainViewController: ScheduleButtonViewDelegate {
             if let overtimeOrFinish = overtimeOrFinish {
                 switch overtimeOrFinish {
                 case .overtime(let date):
-                    print("")
+                    print("replaceOvertimeOrFinishWork overtime")
                     
                 case .finishWork:
-                    print("")
+                    print("replaceOvertimeOrFinishWork finishWork")
                 }
             }
             
         case .finishWorkWithOvertime(let date):
             if let date = date {
-                print("")
+                print("finishWorkWithOvertime ")
             }
             
         case .finishWork:
-            print("")
+            print("finishWork")
             
-        case .workFinished:
+        case .workFinished, .noButton:
             print("Nothing happen")
         }
     }

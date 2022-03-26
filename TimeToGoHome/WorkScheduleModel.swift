@@ -16,7 +16,7 @@ enum WorkType: String {
 enum ScheduleType {
     case morning(WorkType)
     case afternoon(WorkType)
-    case overtime(Int)
+    case overtime(Date)
 }
 
 struct WorkSchedule {
@@ -81,7 +81,7 @@ struct WorkSchedule {
         // Check tody schedule condition for initial setting.
         self.morning = .morning(.holiday) // FIXME: Temp
         self.afternoon = .afternoon(.work) // FIXME: Temp
-        self.overtime = .overtime(59) // FIXME: Temp
+        //self.overtime = .overtime(Date()) // FIXME: Temp
     }
 }
 
@@ -97,15 +97,15 @@ extension WorkSchedule {
         
         var morning: String = ""
         var afternoon: String = ""
-        var overtime: Int?
+        var overtime: Date?
         
         if case .morning(let morningWorkType) = self.morning, case .afternoon(let afternoonWorkType) = self.afternoon {
             morning = morningWorkType.rawValue
             afternoon = afternoonWorkType.rawValue
         }
         
-        if case .overtime(let overtimeMinute) = self.overtime {
-            overtime = overtimeMinute
+        if case .overtime(let overtimeDate) = self.overtime {
+            overtime = overtimeDate
         }
         
         print("DB - update today")
@@ -146,10 +146,10 @@ extension WorkSchedule {
                 return false
             }
             
-        case .overtime(let overtimeMinute):
+        case .overtime(let overtime):
             if self.overtime == nil && self.afternoon != nil && self.morning != nil {
                 if !self.isEditingMode {
-                    print("DB - add overtime: \(overtimeMinute)")// FIXME: DB
+                    print("DB - add overtime: \(overtime)")// FIXME: DB
                 }
                 self.overtime = schedule
                 
@@ -189,9 +189,9 @@ extension WorkSchedule {
                 return false
             }
             
-        case .overtime(let overtimeMinute):
+        case .overtime(let overtime):
             if self.afternoon != nil && self.morning != nil {
-                print("DB - insert overtime: \(overtimeMinute)")// FIXME: DB
+                print("DB - insert overtime: \(overtime)")// FIXME: DB
                 self.overtime = schedule
                 
                 return true
@@ -281,8 +281,8 @@ extension WorkSchedule {
             return nil
             
         } else if self.count == 2 {
-            if let overtimeMinute = withAssociatedValue as? Int {
-                return .overtime(overtimeMinute)
+            if let overtime = withAssociatedValue as? Date {
+                return .overtime(overtime)
             }
             
             return nil

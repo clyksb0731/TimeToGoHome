@@ -232,7 +232,7 @@ extension ScheduleTypeCell {
             
         case .overtime(let overTimeMinute):
             self.timeTypeLabelTopAnchor.constant = 10
-            self.timeTypeLabel.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingMinute(overTimeMinute))"
+            self.timeTypeLabel.text = "SupportingMethods.shared.determineAdditionalHourAndMinuteUsingMinute"
             
             self.scheduleView.backgroundColor = .useRGB(red: 239, green: 119, blue: 119)
             self.timeTypeLabel.textColor = .white
