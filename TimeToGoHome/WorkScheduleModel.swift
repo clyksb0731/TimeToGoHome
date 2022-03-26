@@ -79,6 +79,7 @@ struct WorkSchedule {
         // Check DB if there is already today schedule.
         // &&
         // Check tody schedule condition for initial setting.
+        self.startingWorkTime = self.makeStartingWorkTimeDate()
         self.morning = .morning(.holiday) // FIXME: Temp
         self.afternoon = .afternoon(.work) // FIXME: Temp
         //self.overtime = .overtime(Date()) // FIXME: Temp
@@ -90,6 +91,25 @@ extension WorkSchedule {
     mutating func updateStartingWorkTime(_ timeDate: Date) {
         print("DB - Starting work time updated")// FIXME: DB
         self.startingWorkTime = timeDate
+    }
+    
+    mutating func makeStartingWorkTimeDate() -> Date? {
+        if let startingWorkTimeSetting = SupportingMethods.shared.useAppSetting(for: .startingWorkTimeSetting) as? [String:Any],
+            let type = startingWorkTimeSetting["name"] as? String,
+            type == "normalType",
+            let startingWorkTime = startingWorkTimeSetting["startingWorkTime"] as? Double {
+            let hour = (Int(startingWorkTime * 10)) / 10
+            let minute = Int((Double((Int(startingWorkTime * 10)) % 10) / 10.0) * 60)
+            
+            var calendar = Calendar.current
+            calendar.timeZone = TimeZone.current
+            let dateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
+            let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
+            return calendar.date(from: todayDateComponents)
+            
+        } else {
+            return nil
+        }
     }
     
     func updateToday() {

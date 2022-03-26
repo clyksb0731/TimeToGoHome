@@ -1495,7 +1495,7 @@ extension ScheduleButtonView {
         }
         
         timeScheduled = timeScheduled + Int(startingWorkTime.timeIntervalSinceReferenceDate)
-        let overtime = Int(CFAbsoluteTimeGetCurrent()) - timeScheduled
+        let overtime = SupportingMethods.getCurrentTimeSeconds() - timeScheduled
         
         self.overtimeLabel.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(overtime))"
     }

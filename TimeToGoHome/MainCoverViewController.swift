@@ -9,7 +9,7 @@ import UIKit
 
 enum MainCoverType {
     case normalSchedule(ScheduleType?)
-    case overtimeSchedule(_ overtime: Date?, _ isEditingModeBeforPresented: Bool)
+    case overtimeSchedule(_ finishingRegularTime: Date, _ overtime: Date?, _ isEditingModeBeforPresented: Bool)
     case startingWorkTime(Date?)
 }
 
@@ -39,7 +39,7 @@ class MainCoverViewController: UIViewController {
     lazy var popUpPanelView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
-        view.layer.cornerRadius = 10
+        view.layer.cornerRadius = 20
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -223,7 +223,7 @@ extension MainCoverViewController {
     
     // Initialize views
     func initializeViews() {
-        if case .overtimeSchedule(let overtime, let isEditingBeforePresented) = self.mainCoverType {
+        if case .overtimeSchedule(let finishingRegularTime, let overtime, let isEditingBeforePresented) = self.mainCoverType {
             let now = Date()
             
             if let overtime = overtime {
@@ -237,8 +237,9 @@ extension MainCoverViewController {
             calendar.timeZone = TimeZone.current
             let dateComponents = calendar.dateComponents([.year, .month, .day], from: now)
             let maximumDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: 23, minute: 59)
-            let maximumDate: Date! = maximumDateComponents.date
+            let maximumDate = calendar.date(from: maximumDateComponents)
             
+            datePicker.minimumDate = Date(timeIntervalSinceReferenceDate: finishingRegularTime.timeIntervalSinceReferenceDate + 60)
             datePicker.maximumDate = maximumDate
             
             self.isEditingBeforePresented = isEditingBeforePresented
@@ -252,9 +253,12 @@ extension MainCoverViewController {
                 
             } else {
                 datePicker.date = now
+                
+                self.declineButton.setTitleColor(.useRGB(red: 0, green: 0, blue: 255, alpha: 0.3), for: .normal)
+                self.declineButton.isEnabled = false
             }
             
-            datePicker.maximumDate = now // FIXME: App Setting Starting Work Time
+            //datePicker.maximumDate = now // FIXME: App Setting Starting Work Time
         }
     }
     

@@ -11,7 +11,9 @@ import UIKit
  Variables for app setting on UserDefaults
  */
 enum PListVariable: String {
-    case initialSet = "initialSet"
+    case startingWorkTimeSetting
+    case isSetStartingTime
+    case initiallySetting
 }
 
 enum CoverViewState {
@@ -85,6 +87,11 @@ extension SupportingMethods {
         for view in views {
             to.addSubview(view)
         }
+    }
+    
+    // MARK: Get current time seconds
+    class func getCurrentTimeSeconds() -> Int {
+        return Int(CFAbsoluteTimeGetCurrent())
     }
     
     // MARK: Cover view

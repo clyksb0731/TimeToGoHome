@@ -46,7 +46,7 @@ extension AppDelegate {
     func determineRootVC() {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         
-        if let initialSet = SupportingMethods.shared.useAppSetting(for: .initialSet) as? Bool, initialSet {
+        if let initialSet = SupportingMethods.shared.useAppSetting(for: .initiallySetting) as? Bool, initialSet {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let mainVC = storyboard.instantiateInitialViewController() as! MainViewController
             self.window?.rootViewController = mainVC
