@@ -154,6 +154,23 @@ extension SupportingMethods {
             return "+ \(minuteLeft)분"
         }
     }
+    
+    func determineAdditionalHourAndMinuteUsingSecond(_ seconds: Int) -> String {
+        let hours = seconds / 3600
+        let minuteLeft = (seconds % 3600) / 60
+        
+        if hours > 0 {
+            if minuteLeft == 0 {
+                return "+ \(hours)시간"
+                
+            } else {
+                return "+ \(hours)시간 \(minuteLeft)분"
+            }
+            
+        } else {
+            return "+ \(minuteLeft)분"
+        }
+    }
 }
 
 // MARK: - Other Extensions

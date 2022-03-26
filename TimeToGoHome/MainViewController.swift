@@ -182,6 +182,9 @@ class MainViewController: UIViewController {
     var schedule: WorkSchedule = WorkSchedule.today
     var tempSchedule: WorkSchedule?
     
+    let secondsOfOneHour: Int = 3600
+    let secondsOfFourHours: Int = 3600 * 4
+    
     var isEditingMode: Bool = false {
         willSet {
             
@@ -484,7 +487,7 @@ extension MainViewController {
     func determineScheduleButtonState() {
         if self.isEditingMode {
             if self.schedule.count > 2 {
-                self.scheduleButtonView
+                self.scheduleButtonView.setScheduleButtonViewType(.noButton)
                 
             } else if self.schedule.count == 2 {
                 
@@ -750,8 +753,8 @@ extension MainViewController {
                     
                 } else { // tag 3, overtime
                     print("Long Pressed for overtime")
-                    if case .overtime(let overtimeMinute) = self.schedule.overtime {
-                        let mainCoverVC = MainCoverViewController(.overtimeSchedule(overtimeMinute, self.isEditingMode), delegate: self)
+                    if case .overtime(let overtime) = self.schedule.overtime {
+                        let mainCoverVC = MainCoverViewController(.overtimeSchedule(overtime, self.isEditingMode), delegate: self)
                         self.present(mainCoverVC, animated: false, completion: nil)
                     }
                 }

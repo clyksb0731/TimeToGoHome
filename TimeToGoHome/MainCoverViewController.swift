@@ -66,7 +66,6 @@ class MainCoverViewController: UIViewController {
     }()
     
     // Case 1 - normal schedule type
-    
     lazy var normalScheduleListView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -129,10 +128,6 @@ class MainCoverViewController: UIViewController {
         datePicker.datePickerMode = .time
         datePicker.timeZone = TimeZone.current
         datePicker.locale = Locale(identifier: "ko_KR")
-        if case .startingWorkTime(let today) = self.mainCoverType {
-            datePicker.date = today ?? Date()
-        }
-        datePicker.maximumDate = Date()
         //datePicker.addTarget(self, action: #selector(startingWorkTimeDatePicker(_:)), for: .valueChanged)
         datePicker.translatesAutoresizingMaskIntoConstraints = false
         
@@ -174,10 +169,6 @@ class MainCoverViewController: UIViewController {
     init(_ mainCoverType: MainCoverType, delegate: MainCoverDelegate?) {
         self.mainCoverType = mainCoverType
         self.delegate = delegate
-        
-        if case .overtimeSchedule(_, let isEditingBeforePresented) = mainCoverType {
-            self.isEditingBeforePresented = isEditingBeforePresented
-        }
         
         super.init(nibName: nil, bundle: nil)
         
@@ -232,7 +223,39 @@ extension MainCoverViewController {
     
     // Initialize views
     func initializeViews() {
+        if case .overtimeSchedule(let overtime, let isEditingBeforePresented) = self.mainCoverType {
+            let now = Date()
+            
+            if let overtime = overtime {
+                datePicker.date = overtime
+                
+            } else {
+                datePicker.date = now
+            }
+            
+            var calendar = Calendar.current
+            calendar.timeZone = TimeZone.current
+            let dateComponents = calendar.dateComponents([.year, .month, .day], from: now)
+            let maximumDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: 23, minute: 59)
+            let maximumDate: Date! = maximumDateComponents.date
+            
+            datePicker.maximumDate = maximumDate
+            
+            self.isEditingBeforePresented = isEditingBeforePresented
+        }
         
+        if case .startingWorkTime(let date) = self.mainCoverType {
+            let now = Date()
+            
+            if let date = date {
+                datePicker.date = date
+                
+            } else {
+                datePicker.date = now
+            }
+            
+            datePicker.maximumDate = now // FIXME: App Setting Starting Work Time
+        }
     }
     
     // Set targets

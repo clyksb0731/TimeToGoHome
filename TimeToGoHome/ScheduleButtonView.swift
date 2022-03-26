@@ -56,6 +56,8 @@ extension ScheduleButtonViewDelegate {
 
 class ScheduleButtonView: UIView {
     weak var pageControl: UIPageControl!
+    weak var overtimeLabel: UILabel!
+    weak var timer: Timer?
     
     var buttonViewType: ScheduleButtonViewType = .addOvertime
     
@@ -64,10 +66,11 @@ class ScheduleButtonView: UIView {
     
     var delegate: ScheduleButtonViewDelegate?
     
-    weak var timer: Timer?
-    
     var previousPointX: CGFloat = 0
     var isHaptic: Bool = false
+    
+    let secondsOfOneHour: Int = 3600
+    let secondsOfFourHours: Int = 3600 * 4
 
     init(width: CGFloat, schedule: WorkSchedule? = nil) {
         self.width = width
@@ -1046,6 +1049,7 @@ extension ScheduleButtonView {
             
             return label
         }()
+        self.overtimeLabel = overtimeLabel
         
         let overtimeButton: UIButton = {
             let button = UIButton()
@@ -1068,6 +1072,10 @@ extension ScheduleButtonView {
             
             return button
         }()
+        
+        // MARK: Timer
+        let timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
+        self.timer = timer
         
         // MARK: Subviews
         SupportingMethods.shared.addSubviews([
@@ -1130,9 +1138,6 @@ extension ScheduleButtonView {
             overtimeButton.leadingAnchor.constraint(equalTo: overtimeButtonView.leadingAnchor),
             overtimeButton.trailingAnchor.constraint(equalTo: overtimeButtonView.trailingAnchor)
         ])
-        
-        // MARK: Timer
-        self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
     }
     
     func initializeReplaceOvertimeOrFinishWork() {
@@ -1180,6 +1185,7 @@ extension ScheduleButtonView {
             
             return label
         }()
+        self.overtimeLabel = overtimeLabel
         
         let overtimeButton: UIButton = {
             let button = UIButton()
@@ -1202,6 +1208,10 @@ extension ScheduleButtonView {
             
             return button
         }()
+        
+        // MARK: Timer
+        let timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
+        self.timer = timer
         
         // MARK: Subviews
         SupportingMethods.shared.addSubviews([
@@ -1264,9 +1274,6 @@ extension ScheduleButtonView {
             overtimeButton.leadingAnchor.constraint(equalTo: overtimeButtonView.leadingAnchor),
             overtimeButton.trailingAnchor.constraint(equalTo: overtimeButtonView.trailingAnchor)
         ])
-        
-        // MARK: Timer
-        self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
     }
     
     func initializeFinishWorkWithOvertime() {
@@ -1381,43 +1388,60 @@ extension ScheduleButtonView {
 extension ScheduleButtonView {
     // threeSchedules
     @objc func threeSchedulesWorkTimeButton(_ sender: UIButton) {
+        UIDevice.lightHaptic()
+        
         self.delegate?.scheduleButtonView(self, of: .threeSchedules(.work))
     }
     
     @objc func threeSchedulesVacationButton(_ sender: UIButton) {
+        UIDevice.lightHaptic()
+        
         self.delegate?.scheduleButtonView(self, of: .threeSchedules(.vacation))
     }
     
     @objc func threeSchedulesHolidayButton(_ sender: UIButton) {
+        UIDevice.lightHaptic()
+        
         self.delegate?.scheduleButtonView(self, of: .threeSchedules(.holiday))
     }
     
     // twoScheduleForVacation
     @objc func twoScheduleForVacationWorkTimeButton(_ sender: UIButton) {
+        UIDevice.lightHaptic()
+        
         self.delegate?.scheduleButtonView(self, of: .twoScheduleForVacation(.work))
     }
     
     @objc func twoScheduleForVacationVacationButton(_ sender: UIButton) {
+        UIDevice.lightHaptic()
+        
         self.delegate?.scheduleButtonView(self, of: .twoScheduleForVacation(.vacation))
     }
     
     // twoScheduleForHoliday
     @objc func twoScheduleForHolidayWorkTimeButton(_ sender: UIButton) {
+        UIDevice.lightHaptic()
+        
         self.delegate?.scheduleButtonView(self, of: .twoScheduleForHoliday(.work))
     }
     
     @objc func twoScheduleForHolidayHolidayButton(_ sender: UIButton) {
+        UIDevice.lightHaptic()
+        
         self.delegate?.scheduleButtonView(self, of: .twoScheduleForHoliday(.holiday))
     }
     
     // addOvertime
     @objc func addOvertimeButton(_ sender: UIButton) {
+        UIDevice.lightHaptic()
+        
         self.delegate?.scheduleButtonView(self, of: .addOvertime)
     }
     
     // addOvertimeOrFinishWork
     @objc func addOvertimeOrFinishWorkOvertimeButton(_ sender: UIButton) {
-        // FIXME: Temp date
+        UIDevice.lightHaptic()
+        
         self.delegate?.scheduleButtonView(self, of: .addOvertimeOrFinishWork(.overtime(Date())))
     }
     
@@ -1427,7 +1451,8 @@ extension ScheduleButtonView {
     
     // replaceOvertimeOrFinishWork
     @objc func replaceOvertimeOrFinishWorkOvertimeButton(_ sender: UIButton) {
-        // FIXME: Temp date
+        UIDevice.lightHaptic()
+        
         self.delegate?.scheduleButtonView(self, of: .replaceOvertimeOrFinishWork(.overtime(Date())))
     }
     
@@ -1437,7 +1462,6 @@ extension ScheduleButtonView {
     
     // finishWorkWithOvertime
     @objc func finishWorkWithOvertimeButton(_ sender: UIButton) {
-        // FIXME: Temp date
         self.delegate?.scheduleButtonView(self, of: .finishWorkWithOvertime(Date()))
     }
     
@@ -1448,11 +1472,32 @@ extension ScheduleButtonView {
     
     // timer
     @objc func timer(_ timer: Timer) {
-        guard let schedule = self.schedule else {
+        guard let schedule = self.schedule, let startingWorkTime = schedule.startingWorkTime else {
             return
         }
         
-        // Calculate overtime date with current time
+        if self.overtimeLabel.textColor == .yellow {
+            self.overtimeLabel.textColor = .red
+            
+        } else {
+            self.overtimeLabel.textColor = .yellow
+        }
+        
+        var timeScheduled = 0
+        if case .morning(let workType) = schedule.morning, case .work = workType,
+           case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+            // FIXME: App Setting of rest times as default
+            timeScheduled = self.secondsOfFourHours + 3600 + self.secondsOfFourHours + 0 // launch + dinner time setting
+            
+        } else {
+            // FIXME: App Setting of rest times as default
+            timeScheduled = self.secondsOfFourHours + 0 // dinner time setting
+        }
+        
+        timeScheduled = timeScheduled + Int(startingWorkTime.timeIntervalSinceReferenceDate)
+        let overtime = Int(CFAbsoluteTimeGetCurrent()) - timeScheduled
+        
+        self.overtimeLabel.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(overtime))"
     }
 }
 
