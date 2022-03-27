@@ -9,9 +9,14 @@ import UIKit
 
 class WorkTypeViewController: UIViewController {
     enum MarkingViewType {
-        case earliest (CGPoint)
-        case latest (CGPoint)
-        case attendance (CGPoint)
+        case earliest(CGPoint)
+        case latest(CGPoint)
+        case attendance(CGPoint)
+    }
+    
+    enum WorkType {
+        case staggered
+        case normal
     }
     
     var scrollView: UIScrollView = {
@@ -748,6 +753,8 @@ class WorkTypeViewController: UIViewController {
         
         return button
     }()
+    
+    var workType: WorkType = .staggered
     
     var earliestAttendaceTimeBarMarkingViewConstraint: NSLayoutConstraint!
     var latestAttendaceTimeBarMarkingViewConstraint: NSLayoutConstraint!
@@ -1573,6 +1580,7 @@ extension WorkTypeViewController {
                 if success {
                     self.earliestAttendanceTimeBarView.isUserInteractionEnabled = true
                     self.latestAttendanceTimeBarView.isUserInteractionEnabled = true
+                    self.startButton.isUserInteractionEnabled = true
                 }
             }
             
@@ -1611,6 +1619,7 @@ extension WorkTypeViewController {
                 if success {
                     self.latestAttendanceTimeBarView.isUserInteractionEnabled = true
                     self.earliestAttendanceTimeBarView.isUserInteractionEnabled = true
+                    self.startButton.isUserInteractionEnabled = true
                 }
             }
             
@@ -1659,6 +1668,7 @@ extension WorkTypeViewController {
             } completion: { success in
                 if success {
                     self.attendanceTimeBarView.isUserInteractionEnabled = true
+                    self.startButton.isUserInteractionEnabled = true
                 }
             }
         }
@@ -1811,6 +1821,63 @@ extension WorkTypeViewController {
             }
         }
     }
+    
+    func determineStaggeredWorkTimeValue() -> (Double, Double)? {
+        guard let earliestTime = self.getWorkTimeValue(self.earliestAttendaceTimeBarMarkingViewConstraint.constant),
+           let latestTime = self.getWorkTimeValue(self.latestAttendaceTimeBarMarkingViewConstraint.constant) else {
+            return nil
+        }
+        
+        return (earliestTime, latestTime)
+    }
+    
+    func getWorkTimeValue(_ from: CGFloat) -> Double? {
+        switch from {
+        case 12:
+            return 7.0
+            
+        case 35.25:
+            return 7.5
+            
+        case 58.5:
+            return 8.0
+            
+        case 81.75:
+            return 8.5
+            
+        case 105:
+            return 9.0
+            
+        case 128.25:
+            return 9.5
+            
+        case 151.5:
+            return 10.0
+            
+        case 174.75:
+            return 10.5
+            
+        case 198:
+            return 11.0
+            
+        default:
+            return nil
+        }
+    }
+    
+    func determineRegularHolidays() -> [Int] {
+        var holidays: Array<Int> = []
+        
+        self.sundayButtonView.isSelected ? holidays.append(1) : {}()
+        self.mondayButtonView.isSelected ? holidays.append(2) : {}()
+        self.tuesdayButtonView.isSelected ? holidays.append(3) : {}()
+        self.wednesdayButtonView.isSelected ? holidays.append(4) : {}()
+        self.thursdayButtonView.isSelected ? holidays.append(5) : {}()
+        self.fridayButtonView.isSelected ? holidays.append(6) : {}()
+        self.saturdayButtonView.isSelected ? holidays.append(7) : {}()
+        
+        return holidays
+    }
 }
 
 // MARK: - Extension for Selector methods
@@ -1834,10 +1901,11 @@ extension WorkTypeViewController {
     
     @objc func earliestAttendanceTimeBarViewTapGesture(_ gesture: UIGestureRecognizer) {
         let point = gesture.location(in: gesture.view)
-        print("earliestAttendanceTimeBarView point: \(point)")
+        //print("earliestAttendanceTimeBarView point: \(point)")
         
         self.earliestAttendanceTimeBarView.isUserInteractionEnabled = false
         self.latestAttendanceTimeBarView.isUserInteractionEnabled = false
+        self.startButton.isUserInteractionEnabled = false
         
         self.locateMarkingBarViewFor(.earliest(point))
         self.showMomentLabelFor(.earliest(point), withAnimation: true)
@@ -1845,7 +1913,7 @@ extension WorkTypeViewController {
     
     @objc func earliestAttendanceTimeBarMarkingViewPanGesture(_ gesture: UIGestureRecognizer) {
         let point = gesture.location(in: gesture.view?.superview)
-        print("earliestAttendanceTimeBarMarkingView point: \(point)")
+        //print("earliestAttendanceTimeBarMarkingView point: \(point)")
         
         if (gesture.state == .began) {
             self.latestAttendanceTimeBarView.isUserInteractionEnabled = false
@@ -1867,10 +1935,11 @@ extension WorkTypeViewController {
     
     @objc func latestAttendanceTimeBarViewTapGesture(_ gesture: UIGestureRecognizer) {
         let point = gesture.location(in: gesture.view)
-        print("latestAttendanceTimeBarView point: \(point)")
+        //print("latestAttendanceTimeBarView point: \(point)")
         
         self.latestAttendanceTimeBarView.isUserInteractionEnabled = false
         self.earliestAttendanceTimeBarView.isUserInteractionEnabled = false
+        self.startButton.isUserInteractionEnabled = false
         
         self.locateMarkingBarViewFor(.latest(point))
         self.showMomentLabelFor(.latest(point), withAnimation: true)
@@ -1878,7 +1947,7 @@ extension WorkTypeViewController {
     
     @objc func latestAttendanceTimeBarMarkingViewPanGesture(_ gesture: UIGestureRecognizer) {
         let point = gesture.location(in: gesture.view?.superview)
-        print("leavingAttendanceTimeBarMarkingView point: \(point)")
+        //print("leavingAttendanceTimeBarMarkingView point: \(point)")
         
         if (gesture.state == .began) {
             self.earliestAttendanceTimeBarView.isUserInteractionEnabled = false
@@ -1900,9 +1969,10 @@ extension WorkTypeViewController {
     
     @objc func attendanceTimeBarViewTapGesture(_ gesture: UIGestureRecognizer) {
         let point = gesture.location(in: gesture.view)
-        print("attendanceTimeBarView point: \(point)")
+        //print("attendanceTimeBarView point: \(point)")
         
         self.attendanceTimeBarView.isUserInteractionEnabled = false
+        self.startButton.isUserInteractionEnabled = false
         
         self.locateMarkingBarViewFor(.attendance(point))
         self.showMomentLabelFor(.attendance(point), withAnimation: true)
@@ -1910,7 +1980,7 @@ extension WorkTypeViewController {
     
     @objc func attendanceTimeBarMarkingViewPanGesture(_ gesture: UIGestureRecognizer) {
         let point = gesture.location(in: gesture.view?.superview)
-        print("attendanceTimeBarMarkingView point: \(point)")
+        //print("attendanceTimeBarMarkingView point: \(point)")
         
         if (gesture.state == .began) {
             self.moveMarkingBarViewTo(.attendance(point))
@@ -1958,9 +2028,30 @@ extension WorkTypeViewController {
     }
     
     @objc func startButton(_ sender: UIButton) {
+        print("WorkType: \(self.workType == .staggered ? "Staggered Type" : "Normal Type")")
+        switch self.workType {
+        case .staggered:
+            if let startTimeValue = self.determineStaggeredWorkTimeValue() {
+                print("StartTimeValue: \(startTimeValue.0), \(startTimeValue.1)")
+                
+            } else {
+                print("Invalid StartTimeValue")
+            }
+            
+        case .normal:
+            if let startTimeValue = self.getWorkTimeValue(self.attendaceTimeBarMarkingViewConstraint.constant) {
+                print("StartTimeValue: \(startTimeValue)")
+                
+            } else {
+                print("Invalid StartTimeValue")
+            }
+        }
+        print("Holidays: \(self.determineRegularHolidays())")
+        
+        
         let mainNaviVC = UINavigationController(rootViewController: MainViewController())
         mainNaviVC.modalPresentationStyle = .fullScreen
-        
+
         self.present(mainNaviVC, animated: true, completion: nil)
     }
 }
