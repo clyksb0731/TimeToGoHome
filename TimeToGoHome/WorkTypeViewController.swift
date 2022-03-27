@@ -17,7 +17,8 @@ class WorkTypeViewController: UIViewController {
     var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.bounces = false
-        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width, height: 590)
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width, height: 582)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
         return scrollView
@@ -86,7 +87,6 @@ class WorkTypeViewController: UIViewController {
     
     var momentLabel: UILabel = {
         let label = UILabel()
-        label.backgroundColor = .useRGB(red: 116, green: 116, blue: 128, alpha: 0.08)
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 30)
         label.textColor = .white
@@ -164,7 +164,7 @@ class WorkTypeViewController: UIViewController {
     
     var earliestAttendanceTimeBarView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 212, green: 255, blue: 254, alpha: 0.5)
+        view.backgroundColor = UIColor.useRGB(red: 167, green: 255, blue: 254, alpha: 0.5)
         view.layer.cornerRadius = 12
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -303,7 +303,7 @@ class WorkTypeViewController: UIViewController {
     
     var latestAttendanceTimeBarView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 212, green: 255, blue: 254, alpha: 0.5)
+        view.backgroundColor = UIColor.useRGB(red: 176, green: 255, blue: 186, alpha: 0.5)
         view.layer.cornerRadius = 12
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -312,7 +312,7 @@ class WorkTypeViewController: UIViewController {
     
     var latestAttendanceTimeBarFirstPointView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 110, green: 217, blue: 228)
+        view.backgroundColor = UIColor.useRGB(red: 110, green: 228, blue: 159)
         view.layer.cornerRadius = 2.5
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -321,7 +321,7 @@ class WorkTypeViewController: UIViewController {
     
     var latestAttendanceTimeBarFirstHalfPointView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 110, green: 217, blue: 228)
+        view.backgroundColor = UIColor.useRGB(red: 110, green: 228, blue: 159)
         view.layer.cornerRadius = 2.5
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -330,7 +330,7 @@ class WorkTypeViewController: UIViewController {
     
     var latestAttendanceTimeBarSecondPointView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 110, green: 217, blue: 228)
+        view.backgroundColor = UIColor.useRGB(red: 110, green: 228, blue: 159)
         view.layer.cornerRadius = 2.5
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -339,7 +339,7 @@ class WorkTypeViewController: UIViewController {
     
     var latestAttendanceTimeBarSecondHalfPointView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 110, green: 217, blue: 228)
+        view.backgroundColor = UIColor.useRGB(red: 110, green: 228, blue: 159)
         view.layer.cornerRadius = 2.5
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -348,7 +348,7 @@ class WorkTypeViewController: UIViewController {
     
     var latestAttendanceTimeBarThirdPointView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 110, green: 217, blue: 228)
+        view.backgroundColor = UIColor.useRGB(red: 110, green: 228, blue: 159)
         view.layer.cornerRadius = 2.5
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -357,7 +357,7 @@ class WorkTypeViewController: UIViewController {
     
     var latestAttendanceTimeBarThirdHalfPointView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 110, green: 217, blue: 228)
+        view.backgroundColor = UIColor.useRGB(red: 110, green: 228, blue: 159)
         view.layer.cornerRadius = 2.5
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -366,7 +366,7 @@ class WorkTypeViewController: UIViewController {
     
     var latestAttendanceTimeBarFourthPointView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 110, green: 217, blue: 228)
+        view.backgroundColor = UIColor.useRGB(red: 110, green: 228, blue: 159)
         view.layer.cornerRadius = 2.5
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -375,7 +375,7 @@ class WorkTypeViewController: UIViewController {
     
     var latestAttendanceTimeBarMarkingView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 110, green: 217, blue: 228)
+        view.backgroundColor = UIColor.useRGB(red: 110, green: 228, blue: 159)
         view.layer.cornerRadius = 9
         view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -461,7 +461,7 @@ class WorkTypeViewController: UIViewController {
     
     var attendanceTimeBarView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 212, green: 255, blue: 254, alpha: 0.5)
+        view.backgroundColor = UIColor.useRGB(red: 167, green: 255, blue: 254, alpha: 0.5)
         view.layer.cornerRadius = 12
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -979,7 +979,7 @@ extension WorkTypeViewController {
         // Content view layout
         NSLayoutConstraint.activate([
             self.contentView.topAnchor.constraint(equalTo: self.scrollView.topAnchor),
-            self.contentView.heightAnchor.constraint(equalToConstant: 590),
+            self.contentView.heightAnchor.constraint(equalToConstant: self.scrollView.contentSize.height),
             self.contentView.leadingAnchor.constraint(equalTo: self.scrollView.leadingAnchor),
             self.contentView.widthAnchor.constraint(equalTo: self.scrollView.widthAnchor)
         ])
@@ -995,14 +995,14 @@ extension WorkTypeViewController {
         // Title label layout
         NSLayoutConstraint.activate([
             self.titleLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 44),
-            self.titleLabel.heightAnchor.constraint(equalToConstant: 45),
+            self.titleLabel.heightAnchor.constraint(equalToConstant: 55),
             self.titleLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 16),
             self.titleLabel.widthAnchor.constraint(equalToConstant: 191)
         ])
         
         // Staggered type button layout
         NSLayoutConstraint.activate([
-            self.staggeredTypeButton.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 40),
+            self.staggeredTypeButton.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 30),
             self.staggeredTypeButton.heightAnchor.constraint(equalToConstant: 117),
             self.staggeredTypeButton.trailingAnchor.constraint(equalTo: self.contentView.centerXAnchor, constant: -20),
             self.staggeredTypeButton.widthAnchor.constraint(equalToConstant: 117)
@@ -1010,7 +1010,7 @@ extension WorkTypeViewController {
         
         // Normal type button layout
         NSLayoutConstraint.activate([
-            self.normalTypeButton.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 40),
+            self.normalTypeButton.topAnchor.constraint(equalTo: self.staggeredTypeButton.topAnchor),
             self.normalTypeButton.heightAnchor.constraint(equalToConstant: 117),
             self.normalTypeButton.leadingAnchor.constraint(equalTo: self.contentView.centerXAnchor, constant: 20),
             self.normalTypeButton.widthAnchor.constraint(equalToConstant: 117)
@@ -1027,7 +1027,7 @@ extension WorkTypeViewController {
         // MARK: Staggered type time view layout
         NSLayoutConstraint.activate([
             self.staggeredTypeTimeView.topAnchor.constraint(equalTo: self.staggeredTypeButton.bottomAnchor, constant: 82),
-            self.staggeredTypeTimeView.heightAnchor.constraint(equalToConstant: 87),
+            self.staggeredTypeTimeView.heightAnchor.constraint(equalToConstant: 110),
             self.staggeredTypeTimeView.leadingAnchor.constraint(equalTo: self.staggeredTypeButton.leadingAnchor),
             self.staggeredTypeTimeView.trailingAnchor.constraint(equalTo: self.normalTypeButton.trailingAnchor)
         ])
@@ -1080,7 +1080,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.earliestAttendanceTimeBarFirstPointView.centerYAnchor.constraint(equalTo: self.earliestAttendanceTimeBarView.centerYAnchor),
             self.earliestAttendanceTimeBarFirstPointView.heightAnchor.constraint(equalToConstant: 6),
-            self.earliestAttendanceTimeBarFirstPointView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarView.leadingAnchor, constant: 10),
+            self.earliestAttendanceTimeBarFirstPointView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarView.leadingAnchor, constant: 12),
             self.earliestAttendanceTimeBarFirstPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
@@ -1088,7 +1088,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.earliestAttendanceTimeBarFirstHalfPointView.centerYAnchor.constraint(equalTo: self.earliestAttendanceTimeBarView.centerYAnchor),
             self.earliestAttendanceTimeBarFirstHalfPointView.heightAnchor.constraint(equalToConstant: 3),
-            self.earliestAttendanceTimeBarFirstHalfPointView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarFirstPointView.centerXAnchor, constant: 23.75),
+            self.earliestAttendanceTimeBarFirstHalfPointView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarFirstPointView.centerXAnchor, constant: 23.25),
             self.earliestAttendanceTimeBarFirstHalfPointView.widthAnchor.constraint(equalToConstant: 3)
         ])
         
@@ -1096,7 +1096,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.earliestAttendanceTimeBarSecondPointView.centerYAnchor.constraint(equalTo: self.earliestAttendanceTimeBarView.centerYAnchor),
             self.earliestAttendanceTimeBarSecondPointView.heightAnchor.constraint(equalToConstant: 6),
-            self.earliestAttendanceTimeBarSecondPointView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarFirstPointView.centerXAnchor, constant: 47.5),
+            self.earliestAttendanceTimeBarSecondPointView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarFirstPointView.centerXAnchor, constant: 46.5),
             self.earliestAttendanceTimeBarSecondPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
@@ -1104,7 +1104,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.earliestAttendanceTimeBarSecondHalfPointView.centerYAnchor.constraint(equalTo: self.earliestAttendanceTimeBarView.centerYAnchor),
             self.earliestAttendanceTimeBarSecondHalfPointView.heightAnchor.constraint(equalToConstant: 3),
-            self.earliestAttendanceTimeBarSecondHalfPointView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarSecondPointView.centerXAnchor, constant: 23.75),
+            self.earliestAttendanceTimeBarSecondHalfPointView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarSecondPointView.centerXAnchor, constant: 23.25),
             self.earliestAttendanceTimeBarSecondHalfPointView.widthAnchor.constraint(equalToConstant: 3)
         ])
         
@@ -1112,7 +1112,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.earliestAttendanceTimeBarThirdPointView.centerYAnchor.constraint(equalTo: self.earliestAttendanceTimeBarView.centerYAnchor),
             self.earliestAttendanceTimeBarThirdPointView.heightAnchor.constraint(equalToConstant: 6),
-            self.earliestAttendanceTimeBarThirdPointView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarSecondPointView.centerXAnchor, constant: 47.5),
+            self.earliestAttendanceTimeBarThirdPointView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarSecondPointView.centerXAnchor, constant: 46.5),
             self.earliestAttendanceTimeBarThirdPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
@@ -1120,7 +1120,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.earliestAttendanceTimeBarThirdHalfPointView.centerYAnchor.constraint(equalTo: self.earliestAttendanceTimeBarView.centerYAnchor),
             self.earliestAttendanceTimeBarThirdHalfPointView.heightAnchor.constraint(equalToConstant: 3),
-            self.earliestAttendanceTimeBarThirdHalfPointView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarThirdPointView.centerXAnchor, constant: 23.75),
+            self.earliestAttendanceTimeBarThirdHalfPointView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarThirdPointView.centerXAnchor, constant: 23.25),
             self.earliestAttendanceTimeBarThirdHalfPointView.widthAnchor.constraint(equalToConstant: 3)
         ])
         
@@ -1128,12 +1128,12 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.earliestAttendanceTimeBarFourthPointView.centerYAnchor.constraint(equalTo: self.earliestAttendanceTimeBarView.centerYAnchor),
             self.earliestAttendanceTimeBarFourthPointView.heightAnchor.constraint(equalToConstant: 6),
-            self.earliestAttendanceTimeBarFourthPointView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarThirdPointView.centerXAnchor, constant: 47.5),
+            self.earliestAttendanceTimeBarFourthPointView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarThirdPointView.centerXAnchor, constant: 46.5),
             self.earliestAttendanceTimeBarFourthPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
         // Earliest attendance time bar marking view layout
-        self.earliestAttendaceTimeBarMarkingViewConstraint = self.earliestAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarView.leadingAnchor, constant: 10 + 47.5)
+        self.earliestAttendaceTimeBarMarkingViewConstraint = self.earliestAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.earliestAttendanceTimeBarView.leadingAnchor, constant: 12 + 46.5)
         NSLayoutConstraint.activate([
             self.earliestAttendanceTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.earliestAttendanceTimeBarView.centerYAnchor),
             self.earliestAttendanceTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),
@@ -1189,7 +1189,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.latestAttendanceTimeBarFirstPointView.centerYAnchor.constraint(equalTo: self.latestAttendanceTimeBarView.centerYAnchor),
             self.latestAttendanceTimeBarFirstPointView.heightAnchor.constraint(equalToConstant: 6),
-            self.latestAttendanceTimeBarFirstPointView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarView.leadingAnchor, constant: 10 + 47.5),
+            self.latestAttendanceTimeBarFirstPointView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarView.leadingAnchor, constant: 12 + 46.5),
             self.latestAttendanceTimeBarFirstPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
@@ -1197,7 +1197,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.latestAttendanceTimeBarFirstHalfPointView.centerYAnchor.constraint(equalTo: self.latestAttendanceTimeBarView.centerYAnchor),
             self.latestAttendanceTimeBarFirstHalfPointView.heightAnchor.constraint(equalToConstant: 3),
-            self.latestAttendanceTimeBarFirstHalfPointView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarFirstPointView.centerXAnchor, constant: 23.75),
+            self.latestAttendanceTimeBarFirstHalfPointView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarFirstPointView.centerXAnchor, constant: 23.25),
             self.latestAttendanceTimeBarFirstHalfPointView.widthAnchor.constraint(equalToConstant: 3)
         ])
         
@@ -1205,7 +1205,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.latestAttendanceTimeBarSecondPointView.centerYAnchor.constraint(equalTo: self.latestAttendanceTimeBarView.centerYAnchor),
             self.latestAttendanceTimeBarSecondPointView.heightAnchor.constraint(equalToConstant: 6),
-            self.latestAttendanceTimeBarSecondPointView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarFirstPointView.centerXAnchor, constant: 47.5),
+            self.latestAttendanceTimeBarSecondPointView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarFirstPointView.centerXAnchor, constant: 46.5),
             self.latestAttendanceTimeBarSecondPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
@@ -1213,7 +1213,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.latestAttendanceTimeBarSecondHalfPointView.centerYAnchor.constraint(equalTo: self.latestAttendanceTimeBarView.centerYAnchor),
             self.latestAttendanceTimeBarSecondHalfPointView.heightAnchor.constraint(equalToConstant: 3),
-            self.latestAttendanceTimeBarSecondHalfPointView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarSecondPointView.centerXAnchor, constant: 23.75),
+            self.latestAttendanceTimeBarSecondHalfPointView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarSecondPointView.centerXAnchor, constant: 23.25),
             self.latestAttendanceTimeBarSecondHalfPointView.widthAnchor.constraint(equalToConstant: 3)
         ])
         
@@ -1221,7 +1221,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.latestAttendanceTimeBarThirdPointView.centerYAnchor.constraint(equalTo: self.latestAttendanceTimeBarView.centerYAnchor),
             self.latestAttendanceTimeBarThirdPointView.heightAnchor.constraint(equalToConstant: 6),
-            self.latestAttendanceTimeBarThirdPointView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarSecondPointView.centerXAnchor, constant: 47.5),
+            self.latestAttendanceTimeBarThirdPointView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarSecondPointView.centerXAnchor, constant: 46.5),
             self.latestAttendanceTimeBarThirdPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
@@ -1229,7 +1229,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.latestAttendanceTimeBarThirdHalfPointView.centerYAnchor.constraint(equalTo: self.latestAttendanceTimeBarView.centerYAnchor),
             self.latestAttendanceTimeBarThirdHalfPointView.heightAnchor.constraint(equalToConstant: 3),
-            self.latestAttendanceTimeBarThirdHalfPointView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarThirdPointView.centerXAnchor, constant: 23.75),
+            self.latestAttendanceTimeBarThirdHalfPointView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarThirdPointView.centerXAnchor, constant: 23.25),
             self.latestAttendanceTimeBarThirdHalfPointView.widthAnchor.constraint(equalToConstant: 3)
         ])
         
@@ -1237,12 +1237,12 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.latestAttendanceTimeBarFourthPointView.centerYAnchor.constraint(equalTo: self.latestAttendanceTimeBarView.centerYAnchor),
             self.latestAttendanceTimeBarFourthPointView.heightAnchor.constraint(equalToConstant: 6),
-            self.latestAttendanceTimeBarFourthPointView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarThirdPointView.centerXAnchor, constant: 47.5),
+            self.latestAttendanceTimeBarFourthPointView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarThirdPointView.centerXAnchor, constant: 46.5),
             self.latestAttendanceTimeBarFourthPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
         // Latest attendance time bar marking view layout
-        self.latestAttendaceTimeBarMarkingViewConstraint = self.latestAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarView.leadingAnchor, constant: 10 + 142.5) // 10 + 47.5 + 47.5 + 47.5
+        self.latestAttendaceTimeBarMarkingViewConstraint = self.latestAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.latestAttendanceTimeBarView.leadingAnchor, constant: 12 + 139.5) // 12 + 46.5 + 46.5 + 46.5
         NSLayoutConstraint.activate([
             self.latestAttendanceTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.latestAttendanceTimeBarView.centerYAnchor),
             self.latestAttendanceTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),
@@ -1253,7 +1253,7 @@ extension WorkTypeViewController {
         // MARK: Normal type time view layout
         NSLayoutConstraint.activate([
             self.normalTypeTimeView.topAnchor.constraint(equalTo: self.normalTypeButton.bottomAnchor, constant: 82),
-            self.normalTypeTimeView.heightAnchor.constraint(equalToConstant: 87),
+            self.normalTypeTimeView.heightAnchor.constraint(equalToConstant: 110),
             self.normalTypeTimeView.leadingAnchor.constraint(equalTo: self.staggeredTypeButton.leadingAnchor),
             self.normalTypeTimeView.trailingAnchor.constraint(equalTo: self.normalTypeButton.trailingAnchor)
         ])
@@ -1313,7 +1313,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.attendanceTimeBarFirstPointView.centerYAnchor.constraint(equalTo: self.attendanceTimeBarView.centerYAnchor),
             self.attendanceTimeBarFirstPointView.heightAnchor.constraint(equalToConstant: 6),
-            self.attendanceTimeBarFirstPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarView.leadingAnchor, constant: 10),
+            self.attendanceTimeBarFirstPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarView.leadingAnchor, constant: 12),
             self.attendanceTimeBarFirstPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
@@ -1321,7 +1321,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.attendanceTimeBarFirstHalfPointView.centerYAnchor.constraint(equalTo: self.attendanceTimeBarView.centerYAnchor),
             self.attendanceTimeBarFirstHalfPointView.heightAnchor.constraint(equalToConstant: 3),
-            self.attendanceTimeBarFirstHalfPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarFirstPointView.centerXAnchor, constant: 23.75),
+            self.attendanceTimeBarFirstHalfPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarFirstPointView.centerXAnchor, constant: 23.25),
             self.attendanceTimeBarFirstHalfPointView.widthAnchor.constraint(equalToConstant: 3)
         ])
         
@@ -1329,7 +1329,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.attendanceTimeBarSecondPointView.centerYAnchor.constraint(equalTo: self.attendanceTimeBarView.centerYAnchor),
             self.attendanceTimeBarSecondPointView.heightAnchor.constraint(equalToConstant: 6),
-            self.attendanceTimeBarSecondPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarFirstPointView.centerXAnchor, constant: 47.5),
+            self.attendanceTimeBarSecondPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarFirstPointView.centerXAnchor, constant: 46.5),
             self.attendanceTimeBarSecondPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
@@ -1337,7 +1337,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.attendanceTimeBarSecondHalfPointView.centerYAnchor.constraint(equalTo: self.attendanceTimeBarView.centerYAnchor),
             self.attendanceTimeBarSecondHalfPointView.heightAnchor.constraint(equalToConstant: 3),
-            self.attendanceTimeBarSecondHalfPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarSecondPointView.centerXAnchor, constant: 23.75),
+            self.attendanceTimeBarSecondHalfPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarSecondPointView.centerXAnchor, constant: 23.25),
             self.attendanceTimeBarSecondHalfPointView.widthAnchor.constraint(equalToConstant: 3)
         ])
         
@@ -1345,7 +1345,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.attendanceTimeBarThirdPointView.centerYAnchor.constraint(equalTo: self.attendanceTimeBarView.centerYAnchor),
             self.attendanceTimeBarThirdPointView.heightAnchor.constraint(equalToConstant: 6),
-            self.attendanceTimeBarThirdPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarSecondPointView.centerXAnchor, constant: 47.5),
+            self.attendanceTimeBarThirdPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarSecondPointView.centerXAnchor, constant: 46.5),
             self.attendanceTimeBarThirdPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
@@ -1353,7 +1353,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.attendanceTimeBarThirdHalfPointView.centerYAnchor.constraint(equalTo: self.attendanceTimeBarView.centerYAnchor),
             self.attendanceTimeBarThirdHalfPointView.heightAnchor.constraint(equalToConstant: 3),
-            self.attendanceTimeBarThirdHalfPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarThirdPointView.centerXAnchor, constant: 23.75),
+            self.attendanceTimeBarThirdHalfPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarThirdPointView.centerXAnchor, constant: 23.25),
             self.attendanceTimeBarThirdHalfPointView.widthAnchor.constraint(equalToConstant: 3)
         ])
         
@@ -1361,7 +1361,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.attendanceTimeBarFourthPointView.centerYAnchor.constraint(equalTo: self.attendanceTimeBarView.centerYAnchor),
             self.attendanceTimeBarFourthPointView.heightAnchor.constraint(equalToConstant: 6),
-            self.attendanceTimeBarFourthPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarThirdPointView.centerXAnchor, constant: 47.5),
+            self.attendanceTimeBarFourthPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarThirdPointView.centerXAnchor, constant: 46.5),
             self.attendanceTimeBarFourthPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
@@ -1369,7 +1369,7 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.attendanceTimeBarFourthHalfPointView.centerYAnchor.constraint(equalTo: self.attendanceTimeBarView.centerYAnchor),
             self.attendanceTimeBarFourthHalfPointView.heightAnchor.constraint(equalToConstant: 3),
-            self.attendanceTimeBarFourthHalfPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarFourthPointView.centerXAnchor, constant: 23.75),
+            self.attendanceTimeBarFourthHalfPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarFourthPointView.centerXAnchor, constant: 23.25),
             self.attendanceTimeBarFourthHalfPointView.widthAnchor.constraint(equalToConstant: 3)
         ])
         
@@ -1377,12 +1377,12 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.attendanceTimeBarFifthPointView.centerYAnchor.constraint(equalTo: self.attendanceTimeBarView.centerYAnchor),
             self.attendanceTimeBarFifthPointView.heightAnchor.constraint(equalToConstant: 6),
-            self.attendanceTimeBarFifthPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarFourthPointView.centerXAnchor, constant: 47.5),
+            self.attendanceTimeBarFifthPointView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarFourthPointView.centerXAnchor, constant: 46.5),
             self.attendanceTimeBarFifthPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
         // Attendance time bar marking view layout
-        self.attendaceTimeBarMarkingViewConstraint = self.attendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarView.leadingAnchor, constant: 10 + 95) // 10 + 47.5 + 47.5
+        self.attendaceTimeBarMarkingViewConstraint = self.attendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.attendanceTimeBarView.leadingAnchor, constant: 12 + 93) // 12 + 46.5 + 46.5
         NSLayoutConstraint.activate([
             self.attendanceTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.attendanceTimeBarView.centerYAnchor),
             self.attendanceTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),
@@ -1410,39 +1410,39 @@ extension WorkTypeViewController {
         NSLayoutConstraint.activate([
             self.leaving16Label.bottomAnchor.constraint(equalTo: self.leavingTimeBarView.topAnchor),
             self.leaving16Label.heightAnchor.constraint(equalToConstant: 10),
-            self.leaving16Label.centerXAnchor.constraint(equalTo: self.leavingTimeBarView.leadingAnchor, constant: 10)
+            self.leaving16Label.centerXAnchor.constraint(equalTo: self.leavingTimeBarView.leadingAnchor, constant: 12)
         ])
         
         // Leaving 17 label layout
         NSLayoutConstraint.activate([
             self.leaving17Label.bottomAnchor.constraint(equalTo: self.leavingTimeBarView.topAnchor),
             self.leaving17Label.heightAnchor.constraint(equalToConstant: 10),
-            self.leaving17Label.centerXAnchor.constraint(equalTo: self.leaving16Label.centerXAnchor, constant: 47.5)
+            self.leaving17Label.centerXAnchor.constraint(equalTo: self.leaving16Label.centerXAnchor, constant: 46.5)
         ])
         
         // Leaving 18 label layout
         NSLayoutConstraint.activate([
             self.leaving18Label.bottomAnchor.constraint(equalTo: self.leavingTimeBarView.topAnchor),
             self.leaving18Label.heightAnchor.constraint(equalToConstant: 10),
-            self.leaving18Label.centerXAnchor.constraint(equalTo: self.leaving17Label.centerXAnchor, constant: 47.5)
+            self.leaving18Label.centerXAnchor.constraint(equalTo: self.leaving17Label.centerXAnchor, constant: 46.5)
         ])
         
         // Leaving 19 label layout
         NSLayoutConstraint.activate([
             self.leaving19Label.bottomAnchor.constraint(equalTo: self.leavingTimeBarView.topAnchor),
             self.leaving19Label.heightAnchor.constraint(equalToConstant: 10),
-            self.leaving19Label.centerXAnchor.constraint(equalTo: self.leaving18Label.centerXAnchor, constant: 47.5)
+            self.leaving19Label.centerXAnchor.constraint(equalTo: self.leaving18Label.centerXAnchor, constant: 46.5)
         ])
         
         // Leaving 20 label layout
         NSLayoutConstraint.activate([
             self.leaving20Label.bottomAnchor.constraint(equalTo: self.leavingTimeBarView.topAnchor),
             self.leaving20Label.heightAnchor.constraint(equalToConstant: 10),
-            self.leaving20Label.centerXAnchor.constraint(equalTo: self.leaving19Label.centerXAnchor, constant: 47.5)
+            self.leaving20Label.centerXAnchor.constraint(equalTo: self.leaving19Label.centerXAnchor, constant: 46.5)
         ])
         
         // Leaving time bar marking view layout
-        self.leavingTimeBarMarkingViewConstraint = self.leavingTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.leavingTimeBarView.leadingAnchor, constant: 10 + 95) // 10 + 47.5 + 47.5
+        self.leavingTimeBarMarkingViewConstraint = self.leavingTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.leavingTimeBarView.leadingAnchor, constant: 12 + 93) // 12 + 46.5 + 46.5
         NSLayoutConstraint.activate([
             self.leavingTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.leavingTimeBarView.centerYAnchor),
             self.leavingTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),
@@ -1452,7 +1452,7 @@ extension WorkTypeViewController {
         
         // Holidays label layout
         NSLayoutConstraint.activate([
-            self.holidaysLabel.topAnchor .constraint(equalTo: self.staggeredTypeTimeView.bottomAnchor, constant: 70),
+            self.holidaysLabel.topAnchor .constraint(equalTo: self.staggeredTypeTimeView.bottomAnchor, constant: 50),
             self.holidaysLabel.heightAnchor.constraint(equalToConstant: 24),
             self.holidaysLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 43),
             self.holidaysLabel.widthAnchor.constraint(equalToConstant: 119)
@@ -1460,7 +1460,7 @@ extension WorkTypeViewController {
         
         // Day buttons view layout
         NSLayoutConstraint.activate([
-            self.dayButtonsView.topAnchor.constraint(equalTo: self.holidaysLabel.bottomAnchor, constant: 34),
+            self.dayButtonsView.topAnchor.constraint(equalTo: self.holidaysLabel.bottomAnchor, constant: 24),
             self.dayButtonsView.heightAnchor.constraint(equalToConstant: 36),
             self.dayButtonsView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor),
             self.dayButtonsView.widthAnchor.constraint(equalToConstant: 302)
@@ -1539,26 +1539,26 @@ extension WorkTypeViewController {
     func locateMarkingBarViewFor(_ type: MarkingViewType) {
         switch type {
         case .earliest(let point):
-            if point.x <= 21.875 { // 10 + 23.75/2
-                self.earliestAttendaceTimeBarMarkingViewConstraint.constant = 10 // (07:00)
+            if point.x <= 23.625 { // 12 + 23.25/2
+                self.earliestAttendaceTimeBarMarkingViewConstraint.constant = 12 // (07:00)
                 
-            } else if point.x > 21.875 && point.x <= 45.625 { // 10 + 23.75 + 23.75/2
-                self.earliestAttendaceTimeBarMarkingViewConstraint.constant = 33.75 // 10 + 23.75 (07:30)
+            } else if point.x > 23.625 && point.x <= 46.875 { // 12 + 23.25 + 23.25/2
+                self.earliestAttendaceTimeBarMarkingViewConstraint.constant = 35.25 // 12 + 23.25 (07:30)
                 
-            } else if point.x > 45.625 && point.x <= 69.375 { // 10 + 23.75*2 + 23.75/2
-                self.earliestAttendaceTimeBarMarkingViewConstraint.constant = 57.5 // 10 + 23.75*2 (08:00)
+            } else if point.x > 46.875 && point.x <= 70.125 { // 12 + 23.25*2 + 23.25/2
+                self.earliestAttendaceTimeBarMarkingViewConstraint.constant = 58.5 // 12 + 23.25*2 (08:00)
                 
-            } else if point.x > 69.375 && point.x <= 93.125 { // 10 + 23.75*3 + 23.75/2
-                self.earliestAttendaceTimeBarMarkingViewConstraint.constant = 81.25 // 10 + 23.75*3 (08:30)
+            } else if point.x > 70.125 && point.x <= 93.375 { // 12 + 23.25*3 + 23.25/2
+                self.earliestAttendaceTimeBarMarkingViewConstraint.constant = 81.75 // 12 + 23.25*3 (08:30)
                 
-            } else if point.x > 93.125 && point.x <= 116.875 { // 10 + 23.75*4 + 23.75/2
-                self.earliestAttendaceTimeBarMarkingViewConstraint.constant = 105 // 10 + 23.75*4 (09:00)
+            } else if point.x > 93.375 && point.x <= 116.625 { // 12 + 23.25*4 + 23.25/2
+                self.earliestAttendaceTimeBarMarkingViewConstraint.constant = 105 // 12 + 23.25*4 (09:00)
                 
-            } else if point.x > 116.875 && point.x <= 140.625 { // 10 + 23.75*5 + 23.75/2
-                self.earliestAttendaceTimeBarMarkingViewConstraint.constant = 128.75 // 10 + 23.75*5 (09:30)
+            } else if point.x > 116.625 && point.x <= 139.875 { // 12 + 23.25*5 + 23.25/2
+                self.earliestAttendaceTimeBarMarkingViewConstraint.constant = 128.25 // 12 + 23.25*5 (09:30)
                 
-            } else { // > 10 + 23.75*5 + 23.75/2
-                self.earliestAttendaceTimeBarMarkingViewConstraint.constant = 152.5 // 10 + 23.75*6 + 23.75/2 (10:00)
+            } else { // > 10 + 23.25*5 + 23.25/2
+                self.earliestAttendaceTimeBarMarkingViewConstraint.constant = 151.5 // 12 + 23.25*6 (10:00)
             }
             
             UIView.animate(withDuration: 0.2) {
@@ -1571,26 +1571,26 @@ extension WorkTypeViewController {
             }
             
         case .latest(let point):
-            if point.x <= 69.375 { // 10 + 23.75*2 + 23.75/2
-                self.latestAttendaceTimeBarMarkingViewConstraint.constant = 57.5 // 10 + 23.75*2 (08:00)
+            if point.x <= 70.125 { // 12 + 23.25*2 + 23.25/2
+                self.latestAttendaceTimeBarMarkingViewConstraint.constant = 58.5 // 12 + 23.25*2 (08:00)
                 
-            } else if point.x > 69.375 && point.x <= 93.125 { // 10 + 23.75*3 + 23.75/2
-                self.latestAttendaceTimeBarMarkingViewConstraint.constant = 81.25 // 10 + 23.75*3 (08:30)
+            } else if point.x > 70.125 && point.x <= 93.375 { // 12 + 23.25*3 + 23.25/2
+                self.latestAttendaceTimeBarMarkingViewConstraint.constant = 81.75 // 12 + 23.25*3 (08:30)
                 
-            } else if point.x > 93.125 && point.x <= 116.875 { // 10 + 23.75*4 + 23.75/2
-                self.latestAttendaceTimeBarMarkingViewConstraint.constant = 105 // 10 + 23.75*4 (09:00)
+            } else if point.x > 93.375 && point.x <= 116.625 { // 12 + 23.25*4 + 23.25/2
+                self.latestAttendaceTimeBarMarkingViewConstraint.constant = 105 // 12 + 23.25*4 (09:00)
                 
-            } else if point.x > 116.875 && point.x <= 140.625 { // 10 + 23.75*5 + 23.75/2
-                self.latestAttendaceTimeBarMarkingViewConstraint.constant = 128.75 // 10 + 23.75*5 (09:30)
+            } else if point.x > 116.625 && point.x <= 139.875 { // 12 + 23.25*5 + 23.25/2
+                self.latestAttendaceTimeBarMarkingViewConstraint.constant = 128.25 // 12 + 23.25*5 (09:30)
                 
-            } else if point.x > 140.625 && point.x <= 164.375 { // 10 + 23.75*6 + 23.75/2
-                self.latestAttendaceTimeBarMarkingViewConstraint.constant = 152.5 // 10 + 23.75*6 (10:00)
+            } else if point.x > 139.875 && point.x <= 163.125 { // 12 + 23.25*6 + 23.25/2
+                self.latestAttendaceTimeBarMarkingViewConstraint.constant = 151.5 // 12 + 23.25*6 (10:00)
                 
-            } else if point.x > 164.375 && point.x <= 188.125 { // 10 + 23.75*7 + 23.75/2
-                self.latestAttendaceTimeBarMarkingViewConstraint.constant = 176.25 // 10 + 23.75*7 (10:30)
+            } else if point.x > 163.125 && point.x <= 186.375 { // 12 + 23.25*7 + 23.25/2
+                self.latestAttendaceTimeBarMarkingViewConstraint.constant = 174.75 // 12 + 23.25*7 (10:30)
                 
-            } else { // > 10 + 23.75*7 + 23.75/2
-                self.latestAttendaceTimeBarMarkingViewConstraint.constant = 200 // 10 + 23.75*8 (11:00)
+            } else { // > 12 + 23.25*7 + 23.25/2
+                self.latestAttendaceTimeBarMarkingViewConstraint.constant = 198 // 12 + 23.25*8 (11:00)
             }
             
             UIView.animate(withDuration: 0.2) {
@@ -1603,41 +1603,41 @@ extension WorkTypeViewController {
             }
             
         case .attendance(let point):
-            if point.x <= 21.875 { // 10 + 23.75/2
-                self.attendaceTimeBarMarkingViewConstraint.constant = 10 // (07:00)
-                self.leavingTimeBarMarkingViewConstraint.constant = 10 // (16:00)
+            if point.x <= 23.625 { // 12 + 23.25/2
+                self.attendaceTimeBarMarkingViewConstraint.constant = 12 // (07:00)
+                self.leavingTimeBarMarkingViewConstraint.constant = 12 // (16:00)
                 
-            } else if point.x > 21.875 && point.x <= 45.625 { // 10 + 23.75 + 23.75/2
-                self.attendaceTimeBarMarkingViewConstraint.constant = 33.75 // 10 + 23.75 (07:30)
-                self.leavingTimeBarMarkingViewConstraint.constant = 33.75 // 10 + 23.75 (16:30)
+            } else if point.x > 23.625 && point.x <= 46.875 { // 12 + 23.25 + 23.25/2
+                self.attendaceTimeBarMarkingViewConstraint.constant = 35.25 // 12 + 23.25 (07:30)
+                self.leavingTimeBarMarkingViewConstraint.constant = 35.25 // 12 + 23.25 (16:30)
                 
-            } else if point.x > 45.625 && point.x <= 69.375 { // 10 + 23.75*2 + 23.75/2
-                self.attendaceTimeBarMarkingViewConstraint.constant = 57.5 // 10 + 23.75*2 (08:00)
-                self.leavingTimeBarMarkingViewConstraint.constant = 57.5 // 10 + 23.75*2 (17:00)
+            } else if point.x > 46.875 && point.x <= 70.125 { // 12 + 23.25*2 + 23.25/2
+                self.attendaceTimeBarMarkingViewConstraint.constant = 58.5 // 12 + 23.25*2 (08:00)
+                self.leavingTimeBarMarkingViewConstraint.constant = 58.5 // 12 + 23.25*2 (17:00)
                 
-            } else if point.x > 69.375 && point.x <= 93.125 { // 10 + 23.75*3 + 23.75/2
-                self.attendaceTimeBarMarkingViewConstraint.constant = 81.25 // 10 + 23.75*3 (08:30)
-                self.leavingTimeBarMarkingViewConstraint.constant = 81.25 // 10 + 23.75*3 (17:30)
+            } else if point.x > 70.125 && point.x <= 93.375 { // 12 + 23.25*3 + 23.25/2
+                self.attendaceTimeBarMarkingViewConstraint.constant = 81.75 // 12 + 23.25*3 (08:30)
+                self.leavingTimeBarMarkingViewConstraint.constant = 81.75 // 12 + 23.25*3 (17:30)
                 
-            } else if point.x > 93.125 && point.x <= 116.875 { // 10 + 23.75*4 + 23.75/2
-                self.attendaceTimeBarMarkingViewConstraint.constant = 105 // 10 + 23.75*4 (09:00)
-                self.leavingTimeBarMarkingViewConstraint.constant = 105 // 10 + 23.75*4 (18:00)
+            } else if point.x > 93.375 && point.x <= 116.625 { // 12 + 23.25*4 + 23.25/2
+                self.attendaceTimeBarMarkingViewConstraint.constant = 105 // 12 + 23.25*4 (09:00)
+                self.leavingTimeBarMarkingViewConstraint.constant = 105 // 12 + 23.25*4 (18:00)
                 
-            } else if point.x > 116.875 && point.x <= 140.625 { // 10 + 23.75*5 + 23.75/2
-                self.attendaceTimeBarMarkingViewConstraint.constant = 128.75 // 10 + 23.75*5 (09:30)
-                self.leavingTimeBarMarkingViewConstraint.constant = 128.75 // 10 + 23.75*5 (18:30)
+            } else if point.x > 116.625 && point.x <= 139.875 { // 12 + 23.25*5 + 23.25/2
+                self.attendaceTimeBarMarkingViewConstraint.constant = 128.25 // 12 + 23.25*5 (09:30)
+                self.leavingTimeBarMarkingViewConstraint.constant = 128.25 // 12 + 23.25*5 (18:30)
                 
-            } else if point.x > 140.625 && point.x <= 164.375 { // 10 + 23.75*6 + 23.75/2
-                self.attendaceTimeBarMarkingViewConstraint.constant = 152.5 // 10 + 23.75*6 (10:00)
-                self.leavingTimeBarMarkingViewConstraint.constant = 152.5 // 10 + 23.75*6 (19:00)
+            } else if point.x > 139.875 && point.x <= 163.125 { // 12 + 23.25*6 + 23.25/2
+                self.attendaceTimeBarMarkingViewConstraint.constant = 151.5 // 12 + 23.25*6 (10:00)
+                self.leavingTimeBarMarkingViewConstraint.constant = 151.5 // 12 + 23.25*6 (19:00)
                 
-            } else if point.x > 164.375 && point.x <= 188.125 { // 10 + 23.75*7 + 23.75/2
-                self.attendaceTimeBarMarkingViewConstraint.constant = 176.25 // 10 + 23.75*7 (10:30)
-                self.leavingTimeBarMarkingViewConstraint.constant = 176.25 // 10 + 23.75*7 (19:30)
+            } else if point.x > 163.125 && point.x <= 186.375 { // 12 + 23.25*7 + 23.25/2
+                self.attendaceTimeBarMarkingViewConstraint.constant = 174.75 // 12 + 23.25*7 (10:30)
+                self.leavingTimeBarMarkingViewConstraint.constant = 174.75 // 12 + 23.25*7 (19:30)
                 
-            } else { // > 10 + 23.75*7 + 23.75/2
-                self.attendaceTimeBarMarkingViewConstraint.constant = 200 // 10 + 23.75*8 (11:00)
-                self.leavingTimeBarMarkingViewConstraint.constant = 200 // 10 + 23.75*8 (20:00)
+            } else { // > 12 + 23.25*7 + 23.25/2
+                self.attendaceTimeBarMarkingViewConstraint.constant = 198 // 12 + 23.25*8 (11:00)
+                self.leavingTimeBarMarkingViewConstraint.constant = 198 // 12 + 23.25*8 (20:00)
             }
             
             UIView.animate(withDuration: 0.2) {
@@ -1655,19 +1655,19 @@ extension WorkTypeViewController {
     func moveMarkingBarViewTo(_ type: MarkingViewType) {
         switch type {
         case .earliest(let point):
-            self.earliestAttendaceTimeBarMarkingViewConstraint.constant = point.x < 10 ?
-            10 : point.x > 152.5 ?
-            152.5 : point.x
+            self.earliestAttendaceTimeBarMarkingViewConstraint.constant = point.x < 12 ?
+            12 : point.x > 151.5 ?
+            151.5 : point.x
             
         case .latest(let point):
-            self.latestAttendaceTimeBarMarkingViewConstraint.constant = point.x < 10 + 47.5 ?
-            10 + 47.5 : point.x > 200 ?
-            200 : point.x
+            self.latestAttendaceTimeBarMarkingViewConstraint.constant = point.x < 12 + 46.5 ?
+            12 + 46.5 : point.x > 198 ?
+            198 : point.x
             
         case .attendance(let point):
-            self.attendaceTimeBarMarkingViewConstraint.constant = point.x < 10 ?
-            10 : point.x > 200 ?
-            200 : point.x
+            self.attendaceTimeBarMarkingViewConstraint.constant = point.x < 12 ?
+            12 : point.x > 198 ?
+            198 : point.x
         }
     }
     
@@ -1676,93 +1676,126 @@ extension WorkTypeViewController {
         
         switch type {
         case .earliest(let point):
-            if point.x <= 21.875 { // 10 + 23.75/2
+            self.momentLabel.backgroundColor = .useRGB(red: 167, green: 255, blue: 254, alpha: 0.5)
+            self.momentLabel.alpha = 1
+            self.momentLabel.isHidden = false
+            
+            if animation {
+                UIView.animate(withDuration: 1.0) {
+                    self.momentLabel.alpha = 0
+                    
+                } completion: { finished in
+                    if finished {
+                        self.momentLabel.isHidden = true
+                        self.momentLabel.alpha = 1
+                    }
+                }
+            }
+            
+            if point.x <= 23.625 { // 12 + 23.25/2
                 self.momentLabel.text = "07:00" // (07:00)
                 
-            } else if point.x > 21.875 && point.x <= 45.625 { // 10 + 23.75 + 23.75/2
+            } else if point.x > 23.625 && point.x <= 46.875 { // 12 + 23.25 + 23.25/2
                 self.momentLabel.text = "07:30" // (07:30)
                 
-            } else if point.x > 45.625 && point.x <= 69.375 { // 10 + 23.75*2 + 23.75/2
+            } else if point.x > 46.875 && point.x <= 70.125 { // 12 + 23.25*2 + 23.25/2
                 self.momentLabel.text = "08:00" // (08:00)
                 
-            } else if point.x > 69.375 && point.x <= 93.125 { // 10 + 23.75*3 + 23.75/2
+            } else if point.x > 70.125 && point.x <= 93.375 { // 12 + 23.25*3 + 23.25/2
                 self.momentLabel.text = "08:30" // (08:30)
                 
-            } else if point.x > 93.125 && point.x <= 116.875 { // 10 + 23.75*4 + 23.75/2
+            } else if point.x > 93.375 && point.x <= 116.625 { // 12 + 23.25*4 + 23.25/2
                 self.momentLabel.text = "09:00" // (09:00)
                 
-            } else if point.x > 116.875 && point.x <= 140.625 { // 10 + 23.75*5 + 23.75/2
+            } else if point.x > 116.625 && point.x <= 139.875 { // 12 + 23.25*5 + 23.25/2
                 self.momentLabel.text = "09:30" // (09:30)
                 
-            } else { // > 10 + 23.75*5 + 23.75/2
+            } else { // > 10 + 23.25*5 + 23.25/2
                 self.momentLabel.text = "10:00" // (10:00)
             }
             
         case .latest(let point):
-            if point.x <= 69.375 { // 10 + 23.75*2 + 23.75/2
+            self.momentLabel.backgroundColor = .useRGB(red: 176, green: 255, blue: 186, alpha: 0.5)
+            self.momentLabel.alpha = 1
+            self.momentLabel.isHidden = false
+            
+            if animation {
+                UIView.animate(withDuration: 1.0) {
+                    self.momentLabel.alpha = 0
+                    
+                } completion: { finished in
+                    if finished {
+                        self.momentLabel.isHidden = true
+                        self.momentLabel.alpha = 1
+                    }
+                }
+            }
+            
+            if point.x <= 70.125 { // 12 + 23.25*2 + 23.25/2
                 self.momentLabel.text = "08:00" // (08:00)
                 
-            } else if point.x > 69.375 && point.x <= 93.125 { // 10 + 23.75*3 + 23.75/2
+            } else if point.x > 70.125 && point.x <= 93.375 { // 12 + 23.25*3 + 23.25/2
                 self.momentLabel.text = "08:30" // (08:30)
                 
-            } else if point.x > 93.125 && point.x <= 116.875 { // 10 + 23.75*4 + 23.75/2
+            } else if point.x > 93.375 && point.x <= 116.625 { // 12 + 23.25*4 + 23.25/2
                 self.momentLabel.text = "09:00" // (09:00)
                 
-            } else if point.x > 116.875 && point.x <= 140.625 { // 10 + 23.75*5 + 23.75/2
+            } else if point.x > 116.625 && point.x <= 139.875 { // 12 + 23.25*5 + 23.25/2
                 self.momentLabel.text = "09:30" // (09:30)
                 
-            } else if point.x > 140.625 && point.x <= 164.375 { // 10 + 23.75*6 + 23.75/2
+            } else if point.x > 139.875 && point.x <= 163.125 { // 12 + 23.25*6 + 23.25/2
                 self.momentLabel.text = "10:00" // (10:00)
                 
-            } else if point.x > 164.375 && point.x <= 188.125 { // 10 + 23.75*7 + 23.75/2
+            } else if point.x > 163.125 && point.x <= 186.375 { // 12 + 23.25*7 + 23.25/2
                 self.momentLabel.text = "10:30" // (10:30)
                 
-            } else { // > 10 + 23.75*7 + 23.75/2
+            } else { // > 12 + 23.25*7 + 23.25/2
                 self.momentLabel.text = "11:00" // (11:00)
             }
             
         case .attendance(let point):
-            if point.x <= 21.875 { // 10 + 23.75/2
+            self.momentLabel.backgroundColor = .useRGB(red: 167, green: 255, blue: 254, alpha: 0.5)
+            self.momentLabel.alpha = 1
+            self.momentLabel.isHidden = false
+            
+            if animation {
+                UIView.animate(withDuration: 1.0) {
+                    self.momentLabel.alpha = 0
+                    
+                } completion: { finished in
+                    if finished {
+                        self.momentLabel.isHidden = true
+                        self.momentLabel.alpha = 1
+                    }
+                }
+            }
+            
+            if point.x <= 23.625 { // 12 + 23.25/2
                 self.momentLabel.text = "07:00" // (07:00)
                 
-            } else if point.x > 21.875 && point.x <= 45.625 { // 10 + 23.75 + 23.75/2
+            } else if point.x > 23.625 && point.x <= 46.875 { // 12 + 23.25 + 23.25/2
                 self.momentLabel.text = "07:30" // (07:30)
                 
-            } else if point.x > 45.625 && point.x <= 69.375 { // 10 + 23.75*2 + 23.75/2
+            } else if point.x > 46.875 && point.x <= 70.125 { // 12 + 23.25*2 + 23.25/2
                 self.momentLabel.text = "08:00" // (08:00)
                 
-            } else if point.x > 69.375 && point.x <= 93.125 { // 10 + 23.75*3 + 23.75/2
+            } else if point.x > 70.125 && point.x <= 93.375 { // 12 + 23.25*3 + 23.25/2
                 self.momentLabel.text = "08:30" // (08:30)
                 
-            } else if point.x > 93.125 && point.x <= 116.875 { // 10 + 23.75*4 + 23.75/2
+            } else if point.x > 93.375 && point.x <= 116.625 { // 12 + 23.25*4 + 23.25/2
                 self.momentLabel.text = "09:00" // (09:00)
                 
-            } else if point.x > 116.875 && point.x <= 140.625 { // 10 + 23.75*5 + 23.75/2
+            } else if point.x > 116.625 && point.x <= 139.875 { // 12 + 23.25*5 + 23.25/2
                 self.momentLabel.text = "09:30" // (09:30)
                 
-            } else if point.x > 140.625 && point.x <= 164.375 { // 10 + 23.75*6 + 23.75/2
+            } else if point.x > 139.875 && point.x <= 163.125 { // 12 + 23.25*6 + 23.25/2
                 self.momentLabel.text = "10:00" // (10:00)
                 
-            } else if point.x > 164.375 && point.x <= 188.125 { // 10 + 23.75*7 + 23.75/2
+            } else if point.x > 163.125 && point.x <= 186.375 { // 12 + 23.25*7 + 23.25/2
                 self.momentLabel.text = "10:30" // (10:30)
                 
-            } else { // > 10 + 23.75*7 + 23.75/2
+            } else { // > 12 + 23.25*7 + 23.25/2
                 self.momentLabel.text = "11:00" // (11:00)
-            }
-        }
-        
-        self.momentLabel.alpha = 1
-        self.momentLabel.isHidden = false
-        
-        if animation {
-            UIView.animate(withDuration: 1.0) {
-                self.momentLabel.alpha = 0
-                
-            } completion: { finished in
-                if finished {
-                    self.momentLabel.isHidden = true
-                    self.momentLabel.alpha = 1
-                }
             }
         }
     }
