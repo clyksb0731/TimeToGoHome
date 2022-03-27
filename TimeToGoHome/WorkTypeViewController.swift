@@ -67,7 +67,7 @@ class WorkTypeViewController: UIViewController {
         button.layer.cornerRadius = 5
         button.backgroundColor = UIColor.useRGB(red: 78, green: 216, blue: 220)
         button.tag = 1
-        //button.isSelected = true
+        button.isSelected = true
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -84,7 +84,7 @@ class WorkTypeViewController: UIViewController {
         button.backgroundColor = UIColor.useRGB(red: 78, green: 216, blue: 220)
         button.alpha = 0.5
         button.tag = 2
-        //button.isSelected = false
+        button.isSelected = false
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -1672,6 +1672,8 @@ extension WorkTypeViewController {
                 }
             }
         }
+        
+        UIDevice.softHaptic()
     }
     
     func moveMarkingBarViewTo(_ type: MarkingViewType) {
@@ -1883,7 +1885,16 @@ extension WorkTypeViewController {
 // MARK: - Extension for Selector methods
 extension WorkTypeViewController {
     @objc func workTypeButtons(_ sender: UIButton) {
+        guard !sender.isSelected else {
+            return
+        }
+        
+        UIDevice.lightHaptic()
+        
+        sender.isSelected = true
         if sender.tag == 1 {
+            self.normalTypeButton.isSelected = false
+            
             self.staggeredTypeButton.alpha = 1
             self.normalTypeButton.alpha = 0.5
             
@@ -1891,6 +1902,8 @@ extension WorkTypeViewController {
             self.normalTypeTimeView.isHidden = true
             
         } else {
+            self.staggeredTypeButton.isSelected = false
+            
             self.staggeredTypeButton.alpha = 0.5
             self.normalTypeButton.alpha = 1
             
@@ -1999,6 +2012,8 @@ extension WorkTypeViewController {
     }
     
     @objc func holidayButtons(_ sender: UIButton) {
+        UIDevice.lightHaptic()
+        
         if let buttonView = sender.superview as? DayButtonView {
             buttonView.isSelected = !buttonView.isSelected
             
