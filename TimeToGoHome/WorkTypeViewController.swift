@@ -1561,12 +1561,18 @@ extension WorkTypeViewController {
                 self.earliestAttendaceTimeBarMarkingViewConstraint.constant = 151.5 // 12 + 23.25*6 (10:00)
             }
             
+            if self.latestAttendaceTimeBarMarkingViewConstraint.constant <= self.earliestAttendaceTimeBarMarkingViewConstraint.constant {
+                self.latestAttendaceTimeBarMarkingViewConstraint.constant = self.earliestAttendaceTimeBarMarkingViewConstraint.constant + 23.25
+            }
+            
             UIView.animate(withDuration: 0.2) {
                 self.earliestAttendanceTimeBarView.layoutIfNeeded()
+                self.latestAttendanceTimeBarView.layoutIfNeeded()
                 
             } completion: { success in
                 if success {
                     self.earliestAttendanceTimeBarView.isUserInteractionEnabled = true
+                    self.latestAttendanceTimeBarView.isUserInteractionEnabled = true
                 }
             }
             
@@ -1593,12 +1599,18 @@ extension WorkTypeViewController {
                 self.latestAttendaceTimeBarMarkingViewConstraint.constant = 198 // 12 + 23.25*8 (11:00)
             }
             
+            if self.earliestAttendaceTimeBarMarkingViewConstraint.constant >= self.latestAttendaceTimeBarMarkingViewConstraint.constant {
+                self.earliestAttendaceTimeBarMarkingViewConstraint.constant = self.latestAttendaceTimeBarMarkingViewConstraint.constant - 23.25
+            }
+            
             UIView.animate(withDuration: 0.2) {
                 self.latestAttendanceTimeBarView.layoutIfNeeded()
+                self.earliestAttendanceTimeBarView.layoutIfNeeded()
                 
             } completion: { success in
                 if success {
                     self.latestAttendanceTimeBarView.isUserInteractionEnabled = true
+                    self.earliestAttendanceTimeBarView.isUserInteractionEnabled = true
                 }
             }
             
@@ -1825,6 +1837,7 @@ extension WorkTypeViewController {
         print("earliestAttendanceTimeBarView point: \(point)")
         
         self.earliestAttendanceTimeBarView.isUserInteractionEnabled = false
+        self.latestAttendanceTimeBarView.isUserInteractionEnabled = false
         
         self.locateMarkingBarViewFor(.earliest(point))
         self.showMomentLabelFor(.earliest(point), withAnimation: true)
@@ -1835,6 +1848,8 @@ extension WorkTypeViewController {
         print("earliestAttendanceTimeBarMarkingView point: \(point)")
         
         if (gesture.state == .began) {
+            self.latestAttendanceTimeBarView.isUserInteractionEnabled = false
+            
             self.moveMarkingBarViewTo(.earliest(point))
             self.showMomentLabelFor(.earliest(point), withAnimation: false)
         }
@@ -1855,6 +1870,7 @@ extension WorkTypeViewController {
         print("latestAttendanceTimeBarView point: \(point)")
         
         self.latestAttendanceTimeBarView.isUserInteractionEnabled = false
+        self.earliestAttendanceTimeBarView.isUserInteractionEnabled = false
         
         self.locateMarkingBarViewFor(.latest(point))
         self.showMomentLabelFor(.latest(point), withAnimation: true)
@@ -1865,6 +1881,8 @@ extension WorkTypeViewController {
         print("leavingAttendanceTimeBarMarkingView point: \(point)")
         
         if (gesture.state == .began) {
+            self.earliestAttendanceTimeBarView.isUserInteractionEnabled = false
+            
             self.moveMarkingBarViewTo(.latest(point))
             self.showMomentLabelFor(.latest(point), withAnimation: false)
         }
