@@ -20,7 +20,10 @@ enum ScheduleType {
 }
 
 struct WorkSchedule {
-    static var today: WorkSchedule = WorkSchedule(date: Date())
+    static let secondsOfOneHour: Int = 3600
+    static let secondsOfFourHours: Int = 3600 * 4
+    
+    static let today: WorkSchedule = WorkSchedule(date: Date())
     
     private(set) var dateId: String
     private(set) var startingWorkTime: Date?
@@ -222,13 +225,9 @@ extension WorkSchedule {
         }
     }
     
-    @discardableResult mutating func removeSchedule(_ schedule: ScheduleType?) -> Bool {
-        guard let schedule = schedule else {
-            return false
-        }
-        
-        switch schedule {
-        case .morning:
+    @discardableResult mutating func removeSchedule(_ scheduleOrder: Int) -> Bool {
+        switch scheduleOrder {
+        case 1:
             if self.overtime == nil && self.afternoon == nil && self.morning != nil {
                 if !self.isEditingMode {
                     print("Morning deleted in DB")// FIXME: DB
@@ -241,7 +240,7 @@ extension WorkSchedule {
                 return false
             }
             
-        case .afternoon:
+        case 2:
             if self.overtime == nil && self.morning != nil && self.afternoon != nil {
                 if !self.isEditingMode {
                     print("Afternoon deleted in DB")// FIXME: DB
@@ -254,7 +253,7 @@ extension WorkSchedule {
                 return false
             }
             
-        case .overtime:
+        case 3:
             if self.morning != nil && self.afternoon != nil && self.overtime != nil {
                 if !self.isEditingMode {
                     print("Overtime deleted in DB")// FIXME: DB
@@ -266,6 +265,9 @@ extension WorkSchedule {
             } else {
                 return false
             }
+            
+        default:
+            return false
         }
     }
     
@@ -308,6 +310,28 @@ extension WorkSchedule {
             return nil
             
         } else { // 3
+            return nil
+        }
+    }
+    
+    func whenIsRegularWorkFinish() -> Int? {
+        guard let startingWorkTime = self.startingWorkTime else {
+            return nil
+        }
+        
+        let startingWorkTimeSeconds = Int(startingWorkTime.timeIntervalSinceReferenceDate)
+        
+        if case .morning(let workType) = self.morning, case .work = workType,
+           case .afternoon(let workType) = self.afternoon, case .work = workType {
+            return startingWorkTimeSeconds + type(of: self).secondsOfFourHours + type(of: self).secondsOfOneHour + type(of: self).secondsOfFourHours
+            
+        } else if case .morning(let workType) = self.morning, case .work = workType {
+            return startingWorkTimeSeconds + type(of: self).secondsOfFourHours
+            
+        } else if case .afternoon(let workType) = self.afternoon, case .work = workType {
+            return startingWorkTimeSeconds + type(of: self).secondsOfFourHours
+            
+        } else {
             return nil
         }
     }

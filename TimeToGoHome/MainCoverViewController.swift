@@ -9,7 +9,7 @@ import UIKit
 
 enum MainCoverType {
     case normalSchedule(ScheduleType?)
-    case overtimeSchedule(_ finishingRegularTime: Date, _ overtime: Date?, _ isEditingModeBeforPresented: Bool)
+    case overtimeSchedule(finishingRegularTime: Date, overtime: Date?,  isEditingModeBeforPresented: Bool)
     case startingWorkTime(Date?)
 }
 

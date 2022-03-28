@@ -172,11 +172,13 @@ extension ScheduleTypeCell {
 
 // MARK: - Methods added
 extension ScheduleTypeCell {
-    func setCell(scheduleType type: ScheduleType?, isEditingMode: Bool, tag: Int) {
+    func setCell(schedule: WorkSchedule, isEditingMode: Bool, tag: Int) {
         self.timeTypeLabelTopAnchor.constant = 16
         
-        switch type! {
-        case .morning(let workType):
+        self.tag = tag
+        self.removeScheduleButton.tag = tag
+        
+        if tag == 1, case .morning(let workType) = schedule.morning {
             self.timeTypeLabel.text = "오전"
             self.removeScheduleButton.isHidden = !isEditingMode
             
@@ -202,8 +204,9 @@ extension ScheduleTypeCell {
                 self.scheduleTypeLabel.textColor = .white
                 self.scheduleTypeLabel.text = "휴가"
             }
-            
-        case .afternoon(let workType):
+        }
+        
+        if tag == 2, case .afternoon(let workType) = schedule.afternoon {
             self.timeTypeLabel.text = "오후"
             self.removeScheduleButton.isHidden = !isEditingMode
             
@@ -229,10 +232,11 @@ extension ScheduleTypeCell {
                 self.scheduleTypeLabel.textColor = .white
                 self.scheduleTypeLabel.text = "휴가"
             }
-            
-        case .overtime(let overTimeMinute):
+        }
+        
+        if tag == 3, case .overtime(let overtime) = schedule.overtime {
             self.timeTypeLabelTopAnchor.constant = 10
-            self.timeTypeLabel.text = "SupportingMethods.shared.determineAdditionalHourAndMinuteUsingMinute"
+            self.timeTypeLabel.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(Int(overtime.timeIntervalSinceReferenceDate)-schedule.whenIsRegularWorkFinish()!))"
             
             self.scheduleView.backgroundColor = .useRGB(red: 239, green: 119, blue: 119)
             self.timeTypeLabel.textColor = .white
@@ -242,9 +246,6 @@ extension ScheduleTypeCell {
             
             self.removeScheduleButton.isHidden = !isEditingMode
         }
-        
-        self.tag = tag
-        self.removeScheduleButton.tag = tag
     }
     
     func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {

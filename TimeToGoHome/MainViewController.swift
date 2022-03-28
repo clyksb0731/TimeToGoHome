@@ -185,9 +185,6 @@ class MainViewController: UIViewController {
     var tempSchedule: WorkSchedule?
     var isFinishedScheduleToday: Bool = false
     
-    let secondsOfOneHour: Int = 3600
-    let secondsOfFourHours: Int = 3600 * 4
-    
     var isEditingMode: Bool = false {
         willSet {
             
@@ -542,7 +539,7 @@ extension MainViewController {
             } else {
                 if schedule.count > 2 { // 3
                     if case .overtime(let overtime) = schedule.overtime {
-                        if let regularWorkSeconds = self.whenIsRegularWorkFinish(for: schedule) {
+                        if let regularWorkSeconds = self.schedule.whenIsRegularWorkFinish() {
                             if SupportingMethods.getCurrentTimeSeconds() <= regularWorkSeconds {
                                 self.scheduleButtonView.setScheduleButtonViewType(.noButton)
                                 
@@ -562,7 +559,7 @@ extension MainViewController {
                 } else { // 2
                     if case .morning(let workType) = schedule.morning, case .work = workType,
                        case .afternoon(let workType) = schedule.afternoon, case .work = workType {
-                        if let regularWorkSeconds = self.whenIsRegularWorkFinish(for: schedule) {
+                        if let regularWorkSeconds = self.schedule.whenIsRegularWorkFinish() {
                             if regularWorkSeconds >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
                                 self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
                                 
@@ -575,7 +572,7 @@ extension MainViewController {
                         }
                         
                     } else if case .morning(let workType) = schedule.morning, case .work = workType {
-                        if let regularWorkSeconds = self.whenIsRegularWorkFinish(for: schedule) {
+                        if let regularWorkSeconds = self.schedule.whenIsRegularWorkFinish() {
                             if regularWorkSeconds >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
                                 self.scheduleButtonView.setScheduleButtonViewType(.noButton)
                                 
@@ -588,7 +585,7 @@ extension MainViewController {
                         }
                         
                     } else if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
-                        if let regularWorkSeconds = self.whenIsRegularWorkFinish(for: schedule) {
+                        if let regularWorkSeconds = self.schedule.whenIsRegularWorkFinish() {
                             if regularWorkSeconds >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
                                 self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
                                 
@@ -629,28 +626,6 @@ extension MainViewController {
         
         self.startWorkingTimeMarkLabel.isHidden = !schedule.isAvailableToWork
         self.startWorkingTimeButton.isHidden = !schedule.isAvailableToWork
-    }
-    
-    func whenIsRegularWorkFinish(for schedule: WorkSchedule) -> Int? {
-        guard let startingWorkTime = schedule.startingWorkTime else {
-            return nil
-        }
-        
-        let startingWorkTimeSeconds = Int(startingWorkTime.timeIntervalSinceReferenceDate)
-        
-        if case .morning(let workType) = schedule.morning, case .work = workType,
-           case .afternoon(let workType) = schedule.afternoon, case .work = workType {
-            return startingWorkTimeSeconds + self.secondsOfFourHours + 3600 + self.secondsOfOneHour + self.secondsOfFourHours
-            
-        } else if case .morning(let workType) = schedule.morning, case .work = workType {
-            return startingWorkTimeSeconds + self.secondsOfFourHours
-            
-        } else if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
-            return startingWorkTimeSeconds + self.secondsOfFourHours
-            
-        } else {
-            return nil
-        }
     }
 }
 
@@ -733,7 +708,7 @@ extension MainViewController {
     @objc func removeScheduleButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
-        self.schedule.removeSchedule(self.schedule.scheduleForOrder(sender.tag))
+        self.schedule.removeSchedule(sender.tag)
         
         self.determineCompleteChangingScheduleButton(for: self.schedule)
         
@@ -770,8 +745,8 @@ extension MainViewController {
                 } else { // tag 3, overtime
                     print("Long Pressed for overtime")
                     if case .overtime(let overtime) = self.schedule.overtime {
-                        let mainCoverVC = MainCoverViewController(.overtimeSchedule(Date(timeIntervalSinceReferenceDate: Double(self.whenIsRegularWorkFinish(for: self.schedule)!)), overtime, self.isEditingMode), delegate: self)
-                        self.present(mainCoverVC, animated: false, completion: nil)
+                        let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.whenIsRegularWorkFinish()!)), overtime: overtime, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
+                        self.present(mainCoverVC, animated: false)
                     }
                 }
             }
@@ -852,7 +827,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         if self.schedule.count == 1 {
             if indexPath.row == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
-                cell.setCell(scheduleType: self.schedule.morning, isEditingMode: true, tag:1)
+                cell.setCell(schedule: self.schedule, isEditingMode: true, tag:1)
                 cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                 
                 if let gestures = cell.gestureRecognizers {
@@ -879,7 +854,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             if self.isEditingMode {
                 if indexPath.row == 0 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
-                    cell.setCell(scheduleType: self.schedule.morning, isEditingMode: false, tag: 1)
+                    cell.setCell(schedule: self.schedule, isEditingMode: false, tag: 1)
                     cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                     
                     if let gestures = cell.gestureRecognizers {
@@ -892,7 +867,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                     
                 } else if indexPath.row == 1 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
-                    cell.setCell(scheduleType: self.schedule.afternoon, isEditingMode: true, tag: 2)
+                    cell.setCell(schedule: self.schedule, isEditingMode: true, tag: 2)
                     cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                     
                     if let gestures = cell.gestureRecognizers {
@@ -913,7 +888,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             } else {
                 if indexPath.row == 0 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
-                    cell.setCell(scheduleType: self.schedule.morning, isEditingMode: false, tag: 1)
+                    cell.setCell(schedule: self.schedule, isEditingMode: false, tag: 1)
                     cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                     
                     if let gestures = cell.gestureRecognizers {
@@ -929,7 +904,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                     
                 } else { // row 1
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
-                    cell.setCell(scheduleType: self.schedule.afternoon, isEditingMode: false, tag: 2)
+                    cell.setCell(schedule: self.schedule, isEditingMode: false, tag: 2)
                     cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                     
                     if let gestures = cell.gestureRecognizers {
@@ -948,7 +923,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         } else if self.schedule.count == 3 {
             if indexPath.row == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
-                cell.setCell(scheduleType: self.schedule.morning, isEditingMode: false, tag: 1)
+                cell.setCell(schedule: self.schedule, isEditingMode: false, tag: 1)
                 cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                 
                 if let gestures = cell.gestureRecognizers {
@@ -966,7 +941,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 
             } else if indexPath.row == 1 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
-                cell.setCell(scheduleType: self.schedule.afternoon, isEditingMode: false, tag: 2)
+                cell.setCell(schedule: self.schedule, isEditingMode: false, tag: 2)
                 cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                 
                 if let gestures = cell.gestureRecognizers {
@@ -984,7 +959,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 
             } else { // row 2
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
-                cell.setCell(scheduleType: self.schedule.overtime, isEditingMode: self.isEditingMode, tag: 3)
+                cell.setCell(schedule: self.schedule, isEditingMode: self.isEditingMode, tag: 3)
                 cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                 
                 if let gestures = cell.gestureRecognizers {
@@ -1019,13 +994,23 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 switch workType {
                 case .work:
                     print("threeSchedules work")
+                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.work))
                     
                 case .vacation:
                     print("threeSchedules vacation")
+                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.vacation))
                     
                 case .holiday:
                     print("threeSchedules holiday")
+                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.holiday))
                 }
+                
+                self.determineCompleteChangingScheduleButton(for: self.schedule)
+                
+                self.calculateTableViewHeight(for: self.schedule)
+                self.scheduleTableView.reloadData()
+                
+                self.determineScheduleButtonState(for: self.schedule)
             }
             
         case .twoScheduleForVacation(let workType):
@@ -1033,10 +1018,19 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 switch workType {
                 case .work:
                     print("twoScheduleForVacation work")
+                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.work))
                     
                 case .vacation:
                     print("twoScheduleForVacation vacation")
+                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.vacation))
                 }
+                
+                self.determineCompleteChangingScheduleButton(for: self.schedule)
+                
+                self.calculateTableViewHeight(for: self.schedule)
+                self.scheduleTableView.reloadData()
+                
+                self.determineScheduleButtonState(for: self.schedule)
             }
             
         case .twoScheduleForHoliday(let workType):
@@ -1044,20 +1038,44 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 switch workType {
                 case .work:
                     print("twoScheduleForHoliday work")
+                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.work))
                     
                 case .holiday:
                     print("twoScheduleForHoliday holiday")
+                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.holiday))
                 }
+                
+                self.determineCompleteChangingScheduleButton(for: self.schedule)
+                
+                self.calculateTableViewHeight(for: self.schedule)
+                self.scheduleTableView.reloadData()
+                
+                self.determineScheduleButtonState(for: self.schedule)
             }
             
         case .addOvertime:
             print("addOvertime")
+            if self.schedule.startingWorkTime == nil {
+                print("Not possible to add overtime")
+                
+            } else {
+                let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.whenIsRegularWorkFinish()!)), overtime: nil, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
+                
+                self.present(mainCoverVC, animated: false) {
+                    self.isEditingMode = true
+                }
+            }
             
         case .addOvertimeOrFinishWork(let overtimeOrFinish):
             if let overtimeOrFinish = overtimeOrFinish {
                 switch overtimeOrFinish {
                 case .overtime(let date):
                     print("addOvertimeOrFinishWork overtime")
+                    let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.whenIsRegularWorkFinish()!)), overtime: date, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
+                    
+                    self.present(mainCoverVC, animated: false) {
+                        self.isEditingMode = true
+                    }
                     
                 case .finishWork:
                     print("addOvertimeOrFinishWork finishWork")
@@ -1069,6 +1087,9 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 switch overtimeOrFinish {
                 case .overtime(let date):
                     print("replaceOvertimeOrFinishWork overtime")
+                    let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.whenIsRegularWorkFinish()!)), overtime: date, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
+                    
+                    self.present(mainCoverVC, animated: false)
                     
                 case .finishWork:
                     print("replaceOvertimeOrFinishWork finishWork")
@@ -1077,7 +1098,7 @@ extension MainViewController: ScheduleButtonViewDelegate {
             
         case .finishWorkWithOvertime(let date):
             if let date = date {
-                print("finishWorkWithOvertime ")
+                print("finishWorkWithOvertime at \(date)")
             }
             
         case .finishWork:

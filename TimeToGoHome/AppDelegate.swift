@@ -52,12 +52,12 @@ extension AppDelegate {
             self.window?.rootViewController = mainVC
             
         } else {
-            //let mainVC = MainViewController()
-            //let mainNaviVC = UINavigationController(rootViewController: mainVC)
+            let mainVC = MainViewController()
+            let mainNaviVC = UINavigationController(rootViewController: mainVC)
+            self.window?.rootViewController = mainNaviVC
             
-            let initialSettingDateVC = WorkTypeViewController()
-            
-            self.window?.rootViewController = initialSettingDateVC
+            //let workTypeVC = WorkTypeViewController()
+            //self.window?.rootViewController = workTypeVC
         }
         
         self.window?.makeKeyAndVisible()

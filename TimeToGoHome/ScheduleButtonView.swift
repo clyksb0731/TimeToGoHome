@@ -68,9 +68,6 @@ class ScheduleButtonView: UIView {
     
     var previousPointX: CGFloat = 0
     var isHaptic: Bool = false
-    
-    let secondsOfOneHour: Int = 3600
-    let secondsOfFourHours: Int = 3600 * 4
 
     init(width: CGFloat, schedule: WorkSchedule? = nil) {
         self.width = width
@@ -1487,11 +1484,11 @@ extension ScheduleButtonView {
         if case .morning(let workType) = schedule.morning, case .work = workType,
            case .afternoon(let workType) = schedule.afternoon, case .work = workType {
             // FIXME: App Setting of rest times as default
-            timeScheduled = self.secondsOfFourHours + 3600 + self.secondsOfFourHours + 0 // launch + dinner time setting
+            timeScheduled = WorkSchedule.secondsOfFourHours + 3600 + WorkSchedule.secondsOfFourHours + 0 // launch + dinner time setting
             
         } else {
             // FIXME: App Setting of rest times as default
-            timeScheduled = self.secondsOfFourHours + 0 // dinner time setting
+            timeScheduled = WorkSchedule.secondsOfFourHours + 0 // dinner time setting
         }
         
         timeScheduled = timeScheduled + Int(startingWorkTime.timeIntervalSinceReferenceDate)
