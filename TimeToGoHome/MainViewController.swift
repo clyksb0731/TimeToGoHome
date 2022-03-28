@@ -512,7 +512,12 @@ extension MainViewController {
                 
             } else if schedule.count == 2 {
                 if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
-                    self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
+                    if self.schedule.whenIsRegularWorkFinish()! >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
+                        self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
+                        
+                    } else {
+                        self.scheduleButtonView.setScheduleButtonViewType(.addOvertimeOrFinishWork(nil), with: self.schedule)
+                    }
                     
                 } else {
                     self.scheduleButtonView.setScheduleButtonViewType(.noButton)
@@ -549,10 +554,10 @@ extension MainViewController {
                                 
                             } else if SupportingMethods.getCurrentTimeSeconds() > regularWorkSeconds &&
                                         SupportingMethods.getCurrentTimeSeconds() <= Int(overtime.timeIntervalSinceReferenceDate) { // in overtime
-                                self.scheduleButtonView.setScheduleButtonViewType(.finishWorkWithOvertime(nil))
+                                self.scheduleButtonView.setScheduleButtonViewType(.finishWorkWithOvertime(nil), with: self.schedule)
                                 
                             } else { // after overtime
-                                self.scheduleButtonView.setScheduleButtonViewType(.replaceOvertimeOrFinishWork(nil))
+                                self.scheduleButtonView.setScheduleButtonViewType(.replaceOvertimeOrFinishWork(nil), with: self.schedule)
                             }
                             
                         } else { // before starting work time
@@ -568,7 +573,7 @@ extension MainViewController {
                                 self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
                                 
                             } else {
-                                self.scheduleButtonView.setScheduleButtonViewType(.addOvertimeOrFinishWork(nil))
+                                self.scheduleButtonView.setScheduleButtonViewType(.addOvertimeOrFinishWork(nil), with: self.schedule)
                             }
                             
                         } else { // before starting work time
@@ -594,7 +599,7 @@ extension MainViewController {
                                 self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
                                 
                             } else {
-                                self.scheduleButtonView.setScheduleButtonViewType(.addOvertimeOrFinishWork(nil))
+                                self.scheduleButtonView.setScheduleButtonViewType(.addOvertimeOrFinishWork(nil), with: self.schedule)
                             }
                             
                         } else { // before starting work time
