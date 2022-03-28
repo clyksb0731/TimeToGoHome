@@ -511,6 +511,7 @@ extension MainViewController {
                 self.scheduleButtonView.setScheduleButtonViewType(.noButton)
                 
             } else if schedule.count == 2 {
+                // FIXME: Need to remove finish button at this case
                 if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
                     if self.schedule.whenIsRegularWorkFinish()! >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
                         self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
