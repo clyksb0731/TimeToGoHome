@@ -511,13 +511,17 @@ extension MainViewController {
                 self.scheduleButtonView.setScheduleButtonViewType(.noButton)
                 
             } else if schedule.count == 2 {
-                // FIXME: Need to remove finish button at this case
                 if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
-                    if self.schedule.whenIsRegularWorkFinish()! >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
-                        self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
+                    if self.mainTimeCoverView.isHidden { // 추가|제거 deactivated
+                        if self.schedule.whenIsRegularWorkFinish()! >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
+                            self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
+                            
+                        } else {
+                            self.scheduleButtonView.setScheduleButtonViewType(.addOvertimeOrFinishWork(nil), with: self.schedule)
+                        }
                         
-                    } else {
-                        self.scheduleButtonView.setScheduleButtonViewType(.addOvertimeOrFinishWork(nil), with: self.schedule)
+                    } else { // 추가|제거 activated
+                        self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
                     }
                     
                 } else {
@@ -714,8 +718,8 @@ extension MainViewController {
         
         self.tempSchedule = self.schedule
         
-        self.isEditingMode = true
         self.mainTimeCoverView.isHidden = false
+        self.isEditingMode = true
     }
     
     @objc func cancelChangingScheduleButtonView(_ sender: UIButton) {
@@ -730,8 +734,8 @@ extension MainViewController {
     @objc func completeChangingScheduleButtonView(_ sender: UIButton) {
         self.schedule.updateToday()
         
-        self.isEditingMode = false
         self.mainTimeCoverView.isHidden = true
+        self.isEditingMode = false
     }
     
     @objc func removeScheduleButton(_ sender: UIButton) {
@@ -896,7 +900,12 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                     
                 } else if indexPath.row == 1 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
-                    cell.setCell(schedule: self.schedule, isEditingMode: true, tag: 2)
+                    if self.mainTimeCoverView.isHidden { // 추가|제거 deactivated
+                        cell.setCell(schedule: self.schedule, isEditingMode: false, tag: 2)
+                        
+                    } else { // 추가|제거 activated
+                        cell.setCell(schedule: self.schedule, isEditingMode: true, tag: 2)
+                    }
                     cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                     
                     if let gestures = cell.gestureRecognizers {
@@ -1005,7 +1014,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 return cell
             }
             
-        } else {
+        } else { // row 0
             let cell = tableView.dequeueReusableCell(withIdentifier: "SchedulingCell") as! SchedulingCell
             cell.setCell(scheduleTypeText: "오전 일정", width: UIScreen.main.bounds.width - 10, height: self.workScheduleViewHeight)
             
