@@ -59,12 +59,13 @@ class MainViewController: UIViewController {
         return label
     }()
     
-    lazy var changeScheduleButton: UIButton = {
+    lazy var editScheduleButton: UIButton = {
         let button = UIButton()
         button.titleLabel?.font = .systemFont(ofSize: 12)
         button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.useRGB(red: 172, green: 172, blue: 172), for: .disabled)
         button.setTitle("추가 | 제거", for: .normal)
-        button.addTarget(self, action: #selector(changeScheduleButton(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(editScheduleButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -85,6 +86,7 @@ class MainViewController: UIViewController {
         let button = UIButton()
         button.titleLabel?.font = .systemFont(ofSize: 12)
         button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.useRGB(red: 172, green: 172, blue: 172), for: .disabled)
         button.setTitle("출근전", for: .normal)
         button.titleLabel?.adjustsFontSizeToFitWidth = false
         button.titleLabel?.minimumScaleFactor = 0.5
@@ -122,7 +124,7 @@ class MainViewController: UIViewController {
         let buttonView = WhiteButtonView()
         buttonView.font = .systemFont(ofSize: 17)
         buttonView.title = "취소"
-        buttonView.isEnadble = true
+        buttonView.isEnabled = true
         buttonView.addTarget(self, action: #selector(cancelChangingScheduleButtonView(_:)), for: .touchUpInside)
         buttonView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -133,7 +135,7 @@ class MainViewController: UIViewController {
         let buttonView = WhiteButtonView()
         buttonView.font = .systemFont(ofSize: 17)
         buttonView.title = "완료"
-        buttonView.isEnadble = false
+        buttonView.isEnabled = false
         buttonView.addTarget(self, action: #selector(completeChangingScheduleButtonView(_:)), for: .touchUpInside)
         buttonView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -228,6 +230,8 @@ class MainViewController: UIViewController {
         super.viewWillAppear(animated)
         
         self.setViewFoundation()
+        self.determineWhetherPossibleToEditSchedule(self.schedule)
+        self.determineWhetherPossibleToEditStartingWorkTime(for: self.schedule)
         self.determineScheduleButtonState(for: self.schedule)
         self.determineStartingWorkTimeButton(for: self.schedule)
     }
@@ -323,7 +327,7 @@ extension MainViewController {
             self.progressTimeButtonView,
             self.progressRateButtonView,
             self.mainTimeViewValueLabel,
-            self.changeScheduleButton,
+            self.editScheduleButton,
             self.startWorkingTimeMarkLabel,
             self.startWorkingTimeButton,
             self.mainTimeCoverView
@@ -381,10 +385,10 @@ extension MainViewController {
         
         // Change schedule button layout
         NSLayoutConstraint.activate([
-            self.changeScheduleButton.bottomAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: -17),
-            self.changeScheduleButton.heightAnchor.constraint(equalToConstant: 15),
-            self.changeScheduleButton.leadingAnchor.constraint(equalTo: self.mainTimeView.leadingAnchor, constant: 31),
-            self.changeScheduleButton.widthAnchor.constraint(equalToConstant: 55)
+            self.editScheduleButton.bottomAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: -17),
+            self.editScheduleButton.heightAnchor.constraint(equalToConstant: 15),
+            self.editScheduleButton.leadingAnchor.constraint(equalTo: self.mainTimeView.leadingAnchor, constant: 31),
+            self.editScheduleButton.widthAnchor.constraint(equalToConstant: 55)
         ])
         
         // Start work time mark label layout
@@ -605,12 +609,31 @@ extension MainViewController {
         }
     }
     
-    func determineCompleteChangingScheduleButton(for schedule: WorkSchedule) {
-        if schedule.count < 2 {
-            self.completeChangingScheduleButtonView.isEnadble = false
+    func determineWhetherPossibleToEditSchedule(_ schedule: WorkSchedule) {
+        if schedule.startingWorkTime == nil {
+            self.editScheduleButton.isEnabled = false
             
         } else {
-            self.completeChangingScheduleButtonView.isEnadble = true
+            self.editScheduleButton.isEnabled = true
+        }
+    }
+    
+    func determineWhetherPossibleToEditStartingWorkTime(for schedule: WorkSchedule) {
+        switch schedule.workType {
+        case .staggered:
+            self.startWorkingTimeButton.isEnabled = true
+            
+        case .normal:
+            self.startWorkingTimeButton.isEnabled = false
+        }
+    }
+    
+    func determineCompleteChangingScheduleButton(for schedule: WorkSchedule) {
+        if schedule.count < 2 {
+            self.completeChangingScheduleButtonView.isEnabled = false
+            
+        } else {
+            self.completeChangingScheduleButtonView.isEnabled = true
         }
     }
     
@@ -680,7 +703,7 @@ extension MainViewController {
         self.present(mainCoverVC, animated: false)
     }
     
-    @objc func changeScheduleButton(_ sender: UIButton) {
+    @objc func editScheduleButton(_ sender: UIButton) {
         UIDevice.softHaptic()
         
         self.tempSchedule = self.schedule
@@ -994,15 +1017,15 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 switch workType {
                 case .work:
                     print("threeSchedules work")
-                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.work))
+                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkTimeType.work))
                     
                 case .vacation:
                     print("threeSchedules vacation")
-                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.vacation))
+                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkTimeType.vacation))
                     
                 case .holiday:
                     print("threeSchedules holiday")
-                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.holiday))
+                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkTimeType.holiday))
                 }
                 
                 self.determineCompleteChangingScheduleButton(for: self.schedule)
@@ -1018,11 +1041,11 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 switch workType {
                 case .work:
                     print("twoScheduleForVacation work")
-                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.work))
+                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkTimeType.work))
                     
                 case .vacation:
                     print("twoScheduleForVacation vacation")
-                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.vacation))
+                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkTimeType.vacation))
                 }
                 
                 self.determineCompleteChangingScheduleButton(for: self.schedule)
@@ -1038,11 +1061,11 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 switch workType {
                 case .work:
                     print("twoScheduleForHoliday work")
-                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.work))
+                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkTimeType.work))
                     
                 case .holiday:
                     print("twoScheduleForHoliday holiday")
-                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkType.holiday))
+                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkTimeType.holiday))
                 }
                 
                 self.determineCompleteChangingScheduleButton(for: self.schedule)

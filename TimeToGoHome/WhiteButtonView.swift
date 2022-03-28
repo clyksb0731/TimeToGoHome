@@ -65,10 +65,10 @@ class WhiteButtonView: UIView {
         }
     }
     
-    var isEnadble: Bool = true {
+    var isEnabled: Bool = true {
         didSet {
-            self.button.isEnabled = self.isEnadble
-            self.isSelected = self.isEnadble;
+            self.button.isEnabled = self.isEnabled
+            self.isSelected = self.isEnabled;
         }
     }
 

@@ -7,18 +7,18 @@
 
 import UIKit
 
+enum MarkingViewType {
+    case earliest(CGPoint)
+    case latest(CGPoint)
+    case attendance(CGPoint)
+}
+
+enum WorkType: String {
+    case staggered
+    case normal
+}
+
 class WorkTypeViewController: UIViewController {
-    enum MarkingViewType {
-        case earliest(CGPoint)
-        case latest(CGPoint)
-        case attendance(CGPoint)
-    }
-    
-    enum WorkType {
-        case staggered
-        case normal
-    }
-    
     var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.bounces = false

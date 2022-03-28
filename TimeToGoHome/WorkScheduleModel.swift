@@ -7,15 +7,15 @@
 
 import Foundation
 
-enum WorkType: String {
+enum WorkTimeType: String {
     case work = "work"
     case vacation = "vacation"
     case holiday = "holiday"
 }
 
 enum ScheduleType {
-    case morning(WorkType)
-    case afternoon(WorkType)
+    case morning(WorkTimeType)
+    case afternoon(WorkTimeType)
     case overtime(Date)
 }
 
@@ -26,11 +26,13 @@ struct WorkSchedule {
     static let today: WorkSchedule = WorkSchedule(date: Date())
     
     private(set) var dateId: String
+    private(set) var workType: WorkType
     private(set) var startingWorkTime: Date?
     private(set) var morning: ScheduleType?
     private(set) var afternoon: ScheduleType?
     private(set) var overtime: ScheduleType?
     var isEditingMode: Bool = false
+    
     
     var count: Int {
         if self.overtime != nil {
@@ -68,12 +70,14 @@ struct WorkSchedule {
         dateFormatter.timeZone = TimeZone.current
         dateFormatter.dateFormat = "yyyyMMdd"
         self.dateId = dateFormatter.string(from: date)
+        self.workType = .normal // FIXME: From app setting
         
         self.scheduling(dateId: self.dateId)
     }
     
     init(dateId: String) {
         self.dateId = dateId
+        self.workType = .normal // FIXME: From app setting
         
         self.scheduling(dateId: dateId)
     }
@@ -289,14 +293,14 @@ extension WorkSchedule {
     
     func makeNewScheduleBasedOnTodayScheduleCount(_ withAssociatedValue: Any) -> ScheduleType? {
         if self.count == 0 {
-            if let workType = withAssociatedValue as? WorkType {
+            if let workType = withAssociatedValue as? WorkTimeType {
                 return .morning(workType)
             }
             
             return nil
             
         } else if self.count == 1 {
-            if let workType = withAssociatedValue as? WorkType {
+            if let workType = withAssociatedValue as? WorkTimeType {
                 return .afternoon(workType)
             }
             
