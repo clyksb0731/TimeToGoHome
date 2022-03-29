@@ -12,7 +12,7 @@ import UIKit
  */
 enum PListVariable: String {
     case startingWorkTimeSetting
-    case isSetStartingTime
+    case lunchTimeSetting
     case initiallySetting
 }
 

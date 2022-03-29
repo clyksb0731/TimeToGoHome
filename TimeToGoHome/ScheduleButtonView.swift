@@ -1071,7 +1071,7 @@ extension ScheduleButtonView {
         }()
         
         // MARK: Timer
-        let timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
+        let timer = self.makeTimerForButtonState()
         self.timer = timer
         
         // MARK: Subviews
@@ -1207,7 +1207,7 @@ extension ScheduleButtonView {
         }()
         
         // MARK: Timer
-        let timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
+        let timer = self.makeTimerForButtonState()
         self.timer = timer
         
         // MARK: Subviews
@@ -1369,6 +1369,10 @@ extension ScheduleButtonView {
         // MARK: Layouts
     }
     
+    func makeTimerForButtonState() -> Timer {
+        return Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
+    }
+    
     func resetView() {
         self.timer?.invalidate()
         
@@ -1484,11 +1488,11 @@ extension ScheduleButtonView {
         if case .morning(let workType) = schedule.morning, case .work = workType,
            case .afternoon(let workType) = schedule.afternoon, case .work = workType {
             // FIXME: App Setting of rest times as default
-            timeScheduled = WorkSchedule.secondsOfFourHours + 3600 + WorkSchedule.secondsOfFourHours + 0 // launch + dinner time setting
+            timeScheduled = WorkSchedule.secondsOfWorkTime + 3600 + WorkSchedule.secondsOfWorkTime + 0 // launch + dinner time setting
             
         } else {
             // FIXME: App Setting of rest times as default
-            timeScheduled = WorkSchedule.secondsOfFourHours + 0 // dinner time setting
+            timeScheduled = WorkSchedule.secondsOfWorkTime + 0 // dinner time setting
         }
         
         timeScheduled = timeScheduled + Int(startingWorkTime.timeIntervalSinceReferenceDate)

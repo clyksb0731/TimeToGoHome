@@ -28,6 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // FIXME: to test
         self.checkData()
+        self.makeTempAppSetting()
         
         // determine root view controller
         self.determineRootVC()
@@ -240,3 +241,14 @@ extension AppDelegate: LocationManagerDelegate {
     }
 }
 
+// FIXME: - Temp Extension
+extension AppDelegate {
+    func makeTempAppSetting() {
+        // Start working time
+        SupportingMethods.shared.setAppSetting(with: ["name":"staggeredType", "earlierTime":8.0, "laterTime":11.0], for: .startingWorkTimeSetting)
+        //SupportingMethods.shared.setAppSetting(with: ["name":"normalType", "startingWorkTime":9.5], for: .startingWorkTimeSetting)
+        
+        // Lunch time
+        SupportingMethods.shared.setAppSetting(with: 12.5, for: .lunchTimeSetting)
+    }
+}

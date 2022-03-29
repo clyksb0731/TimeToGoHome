@@ -236,7 +236,7 @@ extension ScheduleTypeCell {
         
         if tag == 3, case .overtime(let overtime) = schedule.overtime {
             self.timeTypeLabelTopAnchor.constant = 10
-            self.timeTypeLabel.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(Int(overtime.timeIntervalSinceReferenceDate)-schedule.whenIsRegularWorkFinish()!))"
+            self.timeTypeLabel.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(Int(overtime.timeIntervalSinceReferenceDate)-schedule.finishingRegularWorkTimeSecondsSinceReferenceDate!))"
             
             self.scheduleView.backgroundColor = .useRGB(red: 239, green: 119, blue: 119)
             self.timeTypeLabel.textColor = .white

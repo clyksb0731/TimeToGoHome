@@ -20,19 +20,8 @@ enum ScheduleType {
 }
 
 struct WorkSchedule {
-    static let secondsOfOneHour: Int = 3600
-    static let secondsOfFourHours: Int = 3600 * 4
-    
-    static let today: WorkSchedule = WorkSchedule(date: Date())
-    
-    private(set) var dateId: String
-    private(set) var workType: WorkType
-    private(set) var startingWorkTime: Date?
-    private(set) var morning: ScheduleType?
-    private(set) var afternoon: ScheduleType?
-    private(set) var overtime: ScheduleType?
-    var isEditingMode: Bool = false
-    
+    static let secondsOfLunchTime: Int = 3600
+    static let secondsOfWorkTime: Int = 3600 * 4
     
     var count: Int {
         if self.overtime != nil {
@@ -63,6 +52,88 @@ struct WorkSchedule {
         }
     }
     
+    static let today: WorkSchedule = WorkSchedule(date: Date())
+    
+    private(set) var dateId: String
+    private(set) var workType: WorkType
+    private(set) var startingWorkTime: Date? = nil {
+        willSet {
+            guard let startingWorkTime = newValue else {
+                return
+            }
+            
+            self.startingWorkTimeSecondsSinceReferenceDate =  Int(startingWorkTime.timeIntervalSinceReferenceDate)
+        }
+    }
+    private(set) var startingWorkTimeSecondsSinceReferenceDate: Int?
+    private(set) var lunchTime: Date? = nil {
+        willSet {
+            guard let lunchTime = newValue else {
+                return
+            }
+            
+            self.lunchTimeSecondsSinceReferenceDate = Int(lunchTime.timeIntervalSinceReferenceDate)
+        }
+    }
+    private(set) var lunchTimeSecondsSinceReferenceDate: Int?
+    private(set) var morning: ScheduleType? = nil {
+        willSet {
+            guard let startingWorkTimeSeconds = self.startingWorkTimeSecondsSinceReferenceDate else {
+                return
+            }
+            
+            if case .morning(let workType) = newValue, case .work = workType,
+               case .afternoon(let workType) = self.afternoon, case .work = workType {
+                self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+                
+            } else if case .morning(let workType) = newValue, case .work = workType {
+                self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                
+            } else if case .afternoon(let workType) = self.afternoon, case .work = workType {
+                self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                
+            } else {
+                self.finishingRegularWorkTimeSecondsSinceReferenceDate = nil
+            }
+        }
+    }
+    private(set) var afternoon: ScheduleType? = nil {
+        willSet {
+            guard let startingWorkTimeSeconds = self.startingWorkTimeSecondsSinceReferenceDate else {
+                return
+            }
+            
+            if case .morning(let workType) = self.morning, case .work = workType,
+               case .afternoon(let workType) = newValue, case .work = workType {
+                self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+                
+            } else if case .morning(let workType) = self.morning, case .work = workType {
+                self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                
+            } else if case .afternoon(let workType) = newValue, case .work = workType {
+                self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                
+            } else {
+                self.finishingRegularWorkTimeSecondsSinceReferenceDate = nil
+            }
+        }
+    }
+    private(set) var finishingRegularWorkTimeSecondsSinceReferenceDate: Int?
+    private(set) var overtime: ScheduleType? = nil {
+        willSet {
+            guard let finishingRegularWorkTimeSeconds = self.finishingRegularWorkTimeSecondsSinceReferenceDate,
+                  let overtime = newValue, case .overtime(let overtimeDate) = overtime
+            else {
+                return
+            }
+            
+            self.overtimeMinutes = (Int(overtimeDate.timeIntervalSinceReferenceDate) - finishingRegularWorkTimeSeconds) / 60
+        }
+    }
+    private(set) var overtimeMinutes: Int?
+    
+    var isEditingMode: Bool = false
+    
     init(date: Date) {
         // Make today date id
         let dateFormatter = DateFormatter()
@@ -87,7 +158,8 @@ struct WorkSchedule {
         // &&
         // Check tody schedule condition for initial setting.
         self.startingWorkTime = self.makeStartingWorkTimeDate()
-        self.morning = .morning(.holiday) // FIXME: Temp
+        self.lunchTime = self.makeLunchTimeDate()
+        self.morning = .morning(.work) // FIXME: Temp
         self.afternoon = .afternoon(.work) // FIXME: Temp
         //self.overtime = .overtime(Date()) // FIXME: Temp
     }
@@ -104,14 +176,37 @@ extension WorkSchedule {
         if let startingWorkTimeSetting = SupportingMethods.shared.useAppSetting(for: .startingWorkTimeSetting) as? [String:Any],
             let type = startingWorkTimeSetting["name"] as? String,
             type == "normalType",
-            let startingWorkTime = startingWorkTimeSetting["startingWorkTime"] as? Double {
-            let hour = (Int(startingWorkTime * 10)) / 10
-            let minute = Int((Double((Int(startingWorkTime * 10)) % 10) / 10.0) * 60)
+            let startingWorkTimeValue = startingWorkTimeSetting["startingWorkTime"] as? Double {
+            
+            self.workType = .normal
+            
+            let hour = (Int(startingWorkTimeValue * 10)) / 10
+            let minute = Int((Double((Int(startingWorkTimeValue * 10)) % 10) / 10.0) * 60)
             
             var calendar = Calendar.current
             calendar.timeZone = TimeZone.current
             let dateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
             let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
+            
+            return calendar.date(from: todayDateComponents)
+            
+        } else {
+            self.workType = .staggered
+            
+            return nil
+        }
+    }
+    
+    mutating func makeLunchTimeDate() -> Date? {
+        if let lunchTimeValue = SupportingMethods.shared.useAppSetting(for: .lunchTimeSetting) as? Double {
+            let hour = (Int(lunchTimeValue * 10)) / 10
+            let minute = Int((Double((Int(lunchTimeValue * 10)) % 10) / 10.0) * 60)
+            
+            var calendar = Calendar.current
+            calendar.timeZone = TimeZone.current
+            let dateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
+            let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
+            
             return calendar.date(from: todayDateComponents)
             
         } else {
@@ -119,7 +214,7 @@ extension WorkSchedule {
         }
     }
     
-    func updateToday() {
+    func updateTodayIntoDB() {
         // Find schedule from DB and update it.
         
         var morning: String = ""
@@ -139,6 +234,16 @@ extension WorkSchedule {
         print("Today's morning: \(morning)")
         print("Today's afternoon: \(afternoon)")
         overtime != nil ? print("Today's overtime minute: \(overtime!)") : {}()
+    }
+    
+    mutating func refreshToday() {
+        // Check DB if there is already today schedule.
+        // &&
+        // Check tody schedule condition for initial setting.
+        self.startingWorkTime = self.makeStartingWorkTimeDate()
+        self.lunchTime = self.makeLunchTimeDate()
+        self.morning = .morning(.work) // FIXME: Temp
+        self.afternoon = .afternoon(.work) // FIXME: Temp
     }
     
     @discardableResult mutating func addSchedule(_ schedule: ScheduleType?) -> Bool {
@@ -290,52 +395,33 @@ extension WorkSchedule {
         
         return nil
     }
-    
-    func makeNewScheduleBasedOnTodayScheduleCount(_ withAssociatedValue: Any) -> ScheduleType? {
-        if self.count == 0 {
-            if let workType = withAssociatedValue as? WorkTimeType {
+}
+
+// MARK: - Extension for static methods added
+extension WorkSchedule {
+    static func makeNewScheduleBasedOnCountOfSchedule(_ schedule: WorkSchedule, with associatedValue: Any) -> ScheduleType? {
+        if schedule.count == 0 {
+            if let workType = associatedValue as? WorkTimeType {
                 return .morning(workType)
             }
             
             return nil
             
-        } else if self.count == 1 {
-            if let workType = withAssociatedValue as? WorkTimeType {
+        } else if schedule.count == 1 {
+            if let workType = associatedValue as? WorkTimeType {
                 return .afternoon(workType)
             }
             
             return nil
             
-        } else if self.count == 2 {
-            if let overtime = withAssociatedValue as? Date {
+        } else if schedule.count == 2 {
+            if let overtime = associatedValue as? Date {
                 return .overtime(overtime)
             }
             
             return nil
             
         } else { // 3
-            return nil
-        }
-    }
-    
-    func whenIsRegularWorkFinish() -> Int? {
-        guard let startingWorkTime = self.startingWorkTime else {
-            return nil
-        }
-        
-        let startingWorkTimeSeconds = Int(startingWorkTime.timeIntervalSinceReferenceDate)
-        
-        if case .morning(let workType) = self.morning, case .work = workType,
-           case .afternoon(let workType) = self.afternoon, case .work = workType {
-            return startingWorkTimeSeconds + type(of: self).secondsOfFourHours + type(of: self).secondsOfOneHour + type(of: self).secondsOfFourHours
-            
-        } else if case .morning(let workType) = self.morning, case .work = workType {
-            return startingWorkTimeSeconds + type(of: self).secondsOfFourHours
-            
-        } else if case .afternoon(let workType) = self.afternoon, case .work = workType {
-            return startingWorkTimeSeconds + type(of: self).secondsOfFourHours
-            
-        } else {
             return nil
         }
     }

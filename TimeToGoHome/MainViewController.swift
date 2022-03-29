@@ -48,12 +48,115 @@ class MainViewController: UIViewController {
         return buttonView
     }()
     
-    lazy var mainTimeViewValueLabel: UILabel = {
+    lazy var mainTimeViewTimeValueView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var mainTimeViewHourValueLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 43)
         label.textAlignment = .center
-        label.text = "88:88:88"
+        label.text = "00"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var mainTimeViewFirstSeparatorLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 43)
+        label.textAlignment = .center
+        label.text = ":"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var mainTimeViewMinuteValueLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 43)
+        label.textAlignment = .center
+        label.text = "00"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var mainTimeViewSecondSeparatorLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 43)
+        label.textAlignment = .center
+        label.text = ":"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var mainTimeViewSecondValueLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 43)
+        label.textAlignment = .center
+        label.text = "00"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var mainTimeViewRateValueView: UIView = {
+        let view = UIView()
+        view.isHidden = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var mainTimeViewRateIntegerValueLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 43)
+        label.textAlignment = .right
+        label.text = "0"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var mainTimeViewRatePointSymbolLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 20)
+        label.textAlignment = .center
+        label.text = "."
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var mainTimeViewRateFloatValueLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 20)
+        label.textAlignment = .left
+        label.text = "0"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var mainTimeViewRatePercentSymbolLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 20)
+        label.textAlignment = .center
+        label.text = "%"
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -66,6 +169,7 @@ class MainViewController: UIViewController {
         button.setTitleColor(.useRGB(red: 172, green: 172, blue: 172), for: .disabled)
         button.setTitle("추가 | 제거", for: .normal)
         button.addTarget(self, action: #selector(editScheduleButton(_:)), for: .touchUpInside)
+        button.isEnabled = false
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -91,6 +195,7 @@ class MainViewController: UIViewController {
         button.titleLabel?.adjustsFontSizeToFitWidth = false
         button.titleLabel?.minimumScaleFactor = 0.5
         button.addTarget(self, action: #selector(startWorkingTimeButton(_:)), for: .touchUpInside)
+        button.isEnabled = false
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -202,7 +307,7 @@ class MainViewController: UIViewController {
                 self.scheduleTableView.reloadData()
                 
                 self.determineScheduleButtonState(for: self.schedule)
-                self.determineStartingWorkTimeButton(for: self.schedule)
+                self.determineStartingWorkTimeButtonState(for: self.schedule)
                 
                 self.changeScheduleDescriptionLabel.isHidden = self.isEditingMode
             }
@@ -214,9 +319,6 @@ class MainViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // FIXME: Temp
-        self.makeTempAppSetting()
 
         self.initializeViews()
         self.setTargets()
@@ -230,10 +332,6 @@ class MainViewController: UIViewController {
         super.viewWillAppear(animated)
         
         self.setViewFoundation()
-        self.determineWhetherPossibleToEditSchedule(self.schedule)
-        self.determineWhetherPossibleToEditStartingWorkTime(for: self.schedule)
-        self.determineScheduleButtonState(for: self.schedule)
-        self.determineStartingWorkTimeButton(for: self.schedule)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -326,12 +424,28 @@ extension MainViewController {
             self.remainingTimeButtonView,
             self.progressTimeButtonView,
             self.progressRateButtonView,
-            self.mainTimeViewValueLabel,
+            self.mainTimeViewTimeValueView,
+            self.mainTimeViewRateValueView,
             self.editScheduleButton,
             self.startWorkingTimeMarkLabel,
             self.startWorkingTimeButton,
             self.mainTimeCoverView
         ], to: self.mainTimeView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.mainTimeViewHourValueLabel,
+            self.mainTimeViewFirstSeparatorLabel,
+            self.mainTimeViewMinuteValueLabel,
+            self.mainTimeViewSecondSeparatorLabel,
+            self.mainTimeViewSecondValueLabel
+        ], to: self.mainTimeViewTimeValueView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.mainTimeViewRateIntegerValueLabel,
+            self.mainTimeViewRatePointSymbolLabel,
+            self.mainTimeViewRateFloatValueLabel,
+            self.mainTimeViewRatePercentSymbolLabel
+        ], to: self.mainTimeViewRateValueView)
         
         SupportingMethods.shared.addSubviews([
             self.cancelChangingScheduleButtonView,
@@ -375,12 +489,88 @@ extension MainViewController {
             self.progressRateButtonView.widthAnchor.constraint(equalToConstant: 61)
         ])
         
-        // Main time view value label layout
+        // Main time view time value view layout
         NSLayoutConstraint.activate([
-            self.mainTimeViewValueLabel.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 77),
-            self.mainTimeViewValueLabel.heightAnchor.constraint(equalToConstant: 52),
-            self.mainTimeViewValueLabel.centerXAnchor.constraint(equalTo: self.mainTimeView.centerXAnchor),
-            self.mainTimeViewValueLabel.widthAnchor.constraint(equalToConstant: 200)
+            self.mainTimeViewTimeValueView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 77),
+            self.mainTimeViewTimeValueView.heightAnchor.constraint(equalToConstant: 52),
+            self.mainTimeViewTimeValueView.centerXAnchor.constraint(equalTo: self.mainTimeView.centerXAnchor),
+            self.mainTimeViewTimeValueView.widthAnchor.constraint(equalToConstant: 182)
+        ])
+        
+        // Main time view hour value label layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewHourValueLabel.topAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.topAnchor),
+            self.mainTimeViewHourValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.bottomAnchor),
+            self.mainTimeViewHourValueLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.leadingAnchor),
+            self.mainTimeViewHourValueLabel.widthAnchor.constraint(equalTo: self.mainTimeViewMinuteValueLabel.widthAnchor)
+        ])
+        
+        // Main time view first separator label layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewFirstSeparatorLabel.topAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.topAnchor),
+            self.mainTimeViewFirstSeparatorLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.bottomAnchor),
+            self.mainTimeViewFirstSeparatorLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewHourValueLabel.trailingAnchor),
+            self.mainTimeViewFirstSeparatorLabel.widthAnchor.constraint(equalToConstant: 10)
+        ])
+        
+        // Main time view minute value label layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewMinuteValueLabel.topAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.topAnchor),
+            self.mainTimeViewMinuteValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.bottomAnchor),
+            self.mainTimeViewMinuteValueLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewFirstSeparatorLabel.trailingAnchor),
+            self.mainTimeViewHourValueLabel.widthAnchor.constraint(equalTo: self.mainTimeViewSecondValueLabel.widthAnchor)
+        ])
+        
+        // Main time view second separator label layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewSecondSeparatorLabel.topAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.topAnchor),
+            self.mainTimeViewSecondSeparatorLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.bottomAnchor),
+            self.mainTimeViewSecondSeparatorLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewMinuteValueLabel.trailingAnchor),
+            self.mainTimeViewSecondSeparatorLabel.widthAnchor.constraint(equalToConstant: 10)
+        ])
+        
+        // Main time view second value label layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewSecondValueLabel.topAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.topAnchor),
+            self.mainTimeViewSecondValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.bottomAnchor),
+            self.mainTimeViewSecondValueLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewSecondSeparatorLabel.trailingAnchor),
+            self.mainTimeViewSecondValueLabel.trailingAnchor.constraint(equalTo: mainTimeViewTimeValueView.trailingAnchor)
+        ])
+        
+        // Main time view rate value view layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewRateValueView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 77),
+            self.mainTimeViewRateValueView.heightAnchor.constraint(equalToConstant: 52),
+            self.mainTimeViewRateValueView.centerXAnchor.constraint(equalTo: self.mainTimeView.centerXAnchor),
+            self.mainTimeViewRateValueView.widthAnchor.constraint(equalToConstant: 75+43)
+        ])
+        
+        // Main time view rate integer value label layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewRateIntegerValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewRateValueView.bottomAnchor),
+            self.mainTimeViewRateIntegerValueLabel.leadingAnchor.constraint(equalTo: mainTimeViewRateValueView.leadingAnchor),
+            self.mainTimeViewRateIntegerValueLabel.trailingAnchor.constraint(equalTo: self.mainTimeViewRatePointSymbolLabel.leadingAnchor)
+        ])
+        
+        // Main time view rate point symbol label layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewRatePointSymbolLabel.lastBaselineAnchor.constraint(equalTo: self.mainTimeViewRateIntegerValueLabel.lastBaselineAnchor),
+            self.mainTimeViewRatePointSymbolLabel.trailingAnchor.constraint(equalTo: mainTimeViewRateFloatValueLabel.leadingAnchor),
+            self.mainTimeViewRatePointSymbolLabel.widthAnchor.constraint(equalToConstant: 7)
+        ])
+        
+        // Main time view rate float value label layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewRateFloatValueLabel.lastBaselineAnchor.constraint(equalTo: self.mainTimeViewRateIntegerValueLabel.lastBaselineAnchor),
+            self.mainTimeViewRateFloatValueLabel.trailingAnchor.constraint(equalTo: self.mainTimeViewRatePercentSymbolLabel.leadingAnchor),
+            self.mainTimeViewRateFloatValueLabel.widthAnchor.constraint(equalToConstant: 15)
+        ])
+        
+        // Main time view rate percent symbol label layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewRatePercentSymbolLabel.lastBaselineAnchor.constraint(equalTo: self.mainTimeViewRateIntegerValueLabel.lastBaselineAnchor),
+            self.mainTimeViewRatePercentSymbolLabel.trailingAnchor.constraint(equalTo: self.mainTimeViewRateValueView.trailingAnchor),
+            self.mainTimeViewRatePercentSymbolLabel.widthAnchor.constraint(equalToConstant: 21)
         ])
         
         // Change schedule button layout
@@ -459,16 +649,27 @@ extension MainViewController {
 // MARK: - Extension for methods added
 extension MainViewController {
     func determineToday() {
-        if self.schedule.startingWorkTime == nil {
+        self.determineScheduleButtonState(for: self.schedule)
+        
+        switch self.schedule.workType {
+        case .staggered:
             let mainCoverVC = MainCoverViewController(.startingWorkTime(nil), delegate: self)
             self.present(mainCoverVC, animated: false)
             
-        } else {
+        case .normal:
+            self.determineStartingWorkTimeButtonState(for: self.schedule)
+            
+            self.editScheduleButton.isEnabled = true
+            
             if self.timer == nil {
-                let timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
+                let timer = self.makeTimerForSchedule()
                 self.timer = timer
             }
         }
+    }
+    
+    func makeTimerForSchedule() -> Timer {
+        return Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
     }
     
     func calculateTableViewHeight(for schedule: WorkSchedule) {
@@ -505,6 +706,18 @@ extension MainViewController {
         }
     }
     
+    func determineRemainingTimeOnMainTimeView() {
+        
+    }
+    
+    func determineProgressTimeOnMainTimeView() {
+        
+    }
+    
+    func determineProgressRateOnMainTimeView() {
+        
+    }
+    
     func determineScheduleButtonState(for schedule: WorkSchedule) {
         if self.isEditingMode {
             if schedule.count > 2 { // 3
@@ -513,7 +726,7 @@ extension MainViewController {
             } else if schedule.count == 2 {
                 if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
                     if self.mainTimeCoverView.isHidden { // 추가|제거 deactivated
-                        if self.schedule.whenIsRegularWorkFinish()! >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
+                        if schedule.finishingRegularWorkTimeSecondsSinceReferenceDate! >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
                             self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
                             
                         } else {
@@ -553,7 +766,7 @@ extension MainViewController {
             } else {
                 if schedule.count > 2 { // 3
                     if case .overtime(let overtime) = schedule.overtime {
-                        if let regularWorkSeconds = self.schedule.whenIsRegularWorkFinish() {
+                        if let regularWorkSeconds = schedule.finishingRegularWorkTimeSecondsSinceReferenceDate {
                             if SupportingMethods.getCurrentTimeSeconds() <= regularWorkSeconds {
                                 self.scheduleButtonView.setScheduleButtonViewType(.noButton)
                                 
@@ -573,7 +786,7 @@ extension MainViewController {
                 } else { // 2
                     if case .morning(let workType) = schedule.morning, case .work = workType,
                        case .afternoon(let workType) = schedule.afternoon, case .work = workType {
-                        if let regularWorkSeconds = self.schedule.whenIsRegularWorkFinish() {
+                        if let regularWorkSeconds = schedule.finishingRegularWorkTimeSecondsSinceReferenceDate {
                             if regularWorkSeconds >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
                                 self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
                                 
@@ -586,7 +799,7 @@ extension MainViewController {
                         }
                         
                     } else if case .morning(let workType) = schedule.morning, case .work = workType {
-                        if let regularWorkSeconds = self.schedule.whenIsRegularWorkFinish() {
+                        if let regularWorkSeconds = schedule.finishingRegularWorkTimeSecondsSinceReferenceDate {
                             if regularWorkSeconds >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
                                 self.scheduleButtonView.setScheduleButtonViewType(.noButton)
                                 
@@ -599,7 +812,7 @@ extension MainViewController {
                         }
                         
                     } else if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
-                        if let regularWorkSeconds = self.schedule.whenIsRegularWorkFinish() {
+                        if let regularWorkSeconds = schedule.finishingRegularWorkTimeSecondsSinceReferenceDate {
                             if regularWorkSeconds >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
                                 self.scheduleButtonView.setScheduleButtonViewType(.addOvertime)
                                 
@@ -619,25 +832,6 @@ extension MainViewController {
         }
     }
     
-    func determineWhetherPossibleToEditSchedule(_ schedule: WorkSchedule) {
-        if schedule.startingWorkTime == nil {
-            self.editScheduleButton.isEnabled = false
-            
-        } else {
-            self.editScheduleButton.isEnabled = true
-        }
-    }
-    
-    func determineWhetherPossibleToEditStartingWorkTime(for schedule: WorkSchedule) {
-        switch schedule.workType {
-        case .staggered:
-            self.startWorkingTimeButton.isEnabled = true
-            
-        case .normal:
-            self.startWorkingTimeButton.isEnabled = false
-        }
-    }
-    
     func determineCompleteChangingScheduleButton(for schedule: WorkSchedule) {
         if schedule.count < 2 {
             self.completeChangingScheduleButtonView.isEnabled = false
@@ -647,8 +841,8 @@ extension MainViewController {
         }
     }
     
-    func determineStartingWorkTimeButton(for schedule: WorkSchedule) {
-        if let startingWorkingTime = self.schedule.startingWorkTime {
+    func determineStartingWorkTimeButtonState(for schedule: WorkSchedule) {
+        if let startingWorkingTime = schedule.startingWorkTime {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "HH:mm"
             dateFormatter.timeZone = .current
@@ -673,7 +867,9 @@ extension MainViewController {
     }
     
     @objc func timer(_ timer: Timer) {
-        print("Timer at main vc")
+        self.determineRemainingTimeOnMainTimeView()
+        self.determineProgressTimeOnMainTimeView()
+        self.determineProgressRateOnMainTimeView()
     }
     
     @objc func remainingTimeButtonView(_ sender: UIButton) {
@@ -683,7 +879,9 @@ extension MainViewController {
         self.progressTimeButtonView.isSelected = false
         self.progressRateButtonView.isSelected = false
         
-        self.mainTimeViewValueLabel.text = "88:88:88"
+        //self.mainTimeViewValueLabel.text = "88:88:88"
+        self.mainTimeViewRateValueView.isHidden = true
+        self.mainTimeViewTimeValueView.isHidden = false
     }
     
     @objc func progressTimeButtonView(_ sender: UIButton) {
@@ -693,7 +891,9 @@ extension MainViewController {
         self.progressTimeButtonView.isSelected = true
         self.progressRateButtonView.isSelected = false
         
-        self.mainTimeViewValueLabel.text = "88:88:88"
+        //self.mainTimeViewValueLabel.text = "88:88:88"
+        self.mainTimeViewRateValueView.isHidden = true
+        self.mainTimeViewTimeValueView.isHidden = false
     }
     
     @objc func progressRateButtonView(_ sender: UIButton) {
@@ -703,7 +903,9 @@ extension MainViewController {
         self.progressTimeButtonView.isSelected = false
         self.progressRateButtonView.isSelected = true
         
-        self.mainTimeViewValueLabel.text = "88%"
+        //self.mainTimeViewValueLabel.text = "88%"
+        self.mainTimeViewTimeValueView.isHidden = true
+        self.mainTimeViewRateValueView.isHidden = false
     }
     
     @objc func startWorkingTimeButton(_ sender: UIButton) {
@@ -732,7 +934,7 @@ extension MainViewController {
     }
     
     @objc func completeChangingScheduleButtonView(_ sender: UIButton) {
-        self.schedule.updateToday()
+        self.schedule.updateTodayIntoDB()
         
         self.mainTimeCoverView.isHidden = true
         self.isEditingMode = false
@@ -749,7 +951,7 @@ extension MainViewController {
         self.scheduleTableView.reloadData()
         
         self.determineScheduleButtonState(for: self.schedule)
-        self.determineStartingWorkTimeButton(for: self.schedule)
+        self.determineStartingWorkTimeButtonState(for: self.schedule)
     }
     
     @objc func scheduleCellLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
@@ -778,7 +980,7 @@ extension MainViewController {
                 } else { // tag 3, overtime
                     print("Long Pressed for overtime")
                     if case .overtime(let overtime) = self.schedule.overtime {
-                        let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.whenIsRegularWorkFinish()!)), overtime: overtime, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
+                        let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.finishingRegularWorkTimeSecondsSinceReferenceDate!)), overtime: overtime, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
                         self.present(mainCoverVC, animated: false)
                     }
                 }
@@ -1032,15 +1234,15 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 switch workType {
                 case .work:
                     print("threeSchedules work")
-                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkTimeType.work))
+                    self.schedule.addSchedule(WorkSchedule.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with: WorkTimeType.work))
                     
                 case .vacation:
                     print("threeSchedules vacation")
-                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkTimeType.vacation))
+                    self.schedule.addSchedule(WorkSchedule.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.vacation))
                     
                 case .holiday:
                     print("threeSchedules holiday")
-                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkTimeType.holiday))
+                    self.schedule.addSchedule(WorkSchedule.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.holiday))
                 }
                 
                 self.determineCompleteChangingScheduleButton(for: self.schedule)
@@ -1056,11 +1258,11 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 switch workType {
                 case .work:
                     print("twoScheduleForVacation work")
-                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkTimeType.work))
+                    self.schedule.addSchedule(WorkSchedule.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.work))
                     
                 case .vacation:
                     print("twoScheduleForVacation vacation")
-                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkTimeType.vacation))
+                    self.schedule.addSchedule(WorkSchedule.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.vacation))
                 }
                 
                 self.determineCompleteChangingScheduleButton(for: self.schedule)
@@ -1076,11 +1278,11 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 switch workType {
                 case .work:
                     print("twoScheduleForHoliday work")
-                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkTimeType.work))
+                    self.schedule.addSchedule(WorkSchedule.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.work))
                     
                 case .holiday:
                     print("twoScheduleForHoliday holiday")
-                    self.schedule.addSchedule(self.schedule.makeNewScheduleBasedOnTodayScheduleCount(WorkTimeType.holiday))
+                    self.schedule.addSchedule(WorkSchedule.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.holiday))
                 }
                 
                 self.determineCompleteChangingScheduleButton(for: self.schedule)
@@ -1097,7 +1299,7 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 print("Not possible to add overtime")
                 
             } else {
-                let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.whenIsRegularWorkFinish()!)), overtime: nil, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
+                let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.finishingRegularWorkTimeSecondsSinceReferenceDate!)), overtime: nil, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
                 
                 self.present(mainCoverVC, animated: false) {
                     self.isEditingMode = true
@@ -1109,7 +1311,7 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 switch overtimeOrFinish {
                 case .overtime(let date):
                     print("addOvertimeOrFinishWork overtime")
-                    let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.whenIsRegularWorkFinish()!)), overtime: date, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
+                    let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.finishingRegularWorkTimeSecondsSinceReferenceDate!)), overtime: date, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
                     
                     self.present(mainCoverVC, animated: false) {
                         self.isEditingMode = true
@@ -1125,7 +1327,7 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 switch overtimeOrFinish {
                 case .overtime(let date):
                     print("replaceOvertimeOrFinishWork overtime")
-                    let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.whenIsRegularWorkFinish()!)), overtime: date, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
+                    let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.finishingRegularWorkTimeSecondsSinceReferenceDate!)), overtime: date, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
                     
                     self.present(mainCoverVC, animated: false)
                     
@@ -1156,7 +1358,7 @@ extension MainViewController: MainCoverDelegate {
         self.scheduleTableView.reloadData()
         
         self.determineScheduleButtonState(for: self.schedule)
-        self.determineStartingWorkTimeButton(for: self.schedule)
+        self.determineStartingWorkTimeButtonState(for: self.schedule)
     }
     
     func mainCoverDidDetermineOvertimeSchedule(_ scheduleType: ScheduleType, isEditingModeBeforPresenting: Bool!) {
@@ -1174,25 +1376,20 @@ extension MainViewController: MainCoverDelegate {
         self.scheduleTableView.reloadData()
         
         self.determineScheduleButtonState(for: self.schedule)
-        self.determineStartingWorkTimeButton(for: self.schedule)
+        self.determineStartingWorkTimeButtonState(for: self.schedule)
     }
     
     func mianCoverDidDetermineStartingWorkTime(_ startingWorkTime: Date) {
         self.schedule.updateStartingWorkTime(startingWorkTime)
         
-        self.determineStartingWorkTimeButton(for: self.schedule)
+        self.determineStartingWorkTimeButtonState(for: self.schedule)
+        
+        self.editScheduleButton.isEnabled = true
+        self.startWorkingTimeButton.isEnabled = true
         
         if self.timer == nil {
-            let timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
+            let timer = self.makeTimerForSchedule()
             self.timer = timer
         }
-    }
-}
-
-// FIXME: - Temp Extension
-extension MainViewController {
-    func makeTempAppSetting() {
-        //SupportingMethods.shared.setAppSetting(with: ["name":"staggeredType", "earlierTime":8.0, "laterTime":11.0], for: .startingWorkTimeSetting)
-        SupportingMethods.shared.setAppSetting(with: ["name":"normalType", "startingWorkTime":9.5], for: .startingWorkTimeSetting)
     }
 }
