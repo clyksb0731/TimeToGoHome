@@ -288,8 +288,8 @@ class MainViewController: UIViewController {
     
     var scheduleTableViewHeightAnchor: NSLayoutConstraint!
     
-    var schedule: WorkSchedule = WorkSchedule.today
-    var tempSchedule: WorkSchedule?
+    var schedule: WorkScheduleModel = WorkScheduleModel.today
+    var tempSchedule: WorkScheduleModel?
     var isFinishedScheduleToday: Bool = false
     
     var isEditingMode: Bool = false {
@@ -672,7 +672,7 @@ extension MainViewController {
         return Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
     }
     
-    func calculateTableViewHeight(for schedule: WorkSchedule) {
+    func calculateTableViewHeight(for schedule: WorkScheduleModel) {
         if schedule.count == 0 {
             self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight
         }
@@ -718,7 +718,7 @@ extension MainViewController {
         
     }
     
-    func determineScheduleButtonState(for schedule: WorkSchedule) {
+    func determineScheduleButtonState(for schedule: WorkScheduleModel) {
         if self.isEditingMode {
             if schedule.count > 2 { // 3
                 self.scheduleButtonView.setScheduleButtonViewType(.noButton)
@@ -832,7 +832,7 @@ extension MainViewController {
         }
     }
     
-    func determineCompleteChangingScheduleButton(for schedule: WorkSchedule) {
+    func determineCompleteChangingScheduleButton(for schedule: WorkScheduleModel) {
         if schedule.count < 2 {
             self.completeChangingScheduleButtonView.isEnabled = false
             
@@ -841,8 +841,8 @@ extension MainViewController {
         }
     }
     
-    func determineStartingWorkTimeButtonState(for schedule: WorkSchedule) {
-        if let startingWorkingTime = schedule.startingWorkTime {
+    func determineStartingWorkTimeButtonState(for schedule: WorkScheduleModel) {
+        if let startingWorkingTime = schedule.startingWorkTime { // should be date not integer
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "HH:mm"
             dateFormatter.timeZone = .current
@@ -1234,15 +1234,15 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 switch workType {
                 case .work:
                     print("threeSchedules work")
-                    self.schedule.addSchedule(WorkSchedule.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with: WorkTimeType.work))
+                    self.schedule.addSchedule(WorkScheduleModel.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with: WorkTimeType.work))
                     
                 case .vacation:
                     print("threeSchedules vacation")
-                    self.schedule.addSchedule(WorkSchedule.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.vacation))
+                    self.schedule.addSchedule(WorkScheduleModel.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.vacation))
                     
                 case .holiday:
                     print("threeSchedules holiday")
-                    self.schedule.addSchedule(WorkSchedule.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.holiday))
+                    self.schedule.addSchedule(WorkScheduleModel.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.holiday))
                 }
                 
                 self.determineCompleteChangingScheduleButton(for: self.schedule)
@@ -1258,11 +1258,11 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 switch workType {
                 case .work:
                     print("twoScheduleForVacation work")
-                    self.schedule.addSchedule(WorkSchedule.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.work))
+                    self.schedule.addSchedule(WorkScheduleModel.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.work))
                     
                 case .vacation:
                     print("twoScheduleForVacation vacation")
-                    self.schedule.addSchedule(WorkSchedule.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.vacation))
+                    self.schedule.addSchedule(WorkScheduleModel.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.vacation))
                 }
                 
                 self.determineCompleteChangingScheduleButton(for: self.schedule)
@@ -1278,11 +1278,11 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 switch workType {
                 case .work:
                     print("twoScheduleForHoliday work")
-                    self.schedule.addSchedule(WorkSchedule.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.work))
+                    self.schedule.addSchedule(WorkScheduleModel.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.work))
                     
                 case .holiday:
                     print("twoScheduleForHoliday holiday")
-                    self.schedule.addSchedule(WorkSchedule.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.holiday))
+                    self.schedule.addSchedule(WorkScheduleModel.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.holiday))
                 }
                 
                 self.determineCompleteChangingScheduleButton(for: self.schedule)
@@ -1383,6 +1383,7 @@ extension MainViewController: MainCoverDelegate {
         self.schedule.updateStartingWorkTime(startingWorkTime)
         
         self.determineStartingWorkTimeButtonState(for: self.schedule)
+        self.determineScheduleButtonState(for: self.schedule)
         
         self.editScheduleButton.isEnabled = true
         self.startWorkingTimeButton.isEnabled = true

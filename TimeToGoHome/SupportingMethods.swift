@@ -11,6 +11,7 @@ import UIKit
  Variables for app setting on UserDefaults
  */
 enum PListVariable: String {
+    case workTypeAndTimeSetting
     case startingWorkTimeSetting
     case lunchTimeSetting
     case initiallySetting

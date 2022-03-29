@@ -19,7 +19,7 @@ enum ScheduleType {
     case overtime(Date)
 }
 
-struct WorkSchedule {
+struct WorkScheduleModel {
     static let secondsOfLunchTime: Int = 3600
     static let secondsOfWorkTime: Int = 3600 * 4
     
@@ -52,7 +52,7 @@ struct WorkSchedule {
         }
     }
     
-    static let today: WorkSchedule = WorkSchedule(date: Date())
+    static let today: WorkScheduleModel = WorkScheduleModel(date: Date())
     
     private(set) var dateId: String
     private(set) var workType: WorkType
@@ -166,10 +166,13 @@ struct WorkSchedule {
 }
 
 // MARK: - Extension for methods added
-extension WorkSchedule {
-    mutating func updateStartingWorkTime(_ timeDate: Date) {
-        print("DB - Starting work time updated")// FIXME: DB
-        self.startingWorkTime = timeDate
+extension WorkScheduleModel {
+    mutating func updateStartingWorkTime(_ startingWorkTimeDate: Date) {
+        // MARK: Need to save startingWorkTime to UserDefaults as appSetting
+        
+        self.startingWorkTime = startingWorkTimeDate
+        
+        self.refreshToday()
     }
     
     mutating func makeStartingWorkTimeDate() -> Date? {
@@ -193,7 +196,7 @@ extension WorkSchedule {
         } else {
             self.workType = .staggered
             
-            return nil
+            return self.startingWorkTime // MARK: Need to load from UserDefualts as app setting
         }
     }
     
@@ -398,8 +401,8 @@ extension WorkSchedule {
 }
 
 // MARK: - Extension for static methods added
-extension WorkSchedule {
-    static func makeNewScheduleBasedOnCountOfSchedule(_ schedule: WorkSchedule, with associatedValue: Any) -> ScheduleType? {
+extension WorkScheduleModel {
+    static func makeNewScheduleBasedOnCountOfSchedule(_ schedule: WorkScheduleModel, with associatedValue: Any) -> ScheduleType? {
         if schedule.count == 0 {
             if let workType = associatedValue as? WorkTimeType {
                 return .morning(workType)

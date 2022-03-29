@@ -172,7 +172,7 @@ extension ScheduleTypeCell {
 
 // MARK: - Methods added
 extension ScheduleTypeCell {
-    func setCell(schedule: WorkSchedule, isEditingMode: Bool, tag: Int) {
+    func setCell(schedule: WorkScheduleModel, isEditingMode: Bool, tag: Int) {
         self.timeTypeLabelTopAnchor.constant = 16
         
         self.tag = tag
