@@ -121,15 +121,38 @@ struct WorkScheduleModel {
     private(set) var finishingRegularWorkTimeSecondsSinceReferenceDate: Int?
     private(set) var overtime: ScheduleType? = nil {
         willSet {
-            guard let finishingRegularWorkTimeSeconds = self.finishingRegularWorkTimeSecondsSinceReferenceDate,
-                  let overtime = newValue, case .overtime(let overtimeDate) = overtime
-            else {
-                return
+            if newValue == nil {
+                self.overtimeSecondsSincReferenceDate = 0
+                
+                guard let startingWorkTimeSeconds = self.startingWorkTimeSecondsSinceReferenceDate else {
+                    return
+                }
+                
+                if case .morning(let workType) = self.morning, case .work = workType,
+                   case .afternoon(let workType) = self.afternoon, case .work = workType {
+                    self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+                    
+                } else if case .morning(let workType) = self.morning, case .work = workType {
+                    self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                    
+                } else if case .afternoon(let workType) = self.afternoon, case .work = workType {
+                    self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                    
+                } else {
+                    self.finishingRegularWorkTimeSecondsSinceReferenceDate = nil
+                }
+                
+            } else {
+                guard let finishingRegularWorkTimeSeconds = self.finishingRegularWorkTimeSecondsSinceReferenceDate,
+                      let overtime = newValue, case .overtime(let overtimeDate) = overtime
+                else {
+                    return
+                }
+                
+                let overtimeSecondsSincReferenceDate = Int(overtimeDate.timeIntervalSinceReferenceDate)
+                self.overtimeSecondsSincReferenceDate = overtimeSecondsSincReferenceDate
+                self.overtimeMinutes = (overtimeSecondsSincReferenceDate - finishingRegularWorkTimeSeconds) / 60
             }
-            
-            let overtimeSecondsSincReferenceDate = Int(overtimeDate.timeIntervalSinceReferenceDate)
-            self.overtimeSecondsSincReferenceDate = overtimeSecondsSincReferenceDate
-            self.overtimeMinutes = (overtimeSecondsSincReferenceDate - finishingRegularWorkTimeSeconds) / 60
         }
     }
     private(set) var overtimeSecondsSincReferenceDate: Int = 0

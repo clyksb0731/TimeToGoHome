@@ -48,14 +48,14 @@ class MainViewController: UIViewController {
         return buttonView
     }()
     
-    lazy var mainTimeViewTimeValueView: UIView = {
+    lazy var mainTimeViewRemainingTimeValueView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
     
-    lazy var mainTimeViewHourValueLabel: UILabel = {
+    lazy var mainTimeViewRemainingHourValueLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 43)
@@ -66,7 +66,7 @@ class MainViewController: UIViewController {
         return label
     }()
     
-    lazy var mainTimeViewFirstSeparatorLabel: UILabel = {
+    lazy var mainTimeViewRemainingFirstSeparatorLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 43)
@@ -77,7 +77,7 @@ class MainViewController: UIViewController {
         return label
     }()
     
-    lazy var mainTimeViewMinuteValueLabel: UILabel = {
+    lazy var mainTimeViewRemainingMinuteValueLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 43)
@@ -88,7 +88,7 @@ class MainViewController: UIViewController {
         return label
     }()
     
-    lazy var mainTimeViewSecondSeparatorLabel: UILabel = {
+    lazy var mainTimeViewRemainingSecondSeparatorLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 43)
@@ -99,7 +99,7 @@ class MainViewController: UIViewController {
         return label
     }()
     
-    lazy var mainTimeViewSecondValueLabel: UILabel = {
+    lazy var mainTimeViewRemainingSecondValueLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 43)
@@ -421,7 +421,7 @@ extension MainViewController {
             self.remainingTimeButtonView,
             self.progressTimeButtonView,
             self.progressRateButtonView,
-            self.mainTimeViewTimeValueView,
+            self.mainTimeViewRemainingTimeValueView,
             self.mainTimeViewRateValueView,
             self.editScheduleButton,
             self.startWorkingTimeMarkLabel,
@@ -430,12 +430,12 @@ extension MainViewController {
         ], to: self.mainTimeView)
         
         SupportingMethods.shared.addSubviews([
-            self.mainTimeViewHourValueLabel,
-            self.mainTimeViewFirstSeparatorLabel,
-            self.mainTimeViewMinuteValueLabel,
-            self.mainTimeViewSecondSeparatorLabel,
-            self.mainTimeViewSecondValueLabel
-        ], to: self.mainTimeViewTimeValueView)
+            self.mainTimeViewRemainingHourValueLabel,
+            self.mainTimeViewRemainingFirstSeparatorLabel,
+            self.mainTimeViewRemainingMinuteValueLabel,
+            self.mainTimeViewRemainingSecondSeparatorLabel,
+            self.mainTimeViewRemainingSecondValueLabel
+        ], to: self.mainTimeViewRemainingTimeValueView)
         
         SupportingMethods.shared.addSubviews([
             self.mainTimeViewRateIntegerValueLabel,
@@ -488,50 +488,50 @@ extension MainViewController {
         
         // Main time view time value view layout
         NSLayoutConstraint.activate([
-            self.mainTimeViewTimeValueView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 77),
-            self.mainTimeViewTimeValueView.heightAnchor.constraint(equalToConstant: 52),
-            self.mainTimeViewTimeValueView.centerXAnchor.constraint(equalTo: self.mainTimeView.centerXAnchor),
-            self.mainTimeViewTimeValueView.widthAnchor.constraint(equalToConstant: 182)
+            self.mainTimeViewRemainingTimeValueView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 77),
+            self.mainTimeViewRemainingTimeValueView.heightAnchor.constraint(equalToConstant: 52),
+            self.mainTimeViewRemainingTimeValueView.centerXAnchor.constraint(equalTo: self.mainTimeView.centerXAnchor),
+            self.mainTimeViewRemainingTimeValueView.widthAnchor.constraint(equalToConstant: 182)
         ])
         
         // Main time view hour value label layout
         NSLayoutConstraint.activate([
-            self.mainTimeViewHourValueLabel.topAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.topAnchor),
-            self.mainTimeViewHourValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.bottomAnchor),
-            self.mainTimeViewHourValueLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.leadingAnchor),
-            self.mainTimeViewHourValueLabel.widthAnchor.constraint(equalTo: self.mainTimeViewMinuteValueLabel.widthAnchor)
+            self.mainTimeViewRemainingHourValueLabel.topAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.topAnchor),
+            self.mainTimeViewRemainingHourValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.bottomAnchor),
+            self.mainTimeViewRemainingHourValueLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.leadingAnchor),
+            self.mainTimeViewRemainingHourValueLabel.widthAnchor.constraint(equalTo: self.mainTimeViewRemainingMinuteValueLabel.widthAnchor)
         ])
         
         // Main time view first separator label layout
         NSLayoutConstraint.activate([
-            self.mainTimeViewFirstSeparatorLabel.topAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.topAnchor),
-            self.mainTimeViewFirstSeparatorLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.bottomAnchor),
-            self.mainTimeViewFirstSeparatorLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewHourValueLabel.trailingAnchor),
-            self.mainTimeViewFirstSeparatorLabel.widthAnchor.constraint(equalToConstant: 10)
+            self.mainTimeViewRemainingFirstSeparatorLabel.topAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.topAnchor),
+            self.mainTimeViewRemainingFirstSeparatorLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.bottomAnchor),
+            self.mainTimeViewRemainingFirstSeparatorLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewRemainingHourValueLabel.trailingAnchor),
+            self.mainTimeViewRemainingFirstSeparatorLabel.widthAnchor.constraint(equalToConstant: 10)
         ])
         
         // Main time view minute value label layout
         NSLayoutConstraint.activate([
-            self.mainTimeViewMinuteValueLabel.topAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.topAnchor),
-            self.mainTimeViewMinuteValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.bottomAnchor),
-            self.mainTimeViewMinuteValueLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewFirstSeparatorLabel.trailingAnchor),
-            self.mainTimeViewHourValueLabel.widthAnchor.constraint(equalTo: self.mainTimeViewSecondValueLabel.widthAnchor)
+            self.mainTimeViewRemainingMinuteValueLabel.topAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.topAnchor),
+            self.mainTimeViewRemainingMinuteValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.bottomAnchor),
+            self.mainTimeViewRemainingMinuteValueLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewRemainingFirstSeparatorLabel.trailingAnchor),
+            self.mainTimeViewRemainingHourValueLabel.widthAnchor.constraint(equalTo: self.mainTimeViewRemainingSecondValueLabel.widthAnchor)
         ])
         
         // Main time view second separator label layout
         NSLayoutConstraint.activate([
-            self.mainTimeViewSecondSeparatorLabel.topAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.topAnchor),
-            self.mainTimeViewSecondSeparatorLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.bottomAnchor),
-            self.mainTimeViewSecondSeparatorLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewMinuteValueLabel.trailingAnchor),
-            self.mainTimeViewSecondSeparatorLabel.widthAnchor.constraint(equalToConstant: 10)
+            self.mainTimeViewRemainingSecondSeparatorLabel.topAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.topAnchor),
+            self.mainTimeViewRemainingSecondSeparatorLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.bottomAnchor),
+            self.mainTimeViewRemainingSecondSeparatorLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewRemainingMinuteValueLabel.trailingAnchor),
+            self.mainTimeViewRemainingSecondSeparatorLabel.widthAnchor.constraint(equalToConstant: 10)
         ])
         
         // Main time view second value label layout
         NSLayoutConstraint.activate([
-            self.mainTimeViewSecondValueLabel.topAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.topAnchor),
-            self.mainTimeViewSecondValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewTimeValueView.bottomAnchor),
-            self.mainTimeViewSecondValueLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewSecondSeparatorLabel.trailingAnchor),
-            self.mainTimeViewSecondValueLabel.trailingAnchor.constraint(equalTo: mainTimeViewTimeValueView.trailingAnchor)
+            self.mainTimeViewRemainingSecondValueLabel.topAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.topAnchor),
+            self.mainTimeViewRemainingSecondValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.bottomAnchor),
+            self.mainTimeViewRemainingSecondValueLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewRemainingSecondSeparatorLabel.trailingAnchor),
+            self.mainTimeViewRemainingSecondValueLabel.trailingAnchor.constraint(equalTo: mainTimeViewRemainingTimeValueView.trailingAnchor)
         ])
         
         // Main time view rate value view layout
@@ -727,9 +727,9 @@ extension MainViewController {
             remainingTimeSeconds = endTimeSeconds - currentTimeSeconds
         }
         
-        self.mainTimeViewHourValueLabel.text = String(format: "%02d", remainingTimeSeconds/3600)
-        self.mainTimeViewMinuteValueLabel.text = String(format: "%02d", (remainingTimeSeconds%3600)/60)
-        self.mainTimeViewSecondValueLabel.text = String(format: "%02d", remainingTimeSeconds%60)
+        self.mainTimeViewRemainingHourValueLabel.text = remainingTimeSeconds > 0 ? String(format: "%02d", remainingTimeSeconds/3600) : "00"
+        self.mainTimeViewRemainingMinuteValueLabel.text = remainingTimeSeconds > 0 ? String(format: "%02d", (remainingTimeSeconds%3600)/60) : "00"
+        self.mainTimeViewRemainingSecondValueLabel.text = remainingTimeSeconds > 0 ? String(format: "%02d", remainingTimeSeconds%60) : "00"
     }
     
     func determineProgressTimeOnMainTimeView() {
@@ -904,7 +904,7 @@ extension MainViewController {
         
         //self.mainTimeViewValueLabel.text = "88:88:88"
         self.mainTimeViewRateValueView.isHidden = true
-        self.mainTimeViewTimeValueView.isHidden = false
+        self.mainTimeViewRemainingTimeValueView.isHidden = false
     }
     
     @objc func progressTimeButtonView(_ sender: UIButton) {
@@ -916,7 +916,7 @@ extension MainViewController {
         
         //self.mainTimeViewValueLabel.text = "88:88:88"
         self.mainTimeViewRateValueView.isHidden = true
-        self.mainTimeViewTimeValueView.isHidden = false
+        self.mainTimeViewRemainingTimeValueView.isHidden = false
     }
     
     @objc func progressRateButtonView(_ sender: UIButton) {
@@ -927,7 +927,7 @@ extension MainViewController {
         self.progressRateButtonView.isSelected = true
         
         //self.mainTimeViewValueLabel.text = "88%"
-        self.mainTimeViewTimeValueView.isHidden = true
+        self.mainTimeViewRemainingTimeValueView.isHidden = true
         self.mainTimeViewRateValueView.isHidden = false
     }
     
