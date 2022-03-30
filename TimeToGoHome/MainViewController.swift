@@ -834,7 +834,7 @@ extension MainViewController {
         
         let currentTimeSeconds = SupportingMethods.getCurrentTimeSeconds()
         let startingWorkTimeSeconds = self.schedule.startingWorkTimeSecondsSinceReferenceDate!
-        let lunchTimeSeconds = self.schedule.lunchTimeSecondsSinceReferenceDate!
+        let lunchTimeSeconds = self.schedule.lunchTimeSecondsSinceReferenceDate
         let lunchTimesSecondsLeft = lunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime - currentTimeSeconds
         let endTimeSeconds = self.schedule.overtimeSecondsSincReferenceDate > 0 ? self.schedule.overtimeSecondsSincReferenceDate : finishingRegularWorkTimeSeconds
         

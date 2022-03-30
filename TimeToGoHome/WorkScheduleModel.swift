@@ -75,7 +75,7 @@ struct WorkScheduleModel {
             self.lunchTimeSecondsSinceReferenceDate = Int(lunchTime.timeIntervalSinceReferenceDate)
         }
     }
-    private(set) var lunchTimeSecondsSinceReferenceDate: Int?
+    private(set) var lunchTimeSecondsSinceReferenceDate: Int = 0
     private(set) var morning: ScheduleType? = nil {
         willSet {
             guard let startingWorkTimeSeconds = self.startingWorkTimeSecondsSinceReferenceDate else {
