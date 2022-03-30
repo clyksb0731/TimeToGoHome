@@ -253,5 +253,8 @@ extension AppDelegate {
 //        SupportingMethods.shared.setAppSetting(with: WorkType.normal.rawValue, for: .workType)
 //        SupportingMethods.shared.setAppSetting(with: 9.5, for: .startingWorkTimeValue)
 //        SupportingMethods.shared.setAppSetting(with: 12.5, for: .lunchTimeValue)
+        
+        // FIXME: Temp, common
+        SupportingMethods.shared.setAppSetting(with: true, for: .isIgnoredLunchTimeForHalfVacation)
     }
 }

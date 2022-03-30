@@ -15,6 +15,7 @@ enum PListVariable: String {
     case workTimeValueRange
     case startingWorkTimeValue
     case lunchTimeValue
+    case isIgnoredLunchTimeForHalfVacation
     case initiallySetting
 }
 
