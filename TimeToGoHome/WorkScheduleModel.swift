@@ -127,10 +127,13 @@ struct WorkScheduleModel {
                 return
             }
             
-            self.overtimeMinutes = (Int(overtimeDate.timeIntervalSinceReferenceDate) - finishingRegularWorkTimeSeconds) / 60
+            let overtimeSecondsSincReferenceDate = Int(overtimeDate.timeIntervalSinceReferenceDate)
+            self.overtimeSecondsSincReferenceDate = overtimeSecondsSincReferenceDate
+            self.overtimeMinutes = (overtimeSecondsSincReferenceDate - finishingRegularWorkTimeSeconds) / 60
         }
     }
-    private(set) var overtimeMinutes: Int?
+    private(set) var overtimeSecondsSincReferenceDate: Int = 0
+    private(set) var overtimeMinutes: Int = 0
     
     var isFinishedScheduleToday: Bool = false
     

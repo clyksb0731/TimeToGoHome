@@ -651,7 +651,9 @@ extension MainViewController {
         
         if case .normal = self.schedule.workType {
             self.startWorkingTimeButton.isEnabled = false
-            
+        }
+        
+        if self.schedule.startingWorkTime != nil {
             if self.timer == nil {
                 let timer = self.makeTimerForSchedule()
                 self.timer = timer
@@ -660,7 +662,7 @@ extension MainViewController {
     }
     
     func makeTimerForSchedule() -> Timer {
-        return Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
+        return Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
     }
     
     func calculateTableViewHeight(for schedule: WorkScheduleModel) {
@@ -698,7 +700,36 @@ extension MainViewController {
     }
     
     func determineRemainingTimeOnMainTimeView() {
+        guard let finishingRegularWorkTimeSeconds = self.schedule.finishingRegularWorkTimeSecondsSinceReferenceDate else {
+            return
+        }
         
+        let currentTimeSeconds = SupportingMethods.getCurrentTimeSeconds()
+        let startingWorkTimeSeconds = self.schedule.startingWorkTimeSecondsSinceReferenceDate!
+        let lunchTimeSeconds = self.schedule.lunchTimeSecondsSinceReferenceDate!
+        let lunchTimesSecondsLeft = lunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime - currentTimeSeconds
+        let endTimeSeconds = self.schedule.overtimeSecondsSincReferenceDate > 0 ? self.schedule.overtimeSecondsSincReferenceDate : finishingRegularWorkTimeSeconds
+        
+        var remainingTimeSeconds: Int = 0
+        
+        if currentTimeSeconds < startingWorkTimeSeconds {
+            remainingTimeSeconds = endTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+            
+        } else if currentTimeSeconds >= startingWorkTimeSeconds &&
+                    currentTimeSeconds < lunchTimeSeconds {
+            remainingTimeSeconds = endTimeSeconds - currentTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+            
+        } else if currentTimeSeconds >= lunchTimeSeconds &&
+                    currentTimeSeconds < lunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+            remainingTimeSeconds = endTimeSeconds - currentTimeSeconds - lunchTimesSecondsLeft
+            
+        } else if currentTimeSeconds >= lunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+            remainingTimeSeconds = endTimeSeconds - currentTimeSeconds
+        }
+        
+        self.mainTimeViewHourValueLabel.text = String(format: "%02d", remainingTimeSeconds/3600)
+        self.mainTimeViewMinuteValueLabel.text = String(format: "%02d", (remainingTimeSeconds%3600)/60)
+        self.mainTimeViewSecondValueLabel.text = String(format: "%02d", remainingTimeSeconds%60)
     }
     
     func determineProgressTimeOnMainTimeView() {

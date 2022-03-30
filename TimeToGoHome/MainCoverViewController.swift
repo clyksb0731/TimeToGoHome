@@ -469,12 +469,16 @@ extension MainCoverViewController {
     }
     
     @objc func confirmButton(_ sender: UIButton) {
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone.current
+        let datePickerComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.datePicker.date)
+        
         if case .overtimeSchedule = self.mainCoverType {
-            self.delegate?.mainCoverDidDetermineOvertimeSchedule(.overtime(self.datePicker.date), isEditingModeBeforPresenting: self.isEditingBeforePresented)
+            self.delegate?.mainCoverDidDetermineOvertimeSchedule(.overtime(calendar.date(from: datePickerComponents)!), isEditingModeBeforPresenting: self.isEditingBeforePresented)
         }
         
         if case .startingWorkTime = self.mainCoverType {
-            self.delegate?.mianCoverDidDetermineStartingWorkTime(self.datePicker.date)
+            self.delegate?.mianCoverDidDetermineStartingWorkTime(calendar.date(from: datePickerComponents)!)
         }
         
         self.dismiss(animated: false)
