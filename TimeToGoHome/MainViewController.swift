@@ -8,6 +8,12 @@
 import UIKit
 
 class MainViewController: UIViewController {
+    enum MainTimeViewButtonType {
+        case remainingTime
+        case progressTime
+        case progressRate
+    }
+    
     lazy var mainTimeView: UIView = {
         let view = UIView()
         view.backgroundColor = .black
@@ -110,7 +116,7 @@ class MainViewController: UIViewController {
         return label
     }()
     
-    lazy var mainTimeViewRateValueView: UIView = {
+    lazy var mainTimeViewProgressTimeValueView: UIView = {
         let view = UIView()
         view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -118,7 +124,70 @@ class MainViewController: UIViewController {
         return view
     }()
     
-    lazy var mainTimeViewRateIntegerValueLabel: UILabel = {
+    lazy var mainTimeViewProgressHourValueLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 43)
+        label.textAlignment = .center
+        label.text = "00"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var mainTimeViewProgressFirstSeparatorLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 43)
+        label.textAlignment = .center
+        label.text = ":"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var mainTimeViewProgressMinuteValueLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 43)
+        label.textAlignment = .center
+        label.text = "00"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var mainTimeViewProgressSecondSeparatorLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 43)
+        label.textAlignment = .center
+        label.text = ":"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var mainTimeViewProgressSecondValueLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 43)
+        label.textAlignment = .center
+        label.text = "00"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var mainTimeViewProgressRateValueView: UIView = {
+        let view = UIView()
+        view.isHidden = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var mainTimeViewProgressRateIntegerValueLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 43)
@@ -129,7 +198,7 @@ class MainViewController: UIViewController {
         return label
     }()
     
-    lazy var mainTimeViewRatePointSymbolLabel: UILabel = {
+    lazy var mainTimeViewProgressRatePointSymbolLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 20)
@@ -140,7 +209,7 @@ class MainViewController: UIViewController {
         return label
     }()
     
-    lazy var mainTimeViewRateFloatValueLabel: UILabel = {
+    lazy var mainTimeViewProgressRateFloatValueLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 20)
@@ -151,7 +220,7 @@ class MainViewController: UIViewController {
         return label
     }()
     
-    lazy var mainTimeViewRatePercentSymbolLabel: UILabel = {
+    lazy var mainTimeViewProgressRatePercentSymbolLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 20)
@@ -285,6 +354,8 @@ class MainViewController: UIViewController {
     let changeScheduleDescriptionLabelHeight = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.024
     
     var scheduleTableViewHeightAnchor: NSLayoutConstraint!
+    
+    var mainTimeViewButtonType: MainTimeViewButtonType = .remainingTime
     
     var schedule: WorkScheduleModel = WorkScheduleModel.today
     var tempSchedule: WorkScheduleModel?
@@ -422,7 +493,8 @@ extension MainViewController {
             self.progressTimeButtonView,
             self.progressRateButtonView,
             self.mainTimeViewRemainingTimeValueView,
-            self.mainTimeViewRateValueView,
+            self.mainTimeViewProgressTimeValueView,
+            self.mainTimeViewProgressRateValueView,
             self.editScheduleButton,
             self.startWorkingTimeMarkLabel,
             self.startWorkingTimeButton,
@@ -438,11 +510,19 @@ extension MainViewController {
         ], to: self.mainTimeViewRemainingTimeValueView)
         
         SupportingMethods.shared.addSubviews([
-            self.mainTimeViewRateIntegerValueLabel,
-            self.mainTimeViewRatePointSymbolLabel,
-            self.mainTimeViewRateFloatValueLabel,
-            self.mainTimeViewRatePercentSymbolLabel
-        ], to: self.mainTimeViewRateValueView)
+            self.mainTimeViewProgressHourValueLabel,
+            self.mainTimeViewProgressFirstSeparatorLabel,
+            self.mainTimeViewProgressMinuteValueLabel,
+            self.mainTimeViewProgressSecondSeparatorLabel,
+            self.mainTimeViewProgressSecondValueLabel
+        ], to: self.mainTimeViewProgressTimeValueView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.mainTimeViewProgressRateIntegerValueLabel,
+            self.mainTimeViewProgressRatePointSymbolLabel,
+            self.mainTimeViewProgressRateFloatValueLabel,
+            self.mainTimeViewProgressRatePercentSymbolLabel
+        ], to: self.mainTimeViewProgressRateValueView)
         
         SupportingMethods.shared.addSubviews([
             self.cancelChangingScheduleButtonView,
@@ -486,7 +566,7 @@ extension MainViewController {
             self.progressRateButtonView.widthAnchor.constraint(equalToConstant: 61)
         ])
         
-        // Main time view time value view layout
+        // Main time view remaining time value view layout
         NSLayoutConstraint.activate([
             self.mainTimeViewRemainingTimeValueView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 77),
             self.mainTimeViewRemainingTimeValueView.heightAnchor.constraint(equalToConstant: 52),
@@ -494,7 +574,7 @@ extension MainViewController {
             self.mainTimeViewRemainingTimeValueView.widthAnchor.constraint(equalToConstant: 182)
         ])
         
-        // Main time view hour value label layout
+        // Main time view remaining hour value label layout
         NSLayoutConstraint.activate([
             self.mainTimeViewRemainingHourValueLabel.topAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.topAnchor),
             self.mainTimeViewRemainingHourValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.bottomAnchor),
@@ -502,7 +582,7 @@ extension MainViewController {
             self.mainTimeViewRemainingHourValueLabel.widthAnchor.constraint(equalTo: self.mainTimeViewRemainingMinuteValueLabel.widthAnchor)
         ])
         
-        // Main time view first separator label layout
+        // Main time view remaining first separator label layout
         NSLayoutConstraint.activate([
             self.mainTimeViewRemainingFirstSeparatorLabel.topAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.topAnchor),
             self.mainTimeViewRemainingFirstSeparatorLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.bottomAnchor),
@@ -510,7 +590,7 @@ extension MainViewController {
             self.mainTimeViewRemainingFirstSeparatorLabel.widthAnchor.constraint(equalToConstant: 10)
         ])
         
-        // Main time view minute value label layout
+        // Main time view remaining minute value label layout
         NSLayoutConstraint.activate([
             self.mainTimeViewRemainingMinuteValueLabel.topAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.topAnchor),
             self.mainTimeViewRemainingMinuteValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.bottomAnchor),
@@ -518,7 +598,7 @@ extension MainViewController {
             self.mainTimeViewRemainingHourValueLabel.widthAnchor.constraint(equalTo: self.mainTimeViewRemainingSecondValueLabel.widthAnchor)
         ])
         
-        // Main time view second separator label layout
+        // Main time view remaining second separator label layout
         NSLayoutConstraint.activate([
             self.mainTimeViewRemainingSecondSeparatorLabel.topAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.topAnchor),
             self.mainTimeViewRemainingSecondSeparatorLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.bottomAnchor),
@@ -526,7 +606,7 @@ extension MainViewController {
             self.mainTimeViewRemainingSecondSeparatorLabel.widthAnchor.constraint(equalToConstant: 10)
         ])
         
-        // Main time view second value label layout
+        // Main time view remaining second value label layout
         NSLayoutConstraint.activate([
             self.mainTimeViewRemainingSecondValueLabel.topAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.topAnchor),
             self.mainTimeViewRemainingSecondValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.bottomAnchor),
@@ -534,40 +614,88 @@ extension MainViewController {
             self.mainTimeViewRemainingSecondValueLabel.trailingAnchor.constraint(equalTo: mainTimeViewRemainingTimeValueView.trailingAnchor)
         ])
         
+        // Main time view progress time value view layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewProgressTimeValueView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 77),
+            self.mainTimeViewProgressTimeValueView.heightAnchor.constraint(equalToConstant: 52),
+            self.mainTimeViewProgressTimeValueView.centerXAnchor.constraint(equalTo: self.mainTimeView.centerXAnchor),
+            self.mainTimeViewProgressTimeValueView.widthAnchor.constraint(equalToConstant: 182)
+        ])
+        
+        // Main time view progress hour value label layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewProgressHourValueLabel.topAnchor.constraint(equalTo: self.mainTimeViewProgressTimeValueView.topAnchor),
+            self.mainTimeViewProgressHourValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewProgressTimeValueView.bottomAnchor),
+            self.mainTimeViewProgressHourValueLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewProgressTimeValueView.leadingAnchor),
+            self.mainTimeViewProgressHourValueLabel.widthAnchor.constraint(equalTo: self.mainTimeViewProgressMinuteValueLabel.widthAnchor)
+        ])
+        
+        // Main time view progress first separator label layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewProgressFirstSeparatorLabel.topAnchor.constraint(equalTo: self.mainTimeViewProgressTimeValueView.topAnchor),
+            self.mainTimeViewProgressFirstSeparatorLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewProgressTimeValueView.bottomAnchor),
+            self.mainTimeViewProgressFirstSeparatorLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewProgressHourValueLabel.trailingAnchor),
+            self.mainTimeViewProgressFirstSeparatorLabel.widthAnchor.constraint(equalToConstant: 10)
+        ])
+        
+        // Main time view progress minute value label layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewProgressMinuteValueLabel.topAnchor.constraint(equalTo: self.mainTimeViewProgressTimeValueView.topAnchor),
+            self.mainTimeViewProgressMinuteValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewProgressTimeValueView.bottomAnchor),
+            self.mainTimeViewProgressMinuteValueLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewProgressFirstSeparatorLabel.trailingAnchor),
+            self.mainTimeViewProgressHourValueLabel.widthAnchor.constraint(equalTo: self.mainTimeViewProgressSecondValueLabel.widthAnchor)
+        ])
+        
+        // Main time view progress second separator label layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewProgressSecondSeparatorLabel.topAnchor.constraint(equalTo: self.mainTimeViewProgressTimeValueView.topAnchor),
+            self.mainTimeViewProgressSecondSeparatorLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewProgressTimeValueView.bottomAnchor),
+            self.mainTimeViewProgressSecondSeparatorLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewProgressMinuteValueLabel.trailingAnchor),
+            self.mainTimeViewProgressSecondSeparatorLabel.widthAnchor.constraint(equalToConstant: 10)
+        ])
+        
+        // Main time view progress second value label layout
+        NSLayoutConstraint.activate([
+            self.mainTimeViewProgressSecondValueLabel.topAnchor.constraint(equalTo: self.mainTimeViewProgressTimeValueView.topAnchor),
+            self.mainTimeViewProgressSecondValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewProgressTimeValueView.bottomAnchor),
+            self.mainTimeViewProgressSecondValueLabel.leadingAnchor.constraint(equalTo: self.mainTimeViewProgressSecondSeparatorLabel.trailingAnchor),
+            self.mainTimeViewProgressSecondValueLabel.trailingAnchor.constraint(equalTo: mainTimeViewProgressTimeValueView.trailingAnchor)
+        ])
+        
         // Main time view rate value view layout
         NSLayoutConstraint.activate([
-            self.mainTimeViewRateValueView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 77),
-            self.mainTimeViewRateValueView.heightAnchor.constraint(equalToConstant: 52),
-            self.mainTimeViewRateValueView.centerXAnchor.constraint(equalTo: self.mainTimeView.centerXAnchor),
-            self.mainTimeViewRateValueView.widthAnchor.constraint(equalToConstant: 75+43)
+            self.mainTimeViewProgressRateValueView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 77),
+            self.mainTimeViewProgressRateValueView.heightAnchor.constraint(equalToConstant: 52),
+            self.mainTimeViewProgressRateValueView.centerXAnchor.constraint(equalTo: self.mainTimeView.centerXAnchor),
+            self.mainTimeViewProgressRateValueView.widthAnchor.constraint(equalToConstant: 75+43)
         ])
         
         // Main time view rate integer value label layout
         NSLayoutConstraint.activate([
-            self.mainTimeViewRateIntegerValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewRateValueView.bottomAnchor),
-            self.mainTimeViewRateIntegerValueLabel.leadingAnchor.constraint(equalTo: mainTimeViewRateValueView.leadingAnchor),
-            self.mainTimeViewRateIntegerValueLabel.trailingAnchor.constraint(equalTo: self.mainTimeViewRatePointSymbolLabel.leadingAnchor)
+            self.mainTimeViewProgressRateIntegerValueLabel.bottomAnchor.constraint(equalTo: self.mainTimeViewProgressRateValueView.bottomAnchor),
+            self.mainTimeViewProgressRateIntegerValueLabel.leadingAnchor.constraint(equalTo: mainTimeViewProgressRateValueView.leadingAnchor),
+            self.mainTimeViewProgressRateIntegerValueLabel.trailingAnchor.constraint(equalTo: self.mainTimeViewProgressRatePointSymbolLabel.leadingAnchor)
         ])
         
         // Main time view rate point symbol label layout
         NSLayoutConstraint.activate([
-            self.mainTimeViewRatePointSymbolLabel.lastBaselineAnchor.constraint(equalTo: self.mainTimeViewRateIntegerValueLabel.lastBaselineAnchor),
-            self.mainTimeViewRatePointSymbolLabel.trailingAnchor.constraint(equalTo: mainTimeViewRateFloatValueLabel.leadingAnchor),
-            self.mainTimeViewRatePointSymbolLabel.widthAnchor.constraint(equalToConstant: 7)
+            self.mainTimeViewProgressRatePointSymbolLabel.lastBaselineAnchor.constraint(equalTo: self.mainTimeViewProgressRateIntegerValueLabel.lastBaselineAnchor),
+            self.mainTimeViewProgressRatePointSymbolLabel.trailingAnchor.constraint(equalTo: mainTimeViewProgressRateFloatValueLabel.leadingAnchor),
+            self.mainTimeViewProgressRatePointSymbolLabel.widthAnchor.constraint(equalToConstant: 7)
         ])
         
         // Main time view rate float value label layout
         NSLayoutConstraint.activate([
-            self.mainTimeViewRateFloatValueLabel.lastBaselineAnchor.constraint(equalTo: self.mainTimeViewRateIntegerValueLabel.lastBaselineAnchor),
-            self.mainTimeViewRateFloatValueLabel.trailingAnchor.constraint(equalTo: self.mainTimeViewRatePercentSymbolLabel.leadingAnchor),
-            self.mainTimeViewRateFloatValueLabel.widthAnchor.constraint(equalToConstant: 15)
+            self.mainTimeViewProgressRateFloatValueLabel.lastBaselineAnchor.constraint(equalTo: self.mainTimeViewProgressRateIntegerValueLabel.lastBaselineAnchor),
+            self.mainTimeViewProgressRateFloatValueLabel.trailingAnchor.constraint(equalTo: self.mainTimeViewProgressRatePercentSymbolLabel.leadingAnchor),
+            self.mainTimeViewProgressRateFloatValueLabel.widthAnchor.constraint(equalToConstant: 15)
         ])
         
         // Main time view rate percent symbol label layout
         NSLayoutConstraint.activate([
-            self.mainTimeViewRatePercentSymbolLabel.lastBaselineAnchor.constraint(equalTo: self.mainTimeViewRateIntegerValueLabel.lastBaselineAnchor),
-            self.mainTimeViewRatePercentSymbolLabel.trailingAnchor.constraint(equalTo: self.mainTimeViewRateValueView.trailingAnchor),
-            self.mainTimeViewRatePercentSymbolLabel.widthAnchor.constraint(equalToConstant: 21)
+            self.mainTimeViewProgressRatePercentSymbolLabel.lastBaselineAnchor.constraint(equalTo: self.mainTimeViewProgressRateIntegerValueLabel.lastBaselineAnchor),
+            self.mainTimeViewProgressRatePercentSymbolLabel.trailingAnchor.constraint(equalTo: self.mainTimeViewProgressRateValueView.trailingAnchor),
+            self.mainTimeViewProgressRatePercentSymbolLabel.widthAnchor.constraint(equalToConstant: 21)
         ])
         
         // Change schedule button layout
@@ -890,9 +1018,16 @@ extension MainViewController {
     }
     
     @objc func timer(_ timer: Timer) {
-        self.determineRemainingTimeOnMainTimeView()
-        self.determineProgressTimeOnMainTimeView()
-        self.determineProgressRateOnMainTimeView()
+        switch self.mainTimeViewButtonType {
+        case .remainingTime:
+            self.determineRemainingTimeOnMainTimeView()
+            
+        case .progressTime:
+            self.determineProgressTimeOnMainTimeView()
+            
+        case .progressRate:
+            self.determineProgressRateOnMainTimeView()
+        }
     }
     
     @objc func remainingTimeButtonView(_ sender: UIButton) {
@@ -902,8 +1037,8 @@ extension MainViewController {
         self.progressTimeButtonView.isSelected = false
         self.progressRateButtonView.isSelected = false
         
-        //self.mainTimeViewValueLabel.text = "88:88:88"
-        self.mainTimeViewRateValueView.isHidden = true
+        self.mainTimeViewButtonType = .remainingTime
+        self.mainTimeViewProgressRateValueView.isHidden = true
         self.mainTimeViewRemainingTimeValueView.isHidden = false
     }
     
@@ -914,8 +1049,8 @@ extension MainViewController {
         self.progressTimeButtonView.isSelected = true
         self.progressRateButtonView.isSelected = false
         
-        //self.mainTimeViewValueLabel.text = "88:88:88"
-        self.mainTimeViewRateValueView.isHidden = true
+        self.mainTimeViewButtonType = .progressTime
+        self.mainTimeViewProgressRateValueView.isHidden = true
         self.mainTimeViewRemainingTimeValueView.isHidden = false
     }
     
@@ -926,9 +1061,9 @@ extension MainViewController {
         self.progressTimeButtonView.isSelected = false
         self.progressRateButtonView.isSelected = true
         
-        //self.mainTimeViewValueLabel.text = "88%"
+        self.mainTimeViewButtonType = .progressRate
         self.mainTimeViewRemainingTimeValueView.isHidden = true
-        self.mainTimeViewRateValueView.isHidden = false
+        self.mainTimeViewProgressRateValueView.isHidden = false
     }
     
     @objc func startWorkingTimeButton(_ sender: UIButton) {
