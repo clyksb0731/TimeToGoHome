@@ -861,7 +861,32 @@ extension MainViewController {
     }
     
     func determineProgressTimeOnMainTimeView() {
+        guard let finishingRegularWorkTimeSeconds = self.schedule.finishingRegularWorkTimeSecondsSinceReferenceDate else {
+            return
+        }
         
+        let currentTimeSeconds = SupportingMethods.getCurrentTimeSeconds()
+        let startingWorkTimeSeconds = self.schedule.startingWorkTimeSecondsSinceReferenceDate!
+        let lunchTimeSeconds = self.schedule.lunchTimeSecondsSinceReferenceDate
+        let lunchTimesSecondsLeft = lunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime - currentTimeSeconds
+        let endTimeSeconds = self.schedule.overtimeSecondsSincReferenceDate > 0 ? self.schedule.overtimeSecondsSincReferenceDate : finishingRegularWorkTimeSeconds
+        
+        var progressTimeSeconds: Int = 0
+        
+        if currentTimeSeconds < startingWorkTimeSeconds {
+            progressTimeSeconds = 0
+            
+        } else if currentTimeSeconds >= startingWorkTimeSeconds &&
+                    currentTimeSeconds < lunchTimeSeconds {
+            
+            
+        } else if currentTimeSeconds >= lunchTimeSeconds &&
+                    currentTimeSeconds < lunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+            
+            
+        } else if currentTimeSeconds >= lunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+            
+        }
     }
     
     func determineProgressRateOnMainTimeView() {
