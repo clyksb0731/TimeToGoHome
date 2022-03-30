@@ -55,7 +55,7 @@ struct WorkScheduleModel {
     static let today: WorkScheduleModel = WorkScheduleModel(date: Date())
     
     private(set) var dateId: String
-    private(set) var workType: WorkType
+    private(set) var workType: WorkType?
     private(set) var startingWorkTime: Date? = nil {
         willSet {
             guard let startingWorkTime = newValue else {
@@ -132,6 +132,8 @@ struct WorkScheduleModel {
     }
     private(set) var overtimeMinutes: Int?
     
+    var isFinishedScheduleToday: Bool = false
+    
     var isEditingMode: Bool = false
     
     init(date: Date) {
@@ -141,14 +143,12 @@ struct WorkScheduleModel {
         dateFormatter.timeZone = TimeZone.current
         dateFormatter.dateFormat = "yyyyMMdd"
         self.dateId = dateFormatter.string(from: date)
-        self.workType = .normal // FIXME: From app setting
         
         self.scheduling(dateId: self.dateId)
     }
     
     init(dateId: String) {
         self.dateId = dateId
-        self.workType = .normal // FIXME: From app setting
         
         self.scheduling(dateId: dateId)
     }
@@ -157,6 +157,7 @@ struct WorkScheduleModel {
         // Check DB if there is already today schedule.
         // &&
         // Check tody schedule condition for initial setting.
+        self.workType = self.makeWorkType() // FIXME: From app setting
         self.startingWorkTime = self.makeStartingWorkTimeDate()
         self.lunchTime = self.makeLunchTimeDate()
         self.morning = .morning(.work) // FIXME: Temp
@@ -168,20 +169,59 @@ struct WorkScheduleModel {
 // MARK: - Extension for methods added
 extension WorkScheduleModel {
     mutating func updateStartingWorkTime(_ startingWorkTimeDate: Date) {
-        // MARK: Need to save startingWorkTime to UserDefaults as appSetting
-        
+        SupportingMethods.shared.setAppSetting(with: startingWorkTimeDate, for: .startingWorkTimeValue)
         self.startingWorkTime = startingWorkTimeDate
         
         self.refreshToday()
     }
     
-    mutating func makeStartingWorkTimeDate() -> Date? {
-        if let startingWorkTimeSetting = SupportingMethods.shared.useAppSetting(for: .startingWorkTimeSetting) as? [String:Any],
-            let type = startingWorkTimeSetting["name"] as? String,
-            type == "normalType",
-            let startingWorkTimeValue = startingWorkTimeSetting["startingWorkTime"] as? Double {
+    mutating func makeWorkType() -> WorkType? {
+        guard let workTypeString = SupportingMethods.shared.useAppSetting(for: .workType) as? String else {
+            return nil
+        }
+        
+        if workTypeString == WorkType.staggered.rawValue {
+            return .staggered
             
-            self.workType = .normal
+        } else {
+            return .normal
+        }
+    }
+    
+    mutating func makeStartingWorkTimeDate() -> Date? {
+        guard let workType = self.workType else {
+            return nil
+        }
+        
+        switch workType {
+        case .staggered:
+            if let startingWorkTimeDate = SupportingMethods.shared.useAppSetting(for: .startingWorkTimeValue) as? Date {
+                
+                var calendar = Calendar.current
+                calendar.timeZone = TimeZone.current
+                let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
+                let savedStartingWorkTimeDateComponents = calendar.dateComponents([.year, .month, .day], from: startingWorkTimeDate)
+                
+                if todayDateComponents.year == savedStartingWorkTimeDateComponents.year &&
+                    todayDateComponents.month == savedStartingWorkTimeDateComponents.month &&
+                    todayDateComponents.day == savedStartingWorkTimeDateComponents.day {
+                    
+                    return startingWorkTimeDate
+                    
+                } else {
+                    SupportingMethods.shared.setAppSetting(with: nil, for: .startingWorkTimeValue)
+                    
+                    return nil
+                }
+                
+            } else {
+                return nil
+            }
+            
+        case .normal:
+            guard let startingWorkTimeValue = SupportingMethods.shared.useAppSetting(for: .startingWorkTimeValue) as? Double else {
+                return nil
+            }
             
             let hour = (Int(startingWorkTimeValue * 10)) / 10
             let minute = Int((Double((Int(startingWorkTimeValue * 10)) % 10) / 10.0) * 60)
@@ -192,29 +232,23 @@ extension WorkScheduleModel {
             let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
             
             return calendar.date(from: todayDateComponents)
-            
-        } else {
-            self.workType = .staggered
-            
-            return self.startingWorkTime // MARK: Need to load from UserDefualts as app setting
         }
     }
     
     mutating func makeLunchTimeDate() -> Date? {
-        if let lunchTimeValue = SupportingMethods.shared.useAppSetting(for: .lunchTimeSetting) as? Double {
-            let hour = (Int(lunchTimeValue * 10)) / 10
-            let minute = Int((Double((Int(lunchTimeValue * 10)) % 10) / 10.0) * 60)
-            
-            var calendar = Calendar.current
-            calendar.timeZone = TimeZone.current
-            let dateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
-            let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
-            
-            return calendar.date(from: todayDateComponents)
-            
-        } else {
+        guard let lunchTimeValue = SupportingMethods.shared.useAppSetting(for: .lunchTimeValue) as? Double else {
             return nil
         }
+        
+        let hour = (Int(lunchTimeValue * 10)) / 10
+        let minute = Int((Double((Int(lunchTimeValue * 10)) % 10) / 10.0) * 60)
+        
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone.current
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
+        let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
+        
+        return calendar.date(from: todayDateComponents)
     }
     
     func updateTodayIntoDB() {
@@ -243,6 +277,7 @@ extension WorkScheduleModel {
         // Check DB if there is already today schedule.
         // &&
         // Check tody schedule condition for initial setting.
+        self.workType = self.makeWorkType()
         self.startingWorkTime = self.makeStartingWorkTimeDate()
         self.lunchTime = self.makeLunchTimeDate()
         self.morning = .morning(.work) // FIXME: Temp

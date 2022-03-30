@@ -244,11 +244,14 @@ extension AppDelegate: LocationManagerDelegate {
 // FIXME: - Temp Extension
 extension AppDelegate {
     func makeTempAppSetting() {
-        // Start working time
-        SupportingMethods.shared.setAppSetting(with: ["name":"staggeredType", "earlierTime":8.0, "laterTime":11.0], for: .startingWorkTimeSetting)
-        //SupportingMethods.shared.setAppSetting(with: ["name":"normalType", "startingWorkTime":9.5], for: .startingWorkTimeSetting)
+        // FIXME: Temp, WorkType - Staggered
+        SupportingMethods.shared.setAppSetting(with: WorkType.staggered.rawValue, for: .workType)
+        SupportingMethods.shared.setAppSetting(with: 12.5, for: .lunchTimeValue)
+        SupportingMethods.shared.setAppSetting(with: ["earliestTime":8.0, "latestTime":11.0], for: .workTimeValueRange)
         
-        // Lunch time
-        SupportingMethods.shared.setAppSetting(with: 12.5, for: .lunchTimeSetting)
+        // FIXME: Temp, WorkType - Noraml
+//        SupportingMethods.shared.setAppSetting(with: WorkType.normal.rawValue, for: .workType)
+//        SupportingMethods.shared.setAppSetting(with: 9.5, for: .startingWorkTimeValue)
+//        SupportingMethods.shared.setAppSetting(with: 12.5, for: .lunchTimeValue)
     }
 }
