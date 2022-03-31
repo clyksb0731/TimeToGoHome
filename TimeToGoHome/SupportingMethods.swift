@@ -148,6 +148,7 @@ extension SupportingMethods {
         }
     }
     
+    // MARK: About time
     func determineAdditionalHourAndMinuteUsingMinute(_ minutes: Int) -> String {
         let hours = minutes / 60
         let minuteLeft = minutes % 60
@@ -180,6 +181,16 @@ extension SupportingMethods {
         } else {
             return "+ \(minuteLeft)분"
         }
+    }
+    
+    // MARK: About constraint
+    func makeSameBoundConstraints(_ firstView: UIView, _ secondView: UIView) {
+        NSLayoutConstraint.activate([
+            firstView.topAnchor.constraint(equalTo: secondView.topAnchor),
+            firstView.bottomAnchor.constraint(equalTo: secondView.bottomAnchor),
+            firstView.leadingAnchor.constraint(equalTo: secondView.leadingAnchor),
+            firstView.trailingAnchor.constraint(equalTo: secondView.trailingAnchor)
+        ])
     }
 }
 

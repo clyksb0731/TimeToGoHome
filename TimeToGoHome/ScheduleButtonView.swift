@@ -55,11 +55,76 @@ extension ScheduleButtonViewDelegate {
 }
 
 class ScheduleButtonView: UIView {
-    weak var pageControl: UIPageControl!
-    weak var overtimeLabel: UILabel!
-    weak var timer: Timer?
+    lazy var threeSchedulesView: UIView = {
+        let view = self.initializeThreeSchedules()
+        
+        return view
+    }()
     
-    var buttonViewType: ScheduleButtonViewType = .addOvertime
+    lazy var twoScheduleForVacationView: UIView = {
+        let view = self.initializeTwoScheduleForVacation()
+        
+        return view
+    }()
+    
+    lazy var twoScheduleForHolidayView: UIView = {
+        let view = self.initializeTwoScheduleForHoliday()
+        
+        return view
+    }()
+    
+    lazy var addOvertimeView: UIView = {
+        let view = self.initializeAddOvertime()
+        
+        return view
+    }()
+    
+    lazy var addOvertimeOrFinishWorkView: UIView = {
+        let view = self.initializeAddOvertimeOrFinishWork()
+        
+        return view
+    }()
+    
+    lazy var replaceOvertimeOrFinishWorkView: UIView = {
+        let view = self.initializeReplaceOvertimeOrFinishWork()
+        
+        return view
+    }()
+    
+    lazy var finishWorkWithOvertimeView: UIView = {
+        let view = self.initializeFinishWorkWithOvertime()
+        
+        return view
+    }()
+    
+    lazy var finishWorkView: UIView = {
+        let view = self.initializeFinishWork()
+        
+        return view
+    }()
+    
+    lazy var workFinishedView: UIView = {
+        let view = self.initializeWorkFinished()
+        
+        return view
+    }()
+    
+    lazy var noButtonView: UIView = {
+        let view = self.initializeNoButton()
+        
+        return view
+    }()
+    
+    weak var threeSchedulesPageControl: UIPageControl?
+    weak var twoScheduleForVacationPageControl: UIPageControl?
+    weak var twoScheduleForHolidayPageControl: UIPageControl?
+    weak var threeSchedulesScrollView: UIScrollView?
+    weak var twoScheduleForVacationScrollView: UIScrollView?
+    weak var twoScheduleForHolidayScrollView: UIScrollView?
+    weak var addOvertimeOrFinishWorkOvertimeLabel: UILabel?
+    weak var replaceOvertimeOrFinishWorkOvertimeLabel: UILabel?
+    var addOvertimeOrFinishWorkTimer: Timer?
+    var replaceOvertimeOrFinishWorkTimer: Timer?
     
     private(set) var width: CGFloat
     private(set) var schedule: WorkScheduleModel?
@@ -69,14 +134,17 @@ class ScheduleButtonView: UIView {
     var previousPointX: CGFloat = 0
     var isHaptic: Bool = false
 
-    init(width: CGFloat, schedule: WorkScheduleModel? = nil) {
+    init(_ buttonViewType:ScheduleButtonViewType = .addOvertime, width: CGFloat, schedule: WorkScheduleModel? = nil) {
         self.width = width
         self.schedule = schedule
         
         super.init(frame: .zero)
         
         self.setViewFoundation()
-        self.initializeViews()
+        self.setSubviews()
+        self.setLayouts()
+        
+        self.showScheduleButtonView(type: buttonViewType)
     }
     
     required init?(coder: NSCoder) {
@@ -87,13 +155,11 @@ class ScheduleButtonView: UIView {
 // MARK: - Extension for essential methods
 extension ScheduleButtonView {
     // MARK: Set schedule button view type
-    func setScheduleButtonViewType(_ buttonViewType: ScheduleButtonViewType,
+    func setScheduleButtonView(_ buttonViewType: ScheduleButtonViewType,
                                    with schedule: WorkScheduleModel? = nil) {
         self.schedule = schedule
-        self.buttonViewType = buttonViewType
         
-        self.resetView()
-        self.initializeViews()
+        self.showScheduleButtonView(type: buttonViewType)
     }
     
     // MARK: Set view foundation
@@ -101,46 +167,66 @@ extension ScheduleButtonView {
         self.backgroundColor = .white
     }
     
-    // MARK: Initialize views with ScheduleButtonViewType
-    func initializeViews() {
-        switch self.buttonViewType {
-        case .threeSchedules:
-            self.initializeThreeSchedules()
-            
-        case .twoScheduleForVacation:
-            self.initializeTwoScheduleForVacation()
-            
-        case .twoScheduleForHoliday:
-            self.initializeTwoScheduleForHoliday()
-            
-        case .addOvertime:
-            self.initializeAddOvertime()
-            
-        case .addOvertimeOrFinishWork:
-            self.initializeAddOvertimeOrFinishWork()
-            
-        case .replaceOvertimeOrFinishWork:
-            self.initializeReplaceOvertimeOrFinishWork()
-            
-        case .finishWorkWithOvertime:
-            self.initializeFinishWorkWithOvertime()
-            
-        case .finishWork:
-            self.initializeFinishWork()
-            
-        case .workFinished:
-            self.initializeWorkFinished()
-            
-        case .noButton:
-            self.initializeNoButton()
-        }
+    func setSubviews() {
+        SupportingMethods.shared.addSubviews([
+            self.threeSchedulesView,
+            self.twoScheduleForVacationView,
+            self.twoScheduleForHolidayView,
+            self.addOvertimeView,
+            self.addOvertimeOrFinishWorkView,
+            self.replaceOvertimeOrFinishWorkView,
+            self.finishWorkWithOvertimeView,
+            self.finishWorkView,
+            self.workFinishedView,
+            self.noButtonView
+        ], to: self)
+    }
+    
+    func setLayouts() {
+        // threeSchedules view layout
+        SupportingMethods.shared.makeSameBoundConstraints(self.threeSchedulesView, self)
+        
+        // twoScheduleForVacation view layout
+        SupportingMethods.shared.makeSameBoundConstraints(self.twoScheduleForVacationView, self)
+        
+        // twoScheduleForHoliday view layout
+        SupportingMethods.shared.makeSameBoundConstraints(self.twoScheduleForHolidayView, self)
+        
+        // addOvertime view layout
+        SupportingMethods.shared.makeSameBoundConstraints(self.addOvertimeView, self)
+        
+        // addOvertimeOrFinishWork view layout
+        SupportingMethods.shared.makeSameBoundConstraints(self.addOvertimeOrFinishWorkView, self)
+        
+        // replaceOvertimeOrFinishWork view layout
+        SupportingMethods.shared.makeSameBoundConstraints(self.replaceOvertimeOrFinishWorkView, self)
+        
+        // finishWorkWithOvertime view layout
+        SupportingMethods.shared.makeSameBoundConstraints(self.finishWorkWithOvertimeView, self)
+        
+        // finishWork view layout
+        SupportingMethods.shared.makeSameBoundConstraints(self.finishWorkView, self)
+        
+        // workFinished view layout
+        SupportingMethods.shared.makeSameBoundConstraints(self.workFinishedView, self)
+        
+        // noButton view layout
+        SupportingMethods.shared.makeSameBoundConstraints(self.noButtonView, self)
     }
 }
 
 // MARK: - Extension for methods added
 extension ScheduleButtonView {
-    func initializeThreeSchedules() {
+    func initializeThreeSchedules() -> UIView {
         // MARK: Initialize
+        let returnView:UIView = {
+            let view = UIView()
+            view.isHidden = true
+            view.translatesAutoresizingMaskIntoConstraints = false
+            
+            return view
+        }()
+        
         let pageControl: UIPageControl = {
             let pageControl = UIPageControl()
             pageControl.currentPage = 0
@@ -153,7 +239,7 @@ extension ScheduleButtonView {
             
             return pageControl
         }()
-        self.pageControl = pageControl
+        self.threeSchedulesPageControl = pageControl
         
         let scrollView:UIScrollView = {
             let scrollView = UIScrollView()
@@ -168,6 +254,7 @@ extension ScheduleButtonView {
             
             return scrollView
         }()
+        self.threeSchedulesScrollView = scrollView
         
         let contentView: UIView = {
             let view = UIView()
@@ -299,8 +386,8 @@ extension ScheduleButtonView {
         // MARK: Subviews
         SupportingMethods.shared.addSubviews([
             scrollView,
-            self.pageControl
-        ], to: self)
+            pageControl
+        ], to: returnView)
         
         SupportingMethods.shared.addSubviews([
             contentView
@@ -333,16 +420,16 @@ extension ScheduleButtonView {
         // MARK: Layouts
         // Page control layout
         NSLayoutConstraint.activate([
-            self.pageControl.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            self.pageControl.centerXAnchor.constraint(equalTo: self.centerXAnchor)
+            pageControl.bottomAnchor.constraint(equalTo: returnView.bottomAnchor),
+            pageControl.centerXAnchor.constraint(equalTo: returnView.centerXAnchor)
         ])
         
         // Scroll view layout
         NSLayoutConstraint.activate([
-            scrollView.bottomAnchor.constraint(equalTo: self.pageControl.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: pageControl.topAnchor),
             scrollView.heightAnchor.constraint(equalToConstant: 75),
-            scrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor)
+            scrollView.leadingAnchor.constraint(equalTo: returnView.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: returnView.trailingAnchor)
         ])
         
         // Content view layout
@@ -448,10 +535,20 @@ extension ScheduleButtonView {
             holidayButton.leadingAnchor.constraint(equalTo: holidayButtonView.leadingAnchor),
             holidayButton.trailingAnchor.constraint(equalTo: holidayButtonView.trailingAnchor)
         ])
+        
+        return returnView
     }
     
-    func initializeTwoScheduleForVacation() {
+    func initializeTwoScheduleForVacation() -> UIView {
         // MARK: Initialize
+        let returnView:UIView = {
+            let view = UIView()
+            view.isHidden = true
+            view.translatesAutoresizingMaskIntoConstraints = false
+            
+            return view
+        }()
+        
         let pageControl: UIPageControl = {
             let pageControl = UIPageControl()
             pageControl.currentPage = 0
@@ -464,7 +561,7 @@ extension ScheduleButtonView {
             
             return pageControl
         }()
-        self.pageControl = pageControl
+        self.twoScheduleForVacationPageControl = pageControl
         
         let scrollView:UIScrollView = {
             let scrollView = UIScrollView()
@@ -479,6 +576,7 @@ extension ScheduleButtonView {
             
             return scrollView
         }()
+        self.twoScheduleForVacationScrollView = scrollView
         
         let contentView: UIView = {
             let view = UIView()
@@ -570,8 +668,8 @@ extension ScheduleButtonView {
         // MARK: Subviews
         SupportingMethods.shared.addSubviews([
             scrollView,
-            self.pageControl
-        ], to: self)
+            pageControl
+        ], to: returnView)
         
         SupportingMethods.shared.addSubviews([
             contentView
@@ -597,16 +695,16 @@ extension ScheduleButtonView {
         // MARK: Layouts
         // Page control layout
         NSLayoutConstraint.activate([
-            self.pageControl.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            self.pageControl.centerXAnchor.constraint(equalTo: self.centerXAnchor)
+            pageControl.bottomAnchor.constraint(equalTo: returnView.bottomAnchor),
+            pageControl.centerXAnchor.constraint(equalTo: returnView.centerXAnchor)
         ])
         
         // Scroll view layout
         NSLayoutConstraint.activate([
-            scrollView.bottomAnchor.constraint(equalTo: self.pageControl.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: pageControl.topAnchor),
             scrollView.heightAnchor.constraint(equalToConstant: 75),
-            scrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor)
+            scrollView.leadingAnchor.constraint(equalTo: returnView.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: returnView.trailingAnchor)
         ])
         
         // Content view layout
@@ -680,10 +778,20 @@ extension ScheduleButtonView {
             vacationTimeButton.leadingAnchor.constraint(equalTo: vacationTimeButtonView.leadingAnchor),
             vacationTimeButton.trailingAnchor.constraint(equalTo: vacationTimeButtonView.trailingAnchor)
         ])
+        
+        return returnView
     }
     
-    func initializeTwoScheduleForHoliday() {
+    func initializeTwoScheduleForHoliday() -> UIView {
         // MARK: Initialize
+        let returnView:UIView = {
+            let view = UIView()
+            view.isHidden = true
+            view.translatesAutoresizingMaskIntoConstraints = false
+            
+            return view
+        }()
+        
         let pageControl: UIPageControl = {
             let pageControl = UIPageControl()
             pageControl.currentPage = 0
@@ -696,11 +804,11 @@ extension ScheduleButtonView {
             
             return pageControl
         }()
-        self.pageControl = pageControl
+        self.twoScheduleForHolidayPageControl = pageControl
         
         let scrollView:UIScrollView = {
             let scrollView = UIScrollView()
-            scrollView.tag = 2
+            scrollView.tag = 3
             scrollView.bounces = false
             scrollView.contentSize = CGSize(width: self.width * 2, height: 75) // height: due to button's shadow
             scrollView.isPagingEnabled = true
@@ -711,6 +819,7 @@ extension ScheduleButtonView {
             
             return scrollView
         }()
+        self.twoScheduleForHolidayScrollView = scrollView
         
         let contentView: UIView = {
             let view = UIView()
@@ -802,8 +911,8 @@ extension ScheduleButtonView {
         // MARK: Subviews
         SupportingMethods.shared.addSubviews([
             scrollView,
-            self.pageControl
-        ], to: self)
+            pageControl
+        ], to: returnView)
         
         SupportingMethods.shared.addSubviews([
             contentView
@@ -829,16 +938,16 @@ extension ScheduleButtonView {
         // MARK: Layouts
         // Page control layout
         NSLayoutConstraint.activate([
-            self.pageControl.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            self.pageControl.centerXAnchor.constraint(equalTo: self.centerXAnchor)
+            pageControl.bottomAnchor.constraint(equalTo: returnView.bottomAnchor),
+            pageControl.centerXAnchor.constraint(equalTo: returnView.centerXAnchor)
         ])
         
         // Scroll view layout
         NSLayoutConstraint.activate([
-            scrollView.bottomAnchor.constraint(equalTo: self.pageControl.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: pageControl.topAnchor),
             scrollView.heightAnchor.constraint(equalToConstant: 75),
-            scrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor)
+            scrollView.leadingAnchor.constraint(equalTo: returnView.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: returnView.trailingAnchor)
         ])
         
         // Content view layout
@@ -912,10 +1021,20 @@ extension ScheduleButtonView {
             holidayButton.leadingAnchor.constraint(equalTo: holidayButtonView.leadingAnchor),
             holidayButton.trailingAnchor.constraint(equalTo: holidayButtonView.trailingAnchor)
         ])
+        
+        return returnView
     }
     
-    func initializeAddOvertime() {
+    func initializeAddOvertime() -> UIView {
         // MARK: Initialize
+        let returnView:UIView = {
+            let view = UIView()
+            view.isHidden = true
+            view.translatesAutoresizingMaskIntoConstraints = false
+            
+            return view
+        }()
+        
         let overtimeButtonView: UIView = {
             let view = UIView()
             view.backgroundColor = UIColor.useRGB(red: 239, green: 119, blue: 119)
@@ -959,7 +1078,7 @@ extension ScheduleButtonView {
         // MARK: Subviews
         SupportingMethods.shared.addSubviews([
             overtimeButtonView
-        ], to: self)
+        ], to: returnView)
         
         SupportingMethods.shared.addSubviews([
             addOvertimeButtonImageView,
@@ -970,9 +1089,9 @@ extension ScheduleButtonView {
         // MARK: Layouts
         // Overtime button view layout
         NSLayoutConstraint.activate([
-            overtimeButtonView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -31),
+            overtimeButtonView.bottomAnchor.constraint(equalTo: returnView.bottomAnchor, constant: -31),
             overtimeButtonView.heightAnchor.constraint(equalToConstant: 70),
-            overtimeButtonView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            overtimeButtonView.centerXAnchor.constraint(equalTo: returnView.centerXAnchor),
             overtimeButtonView.widthAnchor.constraint(equalToConstant: self.width - 40)
         ])
         
@@ -999,10 +1118,20 @@ extension ScheduleButtonView {
             overtimeButton.leadingAnchor.constraint(equalTo: overtimeButtonView.leadingAnchor),
             overtimeButton.trailingAnchor.constraint(equalTo: overtimeButtonView.trailingAnchor)
         ])
+        
+        return returnView
     }
     
-    func initializeAddOvertimeOrFinishWork() {
+    func initializeAddOvertimeOrFinishWork() -> UIView {
         // MARK: Initialize
+        let returnView:UIView = {
+            let view = UIView()
+            view.isHidden = true
+            view.translatesAutoresizingMaskIntoConstraints = false
+            
+            return view
+        }()
+        
         let overtimeButtonView: UIView = {
             let view = UIView()
             view.backgroundColor = UIColor.useRGB(red: 239, green: 119, blue: 119)
@@ -1046,7 +1175,7 @@ extension ScheduleButtonView {
             
             return label
         }()
-        self.overtimeLabel = overtimeLabel
+        self.addOvertimeOrFinishWorkOvertimeLabel = overtimeLabel
         
         let overtimeButton: UIButton = {
             let button = UIButton()
@@ -1070,15 +1199,11 @@ extension ScheduleButtonView {
             return button
         }()
         
-        // MARK: Timer
-        let timer = self.makeTimerForButtonState()
-        self.timer = timer
-        
         // MARK: Subviews
         SupportingMethods.shared.addSubviews([
             overtimeButtonView,
             finishWorkButton
-        ], to: self)
+        ], to: returnView)
         
         SupportingMethods.shared.addSubviews([
             addOvertimeButtonImageView,
@@ -1090,17 +1215,17 @@ extension ScheduleButtonView {
         // MARK: Layouts
         // Finish work button view layout
         NSLayoutConstraint.activate([
-            finishWorkButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -31),
+            finishWorkButton.bottomAnchor.constraint(equalTo: returnView.bottomAnchor, constant: -31),
             finishWorkButton.heightAnchor.constraint(equalToConstant: 70),
-            finishWorkButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
+            finishWorkButton.trailingAnchor.constraint(equalTo: returnView.trailingAnchor, constant: -20),
             finishWorkButton.widthAnchor.constraint(equalToConstant: 80)
         ])
         
         // Overtime button view layout
         NSLayoutConstraint.activate([
-            overtimeButtonView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -31),
+            overtimeButtonView.bottomAnchor.constraint(equalTo: returnView.bottomAnchor, constant: -31),
             overtimeButtonView.heightAnchor.constraint(equalToConstant: 70),
-            overtimeButtonView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            overtimeButtonView.leadingAnchor.constraint(equalTo: returnView.leadingAnchor, constant: 20),
             overtimeButtonView.trailingAnchor.constraint(equalTo: finishWorkButton.leadingAnchor, constant: -15),
         ])
         
@@ -1135,10 +1260,20 @@ extension ScheduleButtonView {
             overtimeButton.leadingAnchor.constraint(equalTo: overtimeButtonView.leadingAnchor),
             overtimeButton.trailingAnchor.constraint(equalTo: overtimeButtonView.trailingAnchor)
         ])
+        
+        return returnView
     }
     
-    func initializeReplaceOvertimeOrFinishWork() {
+    func initializeReplaceOvertimeOrFinishWork() -> UIView {
         // MARK: Initialize
+        let returnView:UIView = {
+            let view = UIView()
+            view.isHidden = true
+            view.translatesAutoresizingMaskIntoConstraints = false
+            
+            return view
+        }()
+        
         let overtimeButtonView: UIView = {
             let view = UIView()
             view.backgroundColor = UIColor.useRGB(red: 239, green: 119, blue: 119)
@@ -1182,7 +1317,7 @@ extension ScheduleButtonView {
             
             return label
         }()
-        self.overtimeLabel = overtimeLabel
+        self.replaceOvertimeOrFinishWorkOvertimeLabel = overtimeLabel
         
         let overtimeButton: UIButton = {
             let button = UIButton()
@@ -1206,15 +1341,11 @@ extension ScheduleButtonView {
             return button
         }()
         
-        // MARK: Timer
-        let timer = self.makeTimerForButtonState()
-        self.timer = timer
-        
         // MARK: Subviews
         SupportingMethods.shared.addSubviews([
             overtimeButtonView,
             finishWorkButton
-        ], to: self)
+        ], to: returnView)
         
         SupportingMethods.shared.addSubviews([
             addOvertimeButtonImageView,
@@ -1226,17 +1357,17 @@ extension ScheduleButtonView {
         // MARK: Layouts
         // Finish work button view layout
         NSLayoutConstraint.activate([
-            finishWorkButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -31),
+            finishWorkButton.bottomAnchor.constraint(equalTo: returnView.bottomAnchor, constant: -31),
             finishWorkButton.heightAnchor.constraint(equalToConstant: 70),
-            finishWorkButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
+            finishWorkButton.trailingAnchor.constraint(equalTo: returnView.trailingAnchor, constant: -20),
             finishWorkButton.widthAnchor.constraint(equalToConstant: 80)
         ])
         
         // Overtime button view layout
         NSLayoutConstraint.activate([
-            overtimeButtonView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -31),
+            overtimeButtonView.bottomAnchor.constraint(equalTo: returnView.bottomAnchor, constant: -31),
             overtimeButtonView.heightAnchor.constraint(equalToConstant: 70),
-            overtimeButtonView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            overtimeButtonView.leadingAnchor.constraint(equalTo: returnView.leadingAnchor, constant: 20),
             overtimeButtonView.trailingAnchor.constraint(equalTo: finishWorkButton.leadingAnchor, constant: -15),
         ])
         
@@ -1271,10 +1402,20 @@ extension ScheduleButtonView {
             overtimeButton.leadingAnchor.constraint(equalTo: overtimeButtonView.leadingAnchor),
             overtimeButton.trailingAnchor.constraint(equalTo: overtimeButtonView.trailingAnchor)
         ])
+        
+        return returnView
     }
     
-    func initializeFinishWorkWithOvertime() {
+    func initializeFinishWorkWithOvertime() -> UIView {
         // MARK: Initialize
+        let returnView:UIView = {
+            let view = UIView()
+            view.isHidden = true
+            view.translatesAutoresizingMaskIntoConstraints = false
+            
+            return view
+        }()
+        
         let finishWorkButton: UIButton = {
             let button = UIButton()
             button.backgroundColor = .black
@@ -1291,20 +1432,30 @@ extension ScheduleButtonView {
         // MARK: Subviews
         SupportingMethods.shared.addSubviews([
             finishWorkButton
-        ], to: self)
+        ], to: returnView)
         
         // MARK: Layouts
         // Finish work button layout
         NSLayoutConstraint.activate([
-            finishWorkButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -31),
+            finishWorkButton.bottomAnchor.constraint(equalTo: returnView.bottomAnchor, constant: -31),
             finishWorkButton.heightAnchor.constraint(equalToConstant: 70),
-            finishWorkButton.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            finishWorkButton.centerXAnchor.constraint(equalTo: returnView.centerXAnchor),
             finishWorkButton.widthAnchor.constraint(equalToConstant: self.width - 40)
         ])
+        
+        return returnView
     }
     
-    func initializeFinishWork() {
+    func initializeFinishWork() -> UIView {
         // MARK: Initialize
+        let returnView:UIView = {
+            let view = UIView()
+            view.isHidden = true
+            view.translatesAutoresizingMaskIntoConstraints = false
+            
+            return view
+        }()
+        
         let finishWorkButton: UIButton = {
             let button = UIButton()
             button.backgroundColor = .black
@@ -1321,20 +1472,30 @@ extension ScheduleButtonView {
         // MARK: Subviews
         SupportingMethods.shared.addSubviews([
             finishWorkButton
-        ], to: self)
+        ], to: returnView)
         
         // MARK: Layouts
         // Finish work button layout
         NSLayoutConstraint.activate([
-            finishWorkButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -31),
+            finishWorkButton.bottomAnchor.constraint(equalTo: returnView.bottomAnchor, constant: -31),
             finishWorkButton.heightAnchor.constraint(equalToConstant: 70),
-            finishWorkButton.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            finishWorkButton.centerXAnchor.constraint(equalTo: returnView.centerXAnchor),
             finishWorkButton.widthAnchor.constraint(equalToConstant: self.width - 40)
         ])
+        
+        return returnView
     }
     
-    func initializeWorkFinished() {
+    func initializeWorkFinished() -> UIView {
         // MARK: Initialize
+        let returnView:UIView = {
+            let view = UIView()
+            view.isHidden = true
+            view.translatesAutoresizingMaskIntoConstraints = false
+            
+            return view
+        }()
+        
         let workFinishedLabel: UILabel = {
             let label = UILabel()
             label.font = .systemFont(ofSize: 30, weight: .bold)
@@ -1349,34 +1510,249 @@ extension ScheduleButtonView {
         // MARK: Subviews
         SupportingMethods.shared.addSubviews([
             workFinishedLabel
-        ], to: self)
+        ], to: returnView)
         
         // MARK: Layouts
         // Work finished label layout
         NSLayoutConstraint.activate([
-            workFinishedLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -31),
+            workFinishedLabel.bottomAnchor.constraint(equalTo: returnView.bottomAnchor, constant: -31),
             workFinishedLabel.heightAnchor.constraint(equalToConstant: 70),
-            workFinishedLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            workFinishedLabel.centerXAnchor.constraint(equalTo: returnView.centerXAnchor),
             workFinishedLabel.widthAnchor.constraint(equalToConstant: 127)
         ])
+        
+        return returnView
     }
     
-    func initializeNoButton() {
+    func initializeNoButton() -> UIView {
+        let returnView:UIView = {
+            let view = UIView()
+            view.isHidden = true
+            view.translatesAutoresizingMaskIntoConstraints = false
+            
+            return view
+        }()
+        
         // MARK: Initialize
         
         // MARK: Subviews
         
         // MARK: Layouts
+        
+        return returnView
     }
     
-    func makeTimerForButtonState() -> Timer? {
+    // MARK: Show ScheduleButtonView depending on type
+    func showScheduleButtonView(type buttonViewType: ScheduleButtonViewType) {
+        switch buttonViewType {
+        case .threeSchedules:
+            guard self.threeSchedulesView.isHidden else {
+                return
+            }
+            
+            self.resetView()
+            
+            self.threeSchedulesView.isHidden = false
+            self.twoScheduleForVacationView.isHidden = true
+            self.twoScheduleForHolidayView.isHidden = true
+            self.addOvertimeView.isHidden = true
+            self.addOvertimeOrFinishWorkView.isHidden = true
+            self.replaceOvertimeOrFinishWorkView.isHidden = true
+            self.finishWorkWithOvertimeView.isHidden = true
+            self.finishWorkView.isHidden = true
+            self.workFinishedView.isHidden = true
+            self.noButtonView.isHidden = true
+            
+        case .twoScheduleForVacation:
+            guard self.twoScheduleForVacationView.isHidden else {
+                return
+            }
+            
+            self.resetView()
+            
+            self.threeSchedulesView.isHidden = true
+            self.twoScheduleForVacationView.isHidden = false
+            self.twoScheduleForHolidayView.isHidden = true
+            self.addOvertimeView.isHidden = true
+            self.addOvertimeOrFinishWorkView.isHidden = true
+            self.replaceOvertimeOrFinishWorkView.isHidden = true
+            self.finishWorkWithOvertimeView.isHidden = true
+            self.finishWorkView.isHidden = true
+            self.workFinishedView.isHidden = true
+            self.noButtonView.isHidden = true
+            
+        case .twoScheduleForHoliday:
+            guard self.twoScheduleForHolidayView.isHidden else {
+                return
+            }
+            
+            self.resetView()
+            
+            self.threeSchedulesView.isHidden = true
+            self.twoScheduleForVacationView.isHidden = true
+            self.twoScheduleForHolidayView.isHidden = false
+            self.addOvertimeView.isHidden = true
+            self.addOvertimeOrFinishWorkView.isHidden = true
+            self.replaceOvertimeOrFinishWorkView.isHidden = true
+            self.finishWorkWithOvertimeView.isHidden = true
+            self.finishWorkView.isHidden = true
+            self.workFinishedView.isHidden = true
+            self.noButtonView.isHidden = true
+            
+        case .addOvertime:
+            guard self.addOvertimeView.isHidden else {
+                return
+            }
+            
+            self.resetView()
+            
+            self.threeSchedulesView.isHidden = true
+            self.twoScheduleForVacationView.isHidden = true
+            self.twoScheduleForHolidayView.isHidden = true
+            self.addOvertimeView.isHidden = false
+            self.addOvertimeOrFinishWorkView.isHidden = true
+            self.replaceOvertimeOrFinishWorkView.isHidden = true
+            self.finishWorkWithOvertimeView.isHidden = true
+            self.finishWorkView.isHidden = true
+            self.workFinishedView.isHidden = true
+            self.noButtonView.isHidden = true
+            
+        case .addOvertimeOrFinishWork:
+            guard self.addOvertimeOrFinishWorkView.isHidden else {
+                return
+            }
+            
+            self.resetView()
+            
+            // MARK: addOvertimeOrFinishWork Timer
+            self.addOvertimeOrFinishWorkTimer = self.makeTimerForButtonState(type: buttonViewType)
+            
+            self.threeSchedulesView.isHidden = true
+            self.twoScheduleForVacationView.isHidden = true
+            self.twoScheduleForHolidayView.isHidden = true
+            self.addOvertimeView.isHidden = true
+            self.addOvertimeOrFinishWorkView.isHidden = false
+            self.replaceOvertimeOrFinishWorkView.isHidden = true
+            self.finishWorkWithOvertimeView.isHidden = true
+            self.finishWorkView.isHidden = true
+            self.workFinishedView.isHidden = true
+            self.noButtonView.isHidden = true
+            
+        case .replaceOvertimeOrFinishWork:
+            guard self.replaceOvertimeOrFinishWorkView.isHidden else {
+                return
+            }
+            
+            self.resetView()
+            
+            // MARK: replaceOvertimeOrFinishWork Timer
+            self.replaceOvertimeOrFinishWorkTimer = self.makeTimerForButtonState(type: buttonViewType)
+            
+            self.threeSchedulesView.isHidden = true
+            self.twoScheduleForVacationView.isHidden = true
+            self.twoScheduleForHolidayView.isHidden = true
+            self.addOvertimeView.isHidden = true
+            self.addOvertimeOrFinishWorkView.isHidden = true
+            self.replaceOvertimeOrFinishWorkView.isHidden = false
+            self.finishWorkWithOvertimeView.isHidden = true
+            self.finishWorkView.isHidden = true
+            self.workFinishedView.isHidden = true
+            self.noButtonView.isHidden = true
+            
+        case .finishWorkWithOvertime:
+            guard self.finishWorkWithOvertimeView.isHidden else {
+                return
+            }
+            
+            self.resetView()
+            
+            self.threeSchedulesView.isHidden = true
+            self.twoScheduleForVacationView.isHidden = true
+            self.twoScheduleForHolidayView.isHidden = true
+            self.addOvertimeView.isHidden = true
+            self.addOvertimeOrFinishWorkView.isHidden = true
+            self.replaceOvertimeOrFinishWorkView.isHidden = true
+            self.finishWorkWithOvertimeView.isHidden = false
+            self.finishWorkView.isHidden = true
+            self.workFinishedView.isHidden = true
+            self.noButtonView.isHidden = true
+            
+        case .finishWork:
+            guard self.finishWorkView.isHidden else {
+                return
+            }
+            
+            self.resetView()
+            
+            self.threeSchedulesView.isHidden = true
+            self.twoScheduleForVacationView.isHidden = true
+            self.twoScheduleForHolidayView.isHidden = true
+            self.addOvertimeView.isHidden = true
+            self.addOvertimeOrFinishWorkView.isHidden = true
+            self.replaceOvertimeOrFinishWorkView.isHidden = true
+            self.finishWorkWithOvertimeView.isHidden = true
+            self.finishWorkView.isHidden = false
+            self.workFinishedView.isHidden = true
+            self.noButtonView.isHidden = true
+            
+        case .workFinished:
+            guard self.workFinishedView.isHidden else {
+                return
+            }
+            
+            self.resetView()
+            
+            self.threeSchedulesView.isHidden = true
+            self.twoScheduleForVacationView.isHidden = true
+            self.twoScheduleForHolidayView.isHidden = true
+            self.addOvertimeView.isHidden = true
+            self.addOvertimeOrFinishWorkView.isHidden = true
+            self.replaceOvertimeOrFinishWorkView.isHidden = true
+            self.finishWorkWithOvertimeView.isHidden = true
+            self.finishWorkView.isHidden = true
+            self.workFinishedView.isHidden = false
+            self.noButtonView.isHidden = true
+            
+        case .noButton:
+            guard self.noButtonView.isHidden else {
+                return
+            }
+            
+            self.resetView()
+            
+            self.threeSchedulesView.isHidden = true
+            self.twoScheduleForVacationView.isHidden = true
+            self.twoScheduleForHolidayView.isHidden = true
+            self.addOvertimeView.isHidden = true
+            self.addOvertimeOrFinishWorkView.isHidden = true
+            self.replaceOvertimeOrFinishWorkView.isHidden = true
+            self.finishWorkWithOvertimeView.isHidden = true
+            self.finishWorkView.isHidden = true
+            self.workFinishedView.isHidden = true
+            self.noButtonView.isHidden = false
+        }
+    }
+    
+    func makeTimerForButtonState(type buttonViewType: ScheduleButtonViewType) -> Timer? {
         guard let overtime = self.calculateOvertime() else {
             return nil
         }
         
-        self.overtimeLabel.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(overtime))"
+        var timer: Timer?
         
-        return Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
+        if case .addOvertimeOrFinishWork = buttonViewType {
+            self.addOvertimeOrFinishWorkOvertimeLabel?.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(overtime))"
+            
+            timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(addOvertimeOrFinishWorkTimer(_:)), userInfo: nil, repeats: true)
+        }
+        
+        if case .replaceOvertimeOrFinishWork = buttonViewType {
+            self.replaceOvertimeOrFinishWorkOvertimeLabel?.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(overtime))"
+            
+            timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(replaceOvertimeOrFinishWorkTimer(_:)), userInfo: nil, repeats: true)
+        }
+        
+        return timer
     }
     
     func calculateOvertime() -> Int? {
@@ -1399,14 +1775,35 @@ extension ScheduleButtonView {
     }
     
     func resetView() {
-        self.timer?.invalidate()
+        if self.addOvertimeOrFinishWorkTimer != nil, self.addOvertimeOrFinishWorkTimer!.isValid {
+            self.addOvertimeOrFinishWorkTimer?.invalidate()
+        }
+        
+        if self.replaceOvertimeOrFinishWorkTimer != nil, self.replaceOvertimeOrFinishWorkTimer!.isValid {
+            self.replaceOvertimeOrFinishWorkTimer?.invalidate()
+        }
+        
+        if self.threeSchedulesScrollView?.contentOffset.x != 0 {
+            self.threeSchedulesScrollView?.setContentOffset(
+                CGPoint(x:0, y:self.threeSchedulesScrollView!.contentOffset.y), animated: false)
+        }
+        
+        if self.twoScheduleForVacationScrollView?.contentOffset.x != 0 {
+            self.twoScheduleForVacationScrollView?.setContentOffset(
+                CGPoint(x:0, y:self.twoScheduleForVacationScrollView!.contentOffset.y), animated: false)
+        }
+        
+        if self.twoScheduleForVacationScrollView?.contentOffset.x != 0 {
+            self.twoScheduleForHolidayScrollView?.setContentOffset(
+                CGPoint(x:0, y:self.twoScheduleForHolidayScrollView!.contentOffset.y), animated: false)
+        }
+        
+        self.threeSchedulesPageControl?.currentPage = 0
+        self.twoScheduleForVacationPageControl?.currentPage = 0
+        self.twoScheduleForHolidayPageControl?.currentPage = 0
         
         self.previousPointX = 0
         self.isHaptic = false
-        
-        for subview in self.subviews {
-            subview.removeFromSuperview()
-        }
     }
 }
 
@@ -1496,16 +1893,28 @@ extension ScheduleButtonView {
         self.delegate?.scheduleButtonView(self, of: .finishWork)
     }
     
-    // timer
-    @objc func timer(_ timer: Timer) {
-        if self.overtimeLabel.textColor == .yellow {
-            self.overtimeLabel.textColor = .red
+    // addOvertimeOrFinishWork timer
+    @objc func addOvertimeOrFinishWorkTimer(_ timer: Timer) {
+        if self.addOvertimeOrFinishWorkOvertimeLabel?.textColor == .yellow {
+            self.addOvertimeOrFinishWorkOvertimeLabel?.textColor = .red
             
         } else {
-            self.overtimeLabel.textColor = .yellow
+            self.addOvertimeOrFinishWorkOvertimeLabel?.textColor = .yellow
         }
         
-        self.overtimeLabel.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(self.calculateOvertime()!))"
+        self.addOvertimeOrFinishWorkOvertimeLabel?.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(self.calculateOvertime()!))"
+    }
+    
+    // replaceOvertimeOrFinishWork timer
+    @objc func replaceOvertimeOrFinishWorkTimer(_ timer: Timer) {
+        if self.replaceOvertimeOrFinishWorkOvertimeLabel?.textColor == .yellow {
+            self.replaceOvertimeOrFinishWorkOvertimeLabel?.textColor = .red
+            
+        } else {
+            self.replaceOvertimeOrFinishWorkOvertimeLabel?.textColor = .yellow
+        }
+        
+        self.replaceOvertimeOrFinishWorkOvertimeLabel?.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(self.calculateOvertime()!))"
     }
 }
 
@@ -1525,12 +1934,12 @@ extension ScheduleButtonView: UIScrollViewDelegate {
                         self.isHaptic = true
                     }
                     
-                    self.pageControl.currentPage = 1
+                    self.threeSchedulesPageControl?.currentPage = 1
                     
                 } else {
                     self.isHaptic = false
                     
-                    self.pageControl.currentPage = 0
+                    self.threeSchedulesPageControl?.currentPage = 0
                 }
                 
             } else if self.previousPointX >= scrollView.frame.width && self.previousPointX < scrollView.frame.width + centerXPoint {
@@ -1540,7 +1949,7 @@ extension ScheduleButtonView: UIScrollViewDelegate {
                         self.isHaptic = true
                     }
                     
-                    self.pageControl.currentPage = 2
+                    self.threeSchedulesPageControl?.currentPage = 2
                     
                 } else {
                     if scrollView.contentOffset.x < centerXPoint {
@@ -1549,12 +1958,12 @@ extension ScheduleButtonView: UIScrollViewDelegate {
                             self.isHaptic = true
                         }
                         
-                        self.pageControl.currentPage = 0
+                        self.threeSchedulesPageControl?.currentPage = 0
                         
                     } else {
                         self.isHaptic = false
                         
-                        self.pageControl.currentPage = 1
+                        self.threeSchedulesPageControl?.currentPage = 1
                     }
                 }
                 
@@ -1565,12 +1974,12 @@ extension ScheduleButtonView: UIScrollViewDelegate {
                         self.isHaptic = true
                     }
                     
-                    self.pageControl.currentPage = 1
+                    self.threeSchedulesPageControl?.currentPage = 1
                     
                 } else {
                     self.isHaptic = false
                     
-                    self.pageControl.currentPage = 2
+                    self.threeSchedulesPageControl?.currentPage = 2
                 }
             }
         }
@@ -1583,12 +1992,12 @@ extension ScheduleButtonView: UIScrollViewDelegate {
                         self.isHaptic = true
                     }
                     
-                    self.pageControl.currentPage = 1
+                    self.twoScheduleForVacationPageControl?.currentPage = 1
                     
                 } else {
                     self.isHaptic = false
                     
-                    self.pageControl.currentPage = 0
+                    self.twoScheduleForVacationPageControl?.currentPage = 0
                 }
                 
             } else {
@@ -1598,12 +2007,45 @@ extension ScheduleButtonView: UIScrollViewDelegate {
                         self.isHaptic = true
                     }
                     
-                    self.pageControl.currentPage = 0
+                    self.twoScheduleForVacationPageControl?.currentPage = 0
                     
                 } else {
                     self.isHaptic = false
                     
-                    self.pageControl.currentPage = 1
+                    self.twoScheduleForVacationPageControl?.currentPage = 1
+                }
+            }
+        }
+        
+        if scrollView.tag == 3 {
+            if self.previousPointX >= 0 && self.previousPointX < centerXPoint {
+                if scrollView.contentOffset.x >= centerXPoint {
+                    if !self.isHaptic {
+                        UIDevice.softHaptic()
+                        self.isHaptic = true
+                    }
+                    
+                    self.twoScheduleForHolidayPageControl?.currentPage = 1
+                    
+                } else {
+                    self.isHaptic = false
+                    
+                    self.twoScheduleForHolidayPageControl?.currentPage = 0
+                }
+                
+            } else {
+                if scrollView.contentOffset.x < centerXPoint {
+                    if !self.isHaptic {
+                        UIDevice.softHaptic()
+                        self.isHaptic = true
+                    }
+                    
+                    self.twoScheduleForHolidayPageControl?.currentPage = 0
+                    
+                } else {
+                    self.isHaptic = false
+                    
+                    self.twoScheduleForHolidayPageControl?.currentPage = 1
                 }
             }
         }
