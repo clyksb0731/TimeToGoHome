@@ -1783,19 +1783,19 @@ extension ScheduleButtonView {
             self.replaceOvertimeOrFinishWorkTimer?.invalidate()
         }
         
-        if self.threeSchedulesScrollView?.contentOffset.x != 0 {
-            self.threeSchedulesScrollView?.setContentOffset(
-                CGPoint(x:0, y:self.threeSchedulesScrollView!.contentOffset.y), animated: false)
+        if let threeSchedulesScrollView = self.threeSchedulesScrollView,  threeSchedulesScrollView.contentOffset.x != 0 {
+            threeSchedulesScrollView.setContentOffset(
+                CGPoint(x:0, y:threeSchedulesScrollView.contentOffset.y), animated: false)
         }
         
-        if self.twoScheduleForVacationScrollView?.contentOffset.x != 0 {
-            self.twoScheduleForVacationScrollView?.setContentOffset(
-                CGPoint(x:0, y:self.twoScheduleForVacationScrollView!.contentOffset.y), animated: false)
+        if let twoScheduleForVacationScrollView = self.twoScheduleForVacationScrollView, twoScheduleForVacationScrollView.contentOffset.x != 0 {
+            twoScheduleForVacationScrollView.setContentOffset(
+                CGPoint(x:0, y:twoScheduleForVacationScrollView.contentOffset.y), animated: false)
         }
         
-        if self.twoScheduleForVacationScrollView?.contentOffset.x != 0 {
-            self.twoScheduleForHolidayScrollView?.setContentOffset(
-                CGPoint(x:0, y:self.twoScheduleForHolidayScrollView!.contentOffset.y), animated: false)
+        if let twoScheduleForHolidayScrollView = self.twoScheduleForHolidayScrollView, twoScheduleForHolidayScrollView.contentOffset.x != 0 {
+            twoScheduleForHolidayScrollView.setContentOffset(
+                CGPoint(x:0, y:twoScheduleForHolidayScrollView.contentOffset.y), animated: false)
         }
         
         self.threeSchedulesPageControl?.currentPage = 0
