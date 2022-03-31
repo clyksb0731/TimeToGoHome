@@ -56,10 +56,6 @@ class WhiteButtonView: UIView {
     }
     
     var isSelected: Bool = false {
-        willSet {
-            
-        }
-        
         didSet {
             self.alpha = self.isSelected ? 1.0 : 0.5
         }

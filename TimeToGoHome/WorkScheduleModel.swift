@@ -56,9 +56,11 @@ struct WorkScheduleModel {
     
     private(set) var dateId: String
     private(set) var workType: WorkType?
-    private(set) var startingWorkTime: Date? = nil {
-        willSet {
-            guard let startingWorkTime = newValue else {
+    private(set) var startingWorkTime: Date? {
+        didSet {
+            guard let startingWorkTime = self.startingWorkTime else {
+                self.startingWorkTimeSecondsSinceReferenceDate = nil
+                
                 return
             }
             
@@ -66,109 +68,33 @@ struct WorkScheduleModel {
         }
     }
     private(set) var startingWorkTimeSecondsSinceReferenceDate: Int?
-    private(set) var lunchTime: Date? = nil {
-        willSet {
-            guard let lunchTime = newValue else {
-                return
-            }
-            
+    private(set) var lunchTime: Date! {
+        didSet {
             self.lunchTimeSecondsSinceReferenceDate = Int(lunchTime.timeIntervalSinceReferenceDate)
         }
     }
     private(set) var lunchTimeSecondsSinceReferenceDate: Int = 0
-    private(set) var morning: ScheduleType? = nil {
-        willSet {
-            guard let startingWorkTimeSeconds = self.startingWorkTimeSecondsSinceReferenceDate else {
-                return
-            }
-            
-            let isIgnoredLunchTimeForHalfVacation = SupportingMethods.shared.useAppSetting(for: .isIgnoredLunchTimeForHalfVacation) as! Bool
-            
-            if case .morning(let workType) = newValue, case .work = workType,
-               case .afternoon(let workType) = self.afternoon, case .work = workType {
-                self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
-                
-            } else if case .morning(let workType) = newValue, case .work = workType {
-                if isIgnoredLunchTimeForHalfVacation {
-                    self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
-                    
-                } else {
-                    if startingWorkTimeSeconds + type(of: self).secondsOfWorkTime > self.lunchTimeSecondsSinceReferenceDate {
-                        self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
-                    }
-                }
-                
-            } else if case .afternoon(let workType) = self.afternoon, case .work = workType {
-                if isIgnoredLunchTimeForHalfVacation {
-                    self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
-                    
-                } else {
-                    if startingWorkTimeSeconds < self.lunchTimeSecondsSinceReferenceDate {
-                        self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of:self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
-                        
-                    } else if startingWorkTimeSeconds >= self.lunchTimeSecondsSinceReferenceDate &&
-                                startingWorkTimeSeconds < self.lunchTimeSecondsSinceReferenceDate + type(of:self).secondsOfLunchTime {
-                        let lunchTimesSecondsLeft = self.lunchTimeSecondsSinceReferenceDate + type(of: self).secondsOfLunchTime - startingWorkTimeSeconds
-                        self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + lunchTimesSecondsLeft + type(of: self).secondsOfWorkTime
-                        
-                    } else {
-                        self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
-                    }
-                }
-                
-            } else {
-                self.finishingRegularWorkTimeSecondsSinceReferenceDate = nil
-            }
+    private(set) var morning: ScheduleType? {
+        didSet {
+            self.determineFinishingRegularWorkTime()
         }
     }
-    private(set) var afternoon: ScheduleType? = nil {
-        willSet {
-            guard let startingWorkTimeSeconds = self.startingWorkTimeSecondsSinceReferenceDate else {
-                return
-            }
-            
-            if case .morning(let workType) = self.morning, case .work = workType,
-               case .afternoon(let workType) = newValue, case .work = workType {
-                self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
-                
-            } else if case .morning(let workType) = self.morning, case .work = workType {
-                self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
-                
-            } else if case .afternoon(let workType) = newValue, case .work = workType {
-                self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
-                
-            } else {
-                self.finishingRegularWorkTimeSecondsSinceReferenceDate = nil
-            }
+    private(set) var afternoon: ScheduleType? {
+        didSet {
+            self.determineFinishingRegularWorkTime()
         }
     }
     private(set) var finishingRegularWorkTimeSecondsSinceReferenceDate: Int?
-    private(set) var overtime: ScheduleType? = nil {
-        willSet {
-            if newValue == nil {
+    private(set) var overtime: ScheduleType? {
+        didSet {
+            if self.overtime == nil {
                 self.overtimeSecondsSincReferenceDate = 0
                 
-                guard let startingWorkTimeSeconds = self.startingWorkTimeSecondsSinceReferenceDate else {
-                    return
-                }
-                
-                if case .morning(let workType) = self.morning, case .work = workType,
-                   case .afternoon(let workType) = self.afternoon, case .work = workType {
-                    self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
-                    
-                } else if case .morning(let workType) = self.morning, case .work = workType {
-                    self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
-                    
-                } else if case .afternoon(let workType) = self.afternoon, case .work = workType {
-                    self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
-                    
-                } else {
-                    self.finishingRegularWorkTimeSecondsSinceReferenceDate = nil
-                }
+                self.determineFinishingRegularWorkTime()
                 
             } else {
                 guard let finishingRegularWorkTimeSeconds = self.finishingRegularWorkTimeSecondsSinceReferenceDate,
-                      let overtime = newValue, case .overtime(let overtimeDate) = overtime
+                      let overtime = self.overtime, case .overtime(let overtimeDate) = overtime
                 else {
                     return
                 }
@@ -260,6 +186,7 @@ extension WorkScheduleModel {
                     
                 } else {
                     SupportingMethods.shared.setAppSetting(with: nil, for: .startingWorkTimeValue)
+                    self.startingWorkTime = nil
                     
                     return nil
                 }
@@ -285,7 +212,7 @@ extension WorkScheduleModel {
         }
     }
     
-    mutating func makeLunchTimeDate() -> Date? {
+    mutating func makeLunchTimeDate() -> Date! {
         guard let lunchTimeValue = SupportingMethods.shared.useAppSetting(for: .lunchTimeValue) as? Double else {
             return nil
         }
@@ -482,6 +409,54 @@ extension WorkScheduleModel {
         }
         
         return nil
+    }
+    
+    mutating func determineFinishingRegularWorkTime() {
+        guard let startingWorkTimeSeconds = self.startingWorkTimeSecondsSinceReferenceDate else {
+            self.finishingRegularWorkTimeSecondsSinceReferenceDate = nil
+            
+            return
+        }
+        
+        let isIgnoredLunchTimeForHalfVacation = SupportingMethods.shared.useAppSetting(for: .isIgnoredLunchTimeForHalfVacation) as! Bool
+        
+        if case .morning(let workType) = self.morning, case .work = workType,
+           case .afternoon(let workType) = self.afternoon, case .work = workType {
+            self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+            
+        } else if case .morning(let workType) = self.morning, case .work = workType {
+            if isIgnoredLunchTimeForHalfVacation {
+                self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                
+            } else {
+                if self.lunchTimeSecondsSinceReferenceDate >= startingWorkTimeSeconds + type(of: self).secondsOfWorkTime {
+                    self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                    
+                } else { // self.lunchTimeSecondsSinceReferenceDate < startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                    self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+                }
+            }
+            
+        } else if case .afternoon(let workType) = self.afternoon, case .work = workType {
+            if isIgnoredLunchTimeForHalfVacation {
+                self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                
+            } else {
+                if startingWorkTimeSeconds >= self.lunchTimeSecondsSinceReferenceDate + type(of:self).secondsOfLunchTime {
+                    self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                    
+                } else if startingWorkTimeSeconds >= self.lunchTimeSecondsSinceReferenceDate &&
+                            startingWorkTimeSeconds < self.lunchTimeSecondsSinceReferenceDate + type(of: self).secondsOfLunchTime {
+                    self.finishingRegularWorkTimeSecondsSinceReferenceDate = self.lunchTimeSecondsSinceReferenceDate + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+                    
+                } else { // startingWorkTimeSeconds < self.lunchTimeSecondsSinceReferenceDate
+                    self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+                }
+            }
+            
+        } else {
+            self.finishingRegularWorkTimeSecondsSinceReferenceDate = nil
+        }
     }
 }
 

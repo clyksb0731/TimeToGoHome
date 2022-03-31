@@ -361,10 +361,6 @@ class MainViewController: UIViewController {
     var tempSchedule: WorkScheduleModel?
     
     var isEditingMode: Bool = false {
-        willSet {
-            
-        }
-        
         didSet {
             if self.isEditingMode != oldValue {
                 self.schedule.isEditingMode = self.isEditingMode
@@ -1063,8 +1059,9 @@ extension MainViewController {
         self.progressRateButtonView.isSelected = false
         
         self.mainTimeViewButtonType = .remainingTime
-        self.mainTimeViewProgressRateValueView.isHidden = true
         self.mainTimeViewRemainingTimeValueView.isHidden = false
+        self.mainTimeViewProgressTimeValueView.isHidden = true
+        self.mainTimeViewProgressRateValueView.isHidden = true
     }
     
     @objc func progressTimeButtonView(_ sender: UIButton) {
@@ -1075,8 +1072,9 @@ extension MainViewController {
         self.progressRateButtonView.isSelected = false
         
         self.mainTimeViewButtonType = .progressTime
+        self.mainTimeViewRemainingTimeValueView.isHidden = true
+        self.mainTimeViewProgressTimeValueView.isHidden = false
         self.mainTimeViewProgressRateValueView.isHidden = true
-        self.mainTimeViewRemainingTimeValueView.isHidden = false
     }
     
     @objc func progressRateButtonView(_ sender: UIButton) {
@@ -1088,6 +1086,7 @@ extension MainViewController {
         
         self.mainTimeViewButtonType = .progressRate
         self.mainTimeViewRemainingTimeValueView.isHidden = true
+        self.mainTimeViewProgressTimeValueView.isHidden = true
         self.mainTimeViewProgressRateValueView.isHidden = false
     }
     
