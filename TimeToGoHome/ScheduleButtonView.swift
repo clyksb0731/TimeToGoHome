@@ -1783,20 +1783,26 @@ extension ScheduleButtonView {
             self.replaceOvertimeOrFinishWorkTimer?.invalidate()
         }
         
+        self.threeSchedulesScrollView?.delegate = nil
         if let threeSchedulesScrollView = self.threeSchedulesScrollView,  threeSchedulesScrollView.contentOffset.x != 0 {
             threeSchedulesScrollView.setContentOffset(
                 CGPoint(x:0, y:threeSchedulesScrollView.contentOffset.y), animated: false)
         }
+        self.threeSchedulesScrollView?.delegate = self
         
+        self.twoScheduleForVacationScrollView?.delegate = nil
         if let twoScheduleForVacationScrollView = self.twoScheduleForVacationScrollView, twoScheduleForVacationScrollView.contentOffset.x != 0 {
             twoScheduleForVacationScrollView.setContentOffset(
                 CGPoint(x:0, y:twoScheduleForVacationScrollView.contentOffset.y), animated: false)
         }
+        self.twoScheduleForVacationScrollView?.delegate = self
         
+        self.twoScheduleForHolidayScrollView?.delegate = nil
         if let twoScheduleForHolidayScrollView = self.twoScheduleForHolidayScrollView, twoScheduleForHolidayScrollView.contentOffset.x != 0 {
             twoScheduleForHolidayScrollView.setContentOffset(
                 CGPoint(x:0, y:twoScheduleForHolidayScrollView.contentOffset.y), animated: false)
         }
+        self.twoScheduleForHolidayScrollView?.delegate = self
         
         self.threeSchedulesPageControl?.currentPage = 0
         self.twoScheduleForVacationPageControl?.currentPage = 0
