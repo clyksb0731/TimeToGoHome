@@ -841,27 +841,115 @@ extension MainViewController {
             return
         }
         
+        let isIgnoredLunchTimeForHalfVacation = SupportingMethods.shared.useAppSetting(for: .isIgnoredLunchTimeForHalfVacation) as! Bool
+        
         let currentTimeSeconds = SupportingMethods.getCurrentTimeSeconds()
         let startingWorkTimeSeconds = self.schedule.startingWorkTimeSecondsSinceReferenceDate!
-        let lunchTimeSeconds = self.schedule.lunchTimeSecondsSinceReferenceDate
-        let lunchTimesSecondsLeft = lunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime - currentTimeSeconds
-        let endTimeSeconds = self.schedule.overtimeSecondsSincReferenceDate > 0 ? self.schedule.overtimeSecondsSincReferenceDate : finishingRegularWorkTimeSeconds
+        let atLunchTimeSeconds = self.schedule.lunchTimeSecondsSinceReferenceDate
+        let lunchTimeSecondsLeft = atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime - currentTimeSeconds
+        let endingTimeSeconds = self.schedule.overtimeSecondsSincReferenceDate > 0 ? self.schedule.overtimeSecondsSincReferenceDate : finishingRegularWorkTimeSeconds
         
         var remainingTimeSeconds: Int = 0
         
-        if currentTimeSeconds < startingWorkTimeSeconds {
-            remainingTimeSeconds = endTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+        if case .morning(let workType) = self.schedule.morning, case .work = workType,
+           case .afternoon(let workType) = self.schedule.afternoon, case .work = workType {
+            if currentTimeSeconds < startingWorkTimeSeconds {
+                remainingTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+                
+            } else if currentTimeSeconds >= startingWorkTimeSeconds &&
+                        currentTimeSeconds < atLunchTimeSeconds {
+                remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+                
+            } else if currentTimeSeconds >= atLunchTimeSeconds &&
+                        currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - lunchTimeSecondsLeft
+                
+            } else if currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
+            }
             
-        } else if currentTimeSeconds >= startingWorkTimeSeconds &&
-                    currentTimeSeconds < lunchTimeSeconds {
-            remainingTimeSeconds = endTimeSeconds - currentTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+        } else if case .morning(let workType) = self.schedule.morning, case .work = workType {
+            if isIgnoredLunchTimeForHalfVacation {
+                //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                if currentTimeSeconds < startingWorkTimeSeconds {
+                    remainingTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds
+                    
+                } else {
+                    remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
+                }
+                
+            } else {
+                if atLunchTimeSeconds >= startingWorkTimeSeconds + WorkScheduleModel.secondsOfWorkTime {
+                    //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                    if currentTimeSeconds < startingWorkTimeSeconds {
+                        remainingTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds
+                        
+                    } else {
+                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
+                    }
+                    
+                } else { // self.lunchTimeSecondsSinceReferenceDate < startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                    //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+                    if currentTimeSeconds < atLunchTimeSeconds {
+                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+                        
+                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
+                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - lunchTimeSecondsLeft
+                        
+                    } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
+                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
+                    }
+                }
+            }
             
-        } else if currentTimeSeconds >= lunchTimeSeconds &&
-                    currentTimeSeconds < lunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
-            remainingTimeSeconds = endTimeSeconds - currentTimeSeconds - lunchTimesSecondsLeft
+        } else if case .afternoon(let workType) = self.schedule.afternoon, case .work = workType {
+            if isIgnoredLunchTimeForHalfVacation {
+                //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                if currentTimeSeconds < startingWorkTimeSeconds {
+                    remainingTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds
+                    
+                } else {
+                    remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
+                }
+                
+            } else {
+                if startingWorkTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                    //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                    if currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                        remainingTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds
+                        
+                    } else {
+                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
+                    }
+                    
+                } else if startingWorkTimeSeconds >= atLunchTimeSeconds &&
+                            startingWorkTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                    //self.finishingRegularWorkTimeSecondsSinceReferenceDate = self.lunchTimeSecondsSinceReferenceDate + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+                    if currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime  {
+                        remainingTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds
+                        
+                    } else {
+                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
+                    }
+                    
+                } else { // startingWorkTimeSeconds < self.lunchTimeSecondsSinceReferenceDate
+                    //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+                    if currentTimeSeconds < atLunchTimeSeconds {
+                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+                        
+                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
+                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - lunchTimeSecondsLeft
+                        
+                    } else {
+                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
+                    }
+                }
+            }
             
-        } else if currentTimeSeconds >= lunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
-            remainingTimeSeconds = endTimeSeconds - currentTimeSeconds
+        } else {
+            // FIXME: For totally vacation or holiday
         }
         
         self.mainTimeViewRemainingHourValueLabel.text = remainingTimeSeconds > 0 ? String(format: "%02d", remainingTimeSeconds/3600) : "00"
@@ -874,32 +962,275 @@ extension MainViewController {
             return
         }
         
+        let isIgnoredLunchTimeForHalfVacation = SupportingMethods.shared.useAppSetting(for: .isIgnoredLunchTimeForHalfVacation) as! Bool
+        
         let currentTimeSeconds = SupportingMethods.getCurrentTimeSeconds()
         let startingWorkTimeSeconds = self.schedule.startingWorkTimeSecondsSinceReferenceDate!
-        let lunchTimeSeconds = self.schedule.lunchTimeSecondsSinceReferenceDate
-        let lunchTimesSecondsLeft = lunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime - currentTimeSeconds
-        let endTimeSeconds = self.schedule.overtimeSecondsSincReferenceDate > 0 ? self.schedule.overtimeSecondsSincReferenceDate : finishingRegularWorkTimeSeconds
+        let atLunchTimeSeconds = self.schedule.lunchTimeSecondsSinceReferenceDate
+        let lunchTimeSecondsPassed = currentTimeSeconds - atLunchTimeSeconds
+        let endingTimeSeconds = self.schedule.overtimeSecondsSincReferenceDate > 0 ? self.schedule.overtimeSecondsSincReferenceDate : finishingRegularWorkTimeSeconds
         
         var progressTimeSeconds: Int = 0
+        var maximumPrgressTimeSeconds: Int = 0
         
-        if currentTimeSeconds < startingWorkTimeSeconds {
-            progressTimeSeconds = 0
+        if case .morning(let workType) = self.schedule.morning, case .work = workType,
+           case .afternoon(let workType) = self.schedule.afternoon, case .work = workType {
+            if currentTimeSeconds < startingWorkTimeSeconds {
+                progressTimeSeconds = 0
+                
+            } else if currentTimeSeconds >= startingWorkTimeSeconds &&
+                        currentTimeSeconds < atLunchTimeSeconds {
+                progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+                
+            } else if currentTimeSeconds >= atLunchTimeSeconds &&
+                        currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - lunchTimeSecondsPassed
+                
+            } else if currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+            }
             
-        } else if currentTimeSeconds >= startingWorkTimeSeconds &&
-                    currentTimeSeconds < lunchTimeSeconds {
+            maximumPrgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
             
+        } else if case .morning(let workType) = self.schedule.morning, case .work = workType {
+            if isIgnoredLunchTimeForHalfVacation {
+                //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                if currentTimeSeconds < startingWorkTimeSeconds {
+                    progressTimeSeconds = 0
+                    
+                } else {
+                    progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+                }
+                
+                maximumPrgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds
+                
+            } else {
+                if atLunchTimeSeconds >= startingWorkTimeSeconds + WorkScheduleModel.secondsOfWorkTime {
+                    //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                    if currentTimeSeconds < startingWorkTimeSeconds {
+                        progressTimeSeconds = 0
+                        
+                    } else {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+                    }
+                    
+                    maximumPrgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds
+                    
+                } else { // self.lunchTimeSecondsSinceReferenceDate < startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                    //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+                    if currentTimeSeconds < atLunchTimeSeconds {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+                        
+                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
+                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - lunchTimeSecondsPassed
+                        
+                    } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+                    }
+                    
+                    maximumPrgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+                }
+            }
             
-        } else if currentTimeSeconds >= lunchTimeSeconds &&
-                    currentTimeSeconds < lunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+        } else if case .afternoon(let workType) = self.schedule.afternoon, case .work = workType {
+            if isIgnoredLunchTimeForHalfVacation {
+                //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                if currentTimeSeconds < startingWorkTimeSeconds {
+                    progressTimeSeconds = 0
+                    
+                } else {
+                    progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+                }
+                
+                maximumPrgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds
+                
+            } else {
+                if startingWorkTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                    //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                    if currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                        progressTimeSeconds = 0
+                        
+                    } else {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+                    }
+                    
+                    maximumPrgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds
+                    
+                } else if startingWorkTimeSeconds >= atLunchTimeSeconds &&
+                            startingWorkTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                    //self.finishingRegularWorkTimeSecondsSinceReferenceDate = self.lunchTimeSecondsSinceReferenceDate + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+                    if currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime  {
+                        progressTimeSeconds = 0
+                        
+                    } else {
+                        progressTimeSeconds = currentTimeSeconds - (atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime)
+                    }
+                    
+                    maximumPrgressTimeSeconds = endingTimeSeconds - (atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime)
+                    
+                } else { // startingWorkTimeSeconds < self.lunchTimeSecondsSinceReferenceDate
+                    //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+                    if currentTimeSeconds < atLunchTimeSeconds {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+                        
+                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
+                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - lunchTimeSecondsPassed
+                        
+                    } else {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+                    }
+                    
+                    maximumPrgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+                }
+            }
             
-            
-        } else if currentTimeSeconds >= lunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
-            
+        } else {
+            // FIXME: For totally vacation or holiday
         }
+        
+        self.mainTimeViewProgressHourValueLabel.text = currentTimeSeconds <= endingTimeSeconds ? String(format: "%02d", progressTimeSeconds/3600) : String(format: "%02d", maximumPrgressTimeSeconds/3600)
+        self.mainTimeViewProgressMinuteValueLabel.text = currentTimeSeconds <= endingTimeSeconds ? String(format: "%02d", (progressTimeSeconds%3600)/60) : String(format: "%02d", (maximumPrgressTimeSeconds%3600)/60)
+        self.mainTimeViewProgressSecondValueLabel.text = currentTimeSeconds <= endingTimeSeconds ? String(format: "%02d", progressTimeSeconds%60) : String(format: "%02d", maximumPrgressTimeSeconds%60)
     }
     
     func determineProgressRateOnMainTimeView() {
+        guard let finishingRegularWorkTimeSeconds = self.schedule.finishingRegularWorkTimeSecondsSinceReferenceDate else {
+            return
+        }
         
+        let isIgnoredLunchTimeForHalfVacation = SupportingMethods.shared.useAppSetting(for: .isIgnoredLunchTimeForHalfVacation) as! Bool
+        
+        let currentTimeSeconds = SupportingMethods.getCurrentTimeSeconds()
+        let startingWorkTimeSeconds = self.schedule.startingWorkTimeSecondsSinceReferenceDate!
+        let atLunchTimeSeconds = self.schedule.lunchTimeSecondsSinceReferenceDate
+        let lunchTimeSecondsPassed = currentTimeSeconds - atLunchTimeSeconds
+        let endingTimeSeconds = self.schedule.overtimeSecondsSincReferenceDate > 0 ? self.schedule.overtimeSecondsSincReferenceDate : finishingRegularWorkTimeSeconds
+        
+        var progressTimeSeconds: Int = 0
+        var maximumPrgressTimeSeconds: Int = 0
+        
+        if case .morning(let workType) = self.schedule.morning, case .work = workType,
+           case .afternoon(let workType) = self.schedule.afternoon, case .work = workType {
+            if currentTimeSeconds < startingWorkTimeSeconds {
+                progressTimeSeconds = 0
+                
+            } else if currentTimeSeconds >= startingWorkTimeSeconds &&
+                        currentTimeSeconds < atLunchTimeSeconds {
+                progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+                
+            } else if currentTimeSeconds >= atLunchTimeSeconds &&
+                        currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - lunchTimeSecondsPassed
+                
+            } else if currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+            }
+            
+            maximumPrgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+            
+        } else if case .morning(let workType) = self.schedule.morning, case .work = workType {
+            if isIgnoredLunchTimeForHalfVacation {
+                //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                if currentTimeSeconds < startingWorkTimeSeconds {
+                    progressTimeSeconds = 0
+                    
+                } else {
+                    progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+                }
+                
+                maximumPrgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds
+                
+            } else {
+                if atLunchTimeSeconds >= startingWorkTimeSeconds + WorkScheduleModel.secondsOfWorkTime {
+                    //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                    if currentTimeSeconds < startingWorkTimeSeconds {
+                        progressTimeSeconds = 0
+                        
+                    } else {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+                    }
+                    
+                    maximumPrgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds
+                    
+                } else { // self.lunchTimeSecondsSinceReferenceDate < startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                    //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+                    if currentTimeSeconds < atLunchTimeSeconds {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+                        
+                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
+                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - lunchTimeSecondsPassed
+                        
+                    } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+                    }
+                    
+                    maximumPrgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+                }
+            }
+            
+        } else if case .afternoon(let workType) = self.schedule.afternoon, case .work = workType {
+            if isIgnoredLunchTimeForHalfVacation {
+                //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                if currentTimeSeconds < startingWorkTimeSeconds {
+                    progressTimeSeconds = 0
+                    
+                } else {
+                    progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+                }
+                
+                maximumPrgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds
+                
+            } else {
+                if startingWorkTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                    //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
+                    if currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                        progressTimeSeconds = 0
+                        
+                    } else {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+                    }
+                    
+                    maximumPrgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds
+                    
+                } else if startingWorkTimeSeconds >= atLunchTimeSeconds &&
+                            startingWorkTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                    //self.finishingRegularWorkTimeSecondsSinceReferenceDate = self.lunchTimeSecondsSinceReferenceDate + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+                    if currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime  {
+                        progressTimeSeconds = 0
+                        
+                    } else {
+                        progressTimeSeconds = currentTimeSeconds - (atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime)
+                    }
+                    
+                    maximumPrgressTimeSeconds = endingTimeSeconds - (atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime)
+                    
+                } else { // startingWorkTimeSeconds < self.lunchTimeSecondsSinceReferenceDate
+                    //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
+                    if currentTimeSeconds < atLunchTimeSeconds {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+                        
+                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
+                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - lunchTimeSecondsPassed
+                        
+                    } else {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+                    }
+                    
+                    maximumPrgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+                }
+            }
+            
+        } else {
+            // FIXME: For totally vacation or holiday
+        }
+        
+        let rate = Double(progressTimeSeconds) / Double(maximumPrgressTimeSeconds)
+        self.mainTimeViewProgressRateIntegerValueLabel.text = "\(Int(rate * 100))"
+        self.mainTimeViewProgressRateFloatValueLabel.text = "\(Int(rate * 1000) % 10)"
     }
     
     func determineScheduleButtonState(for schedule: WorkScheduleModel) {
