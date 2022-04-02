@@ -864,7 +864,7 @@ extension MainViewController {
                         currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
                 remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - lunchTimeSecondsLeft
                 
-            } else if currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+            } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
                 remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
             }
             
@@ -927,7 +927,8 @@ extension MainViewController {
                             startingWorkTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
                     //self.finishingRegularWorkTimeSecondsSinceReferenceDate = self.lunchTimeSecondsSinceReferenceDate + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
                     if currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime  {
-                        remainingTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds
+                        //remainingTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds
+                        remainingTimeSeconds = endingTimeSeconds - (atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime)
                         
                     } else {
                         remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
