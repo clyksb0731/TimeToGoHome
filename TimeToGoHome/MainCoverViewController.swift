@@ -10,7 +10,7 @@ import UIKit
 enum MainCoverType {
     case normalSchedule(ScheduleType?)
     case overtimeSchedule(finishingRegularTime: Date, overtime: Date?,  isEditingModeBeforPresented: Bool)
-    case startingWorkTime(Date?)
+    case startingWorkTime(WorkScheduleModel)
 }
 
 protocol MainCoverDelegate {
@@ -227,10 +227,10 @@ extension MainCoverViewController {
             let now = Date()
             
             if let overtime = overtime {
-                datePicker.date = overtime
+                self.datePicker.date = overtime
                 
             } else {
-                datePicker.date = now
+                self.datePicker.date = now
             }
             
             var calendar = Calendar.current
@@ -239,26 +239,57 @@ extension MainCoverViewController {
             let maximumDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: 23, minute: 59)
             let maximumDate = calendar.date(from: maximumDateComponents)
             
-            datePicker.minimumDate = Date(timeIntervalSinceReferenceDate: finishingRegularTime.timeIntervalSinceReferenceDate + 60)
-            datePicker.maximumDate = maximumDate
+            self.datePicker.minimumDate = Date(timeIntervalSinceReferenceDate: finishingRegularTime.timeIntervalSinceReferenceDate + 60)
+            self.datePicker.maximumDate = maximumDate
             
             self.isEditingBeforePresented = isEditingBeforePresented
         }
         
-        if case .startingWorkTime(let date) = self.mainCoverType {
-            let now = Date()
-            
-            if let date = date {
-                datePicker.date = date
+        if case .startingWorkTime(let schedule) = self.mainCoverType {
+            if let startingWorkTime = schedule.startingWorkTime {
+                self.datePicker.date = startingWorkTime
                 
             } else {
-                datePicker.date = now
-                
-                self.declineButton.setTitleColor(.useRGB(red: 0, green: 0, blue: 255, alpha: 0.3), for: .normal)
-                self.declineButton.isEnabled = false
+                if case .morning(let workType) = schedule.morning, case .work = workType,
+                   case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+                    let morningStartingWorkTimeValueRange = SupportingMethods.shared.useAppSetting(for: .morningStartingworkTimeValueRange) as! [String:Double]
+                    
+                    let morningEarliestTimeValue = morningStartingWorkTimeValueRange["earliestTime"]!
+                    let morningLatestTime = morningStartingWorkTimeValueRange["latestTime"]!
+                    
+                    self.datePicker.minimumDate = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)
+                    self.datePicker.maximumDate = SupportingMethods.shared.makeTimeDateWithValue(morningLatestTime)
+                    
+                    self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)!
+                    
+                } else if case .morning(let workType) = schedule.morning, case .work = workType {
+                    let morningStartingWorkTimeValueRange = SupportingMethods.shared.useAppSetting(for: .morningStartingworkTimeValueRange) as! [String:Double]
+                    
+                    let morningEarliestTimeValue = morningStartingWorkTimeValueRange["earliestTime"]!
+                    let morningLatestTime = morningStartingWorkTimeValueRange["latestTime"]!
+                    
+                    self.datePicker.minimumDate = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)
+                    self.datePicker.maximumDate = SupportingMethods.shared.makeTimeDateWithValue(morningLatestTime)
+                    
+                    self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)!
+                    
+                } else if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+                    let afternoonStartingWorkTimeValueRage = SupportingMethods.shared.useAppSetting(for: .afternoonStartingworkTimeValueRange) as! [String:Double]
+                    
+                    let afternoonEarliestTimeValue = afternoonStartingWorkTimeValueRage["earliestTime"]!
+                    let afternoonLatestTime = afternoonStartingWorkTimeValueRage["latestTime"]!
+                    
+                    self.datePicker.minimumDate = SupportingMethods.shared.makeTimeDateWithValue(afternoonEarliestTimeValue)
+                    self.datePicker.maximumDate = SupportingMethods.shared.makeTimeDateWithValue(afternoonLatestTime)
+                    
+                    self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(afternoonEarliestTimeValue)!
+                    
+                    self.datePicker.addTarget(self, action: #selector(datePicker(_:)), for: .valueChanged)
+                    
+                } else {
+                    // vaction, holiday
+                }
             }
-            
-            //datePicker.maximumDate = now // FIXME: App Setting Starting Work Time
         }
     }
     
@@ -497,6 +528,25 @@ extension MainCoverViewController {
         
         if case .startingWorkTime = self.mainCoverType {
             self.dismiss(animated: false)
+        }
+    }
+    
+    @objc func datePicker(_ datePicker: UIDatePicker) {
+        guard let lunchTimeValue = SupportingMethods.shared.useAppSetting(for: .lunchTimeValue) as? Double,
+        let afternoonStartingWorkTimeValueRage = SupportingMethods.shared.useAppSetting(for: .afternoonStartingworkTimeValueRange) as? [String:Double] else {
+            return
+        }
+        
+        let dateInterval = Int(datePicker.date.timeIntervalSinceReferenceDate)
+        let lunchTimeDateInterval = Int(SupportingMethods.shared.makeTimeDateWithValue(lunchTimeValue)!.timeIntervalSinceReferenceDate)
+        
+        if dateInterval >= lunchTimeDateInterval && dateInterval < lunchTimeDateInterval + 3600 {
+            self.confirmButton.isEnabled = false
+            
+            self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(afternoonStartingWorkTimeValueRage["earliestTime"]!)!
+            
+        } else {
+            self.confirmButton.isEnabled = true
         }
     }
 }

@@ -12,10 +12,12 @@ import UIKit
  */
 enum PListVariable: String {
     case workType
-    case workTimeValueRange
+    case morningStartingworkTimeValueRange
+    case afternoonStartingworkTimeValueRange
     case startingWorkTimeValue
     case lunchTimeValue
     case isIgnoredLunchTimeForHalfVacation
+    case fixedAfternoonStartingWorkTimeValue
     case initiallySetting
 }
 
@@ -181,6 +183,18 @@ extension SupportingMethods {
         } else {
             return "+ \(minuteLeft)분"
         }
+    }
+    
+    func makeTimeDateWithValue(_ value: Double) -> Date? {
+        let hour = (Int(value * 10)) / 10
+        let minute = Int((Double((Int(value * 10)) % 10) / 10.0) * 60)
+        
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone.current
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
+        let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
+        
+        return calendar.date(from: todayDateComponents)
     }
     
     // MARK: About constraint

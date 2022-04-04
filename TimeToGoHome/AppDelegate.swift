@@ -247,7 +247,8 @@ extension AppDelegate {
         // FIXME: Temp, WorkType - Staggered
         SupportingMethods.shared.setAppSetting(with: WorkType.staggered.rawValue, for: .workType)
         SupportingMethods.shared.setAppSetting(with: 12.5, for: .lunchTimeValue)
-        SupportingMethods.shared.setAppSetting(with: ["earliestTime":8.0, "latestTime":11.0], for: .workTimeValueRange)
+        SupportingMethods.shared.setAppSetting(with: ["earliestTime":8.0, "latestTime":11.0], for: .morningStartingworkTimeValueRange)
+        SupportingMethods.shared.setAppSetting(with: ["earliestTime":11.0, "latestTime":15.0], for: .afternoonStartingworkTimeValueRange)
         
         // FIXME: Temp, WorkType - Noraml
 //        SupportingMethods.shared.setAppSetting(with: WorkType.normal.rawValue, for: .workType)

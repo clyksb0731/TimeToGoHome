@@ -1440,7 +1440,7 @@ extension MainViewController {
     @objc func startWorkingTimeButton(_ sender: UIButton) {
         UIDevice.softHaptic()
         
-        let mainCoverVC = MainCoverViewController(.startingWorkTime(self.schedule.startingWorkTime), delegate: self)
+        let mainCoverVC = MainCoverViewController(.startingWorkTime(self.schedule), delegate: self)
         self.present(mainCoverVC, animated: false)
     }
     
