@@ -53,9 +53,15 @@ extension AppDelegate {
             self.window?.rootViewController = mainVC
             
         } else {
-            let mainVC = MainViewController()
-            let mainNaviVC = UINavigationController(rootViewController: mainVC)
-            self.window?.rootViewController = mainNaviVC
+            let staggeredWorkTypeVC = StaggeredWorkTypeViewController()
+            let normalWorkTypeVC = NormalWorkTypeViewController()
+            let tabBarVC = UITabBarController()
+            tabBarVC.viewControllers = [staggeredWorkTypeVC, normalWorkTypeVC]
+            self.window?.rootViewController = tabBarVC
+            
+            //let mainVC = MainViewController()
+            //let mainNaviVC = UINavigationController(rootViewController: mainVC)
+            //self.window?.rootViewController = mainNaviVC
             
             //let workTypeVC = WorkTypeViewController()
             //self.window?.rootViewController = workTypeVC

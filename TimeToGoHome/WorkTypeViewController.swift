@@ -13,10 +13,10 @@ enum MarkingViewType {
     case attendance(CGPoint)
 }
 
-enum WorkType: String {
-    case staggered
-    case normal
-}
+//enum WorkType: String {
+//    case staggered
+//    case normal
+//}
 
 class WorkTypeViewController: UIViewController {
     var scrollView: UIScrollView = {
