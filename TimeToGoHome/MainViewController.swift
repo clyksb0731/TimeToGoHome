@@ -1229,7 +1229,8 @@ extension MainViewController {
             // FIXME: For totally vacation or holiday
         }
         
-        let rate = Double(progressTimeSeconds) / Double(maximumPrgressTimeSeconds)
+        let rate = Double(progressTimeSeconds) / Double(maximumPrgressTimeSeconds) < 1.0 ? Double(progressTimeSeconds) / Double(maximumPrgressTimeSeconds) : 1.0
+        
         self.mainTimeViewProgressRateIntegerValueLabel.text = "\(Int(rate * 100))"
         self.mainTimeViewProgressRateFloatValueLabel.text = "\(Int(rate * 1000) % 10)"
     }
