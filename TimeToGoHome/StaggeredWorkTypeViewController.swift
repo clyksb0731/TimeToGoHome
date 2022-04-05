@@ -2172,13 +2172,13 @@ extension StaggeredWorkTypeViewController {
             let endOfAfternoonLatestAttendaceArea = self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant + 23.25
             
             if point.x <= 23.625 { // 12 + 23.25/2
-                self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant = 12 // (12:00)
+                self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant = 12 // (12:00)
                 
             } else if point.x > 23.625 && point.x <= 46.875 { // 12 + 23.25 + 23.25/2
-                self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant = 35.25 // 12 + 23.25 (12:30)
+                self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant = 35.25 // 12 + 23.25 (12:30)
                 
             } else if point.x > 46.875 && point.x <= 70.125 { // 12 + 23.25*2 + 23.25/2
-                self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant = 58.5 // 12 + 23.25*2 (13:00)
+                self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant = 58.5 // 12 + 23.25*2 (13:00)
                 
             } else if point.x > 70.125 && point.x <= 93.375 { // 12 + 23.25*3 + 23.25/2
                 self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant = 81.75 // 12 + 23.25*3 (13:30)
@@ -2250,7 +2250,7 @@ extension StaggeredWorkTypeViewController {
         let previousAfternoonEarliestAttendanceBarMarkingCenterXPoint = self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant
         let previousAfternoonLatestAttendanceBarMarkingCenterXPoint = self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant
         let previousAtLunchTimePointOfAfternoonEarliestAttendaceArea = afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 23.25
-        let previousAtLunchTimePointOfAfternoonLatestAttendaceArea = afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 23.25
+        let previousAtLunchTimePointOfAfternoonLatestAttendaceArea = afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant - 23.25
         
         self.lunchTimeAreaCenterXAnchorConstraint.constant = at + 23.25
         self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant = at + 23.25
@@ -2485,10 +2485,10 @@ extension StaggeredWorkTypeViewController {
                 self.momentLabel.text = "14:00" // (14:00)
                 
             } else if point.x > 163.125 && point.x <= 186.375 { // 12 + 23.25*7 + 23.25/2
-                self.momentLabel.text = "10:30" // (14:30)
+                self.momentLabel.text = "14:30" // (14:30)
                 
             } else { // > 12 + 23.25*7 + 23.25/2
-                self.momentLabel.text = "11:00" // (15:00)
+                self.momentLabel.text = "15:00" // (15:00)
             }
             
         case .afternoonLatest(let point):
@@ -2509,31 +2509,31 @@ extension StaggeredWorkTypeViewController {
             }
             
             if point.x <= 23.625 { // 12 + 23.25/2
-                self.momentLabel.text = "07:00" // (12:00)
+                self.momentLabel.text = "12:00" // (12:00)
                 
             } else if point.x > 23.625 && point.x <= 46.875 { // 12 + 23.25 + 23.25/2
-                self.momentLabel.text = "07:30" // (12:30)
+                self.momentLabel.text = "12:30" // (12:30)
                 
             } else if point.x > 46.875 && point.x <= 70.125 { // 12 + 23.25*2 + 23.25/2
-                self.momentLabel.text = "08:00" // (13:00)
+                self.momentLabel.text = "13:00" // (13:00)
                 
             } else if point.x > 70.125 && point.x <= 93.375 { // 12 + 23.25*3 + 23.25/2
-                self.momentLabel.text = "08:30" // (13:30)
+                self.momentLabel.text = "13:30" // (13:30)
                 
             } else if point.x > 93.375 && point.x <= 116.625 { // 12 + 23.25*4 + 23.25/2
-                self.momentLabel.text = "09:00" // (14:00)
+                self.momentLabel.text = "14:00" // (14:00)
                 
             } else if point.x > 116.625 && point.x <= 139.875 { // 12 + 23.25*5 + 23.25/2
-                self.momentLabel.text = "09:30" // (14:30)
+                self.momentLabel.text = "14:30" // (14:30)
                 
             } else if point.x > 139.875 && point.x <= 163.125 { // 12 + 23.25*6 + 23.25/2
-                self.momentLabel.text = "10:00" // (15:00)
+                self.momentLabel.text = "15:00" // (15:00)
                 
             } else if point.x > 163.125 && point.x <= 186.375 { // 12 + 23.25*7 + 23.25/2
-                self.momentLabel.text = "10:30" // (15:30)
+                self.momentLabel.text = "15:30" // (15:30)
                 
             } else { // > 12 + 23.25*7 + 23.25/2
-                self.momentLabel.text = "11:00" // (16:00)
+                self.momentLabel.text = "16:00" // (16:00)
             }
         }
     }

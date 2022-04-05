@@ -8,9 +8,8 @@
 import UIKit
 
 enum NormalMarkingViewType {
-    case earliest(CGPoint)
-    case latest(CGPoint)
     case attendance(CGPoint)
+    case lunchTime(CGPoint)
 }
 
 class NormalWorkTypeViewController: UIViewController {
@@ -457,8 +456,8 @@ class NormalWorkTypeViewController: UIViewController {
         view.layer.cornerRadius = 12
         view.translatesAutoresizingMaskIntoConstraints = false
         
-        //let earliestAttendanceTimeBarViewTapGesture = UITapGestureRecognizer(target: self, action: #selector(morningEarliestAttendanceTimeBarViewTapGesture(_:)))
-        //view.addGestureRecognizer(earliestAttendanceTimeBarViewTapGesture)
+        let lunchTimeTimeBarViewTapGesture = UITapGestureRecognizer(target: self, action: #selector(lunchTimeTimeBarViewTapGesture(_:)))
+        view.addGestureRecognizer(lunchTimeTimeBarViewTapGesture)
         
         return view
     }()
@@ -542,8 +541,8 @@ class NormalWorkTypeViewController: UIViewController {
         view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
         view.translatesAutoresizingMaskIntoConstraints = false
         
-        //let earliestAttendanceTimeBarMarkingViewPanGesture = UIPanGestureRecognizer(target: self, action: #selector(morningEarliestAttendanceTimeBarMarkingViewPanGesture(_:)))
-        //view.addGestureRecognizer(earliestAttendanceTimeBarMarkingViewPanGesture)
+        let lunchTimeTimeBarMarkingViewPanGesture = UIPanGestureRecognizer(target: self, action: #selector(lunchTimeTimeBarMarkingViewPanGesture(_:)))
+        view.addGestureRecognizer(lunchTimeTimeBarMarkingViewPanGesture)
         
         return view
     }()
@@ -714,10 +713,9 @@ class NormalWorkTypeViewController: UIViewController {
     
     var morningAttendaceTimeBarMarkingViewConstraint: NSLayoutConstraint!
     var morningLeavingTimeBarMarkingViewConstraint: NSLayoutConstraint!
+    var lunchTimeAreaCenterXAnchorConstraint: NSLayoutConstraint!
     var lunchTimeTimeBarMarkingViewConstraint: NSLayoutConstraint!
-    var lunchTimeAreaLeadingAnchorConstraint: NSLayoutConstraint!
     var afternoonAttendaceTimeBarMarkingViewConstraint: NSLayoutConstraint!
-    var afternoonLeavingTimeBarMarkingViewConstraint: NSLayoutConstraint!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -1273,11 +1271,11 @@ extension NormalWorkTypeViewController {
         ])
         
         // Lunch time area view layout
-        self.lunchTimeAreaLeadingAnchorConstraint = self.lunchTimeAreaView.leadingAnchor.constraint(equalTo: self.lunchTimeTimeBarSecondPointView.leadingAnchor)
+        self.lunchTimeAreaCenterXAnchorConstraint = self.lunchTimeAreaView.centerXAnchor.constraint(equalTo: self.lunchTimeTimeBarView.leadingAnchor, constant: 12 + 46.5 + 23.25)
         NSLayoutConstraint.activate([
             self.lunchTimeAreaView.centerYAnchor.constraint(equalTo: self.lunchTimeTimeBarView.centerYAnchor),
             self.lunchTimeAreaView.heightAnchor.constraint(equalToConstant: 24),
-            self.lunchTimeAreaLeadingAnchorConstraint,
+            self.lunchTimeAreaCenterXAnchorConstraint,
             self.lunchTimeAreaView.widthAnchor.constraint(equalToConstant: 46.5)
         ])
         
@@ -1416,12 +1414,6 @@ extension NormalWorkTypeViewController {
 extension NormalWorkTypeViewController {
     func locateMarkingBarViewFor(_ type: NormalMarkingViewType) {
         switch type {
-        case .earliest(let point):
-            print("")
-            
-        case .latest(let point):
-            print("")
-            
         case .attendance(let point):
             if point.x <= 23.625 { // 12 + 23.25/2
                 self.morningAttendaceTimeBarMarkingViewConstraint.constant = 12 // (07:00)
@@ -1470,6 +1462,41 @@ extension NormalWorkTypeViewController {
                     self.nextButton.isUserInteractionEnabled = true
                 }
             }
+            
+        case .lunchTime(let point): // MARK: lunchTime
+            if point.x <= 23.625 { // 12 + 23.25/2
+                self.lunchTimeTimeBarMarkingViewConstraint.constant = 12 // (11:00)
+                
+            } else if point.x > 23.625 && point.x <= 46.875 { // 12 + 23.25 + 23.25/2
+                self.lunchTimeTimeBarMarkingViewConstraint.constant = 35.25 // 12 + 23.25 (11:30)
+                
+            } else if point.x > 46.875 && point.x <= 70.125 { // 12 + 23.25*2 + 23.25/2
+                self.lunchTimeTimeBarMarkingViewConstraint.constant = 58.5 // 12 + 23.25*2 (12:00)
+                
+            } else if point.x > 70.125 && point.x <= 93.375 { // 12 + 23.25*3 + 23.25/2
+                self.lunchTimeTimeBarMarkingViewConstraint.constant = 81.75 // 12 + 23.25*3 (12:30)
+                
+            } else if point.x > 93.375 && point.x <= 116.625 { // 12 + 23.25*4 + 23.25/2
+                self.lunchTimeTimeBarMarkingViewConstraint.constant = 105 // 12 + 23.25*4 (13:00)
+                
+            } else if point.x > 116.625 && point.x <= 139.875 { // 12 + 23.25*5 + 23.25/2
+                self.lunchTimeTimeBarMarkingViewConstraint.constant = 128.25 // 12 + 23.25*5 (13:30)
+                
+            } else { // > 10 + 23.25*5 + 23.25/2
+                self.lunchTimeTimeBarMarkingViewConstraint.constant = 151.5 // 12 + 23.25*6 (14:00)
+            }
+            
+            self.determineLunchTimeArea(self.lunchTimeTimeBarMarkingViewConstraint.constant)
+            
+            UIView.animate(withDuration: 0.2) {
+                self.lunchTimeTimeBarView.layoutIfNeeded()
+                
+            } completion: { success in
+                if success {
+                    self.lunchTimeTimeBarView.isUserInteractionEnabled = true
+                    self.nextButton.isUserInteractionEnabled = true
+                }
+            }
         }
         
         UIDevice.softHaptic()
@@ -1477,29 +1504,28 @@ extension NormalWorkTypeViewController {
     
     func moveMarkingBarViewTo(_ type: NormalMarkingViewType) {
         switch type {
-        case .earliest(let point):
-            print("")
-            
-        case .latest(let point):
-            print("")
-            
         case .attendance(let point):
             self.morningAttendaceTimeBarMarkingViewConstraint.constant = point.x < 12 ?
             12 : point.x > 198 ?
             198 : point.x
+            
+        case .lunchTime(let point):
+            self.lunchTimeTimeBarMarkingViewConstraint.constant = point.x < 12 ?
+            12 : point.x > 151.5 ?
+            151.5 : point.x
         }
+    }
+    
+    func determineLunchTimeArea(_ at: CGFloat) {
+        self.lunchTimeAreaCenterXAnchorConstraint.constant = at + 23.25
+        
+        
     }
     
     func showMomentLabelFor(_ type: NormalMarkingViewType, withAnimation animation: Bool) {
         self.momentLabel.layer.removeAllAnimations()
         
         switch type {
-        case .earliest(let point):
-            print("")
-            
-        case .latest(let point):
-            print("")
-            
         case .attendance(let point):
             self.momentLabel.backgroundColor = .useRGB(red: 167, green: 255, blue: 254, alpha: 0.5)
             self.momentLabel.alpha = 1
@@ -1544,6 +1570,45 @@ extension NormalWorkTypeViewController {
             } else { // > 12 + 23.25*7 + 23.25/2
                 self.momentLabel.text = "11:00" // (11:00)
             }
+            
+        case .lunchTime(let point):
+            self.momentLabel.backgroundColor = .useRGB(red: 255, green: 245, blue: 156, alpha: 0.5)
+            self.momentLabel.alpha = 1
+            self.momentLabel.isHidden = false
+            
+            if animation {
+                UIView.animate(withDuration: 1.0) {
+                    self.momentLabel.alpha = 0
+                    
+                } completion: { finished in
+                    if finished {
+                        self.momentLabel.isHidden = true
+                        self.momentLabel.alpha = 1
+                    }
+                }
+            }
+            
+            if point.x <= 23.625 { // 12 + 23.25/2
+                self.momentLabel.text = "11:00" // (11:00)
+                
+            } else if point.x > 23.625 && point.x <= 46.875 { // 12 + 23.25 + 23.25/2
+                self.momentLabel.text = "11:30" // (11:30)
+                
+            } else if point.x > 46.875 && point.x <= 70.125 { // 12 + 23.25*2 + 23.25/2
+                self.momentLabel.text = "12:00" // (12:00)
+                
+            } else if point.x > 70.125 && point.x <= 93.375 { // 12 + 23.25*3 + 23.25/2
+                self.momentLabel.text = "12:30" // (12:30)
+                
+            } else if point.x > 93.375 && point.x <= 116.625 { // 12 + 23.25*4 + 23.25/2
+                self.momentLabel.text = "13:00" // (13:00)
+                
+            } else if point.x > 116.625 && point.x <= 139.875 { // 12 + 23.25*5 + 23.25/2
+                self.momentLabel.text = "13:30" // (13:30)
+                
+            } else { // > 10 + 23.25*5 + 23.25/2
+                self.momentLabel.text = "14:00" // (14:00)
+            }
         }
     }
 }
@@ -1565,6 +1630,8 @@ extension NormalWorkTypeViewController {
     }
     
     @objc func ignoringLunchTimeButton(_ sender: UIButton) {
+        UIDevice.lightHaptic()
+        
         sender.isSelected.toggle()
     }
     
@@ -1596,6 +1663,39 @@ extension NormalWorkTypeViewController {
         if (gesture.state == .ended) {
             self.locateMarkingBarViewFor(.attendance(point))
             self.showMomentLabelFor(.attendance(point), withAnimation: true)
+        }
+    }
+    
+    @objc func lunchTimeTimeBarViewTapGesture(_ gesture: UIGestureRecognizer) {
+        let point = gesture.location(in: gesture.view)
+        //print("lunchTimeTimeBarView point: \(point)")
+        
+        self.lunchTimeTimeBarView.isUserInteractionEnabled = false
+        self.nextButton.isUserInteractionEnabled = false
+        
+        self.locateMarkingBarViewFor(.lunchTime(point))
+        self.showMomentLabelFor(.lunchTime(point), withAnimation: true)
+    }
+    
+    @objc func lunchTimeTimeBarMarkingViewPanGesture(_ gesture: UIGestureRecognizer) {
+        let point = gesture.location(in: gesture.view?.superview)
+        //print("lunchTimeTimeBarMarkingView point: \(point)")
+        
+        if (gesture.state == .began) {
+            self.lunchTimeTimeBarView.isUserInteractionEnabled = false
+            
+            self.moveMarkingBarViewTo(.lunchTime(point))
+            self.showMomentLabelFor(.lunchTime(point), withAnimation: false)
+        }
+        
+        if (gesture.state == .changed) {
+            self.moveMarkingBarViewTo(.lunchTime(point))
+            self.showMomentLabelFor(.lunchTime(point), withAnimation: false)
+        }
+        
+        if (gesture.state == .ended) {
+            self.locateMarkingBarViewFor(.lunchTime(point))
+            self.showMomentLabelFor(.lunchTime(point), withAnimation: true)
         }
     }
     
