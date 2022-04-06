@@ -2711,10 +2711,10 @@ extension StaggeredWorkTypeViewController {
         let point = gesture.location(in: gesture.view)
         //print("afternoonEarliestAttendanceTimeBarView point: \(point)")
         
-        let aheadPointOfAfternoonEarliestAttendaceArea = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 23.25
+        let aheadPointOfAfternoonEarliestAttendaceArea = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 23.25 - 23.25/2
         let endOfPointOfAfternoonEarliestAttendaceArea = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant + 23.25
         
-        if point.x < aheadPointOfAfternoonEarliestAttendaceArea ||
+        if point.x <= aheadPointOfAfternoonEarliestAttendaceArea ||
             point.x >= endOfPointOfAfternoonEarliestAttendaceArea {
             self.afternoonEarliestAttendanceTimeBarView.isUserInteractionEnabled = false
             self.nextButton.isUserInteractionEnabled = false
@@ -2750,10 +2750,10 @@ extension StaggeredWorkTypeViewController {
         let point = gesture.location(in: gesture.view)
         //print("afternoonLatestAttendanceTimeBarView point: \(point)")
         
-        let aheadPointOfAfternoonLatestAttendaceArea = self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant - 23.25
+        let aheadPointOfAfternoonLatestAttendaceArea = self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant - 23.25 - 23.25/2
         let endOfPointOfAfternoonLatestAttendaceArea = self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant + 23.25
         
-        if point.x < aheadPointOfAfternoonLatestAttendaceArea ||
+        if point.x <= aheadPointOfAfternoonLatestAttendaceArea ||
             point.x >= endOfPointOfAfternoonLatestAttendaceArea {
             self.afternoonLatestAttendanceTimeBarView.isUserInteractionEnabled = false
             self.nextButton.isUserInteractionEnabled = false
