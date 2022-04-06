@@ -2602,6 +2602,8 @@ extension StaggeredWorkTypeViewController {
         UIDevice.lightHaptic()
         
         sender.isSelected.toggle()
+        
+        self.ignoringLunchTimeMarkLabel.textColor = sender.isSelected ? .black : .useRGB(red: 221, green: 221, blue: 221)
     }
     
     @objc func morningEarliestAttendanceTimeBarViewTapGesture(_ gesture: UIGestureRecognizer) {

@@ -1376,7 +1376,7 @@ extension NormalWorkTypeViewController {
         ])
         
         // Attendance time bar marking view layout
-        self.afternoonAttendaceTimeBarMarkingViewConstraint = self.afternoonAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.leadingAnchor, constant: 12 + 37.2*2) // 12 + 37.2 * 2
+        self.afternoonAttendaceTimeBarMarkingViewConstraint = self.afternoonAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.leadingAnchor, constant: 12 + 37.2*3) // 12 + 37.2 * 3
         NSLayoutConstraint.activate([
             self.afternoonAttendanceTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.centerYAnchor),
             self.afternoonAttendanceTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),
@@ -1414,7 +1414,7 @@ extension NormalWorkTypeViewController {
 extension NormalWorkTypeViewController {
     func locateMarkingBarViewFor(_ type: NormalMarkingViewType) {
         switch type {
-        case .attendance(let point):
+        case .attendance(let point): // MARK: attendance
             if point.x <= 23.625 { // 12 + 23.25/2
                 self.morningAttendaceTimeBarMarkingViewConstraint.constant = 12 // (07:00)
                 self.morningLeavingTimeBarMarkingViewConstraint.constant = 12 // (16:00)
@@ -1452,9 +1452,12 @@ extension NormalWorkTypeViewController {
                 self.morningLeavingTimeBarMarkingViewConstraint.constant = 198 // 12 + 23.25*8 (20:00)
             }
             
+            self.determineAfternoonAttendanceTimeMarkingCenterX()
+            
             UIView.animate(withDuration: 0.2) {
                 self.morningAttendanceTimeBarView.layoutIfNeeded()
                 self.leavingTimeBarView.layoutIfNeeded()
+                self.afternoonAttendanceTimeBarView.layoutIfNeeded()
                 
             } completion: { success in
                 if success {
@@ -1490,6 +1493,7 @@ extension NormalWorkTypeViewController {
             
             UIView.animate(withDuration: 0.2) {
                 self.lunchTimeTimeBarView.layoutIfNeeded()
+                self.afternoonAttendanceTimeBarView.layoutIfNeeded()
                 
             } completion: { success in
                 if success {
@@ -1519,7 +1523,29 @@ extension NormalWorkTypeViewController {
     func determineLunchTimeArea(_ at: CGFloat) {
         self.lunchTimeAreaCenterXAnchorConstraint.constant = at + 23.25
         
+        self.determineAfternoonAttendanceTimeMarkingCenterX()
+    }
+    
+    func determineAfternoonAttendanceTimeMarkingCenterX() {
+        let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 12+23.25*8])!
+        let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 23.25*2])!
         
+        if workLeftCountAtMorning + toEndOfLunchTimeCount <= 10 {
+            self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 12 + 18.6*CGFloat(10-workLeftCountAtMorning) // (210-12*2)/10
+            
+        } else {
+            self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 12 + 18.6*CGFloat(8-workLeftCountAtMorning) // (210-12*2)/10
+        }
+    }
+    
+    func countForWidth(_ width: CGFloat, in range: [CGFloat]) -> Int? {
+        guard range.count == 2 else {
+            return nil
+        }
+        
+        let rangeValue = range[1] - range[0]
+        
+        return Int(rangeValue / width)
     }
     
     func showMomentLabelFor(_ type: NormalMarkingViewType, withAnimation animation: Bool) {
@@ -1633,6 +1659,8 @@ extension NormalWorkTypeViewController {
         UIDevice.lightHaptic()
         
         sender.isSelected.toggle()
+        
+        self.ignoringLunchTimeMarkLabel.textColor = sender.isSelected ? .black : .useRGB(red: 221, green: 221, blue: 221)
     }
     
     @objc func attendanceTimeBarViewTapGesture(_ gesture: UIGestureRecognizer) {
