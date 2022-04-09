@@ -59,12 +59,15 @@ extension AppDelegate {
 //            tabBarVC.viewControllers = [staggeredWorkTypeVC, normalWorkTypeVC]
 //            self.window?.rootViewController = tabBarVC
             
-            let mainVC = MainViewController()
-            let mainNaviVC = UINavigationController(rootViewController: mainVC)
-            self.window?.rootViewController = mainNaviVC
+//            let mainVC = MainViewController()
+//            let mainNaviVC = UINavigationController(rootViewController: mainVC)
+//            self.window?.rootViewController = mainNaviVC
             
-            //let workTypeVC = WorkTypeViewController()
-            //self.window?.rootViewController = workTypeVC
+//            let workTypeVC = WorkTypeViewController()
+//            self.window?.rootViewController = workTypeVC
+            
+            let dayOffVC = DayOffViewController()
+            self.window?.rootViewController = dayOffVC
         }
         
         self.window?.makeKeyAndVisible()
@@ -263,5 +266,8 @@ extension AppDelegate {
         
         // FIXME: Temp, common
         SupportingMethods.shared.setAppSetting(with: true, for: .isIgnoredLunchTimeForHalfVacation)
+        SupportingMethods.shared.setAppSetting(with: "fiscalYear", for: .vacationType)
+        //SupportingMethods.shared.setAppSetting(with: "joiningDay", for: .vacationType)
+        SupportingMethods.shared.setAppSetting(with: 15, for: .numberOfTotalVacations)
     }
 }

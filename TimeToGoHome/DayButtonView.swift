@@ -72,15 +72,10 @@ class DayButtonView: UIView {
 // MARK: - Extension for Methods added
 extension DayButtonView {
     func setViewFoundation() {
-        self.translatesAutoresizingMaskIntoConstraints = false
-        
         self.layer.cornerRadius = 8
         self.layer.borderWidth = 1
         self.layer.borderColor = UIColor.white.cgColor
-        self.layer.shadowColor = UIColor.useRGB(red: 0, green: 0, blue: 0).cgColor
-        self.layer.shadowOffset = CGSize(width: 0, height: 2)
-        self.layer.shadowRadius = 4/2
-        self.layer.shadowOpacity = 0.5
+        self.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
     }
     
     func determineView(_ day: Days) {

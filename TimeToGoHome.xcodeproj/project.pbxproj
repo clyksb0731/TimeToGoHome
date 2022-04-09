@@ -14,6 +14,9 @@
 		CA22676B274402D60035663D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA22676A274402D60035663D /* Assets.xcassets */; };
 		CA22676E274402D60035663D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA22676C274402D60035663D /* LaunchScreen.storyboard */; };
 		CA79A8E627D85550000F58E2 /* TemplateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA79A8E527D85550000F58E2 /* TemplateCell.swift */; };
+		CAA3B24B2801755D00FFF892 /* CalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24A2801755D00FFF892 /* CalendarDayCell.swift */; };
+		CAA3B24D2801758200FFF892 /* CalendarHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */; };
+		CAA3B24F28018ED600FFF892 /* VacationButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24E28018ED600FFF892 /* VacationButtonView.swift */; };
 		CAA65B1327E50899000ECC40 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = CAA65B1227E50899000ECC40 /* Alamofire */; };
 		CAB6C93927FA9A9E00B67F1A /* StaggeredWorkTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6C93827FA9A9E00B67F1A /* StaggeredWorkTypeViewController.swift */; };
 		CAB6C93B27FA9AAC00B67F1A /* NormalWorkTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6C93A27FA9AAC00B67F1A /* NormalWorkTypeViewController.swift */; };
@@ -49,6 +52,9 @@
 		CA22676D274402D60035663D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CA22676F274402D60035663D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CA79A8E527D85550000F58E2 /* TemplateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateCell.swift; sourceTree = "<group>"; };
+		CAA3B24A2801755D00FFF892 /* CalendarDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayCell.swift; sourceTree = "<group>"; };
+		CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderView.swift; sourceTree = "<group>"; };
+		CAA3B24E28018ED600FFF892 /* VacationButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VacationButtonView.swift; sourceTree = "<group>"; };
 		CAB6C93827FA9A9E00B67F1A /* StaggeredWorkTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaggeredWorkTypeViewController.swift; sourceTree = "<group>"; };
 		CAB6C93A27FA9AAC00B67F1A /* NormalWorkTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalWorkTypeViewController.swift; sourceTree = "<group>"; };
 		CAB6C93C27FA9C4800B67F1A /* DayOffViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayOffViewController.swift; sourceTree = "<group>"; };
@@ -117,6 +123,9 @@
 				CAB6C93827FA9A9E00B67F1A /* StaggeredWorkTypeViewController.swift */,
 				CAB6C93A27FA9AAC00B67F1A /* NormalWorkTypeViewController.swift */,
 				CAB6C93C27FA9C4800B67F1A /* DayOffViewController.swift */,
+				CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */,
+				CAA3B24A2801755D00FFF892 /* CalendarDayCell.swift */,
+				CAA3B24E28018ED600FFF892 /* VacationButtonView.swift */,
 				CAB7CF472750CDCE005C9232 /* DayButtonView.swift */,
 				CAB7CF322750B5C7005C9232 /* MainViewController.swift */,
 				CAECA69027ED982C005D7859 /* ScheduleButtonView.swift */,
@@ -220,9 +229,12 @@
 				CAB7CF292750B0FA005C9232 /* LocationManager.swift in Sources */,
 				CAB7CF482750CDCE005C9232 /* DayButtonView.swift in Sources */,
 				CAFD580227DB2D0E0027811C /* SchedulingCell.swift in Sources */,
+				CAA3B24B2801755D00FFF892 /* CalendarDayCell.swift in Sources */,
+				CAA3B24F28018ED600FFF892 /* VacationButtonView.swift in Sources */,
 				CAECA69127ED982C005D7859 /* ScheduleButtonView.swift in Sources */,
 				CAB7CF2F2750B2FE005C9232 /* TemplateViewController.swift in Sources */,
 				CAB7CF2B2750B146005C9232 /* SupportingMethods.swift in Sources */,
+				CAA3B24D2801758200FFF892 /* CalendarHeaderView.swift in Sources */,
 				CAB7CF312750B5B9005C9232 /* InitialViewController.swift in Sources */,
 				CAB7CF3D2750C7F3005C9232 /* CompanyLocationAlertViewController.swift in Sources */,
 				CA1592B127DF90E20021501D /* MainCoverViewController.swift in Sources */,
