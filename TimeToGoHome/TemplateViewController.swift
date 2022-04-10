@@ -77,7 +77,12 @@ extension TemplateViewController {
     
     // Set layouts
     func setLayouts() {
+        //let safeArea = self.safeAreaLayoutGuide
         
+        //  layout
+        NSLayoutConstraint.activate([
+            
+        ])
     }
 }
 

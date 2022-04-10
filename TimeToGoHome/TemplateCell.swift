@@ -67,7 +67,7 @@ extension TemplateCell {
     
     // Set layouts
     func setLayouts() {
-        let safeArea = self.safeAreaLayoutGuide
+        //let safeArea = self.safeAreaLayoutGuide
         
         //  layout
         NSLayoutConstraint.activate([

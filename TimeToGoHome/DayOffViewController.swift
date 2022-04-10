@@ -13,7 +13,8 @@ class DayOffViewController: UIViewController {
         let scrollView = UIScrollView()
         scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
-        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width, height: 674)
+        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width,
+                                        height: 428 + 21+45*CGFloat(self.getWeeksOfMonthFor(self.targetYearMonthDate)))
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
         return scrollView
@@ -100,11 +101,12 @@ class DayOffViewController: UIViewController {
         return view
     }()
     
-    lazy var perviousMonthButton: UIButton = {
+    lazy var previousMonthButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "previousMonthNormalButton"), for: .normal)
         button.setImage(UIImage(named: "previousMonthDisableButton"), for: .disabled)
         button.addTarget(self, action: #selector(perviousMonthButton(_:)), for: .touchUpInside)
+        button.isEnabled = self.makeDateWithYear(self.getYearMonthAndDayOf(self.targetYearMonthDate).year, month: self.getYearMonthAndDayOf(self.targetYearMonthDate).month) != self.makeDateWithYear(self.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).year, month: self.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).month)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -115,7 +117,7 @@ class DayOffViewController: UIViewController {
         label.textAlignment = .center
         label.textColor = .black
         label.font = .systemFont(ofSize: 18, weight: .semibold)
-        label.text = "\(self.todayDateComponents.year!)년 \(self.todayDateComponents.month!)월"
+        label.text = "\(self.getYearMonthAndDayOf(self.targetYearMonthDate).year)년 \(self.getYearMonthAndDayOf(self.targetYearMonthDate).month)월"
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -126,6 +128,7 @@ class DayOffViewController: UIViewController {
         button.setImage(UIImage(named: "nextMonthNormalButton"), for: .normal)
         button.setImage(UIImage(named: "nextMonthDisableButton"), for: .disabled)
         button.addTarget(self, action: #selector(nextMonthButton(_:)), for: .touchUpInside)
+        button.isEnabled = self.makeDateWithYear(self.getYearMonthAndDayOf(self.targetYearMonthDate).year, month: self.getYearMonthAndDayOf(self.targetYearMonthDate).month) != self.makeDateWithYear(self.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).year, month: self.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).month)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -432,7 +435,6 @@ class DayOffViewController: UIViewController {
         return button
     }()
     
-    
     var todayDateComponents: DateComponents = {
         var calendar = Calendar.current
         calendar.timeZone = .current
@@ -441,32 +443,77 @@ class DayOffViewController: UIViewController {
         return dateComponents
     }()
     
-    var weeksOfMonth: Int = {
-        var calendar = Calendar.current
-        calendar.timeZone = .current
-        let weeksOfMonth = calendar.range(of: .weekOfMonth, in: .month, for: Date())
-        
-        return (weeksOfMonth?.count)!
-    }()
+    var targetYearMonthDate: Date = Date()
     
-    var daysOfMonth: Int = {
-        var calendar = Calendar.current
-        calendar.timeZone = .current
-        let daysOfMonth = calendar.range(of: .day, in: .month, for: Date())
-        
-        return (daysOfMonth?.count)!
-    }()
-    
-    var firstWeekDay: Int = {
+    var vacationScheduleDateRange: (startDate: Date, endDate: Date) {
         var calendar = Calendar.current
         calendar.timeZone = .current
         let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
-        var firstDayDateComponents = DateComponents(year: todayDateComponents.year!, month: todayDateComponents.month!, day: 1)
+        
+        if SupportingMethods.shared.useAppSetting(for: .vacationType) as! String == "fiscalYear" {
+            let firstDayOfYearDateComponents = DateComponents(year: todayDateComponents.year!, month: 1, day: 1)
+            let lastDayOfYearDateComponents = DateComponents(year: todayDateComponents.year!, month: 12, day: 31)
+            
+            return (calendar.date(from: firstDayOfYearDateComponents)!, calendar.date(from: lastDayOfYearDateComponents)!)
+            
+        } else { // joiningDay
+            let firstDayOfYearDateComponents = SupportingMethods.shared.useAppSetting(for: .joiningDate) as! Date
+            let joiningDateComponents = calendar.dateComponents([.year, .month, .day], from: firstDayOfYearDateComponents)
+            let dateComponentsOfOneYearAfterJoingingDay = DateComponents(year:joiningDateComponents.year! + 1, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+            let dateOfOneYearAfterJoingingDay = calendar.date(from: dateComponentsOfOneYearAfterJoingingDay)!
+            let oneDayBeforeDateOfOneYearAfterJoingingDay = Date(timeIntervalSinceReferenceDate: dateOfOneYearAfterJoingingDay.timeIntervalSinceReferenceDate - 86400) // one day before
+            
+            return (firstDayOfYearDateComponents, oneDayBeforeDateOfOneYearAfterJoingingDay)
+        }
+    }
+    
+    func getYearMonthAndDayOf(_ date: Date) -> (year: Int, month: Int, day: Int) {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
+        
+        return (dateComponents.year!, dateComponents.month!, dateComponents.day!)
+    }
+    
+    func makeDateWithYear(_ year: Int, month: Int, andDay day: Int = 1) -> Date {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        
+        let dateComponents = DateComponents(year: year, month: month, day: day)
+        
+        return calendar.date(from: dateComponents)!
+    }
+    
+    func getWeeksOfMonthFor(_ date: Date) -> Int {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let weeksOfMonth = calendar.range(of: .weekOfMonth, in: .month, for: date)
+        
+        return (weeksOfMonth?.count)!
+    }
+    
+    func getDaysOfMonthFor(_ date: Date) -> Int {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let daysOfMonth = calendar.range(of: .day, in: .month, for: date)
+        
+        return (daysOfMonth?.count)!
+    }
+    
+    func getFirstWeekdayFor(_ date: Date) -> Int {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
+        var firstDayDateComponents = DateComponents(year: dateComponents.year!, month: dateComponents.month!, day: 1)
         let firstDate = calendar.date(from: firstDayDateComponents)!
         firstDayDateComponents = calendar.dateComponents([.weekday], from: firstDate)
         
         return firstDayDateComponents.weekday!
-    }()
+    }
+    
+    var calendarCollectionViewHeightAnchor: NSLayoutConstraint!
+    var contentViewHeightAnchor: NSLayoutConstraint!
+    var selectedIndexOfYearMonthAndDay: (year: Int, month: Int, day: Int)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -559,7 +606,7 @@ extension DayOffViewController {
         ], to: self.vacationSettingButtonView)
         
         SupportingMethods.shared.addSubviews([
-            self.perviousMonthButton,
+            self.previousMonthButton,
             self.yearMonthLabel,
             self.nextMonthButton
         ], to: self.yearMonthButtonView)
@@ -624,9 +671,10 @@ extension DayOffViewController {
         ])
         
         // contentView layout
+        self.contentViewHeightAnchor = self.contentView.heightAnchor.constraint(equalToConstant: self.scrollView.contentSize.height)
         NSLayoutConstraint.activate([
             self.contentView.topAnchor.constraint(equalTo: self.scrollView.topAnchor),
-            self.contentView.heightAnchor.constraint(equalToConstant: self.scrollView.contentSize.height),
+            self.contentViewHeightAnchor,
             self.contentView.leadingAnchor.constraint(equalTo: self.scrollView.leadingAnchor),
             self.contentView.widthAnchor.constraint(equalTo: self.scrollView.widthAnchor)
         ])
@@ -648,9 +696,10 @@ extension DayOffViewController {
         ])
         
         // calendarCollectionView layout
+        self.calendarCollectionViewHeightAnchor = self.calendarCollectionView.heightAnchor.constraint(equalToConstant: 21+45*CGFloat(self.getWeeksOfMonthFor(self.targetYearMonthDate)))
         NSLayoutConstraint.activate([
             self.calendarCollectionView.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 32),
-            self.calendarCollectionView.heightAnchor.constraint(equalToConstant: 21+45*CGFloat(self.weeksOfMonth)),
+            self.calendarCollectionViewHeightAnchor,
             self.calendarCollectionView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
             self.calendarCollectionView.widthAnchor.constraint(equalToConstant: 7*45)
         ])
@@ -689,10 +738,10 @@ extension DayOffViewController {
         
         // perviousMonthButton layout
         NSLayoutConstraint.activate([
-            self.perviousMonthButton.centerYAnchor.constraint(equalTo: self.yearMonthButtonView.centerYAnchor),
-            self.perviousMonthButton.heightAnchor.constraint(equalToConstant: 21),
-            self.perviousMonthButton.leadingAnchor.constraint(equalTo: self.yearMonthButtonView.leadingAnchor),
-            self.perviousMonthButton.widthAnchor.constraint(equalToConstant: 16)
+            self.previousMonthButton.centerYAnchor.constraint(equalTo: self.yearMonthButtonView.centerYAnchor),
+            self.previousMonthButton.heightAnchor.constraint(equalToConstant: 21),
+            self.previousMonthButton.leadingAnchor.constraint(equalTo: self.yearMonthButtonView.leadingAnchor),
+            self.previousMonthButton.widthAnchor.constraint(equalToConstant: 16)
         ])
         
         // yearMonthLabel layout
@@ -976,11 +1025,51 @@ extension DayOffViewController {
     }
     
     @objc func perviousMonthButton(_ sender: UIButton) {
+        var year = self.getYearMonthAndDayOf(self.targetYearMonthDate).year
+        var month = self.getYearMonthAndDayOf(self.targetYearMonthDate).month
         
+        month -= 1
+        if month == 0 {
+            year -= 1
+            month = 12
+        }
+        self.targetYearMonthDate = self.makeDateWithYear(year, month: month)
+        
+        self.scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width,
+                                        height: 428 + 21+45*CGFloat(self.getWeeksOfMonthFor(self.targetYearMonthDate)))
+        self.contentViewHeightAnchor.constant = 428 + 21+45*CGFloat(self.getWeeksOfMonthFor(self.targetYearMonthDate))
+        self.calendarCollectionViewHeightAnchor.constant = 21+45*CGFloat(self.getWeeksOfMonthFor(self.targetYearMonthDate))
+        
+        self.calendarCollectionView.reloadData()
+        
+        self.yearMonthLabel.text = "\(self.getYearMonthAndDayOf(self.targetYearMonthDate).year)년 \(self.getYearMonthAndDayOf(self.targetYearMonthDate).month)월"
+        
+        sender.isEnabled = self.targetYearMonthDate != self.makeDateWithYear(self.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).year, month: self.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).month)
+        self.nextMonthButton.isEnabled = self.targetYearMonthDate != self.makeDateWithYear(self.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).year, month: self.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).month)
     }
     
     @objc func nextMonthButton(_ sender: UIButton) {
+        var year = self.getYearMonthAndDayOf(self.targetYearMonthDate).year
+        var month = self.getYearMonthAndDayOf(self.targetYearMonthDate).month
         
+        month += 1
+        if month > 12 {
+            year += 1
+            month = 1
+        }
+        self.targetYearMonthDate = self.makeDateWithYear(year, month: month)
+        
+        self.scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width,
+                                        height: 428 + 21+45*CGFloat(self.getWeeksOfMonthFor(self.targetYearMonthDate)))
+        self.contentViewHeightAnchor.constant = 428 + 21+45*CGFloat(self.getWeeksOfMonthFor(self.targetYearMonthDate))
+        self.calendarCollectionViewHeightAnchor.constant = 21+45*CGFloat(self.getWeeksOfMonthFor(self.targetYearMonthDate))
+        
+        self.calendarCollectionView.reloadData()
+        
+        self.yearMonthLabel.text = "\(self.getYearMonthAndDayOf(self.targetYearMonthDate).year)년 \(self.getYearMonthAndDayOf(self.targetYearMonthDate).month)월"
+        
+        self.previousMonthButton.isEnabled = self.targetYearMonthDate != self.makeDateWithYear(self.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).year, month: self.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).month)
+        sender.isEnabled = self.targetYearMonthDate != self.makeDateWithYear(self.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).year, month: self.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).month)
     }
     
     @objc func numberOfVacationButton(_ sender: UIButton) {
@@ -1052,48 +1141,41 @@ extension DayOffViewController {
 // MARK: - Extension for UICollectionViewDelegate, UICollectionViewDataSource
 extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.firstWeekDay - 1 + self.daysOfMonth
+        // weekday of 1st - 1 + days of month -> full items
+        return self.getFirstWeekdayFor(self.targetYearMonthDate) - 1 + self.getDaysOfMonthFor(self.targetYearMonthDate)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let item = collectionView.dequeueReusableCell(withReuseIdentifier: "CalendarDayCell", for: indexPath) as! CalendarDayCell
         
-        // FIXME: need to be edited
-        if indexPath.item - (self.firstWeekDay - 2) >= 1 {
-            item.dayLabel.isHidden = false
+        let day = indexPath.item - (self.getFirstWeekdayFor(self.targetYearMonthDate) - 2)
+        
+        if day >= 1 {
+            let dateId: String = String(format: "\(self.getYearMonthAndDayOf(self.targetYearMonthDate).year)%02d%02d", self.getYearMonthAndDayOf(self.targetYearMonthDate).month, day)
             
-            if indexPath.item - (self.firstWeekDay - 2) == 27 {
-                item.setItem(day: indexPath.item - (self.firstWeekDay - 2),
-                             isToday: true,
-                             isSelected: false,
-                             .fullDayVacation)
-                
-            } else if indexPath.item - (self.firstWeekDay - 2) == 28 {
-                item.setItem(day: indexPath.item - (self.firstWeekDay - 2),
-                             isToday: false,
-                             isSelected: true,
-                             .morningVacation)
-                
-            } else if indexPath.item - (self.firstWeekDay - 2) == 29 {
-                item.setItem(day: indexPath.item - (self.firstWeekDay - 2),
-                             isToday: false,
-                             isSelected: false,
-                             .afternoonVacation)
-                
-            } else if indexPath.item - (self.firstWeekDay - 2) == 30 {
-                item.setItem(day: indexPath.item - (self.firstWeekDay - 2),
-                             isToday: true,
-                             isSelected: true,
-                             .fullDayVacation)
-                
-            } else {
-                item.setItem(day: indexPath.item - (self.firstWeekDay - 2),
-                             isToday: false,
-                             isSelected: false)
+            let isToday: Bool = self.getYearMonthAndDayOf(self.targetYearMonthDate).year == self.todayDateComponents.year! &&
+            self.getYearMonthAndDayOf(self.targetYearMonthDate).month == self.todayDateComponents.month! &&
+            day == self.todayDateComponents.day!
+            
+            var isSelected = false
+            if let selectedIndexOfYearMonthAndDay = self.selectedIndexOfYearMonthAndDay {
+            isSelected = self.getYearMonthAndDayOf(self.targetYearMonthDate).year == selectedIndexOfYearMonthAndDay.year &&
+                self.getYearMonthAndDayOf(self.targetYearMonthDate).month == selectedIndexOfYearMonthAndDay.month &&
+                day == selectedIndexOfYearMonthAndDay.day
             }
             
+            let dateOfDay = self.makeDateWithYear(self.getYearMonthAndDayOf(self.targetYearMonthDate).year, month: self.getYearMonthAndDayOf(self.targetYearMonthDate).month, andDay: day)
+            let isEnable = dateOfDay >= self.vacationScheduleDateRange.startDate && dateOfDay <= self.vacationScheduleDateRange.endDate
+            
+            item.setItem(dateId,
+                         day: day,
+                         isToday: isToday,
+                         isSelected: isSelected,
+                         isEnable: isEnable,
+                         vacationType: .none) // FIXME: from DB
+            
         } else {
-            item.dayLabel.isHidden = true
+            item.setItem(nil)
         }
         
         return item
@@ -1103,5 +1185,20 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
         let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "CalendarHeaderView", for: indexPath) as! CalendarHeaderView
         
         return headerView
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let day = indexPath.item - (self.getFirstWeekdayFor(self.targetYearMonthDate) - 2)
+        let dateOfDay = self.makeDateWithYear(self.getYearMonthAndDayOf(self.targetYearMonthDate).year, month: self.getYearMonthAndDayOf(self.targetYearMonthDate).month, andDay: day)
+        
+        guard dateOfDay >= self.vacationScheduleDateRange.startDate && dateOfDay <= self.vacationScheduleDateRange.endDate else {
+            return
+        }
+        
+        self.selectedIndexOfYearMonthAndDay = (self.getYearMonthAndDayOf(self.targetYearMonthDate).year,
+                                               self.getYearMonthAndDayOf(self.targetYearMonthDate).month,
+                                               day)
+        
+        collectionView.reloadData()
     }
 }

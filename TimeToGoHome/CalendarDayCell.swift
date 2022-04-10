@@ -9,12 +9,20 @@ import UIKit
 
 class CalendarDayCell: UICollectionViewCell {
     enum VacationType {
+        case none
         case morningVacation
         case afternoonVacation
         case fullDayVacation
     }
     
-    lazy var morningVacationShapeView: UIView = {
+    lazy private var baseView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy private var morningVacationShapeView: UIView = {
         let halfView = UIView()
         halfView.backgroundColor = .useRGB(red: 110, green: 217, blue: 228)
         halfView.translatesAutoresizingMaskIntoConstraints = false
@@ -39,7 +47,7 @@ class CalendarDayCell: UICollectionViewCell {
         return view
     }()
     
-    lazy var afternoonVacationShapeView: UIView = {
+    lazy private var afternoonVacationShapeView: UIView = {
         let halfView = UIView()
         halfView.backgroundColor = .useRGB(red: 110, green: 217, blue: 228)
         halfView.translatesAutoresizingMaskIntoConstraints = false
@@ -64,7 +72,7 @@ class CalendarDayCell: UICollectionViewCell {
         return view
     }()
     
-    lazy var fullDayVacationShapeView: UIView = {
+    lazy private var fullDayVacationShapeView: UIView = {
         let view = UIView()
         view.backgroundColor = .useRGB(red: 110, green: 217, blue: 228)
         view.layer.cornerRadius = 14
@@ -85,7 +93,7 @@ class CalendarDayCell: UICollectionViewCell {
         return label
     }()
     
-    lazy var todayMarkLabel: UILabel = {
+    lazy private var todayMarkLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 10)
         label.textAlignment = .center
@@ -97,7 +105,7 @@ class CalendarDayCell: UICollectionViewCell {
         return label
     }()
     
-    lazy var bottomLineView: UIView = {
+    lazy private var bottomLineView: UIView = {
         let view = UIView()
         view.backgroundColor = .useRGB(red: 234, green: 234, blue: 234)
         view.isHidden = true
@@ -105,6 +113,8 @@ class CalendarDayCell: UICollectionViewCell {
         
         return view
     }()
+    
+    private(set) var dateId: String?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -127,63 +137,75 @@ extension CalendarDayCell {
     
     func setSubview() {
         SupportingMethods.shared.addSubviews([
+            self.baseView
+        ], to: self)
+        
+        SupportingMethods.shared.addSubviews([
             self.morningVacationShapeView,
             self.afternoonVacationShapeView,
             self.fullDayVacationShapeView,
             self.dayLabel,
             self.todayMarkLabel,
             self.bottomLineView
-        ], to: self)
+        ], to: self.baseView)
     }
     
     func setLayouts() {
         let safeArea = self.safeAreaLayoutGuide
         
+        // baseView layout
+        NSLayoutConstraint.activate([
+            self.baseView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            self.baseView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+            self.baseView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            self.baseView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+        ])
+        
         // morningVacationShapeView layout
         NSLayoutConstraint.activate([
-            self.morningVacationShapeView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 1),
+            self.morningVacationShapeView.topAnchor.constraint(equalTo: self.baseView.topAnchor, constant: 1),
             self.morningVacationShapeView.heightAnchor.constraint(equalToConstant: 28),
-            self.morningVacationShapeView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            self.morningVacationShapeView.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor),
             self.morningVacationShapeView.widthAnchor.constraint(equalToConstant: 28)
         ])
         
         // afternoonVacationShapeView layout
         NSLayoutConstraint.activate([
-            self.afternoonVacationShapeView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 1),
+            self.afternoonVacationShapeView.topAnchor.constraint(equalTo: self.baseView.topAnchor, constant: 1),
             self.afternoonVacationShapeView.heightAnchor.constraint(equalToConstant: 28),
-            self.afternoonVacationShapeView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            self.afternoonVacationShapeView.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor),
             self.afternoonVacationShapeView.widthAnchor.constraint(equalToConstant: 28)
         ])
         
         // fullDayVacationShapeView layout
         NSLayoutConstraint.activate([
-            self.fullDayVacationShapeView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 1),
+            self.fullDayVacationShapeView.topAnchor.constraint(equalTo: self.baseView.topAnchor, constant: 1),
             self.fullDayVacationShapeView.heightAnchor.constraint(equalToConstant: 28),
-            self.fullDayVacationShapeView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            self.fullDayVacationShapeView.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor),
             self.fullDayVacationShapeView.widthAnchor.constraint(equalToConstant: 28)
         ])
         
         // dayLabel layout
         NSLayoutConstraint.activate([
-            self.dayLabel.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            self.dayLabel.topAnchor.constraint(equalTo: self.baseView.topAnchor),
             self.dayLabel.heightAnchor.constraint(equalToConstant: 30),
-            self.dayLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.dayLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+            self.dayLabel.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor),
+            self.dayLabel.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor)
         ])
         
         // todayMarkLabel layout
         NSLayoutConstraint.activate([
             self.todayMarkLabel.topAnchor.constraint(equalTo: self.dayLabel.bottomAnchor),
             self.todayMarkLabel.heightAnchor.constraint(equalToConstant: 12),
-            self.todayMarkLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.todayMarkLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+            self.todayMarkLabel.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor),
+            self.todayMarkLabel.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor)
         ])
         
         // bottomLineView layout
         NSLayoutConstraint.activate([
             self.bottomLineView.topAnchor.constraint(equalTo: self.todayMarkLabel.bottomAnchor),
             self.bottomLineView.heightAnchor.constraint(equalToConstant: 3),
-            self.bottomLineView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            self.bottomLineView.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor),
             self.bottomLineView.widthAnchor.constraint(equalToConstant: 27)
         ])
     }
@@ -191,15 +213,25 @@ extension CalendarDayCell {
 
 // MARK: - Extension for methods added
 extension CalendarDayCell {
-    func setItem(day: Int,
-                 isToday: Bool,
-                 isSelected: Bool,
-                 _ vacationType: VacationType? = nil) {
+    func setItem(_ dateId: String?,
+                 day: Int = 0,
+                 isToday: Bool = false,
+                 isSelected: Bool = false,
+                 isEnable: Bool = false,
+                 vacationType: VacationType = .none) {
         
-        self.dayLabel.text = "\(day)"
-        
-        if let vacationType = vacationType {
+        if let dateId = dateId {
+            self.baseView.isHidden = false
+            self.dateId = dateId
+            
+            self.dayLabel.text = "\(day)"
+            
             switch vacationType {
+            case .none:
+                self.morningVacationShapeView.isHidden = true
+                self.afternoonVacationShapeView.isHidden = true
+                self.fullDayVacationShapeView.isHidden = true
+                
             case .morningVacation:
                 self.morningVacationShapeView.isHidden = false
                 self.afternoonVacationShapeView.isHidden = true
@@ -216,13 +248,15 @@ extension CalendarDayCell {
                 self.fullDayVacationShapeView.isHidden = false
             }
             
+            self.dayLabel.textColor = isEnable ? .black : .useRGB(red: 185, green: 185, blue: 185)
+            
+            self.todayMarkLabel.isHidden = !isToday
+            
+            self.bottomLineView.isHidden = !isSelected
+            
         } else {
-            self.morningVacationShapeView.isHidden = true
-            self.afternoonVacationShapeView.isHidden = true
+            self.baseView.isHidden = true
+            self.dateId = nil
         }
-        
-        self.todayMarkLabel.isHidden = !isToday
-        
-        self.bottomLineView.isHidden = !isSelected
     }
 }

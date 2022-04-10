@@ -265,9 +265,16 @@ extension AppDelegate {
 //        SupportingMethods.shared.setAppSetting(with: 12.5, for: .lunchTimeValue)
         
         // FIXME: Temp, common
+        SupportingMethods.shared.setAppSetting(with: {
+            let dateComonents = DateComponents(year: 2022, month: 4, day: 3)
+            var calendar = Calendar.current
+            calendar.timeZone = .current
+            
+            return calendar.date(from: dateComonents)!
+        }(), for: .joiningDate)
         SupportingMethods.shared.setAppSetting(with: true, for: .isIgnoredLunchTimeForHalfVacation)
-        SupportingMethods.shared.setAppSetting(with: "fiscalYear", for: .vacationType)
-        //SupportingMethods.shared.setAppSetting(with: "joiningDay", for: .vacationType)
+        //SupportingMethods.shared.setAppSetting(with: "fiscalYear", for: .vacationType)
+        SupportingMethods.shared.setAppSetting(with: "joiningDay", for: .vacationType)
         SupportingMethods.shared.setAppSetting(with: 15, for: .numberOfTotalVacations)
     }
 }
