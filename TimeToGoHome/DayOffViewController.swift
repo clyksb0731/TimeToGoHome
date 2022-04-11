@@ -105,6 +105,7 @@ class DayOffViewController: UIViewController {
         let button = UIButton()
         button.setImage(UIImage(named: "previousMonthNormalButton"), for: .normal)
         button.setImage(UIImage(named: "previousMonthDisableButton"), for: .disabled)
+        button.imageView?.contentMode = .scaleAspectFit
         button.addTarget(self, action: #selector(perviousMonthButton(_:)), for: .touchUpInside)
         button.isEnabled = self.makeDateWithYear(self.getYearMonthAndDayOf(self.targetYearMonthDate).year, month: self.getYearMonthAndDayOf(self.targetYearMonthDate).month) != self.makeDateWithYear(self.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).year, month: self.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).month)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -116,6 +117,8 @@ class DayOffViewController: UIViewController {
         let label = UILabel()
         label.textAlignment = .center
         label.textColor = .black
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.7
         label.font = .systemFont(ofSize: 18, weight: .semibold)
         label.text = "\(self.getYearMonthAndDayOf(self.targetYearMonthDate).year)년 \(self.getYearMonthAndDayOf(self.targetYearMonthDate).month)월"
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -127,6 +130,7 @@ class DayOffViewController: UIViewController {
         let button = UIButton()
         button.setImage(UIImage(named: "nextMonthNormalButton"), for: .normal)
         button.setImage(UIImage(named: "nextMonthDisableButton"), for: .disabled)
+        button.imageView?.contentMode = .scaleAspectFit
         button.addTarget(self, action: #selector(nextMonthButton(_:)), for: .touchUpInside)
         button.isEnabled = self.makeDateWithYear(self.getYearMonthAndDayOf(self.targetYearMonthDate).year, month: self.getYearMonthAndDayOf(self.targetYearMonthDate).month) != self.makeDateWithYear(self.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).year, month: self.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).month)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -164,7 +168,7 @@ class DayOffViewController: UIViewController {
         let label = UILabel()
         label.textColor = .black
         label.textAlignment = .right
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: 16, weight: .bold)
         let numberOfTotalVacations = SupportingMethods.shared.useAppSetting(for: .numberOfTotalVacations) as! Int
         label.text = "\(self.getVacationsHold())일 | \(numberOfTotalVacations)일"
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -733,7 +737,7 @@ extension DayOffViewController {
             self.yearMonthButtonView.centerYAnchor.constraint(equalTo: self.vacationSettingButtonView.centerYAnchor),
             self.yearMonthLabel.heightAnchor.constraint(equalToConstant: 21),
             self.yearMonthButtonView.trailingAnchor.constraint(equalTo: self.vacationSettingButtonView.trailingAnchor),
-            self.yearMonthButtonView.widthAnchor.constraint(equalToConstant: 134)
+            self.yearMonthButtonView.widthAnchor.constraint(equalToConstant: 150)
         ])
         
         // perviousMonthButton layout
@@ -741,7 +745,7 @@ extension DayOffViewController {
             self.previousMonthButton.centerYAnchor.constraint(equalTo: self.yearMonthButtonView.centerYAnchor),
             self.previousMonthButton.heightAnchor.constraint(equalToConstant: 21),
             self.previousMonthButton.leadingAnchor.constraint(equalTo: self.yearMonthButtonView.leadingAnchor),
-            self.previousMonthButton.widthAnchor.constraint(equalToConstant: 16)
+            self.previousMonthButton.widthAnchor.constraint(equalToConstant: 20)
         ])
         
         // yearMonthLabel layout
@@ -757,7 +761,7 @@ extension DayOffViewController {
             self.nextMonthButton.centerYAnchor.constraint(equalTo: self.yearMonthButtonView.centerYAnchor),
             self.nextMonthButton.heightAnchor.constraint(equalToConstant: 21),
             self.nextMonthButton.trailingAnchor.constraint(equalTo: self.yearMonthButtonView.trailingAnchor),
-            self.nextMonthButton.widthAnchor.constraint(equalToConstant: 16)
+            self.nextMonthButton.widthAnchor.constraint(equalToConstant: 20)
         ])
         
         // separatorLineView layout
@@ -1073,6 +1077,8 @@ extension DayOffViewController {
     }
     
     @objc func numberOfVacationButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
         self.coverView.isHidden = false
     }
     
@@ -1122,11 +1128,11 @@ extension DayOffViewController {
     }
     
     @objc func minusButton(_ sender: UIButton) {
-        
+        UIDevice.lightHaptic()
     }
     
     @objc func plusButton(_ sender: UIButton) {
-        
+        UIDevice.lightHaptic()
     }
     
     @objc func confirmButton(_ sender: UIButton) {
@@ -1188,6 +1194,8 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        UIDevice.lightHaptic()
+        
         let day = indexPath.item - (self.getFirstWeekdayFor(self.targetYearMonthDate) - 2)
         let dateOfDay = self.makeDateWithYear(self.getYearMonthAndDayOf(self.targetYearMonthDate).year, month: self.getYearMonthAndDayOf(self.targetYearMonthDate).month, andDay: day)
         
