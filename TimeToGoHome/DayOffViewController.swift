@@ -1194,14 +1194,14 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        UIDevice.lightHaptic()
-        
         let day = indexPath.item - (self.getFirstWeekdayFor(self.targetYearMonthDate) - 2)
         let dateOfDay = self.makeDateWithYear(self.getYearMonthAndDayOf(self.targetYearMonthDate).year, month: self.getYearMonthAndDayOf(self.targetYearMonthDate).month, andDay: day)
         
         guard dateOfDay >= self.vacationScheduleDateRange.startDate && dateOfDay <= self.vacationScheduleDateRange.endDate else {
             return
         }
+        
+        UIDevice.lightHaptic()
         
         self.selectedIndexOfYearMonthAndDay = (self.getYearMonthAndDayOf(self.targetYearMonthDate).year,
                                                self.getYearMonthAndDayOf(self.targetYearMonthDate).month,
