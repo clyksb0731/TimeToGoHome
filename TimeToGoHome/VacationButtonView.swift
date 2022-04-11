@@ -37,12 +37,65 @@ class VacationButtonView: UIView {
     
     var isSelected: Bool = false {
         didSet {
-            self.backgroundColor = self.isSelected ?
-                .useRGB(red: 110, green: 217, blue: 228) : .useRGB(red: 216, green: 216, blue: 216)
+            guard oldValue != self.isSelected else {
+                return
+            }
+            
+            self.backgroundColor = {
+                if self.isEnable {
+                    if self.isSelected {
+                        return .useRGB(red: 110, green: 217, blue: 228)
+                        
+                    } else {
+                        return .useRGB(red: 216, green: 216, blue: 216)
+                    }
+                    
+                } else {
+                    if self.isSelected {
+                        return .useRGB(red: 110, green: 217, blue: 228, alpha: 0.5)
+                        
+                    } else {
+                        return .useRGB(red: 216, green: 216, blue: 216, alpha: 0.5)
+                    }
+                }
+            }()
         }
     }
     
-    init(title: String, isSelected: Bool, font: UIFont = .systemFont(ofSize: 18), textAlignment: NSTextAlignment = .center, textColor: UIColor = .black) {
+    var isEnable: Bool = true {
+        didSet {
+            guard oldValue != self.isEnable else {
+                return
+            }
+            
+            self.backgroundColor = {
+                if self.isEnable {
+                    if self.isSelected {
+                        return .useRGB(red: 110, green: 217, blue: 228)
+                        
+                    } else {
+                        return .useRGB(red: 216, green: 216, blue: 216)
+                    }
+                    
+                } else {
+                    if self.isSelected {
+                        return .useRGB(red: 110, green: 217, blue: 228, alpha: 0.5)
+                        
+                    } else {
+                        return .useRGB(red: 216, green: 216, blue: 216, alpha: 0.5)
+                    }
+                }
+            }()
+            
+            self.titleLabel.textColor = self.isEnable ? .black : .useRGB(red: 0, green: 0, blue: 0, alpha: 0.5)
+            
+            self.layer.shadowOpacity = self.isEnable ? 0.5 : 0
+            
+            self.coverButton.isEnabled = self.isEnable
+        }
+    }
+    
+    init(title: String, isSelected: Bool = false, font: UIFont = .systemFont(ofSize: 18), textAlignment: NSTextAlignment = .center, textColor: UIColor = .black) {
         super.init(frame: .zero)
         
         self.setViewFoundation()

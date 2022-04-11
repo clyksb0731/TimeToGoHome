@@ -53,21 +53,18 @@ extension AppDelegate {
             self.window?.rootViewController = mainVC
             
         } else {
-            let staggeredWorkTypeVC = StaggeredWorkTypeViewController()
-            let normalWorkTypeVC = NormalWorkTypeViewController()
-            let tabBarVC = UITabBarController()
-            tabBarVC.viewControllers = [staggeredWorkTypeVC, normalWorkTypeVC]
-            self.window?.rootViewController = tabBarVC
+//            let staggeredWorkTypeVC = StaggeredWorkTypeViewController()
+//            let normalWorkTypeVC = NormalWorkTypeViewController()
+//            let tabBarVC = UITabBarController()
+//            tabBarVC.viewControllers = [staggeredWorkTypeVC, normalWorkTypeVC]
+//            self.window?.rootViewController = tabBarVC
             
 //            let mainVC = MainViewController()
 //            let mainNaviVC = UINavigationController(rootViewController: mainVC)
 //            self.window?.rootViewController = mainNaviVC
             
-//            let workTypeVC = WorkTypeViewController()
-//            self.window?.rootViewController = workTypeVC
-            
-//            let dayOffVC = DayOffViewController()
-//            self.window?.rootViewController = dayOffVC
+            let dayOffVC = DayOffViewController()
+            self.window?.rootViewController = dayOffVC
         }
         
         self.window?.makeKeyAndVisible()
@@ -266,7 +263,7 @@ extension AppDelegate {
         
         // FIXME: Temp, common
         SupportingMethods.shared.setAppSetting(with: {
-            let dateComonents = DateComponents(year: 2022, month: 4, day: 3)
+            let dateComonents = DateComponents(year: 2019, month: 10, day: 1)
             var calendar = Calendar.current
             calendar.timeZone = .current
             

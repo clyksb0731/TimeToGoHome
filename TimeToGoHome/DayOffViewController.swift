@@ -77,18 +77,20 @@ class DayOffViewController: UIViewController {
     }()
     
     lazy var morningVacationButtonView: VacationButtonView = {
-        let buttonView = VacationButtonView(title: "오전", isSelected: false)
+        let buttonView = VacationButtonView(title: "오전")
         buttonView.tag = 1
         buttonView.addTarget(self, action: #selector(vacationButton(_:)), for: .touchUpInside)
+        buttonView.isEnable = false
         buttonView.translatesAutoresizingMaskIntoConstraints = false
         
         return buttonView
     }()
     
     lazy var afternoonVacationButtonView: VacationButtonView = {
-        let buttonView = VacationButtonView(title: "오후", isSelected: false)
+        let buttonView = VacationButtonView(title: "오후")
         buttonView.tag = 2
         buttonView.addTarget(self, action: #selector(vacationButton(_:)), for: .touchUpInside)
+        buttonView.isEnable = false
         buttonView.translatesAutoresizingMaskIntoConstraints = false
         
         return buttonView
@@ -165,12 +167,25 @@ class DayOffViewController: UIViewController {
     }()
     
     lazy var numberOfVacationLabel: UILabel = {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        
+        let attributedText = NSMutableAttributedString()
+        let usedVacationText = NSAttributedString(string: "\(self.numberOfVacationsHold)일 |", attributes: [
+            .font:UIFont.systemFont(ofSize: 16),
+            .foregroundColor:UIColor.black,
+            .paragraphStyle:paragraphStyle
+        ])
+        let totalOfVacationsText = NSAttributedString(string: " \(self.numberOfTotalVacations)일", attributes: [
+            .font:UIFont.systemFont(ofSize: 16, weight: .bold),
+            .foregroundColor:UIColor.black,
+            .paragraphStyle:paragraphStyle
+        ])
+        attributedText.append(usedVacationText)
+        attributedText.append(totalOfVacationsText)
+        
         let label = UILabel()
-        label.textColor = .black
-        label.textAlignment = .right
-        label.font = .systemFont(ofSize: 16, weight: .bold)
-        let numberOfTotalVacations = SupportingMethods.shared.useAppSetting(for: .numberOfTotalVacations) as! Int
-        label.text = "\(self.getVacationsHold())일 | \(numberOfTotalVacations)일"
+        label.attributedText = attributedText
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -449,7 +464,7 @@ class DayOffViewController: UIViewController {
     
     var targetYearMonthDate: Date = Date()
     
-    var vacationScheduleDateRange: (startDate: Date, endDate: Date) {
+    var vacationScheduleDateRange: (startDate: Date, endDate: Date) = {
         var calendar = Calendar.current
         calendar.timeZone = .current
         let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
@@ -461,63 +476,75 @@ class DayOffViewController: UIViewController {
             return (calendar.date(from: firstDayOfYearDateComponents)!, calendar.date(from: lastDayOfYearDateComponents)!)
             
         } else { // joiningDay
-            let firstDayOfYearDateComponents = SupportingMethods.shared.useAppSetting(for: .joiningDate) as! Date
-            let joiningDateComponents = calendar.dateComponents([.year, .month, .day], from: firstDayOfYearDateComponents)
-            let dateComponentsOfOneYearAfterJoingingDay = DateComponents(year:joiningDateComponents.year! + 1, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
-            let dateOfOneYearAfterJoingingDay = calendar.date(from: dateComponentsOfOneYearAfterJoingingDay)!
-            let oneDayBeforeDateOfOneYearAfterJoingingDay = Date(timeIntervalSinceReferenceDate: dateOfOneYearAfterJoingingDay.timeIntervalSinceReferenceDate - 86400) // one day before
+            var firstDayOfVacationDate = SupportingMethods.shared.useAppSetting(for: .joiningDate) as! Date
+            let joiningDateComponents = calendar.dateComponents([.year, .month, .day], from: firstDayOfVacationDate)
+            var endDayOfVacationDate: Date
             
-            return (firstDayOfYearDateComponents, oneDayBeforeDateOfOneYearAfterJoingingDay)
+            if joiningDateComponents.month! < todayDateComponents.month! {
+                // First date of vacation
+                let firstDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year!, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                
+                firstDayOfVacationDate = calendar.date(from: firstDayOfVacationDateDateComponents)!
+                
+                // End date of vacation
+                let endDayAfterOneDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year! + 1, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                let endDayAfterOneDayOfVacationDate = calendar.date(from: endDayAfterOneDayOfVacationDateDateComponents)!
+                
+                endDayOfVacationDate = Date(timeIntervalSinceReferenceDate: endDayAfterOneDayOfVacationDate.timeIntervalSinceReferenceDate - 86400)
+                
+            } else if joiningDateComponents.month! == todayDateComponents.month! {
+                if joiningDateComponents.day! <= todayDateComponents.day! {
+                    // First date of vacation
+                    let firstDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year!, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                    
+                    firstDayOfVacationDate = calendar.date(from: firstDayOfVacationDateDateComponents)!
+                    
+                    // End date of vacation
+                    let endDayAfterOneDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year! + 1, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                    let endDayAfterOneDayOfVacationDate = calendar.date(from: endDayAfterOneDayOfVacationDateDateComponents)!
+                    
+                    endDayOfVacationDate = Date(timeIntervalSinceReferenceDate: endDayAfterOneDayOfVacationDate.timeIntervalSinceReferenceDate - 86400)
+                    
+                } else { // joiningDateComponents.day! > self.todayDateComponents.day!
+                    // First date of vacation
+                    let firstDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year! - 1, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                    
+                    firstDayOfVacationDate = calendar.date(from: firstDayOfVacationDateDateComponents)!
+                    
+                    // End date of vacation
+                    let endDayAfterOneDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year!, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                    let endDayAfterOneDayOfVacationDate = calendar.date(from: endDayAfterOneDayOfVacationDateDateComponents)!
+                    
+                    endDayOfVacationDate = Date(timeIntervalSinceReferenceDate: endDayAfterOneDayOfVacationDate.timeIntervalSinceReferenceDate - 86400)
+                }
+                
+            } else { // joiningDateComponents.month! > self.todayDateComponents.month!
+                // First date of vacation
+                let firstDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year! - 1, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                
+                firstDayOfVacationDate = calendar.date(from: firstDayOfVacationDateDateComponents)!
+                
+                // End date of vacation
+                let endDayAfterOneDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year!, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                let endDayAfterOneDayOfVacationDate = calendar.date(from: endDayAfterOneDayOfVacationDateDateComponents)!
+                
+                endDayOfVacationDate = Date(timeIntervalSinceReferenceDate: endDayAfterOneDayOfVacationDate.timeIntervalSinceReferenceDate - 86400)
+            }
+            
+            return (firstDayOfVacationDate, endDayOfVacationDate)
         }
-    }
-    
-    func getYearMonthAndDayOf(_ date: Date) -> (year: Int, month: Int, day: Int) {
-        var calendar = Calendar.current
-        calendar.timeZone = .current
-        let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
-        
-        return (dateComponents.year!, dateComponents.month!, dateComponents.day!)
-    }
-    
-    func makeDateWithYear(_ year: Int, month: Int, andDay day: Int = 1) -> Date {
-        var calendar = Calendar.current
-        calendar.timeZone = .current
-        
-        let dateComponents = DateComponents(year: year, month: month, day: day)
-        
-        return calendar.date(from: dateComponents)!
-    }
-    
-    func getWeeksOfMonthFor(_ date: Date) -> Int {
-        var calendar = Calendar.current
-        calendar.timeZone = .current
-        let weeksOfMonth = calendar.range(of: .weekOfMonth, in: .month, for: date)
-        
-        return (weeksOfMonth?.count)!
-    }
-    
-    func getDaysOfMonthFor(_ date: Date) -> Int {
-        var calendar = Calendar.current
-        calendar.timeZone = .current
-        let daysOfMonth = calendar.range(of: .day, in: .month, for: date)
-        
-        return (daysOfMonth?.count)!
-    }
-    
-    func getFirstWeekdayFor(_ date: Date) -> Int {
-        var calendar = Calendar.current
-        calendar.timeZone = .current
-        let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
-        var firstDayDateComponents = DateComponents(year: dateComponents.year!, month: dateComponents.month!, day: 1)
-        let firstDate = calendar.date(from: firstDayDateComponents)!
-        firstDayDateComponents = calendar.dateComponents([.weekday], from: firstDate)
-        
-        return firstDayDateComponents.weekday!
-    }
+    }()
     
     var calendarCollectionViewHeightAnchor: NSLayoutConstraint!
     var contentViewHeightAnchor: NSLayoutConstraint!
     var selectedIndexOfYearMonthAndDay: (year: Int, month: Int, day: Int)?
+    
+    var numberOfTotalVacations: Int = SupportingMethods.shared.useAppSetting(for: .numberOfTotalVacations) as! Int
+    lazy var numberOfVacationsHold: Double = {
+        // FIXME: from DB
+        return 5.5
+    }()
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -1003,10 +1030,75 @@ extension DayOffViewController {
 
 // MARK: - Extension for methods added
 extension DayOffViewController {
+    func getYearMonthAndDayOf(_ date: Date) -> (year: Int, month: Int, day: Int) {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
+        
+        return (dateComponents.year!, dateComponents.month!, dateComponents.day!)
+    }
+    
+    func makeDateWithYear(_ year: Int, month: Int, andDay day: Int = 1) -> Date {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        
+        let dateComponents = DateComponents(year: year, month: month, day: day)
+        
+        return calendar.date(from: dateComponents)!
+    }
+    
+    func getWeeksOfMonthFor(_ date: Date) -> Int {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let weeksOfMonth = calendar.range(of: .weekOfMonth, in: .month, for: date)
+        
+        return (weeksOfMonth?.count)!
+    }
+    
+    func getDaysOfMonthFor(_ date: Date) -> Int {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let daysOfMonth = calendar.range(of: .day, in: .month, for: date)
+        
+        return (daysOfMonth?.count)!
+    }
+    
+    func getFirstWeekdayFor(_ date: Date) -> Int {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
+        var firstDayDateComponents = DateComponents(year: dateComponents.year!, month: dateComponents.month!, day: 1)
+        let firstDate = calendar.date(from: firstDayDateComponents)!
+        firstDayDateComponents = calendar.dateComponents([.weekday], from: firstDate)
+        
+        return firstDayDateComponents.weekday!
+    }
+    
     func getVacationsHold() -> Double {
         // FIXME: from DB
         
         return 5.5
+    }
+    
+    func applyVacationsToLabel() {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        
+        let attributedText = NSMutableAttributedString()
+        let usedVacationText = NSAttributedString(string: "\(self.numberOfVacationsHold)일 |", attributes: [
+            .font:UIFont.systemFont(ofSize: 16),
+            .foregroundColor:UIColor.black,
+            .paragraphStyle:paragraphStyle
+        ])
+        let totalOfVacationsText = NSAttributedString(string: " \(self.numberOfTotalVacations)일", attributes: [
+            .font:UIFont.systemFont(ofSize: 16, weight: .bold),
+            .foregroundColor:UIColor.black,
+            .paragraphStyle:paragraphStyle
+        ])
+        attributedText.append(usedVacationText)
+        attributedText.append(totalOfVacationsText)
+        
+        self.numberOfVacationLabel.attributedText = attributedText
     }
 }
 
@@ -1079,6 +1171,8 @@ extension DayOffViewController {
     @objc func numberOfVacationButton(_ sender: UIButton) {
         UIDevice.softHaptic()
         
+        self.numberOfTotalVacationsLabel.text = "\(self.numberOfTotalVacations)"
+        
         self.coverView.isHidden = false
     }
     
@@ -1114,32 +1208,56 @@ extension DayOffViewController {
     }
     
     @objc func startButton(_ sender: UIButton) {
+        let mainVC = MainViewController()
+        let mainNaviVC = UINavigationController(rootViewController: mainVC)
+        mainNaviVC.modalPresentationStyle = .fullScreen
         
+        self.present(mainNaviVC, animated: true)
     }
     
     @objc func fiscalYearButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
         sender.isSelected.toggle()
         self.joiningDayButton.isSelected = false
     }
     
     @objc func joiningDayButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
         sender.isSelected.toggle()
         self.fiscalYearButton.isSelected = false
     }
     
     @objc func minusButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
+        
+        self.numberOfTotalVacations -= 1
+        
+        self.minusButton.isEnabled = Double(self.numberOfTotalVacations - 1) >= self.numberOfVacationsHold
+        self.numberOfTotalVacationsLabel.text = "\(self.numberOfTotalVacations)"
     }
     
     @objc func plusButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
+        
+        self.numberOfTotalVacations += 1
+        
+        self.minusButton.isEnabled = Double(self.numberOfTotalVacations - 1) >= self.numberOfVacationsHold
+        self.numberOfTotalVacationsLabel.text = "\(self.numberOfTotalVacations)"
     }
     
     @objc func confirmButton(_ sender: UIButton) {
+        SupportingMethods.shared.setAppSetting(with: self.numberOfTotalVacations, for: .numberOfTotalVacations)
+        
+        self.applyVacationsToLabel()
+        
         self.coverView.isHidden = true
     }
     
     @objc func declineButton(_ sender: UIButton) {
+        self.numberOfTotalVacations = SupportingMethods.shared.useAppSetting(for: .numberOfTotalVacations) as! Int
+        
         self.coverView.isHidden = true
     }
 }
@@ -1206,6 +1324,10 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
         self.selectedIndexOfYearMonthAndDay = (self.getYearMonthAndDayOf(self.targetYearMonthDate).year,
                                                self.getYearMonthAndDayOf(self.targetYearMonthDate).month,
                                                day)
+        
+        // FIXME: determine state from DB
+        self.morningVacationButtonView.isEnable = true
+        self.afternoonVacationButtonView.isEnable = true
         
         collectionView.reloadData()
     }
