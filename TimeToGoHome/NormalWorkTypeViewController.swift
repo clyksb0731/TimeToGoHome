@@ -1530,11 +1530,16 @@ extension NormalWorkTypeViewController {
         let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 12+23.25*8])!
         let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 23.25*2])!
         
-        if workLeftCountAtMorning + toEndOfLunchTimeCount <= 10 {
-            self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 12 + 18.6*CGFloat(10-workLeftCountAtMorning) // (210-12*2)/10
+        if self.ignoringLunchTimeButton.isSelected {
+            self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 12 + 18.6*CGFloat(8-workLeftCountAtMorning) // (210-12*2)/10
             
         } else {
-            self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 12 + 18.6*CGFloat(8-workLeftCountAtMorning) // (210-12*2)/10
+            if workLeftCountAtMorning + toEndOfLunchTimeCount <= 10 {
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 12 + 18.6*CGFloat(10-workLeftCountAtMorning) // (210-12*2)/10
+                
+            } else {
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 12 + 18.6*CGFloat(8-workLeftCountAtMorning) // (210-12*2)/10
+            }
         }
     }
     
@@ -1660,7 +1665,38 @@ extension NormalWorkTypeViewController {
         
         sender.isSelected.toggle()
         
-        self.ignoringLunchTimeMarkLabel.textColor = sender.isSelected ? .black : .useRGB(red: 221, green: 221, blue: 221)
+        self.lunchTimeTimeBarView.isUserInteractionEnabled = false
+        self.nextButton.isUserInteractionEnabled = false
+        
+        if sender.isSelected {
+            self.ignoringLunchTimeMarkLabel.textColor = .black
+            
+            let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 12+23.25*8])!
+            //let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 23.25*2])!
+            
+            self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 12 + 18.6*CGFloat(8-workLeftCountAtMorning) // (210-12*2)/10
+            
+        } else {
+            self.ignoringLunchTimeMarkLabel.textColor = .useRGB(red: 221, green: 221, blue: 221)
+            
+            let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 12+23.25*8])!
+            let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 23.25*2])!
+            
+            if workLeftCountAtMorning + toEndOfLunchTimeCount <= 10 {
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 12 + 18.6*CGFloat(10-workLeftCountAtMorning) // (210-12*2)/10
+            }
+        }
+        
+        UIView.animate(withDuration: 0.2) {
+            self.lunchTimeTimeBarView.layoutIfNeeded()
+            self.afternoonAttendanceTimeBarView.layoutIfNeeded()
+            
+        } completion: { success in
+            if success {
+                self.lunchTimeTimeBarView.isUserInteractionEnabled = true
+                self.nextButton.isUserInteractionEnabled = true
+            }
+        }
     }
     
     @objc func attendanceTimeBarViewTapGesture(_ gesture: UIGestureRecognizer) {
