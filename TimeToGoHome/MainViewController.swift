@@ -385,15 +385,11 @@ class MainViewController: UIViewController {
                 self.scheduleTableView.reloadData()
                 
                 self.determineScheduleButtonState(for: self.schedule)
-                self.determineStartingWorkTimeButtonState(for: self.schedule)
                 
                 self.changeScheduleDescriptionLabel.isHidden = self.isEditingMode
             }
         }
     }
-    
-    var previousPointX: CGFloat = 0
-    var isHaptic: Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -785,7 +781,7 @@ extension MainViewController {
 extension MainViewController {
     func determineToday() {
         self.determineScheduleButtonState(for: self.schedule)
-        self.determineStartingWorkTimeButtonState(for: self.schedule)
+        self.determineStartingWorkTimeButtonTitleWithSchedule(self.schedule)
         
         if case .normal = self.schedule.workType {
             self.startWorkingTimeButton.isEnabled = false
@@ -1359,18 +1355,20 @@ extension MainViewController {
         }
     }
     
-    func determineStartingWorkTimeButtonState(for schedule: WorkScheduleModel) {
-        if let startingWorkingTime = schedule.startingWorkTime { // should be date not integer
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "HH:mm"
-            dateFormatter.timeZone = .current
-            dateFormatter.locale = Locale(identifier: "ko_KR")
+    func determineStartingWorkTimeButtonTitleWithSchedule(_ schedule: WorkScheduleModel, orTitle title: String? = nil) {
+        if let title = title {
+            self.startWorkingTimeButton.setTitle(title, for: .normal)
             
-            self.startWorkingTimeButton.setTitle(dateFormatter.string(from: startingWorkingTime), for: .normal)
+        } else {
+            if let startingWorkingTime = schedule.startingWorkTime {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "HH:mm"
+                dateFormatter.timeZone = .current
+                dateFormatter.locale = Locale(identifier: "ko_KR")
+                
+                self.startWorkingTimeButton.setTitle(dateFormatter.string(from: startingWorkingTime), for: .normal)
+            }
         }
-        
-        self.startWorkingTimeMarkLabel.isHidden = !schedule.isAvailableToWork
-        self.startWorkingTimeButton.isHidden = !schedule.isAvailableToWork
     }
     
     enum RegularScheduleType {
@@ -1441,7 +1439,7 @@ extension MainViewController {
         }
     }
     
-    func determineAfterModifyingRegularSchedule(_ schedule: WorkScheduleModel) {
+    func determineTodayRegularScheduleTypeAfterModifyingRegularSchedule(_ schedule: WorkScheduleModel) {
         guard let regularScheduleType = self.determineRegularSchedule(schedule) else {
             return
         }
@@ -1449,13 +1447,22 @@ extension MainViewController {
         if regularScheduleType != self.todayRegularScheduleType {
             switch regularScheduleType {
             case .fullWork:
-                if self.schedule.startingWorkTime != nil {
-                    print("출근시간 조정 필요 알림")
+                if case .morningWork = self.todayRegularScheduleType {
+                    
+                } else {
+                    if self.schedule.startingWorkTime != nil {
+                        print("출근시간 조정 필요 알림")
+                        print("업무 일정이 변경되었습니다. 출근시간을 새로 설정해주세요.")
+                    }
                 }
                 
             case .morningWork:
-                if self.schedule.startingWorkTime != nil {
-                    print("출근시간 조정 필요 알림")
+                if case .fullWork = self.todayRegularScheduleType {
+                    
+                } else {
+                    if self.schedule.startingWorkTime != nil {
+                        print("출근시간 조정 필요 알림")
+                    }
                 }
                 
             case .afternoonWork:
@@ -1588,7 +1595,6 @@ extension MainViewController {
         self.scheduleTableView.reloadData()
         
         self.determineScheduleButtonState(for: self.schedule)
-        self.determineStartingWorkTimeButtonState(for: self.schedule)
     }
     
     @objc func scheduleCellLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
@@ -1994,37 +2000,36 @@ extension MainViewController: ScheduleButtonViewDelegate {
 
 // MARK: - Extension for MainCoverDelegate
 extension MainViewController: MainCoverDelegate {
-    func mainCoverDidDetermineNormalSchedule(_ scheduleType: ScheduleType) {
-        self.schedule.insertSchedule(scheduleType)
+    func mainCoverDidDetermineNormalSchedule(_ schedule: ScheduleType) {
+        self.schedule.insertSchedule(schedule)
         
         self.scheduleTableView.reloadData()
         
         self.determineScheduleButtonState(for: self.schedule)
-        self.determineStartingWorkTimeButtonState(for: self.schedule)
+        //self.determineStartingWorkTimeButtonState(for: self.schedule)
     }
     
-    func mainCoverDidDetermineOvertimeSchedule(_ scheduleType: ScheduleType, isEditingModeBeforPresenting: Bool!) {
+    func mainCoverDidDetermineOvertimeSchedule(_ schedule: ScheduleType, isEditingModeBeforPresenting: Bool!) {
         if self.isEditingMode {
             self.isEditingMode = isEditingModeBeforPresenting
             
-            self.schedule.addSchedule(scheduleType)
+            self.schedule.addSchedule(schedule)
             
             self.calculateTableViewHeight(for: self.schedule)
             
         } else {
-            self.schedule.insertSchedule(scheduleType)
+            self.schedule.insertSchedule(schedule)
         }
         
         self.scheduleTableView.reloadData()
         
         self.determineScheduleButtonState(for: self.schedule)
-        self.determineStartingWorkTimeButtonState(for: self.schedule)
     }
     
     func mianCoverDidDetermineStartingWorkTime(_ startingWorkTime: Date) {
         self.schedule.updateStartingWorkTime(startingWorkTime)
         
-        self.determineStartingWorkTimeButtonState(for: self.schedule)
+        self.determineStartingWorkTimeButtonTitleWithSchedule(self.schedule)
         self.determineScheduleButtonState(for: self.schedule)
         
         if self.timer == nil {
