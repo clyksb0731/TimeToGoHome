@@ -90,7 +90,7 @@ struct WorkScheduleModel {
             if self.overtime == nil {
                 self.overtimeSecondsSincReferenceDate = 0
                 
-                self.determineFinishingRegularWorkTime()
+                //self.determineFinishingRegularWorkTime()
                 
             } else {
                 guard let finishingRegularWorkTimeSeconds = self.finishingRegularWorkTimeSecondsSinceReferenceDate,

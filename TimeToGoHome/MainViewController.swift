@@ -372,6 +372,7 @@ class MainViewController: UIViewController {
     
     var schedule: WorkScheduleModel = WorkScheduleModel.today
     var tempSchedule: WorkScheduleModel?
+    lazy var todayRegularScheduleType: RegularScheduleType? = self.determineRegularSchedule(self.schedule)
     
     var isEditingMode: Bool = false {
         didSet {
@@ -1360,7 +1361,6 @@ extension MainViewController {
     
     func determineStartingWorkTimeButtonState(for schedule: WorkScheduleModel) {
         if let startingWorkingTime = schedule.startingWorkTime { // should be date not integer
-            
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "HH:mm"
             dateFormatter.timeZone = .current
@@ -1371,6 +1371,113 @@ extension MainViewController {
         
         self.startWorkingTimeMarkLabel.isHidden = !schedule.isAvailableToWork
         self.startWorkingTimeButton.isHidden = !schedule.isAvailableToWork
+    }
+    
+    enum RegularScheduleType {
+        case fullWork
+        case morningWork
+        case afternoonWork
+        case fullVacation
+        case fullHoliday
+    }
+    
+    func determineRegularSchedule(_ schedule: WorkScheduleModel) -> RegularScheduleType? {
+        if case .morning(let workType) = schedule.morning {
+            switch workType {
+            case .work:
+                if case .afternoon(let workType) = schedule.afternoon {
+                    switch workType {
+                    case .work:
+                        return .fullWork
+                        
+                    case .vacation:
+                        return .morningWork
+                        
+                    case .holiday:
+                        return .morningWork
+                    }
+                    
+                } else {
+                    return nil
+                }
+                
+            case .vacation:
+                if case .afternoon(let workType) = schedule.afternoon {
+                    switch workType {
+                    case .work:
+                        return .afternoonWork
+                        
+                    case .vacation:
+                        return .fullVacation
+                        
+                    case .holiday:
+                        return nil
+                    }
+                    
+                } else {
+                    return nil
+                }
+                
+            case .holiday:
+                if case .afternoon(let workType) = schedule.afternoon {
+                    switch workType {
+                    case .work:
+                        return .afternoonWork
+                        
+                    case .vacation:
+                        return nil
+                        
+                    case .holiday:
+                        return .fullHoliday
+                    }
+                    
+                } else {
+                    return nil
+                }
+            }
+            
+        } else {
+            return nil
+        }
+    }
+    
+    func determineAfterModifyingRegularSchedule(_ schedule: WorkScheduleModel) {
+        guard let regularScheduleType = self.determineRegularSchedule(schedule) else {
+            return
+        }
+        
+        if regularScheduleType != self.todayRegularScheduleType {
+            switch regularScheduleType {
+            case .fullWork:
+                if self.schedule.startingWorkTime != nil {
+                    print("출근시간 조정 필요 알림")
+                }
+                
+            case .morningWork:
+                if self.schedule.startingWorkTime != nil {
+                    print("출근시간 조정 필요 알림")
+                }
+                
+            case .afternoonWork:
+                if self.schedule.startingWorkTime != nil {
+                    print("출근시간 조정 필요 알림")
+                }
+                
+            case .fullVacation:
+                if self.schedule.startingWorkTime != nil {
+                    print("출근시간 조정 필요 알림")
+                    print("UI 구성 조정 필요")
+                }
+                
+            case .fullHoliday:
+                if self.schedule.startingWorkTime != nil {
+                    print("출근시간 조정 필요 알림")
+                    print("UI 구성 조정 필요")
+                }
+            }
+        }
+        
+        self.todayRegularScheduleType = regularScheduleType
     }
 }
 
