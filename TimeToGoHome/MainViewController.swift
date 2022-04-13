@@ -1448,38 +1448,72 @@ extension MainViewController {
             switch regularScheduleType {
             case .fullWork:
                 if case .morningWork = self.todayRegularScheduleType {
+                    // 출근시간 유지
                     
-                } else {
+                }
+                
+                if case .afternoonWork = self.todayRegularScheduleType {
                     if self.schedule.startingWorkTime != nil {
-                        print("출근시간 조정 필요 알림")
-                        print("업무 일정이 변경되었습니다. 출근시간을 새로 설정해주세요.")
+                       // 출근시간 조정 필요
                     }
                 }
                 
             case .morningWork:
                 if case .fullWork = self.todayRegularScheduleType {
-                    
-                } else {
-                    if self.schedule.startingWorkTime != nil {
-                        print("출근시간 조정 필요 알림")
-                    }
+                    // 출근시간 유지
+                }
+                
+                if case .fullVacation = self.todayRegularScheduleType {
+                    // 출근시간 버튼 활성화
+                }
+                
+                if case .fullHoliday = self.todayRegularScheduleType {
+                    // 출근시간 버튼 활성화
                 }
                 
             case .afternoonWork:
-                if self.schedule.startingWorkTime != nil {
-                    print("출근시간 조정 필요 알림")
+                if case .fullWork = self.todayRegularScheduleType {
+                    if self.schedule.startingWorkTime != nil {
+                        // 출근시간 조정 필요
+                    }
+                }
+                
+                if case .fullVacation = self.todayRegularScheduleType {
+                    // 출근시간 버튼 활성화
+                }
+                
+                if case .fullHoliday = self.todayRegularScheduleType {
+                    // 출근시간 버튼 활성화
                 }
                 
             case .fullVacation:
-                if self.schedule.startingWorkTime != nil {
-                    print("출근시간 조정 필요 알림")
-                    print("UI 구성 조정 필요")
+                if case .morningWork = self.todayRegularScheduleType {
+                    if self.schedule.startingWorkTime != nil {
+                        // 출근시간 조정 필요
+                    }
+                    // 출근시간 버튼 비활성화
+                }
+                
+                if case .afternoonWork = self.todayRegularScheduleType {
+                    if self.schedule.startingWorkTime != nil {
+                        // 출근시간 조정 필요
+                    }
+                    // 출근시간 버튼 비활성화
                 }
                 
             case .fullHoliday:
-                if self.schedule.startingWorkTime != nil {
-                    print("출근시간 조정 필요 알림")
-                    print("UI 구성 조정 필요")
+                if case .morningWork = self.todayRegularScheduleType {
+                    if self.schedule.startingWorkTime != nil {
+                        // 출근시간 조정 필요
+                    }
+                    // 출근시간 버튼 비활성화
+                }
+                
+                if case .afternoonWork = self.todayRegularScheduleType {
+                    if self.schedule.startingWorkTime != nil {
+                        // 출근시간 조정 필요
+                    }
+                    // 출근시간 버튼 비활성화
                 }
             }
         }
@@ -1555,8 +1589,16 @@ extension MainViewController {
     @objc func startWorkingTimeButton(_ sender: UIButton) {
         UIDevice.softHaptic()
         
-        let mainCoverVC = MainCoverViewController(.startingWorkTime(self.schedule), delegate: self)
-        self.present(mainCoverVC, animated: false)
+        if self.schedule.overtime == nil {
+            let mainCoverVC = MainCoverViewController(.startingWorkTime(self.schedule), delegate: self)
+            self.present(mainCoverVC, animated: false)
+            
+        } else {
+            let alertVC = UIAlertController(title: "변경 불가", message: "추가근무 제거 후 변경해 주세요.", preferredStyle: .alert)
+            let action = UIAlertAction(title: "확인", style: .default)
+            alertVC.addAction(action)
+            self.present(alertVC, animated: true)
+        }
     }
     
     @objc func editScheduleButton(_ sender: UIButton) {
@@ -1604,8 +1646,16 @@ extension MainViewController {
                 
                 if scheduleCell.tag == 1 {
                     print("Long Pressed for morning")
-                    let mainCoverVC = MainCoverViewController(.normalSchedule(self.schedule.morning), delegate: self)
-                    self.present(mainCoverVC, animated: false)
+                    if self.schedule.overtime == nil {
+                        let mainCoverVC = MainCoverViewController(.normalSchedule(self.schedule.morning), delegate: self)
+                        self.present(mainCoverVC, animated: false)
+                        
+                    } else {
+                        let alertVC = UIAlertController(title: "변경 불가", message: "추가근무 제거 후 변경해 주세요.", preferredStyle: .alert)
+                        let action = UIAlertAction(title: "확인", style: .default)
+                        alertVC.addAction(action)
+                        self.present(alertVC, animated: true)
+                    }
                     
                 } else if scheduleCell.tag == 2 {
                     print("Long Pressed for afternoon")
@@ -1614,7 +1664,7 @@ extension MainViewController {
                         self.present(mainCoverVC, animated: false, completion: nil)
                         
                     } else {
-                        let alertVC = UIAlertController(title: "변경 불가", message: "추가 근무가 있어서 변경할 수 없습니다.", preferredStyle: .alert)
+                        let alertVC = UIAlertController(title: "변경 불가", message: "추가근무 제거 후 변경해 주세요.", preferredStyle: .alert)
                         let action = UIAlertAction(title: "확인", style: .default)
                         alertVC.addAction(action)
                         self.present(alertVC, animated: true)
