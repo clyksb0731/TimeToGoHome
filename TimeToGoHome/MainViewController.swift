@@ -1439,7 +1439,89 @@ extension MainViewController {
         }
     }
     
-    func determineTodayRegularScheduleTypeAfterModifyingRegularSchedule(_ schedule: WorkScheduleModel) {
+    func determineTodayRegularScheduleTypeAfterInsertingRegularSchedule(_ schedule: WorkScheduleModel) {
+        guard let regularScheduleType = self.determineRegularSchedule(schedule) else {
+            return
+        }
+        
+        if regularScheduleType != self.todayRegularScheduleType {
+            switch regularScheduleType {
+            case .fullWork:
+                if case .morningWork = self.todayRegularScheduleType {
+                    // 출근시간 유지
+                    
+                }
+                
+                if case .afternoonWork = self.todayRegularScheduleType {
+                    if self.schedule.startingWorkTime != nil {
+                       // 출근시간 조정 필요
+                    }
+                }
+                
+            case .morningWork:
+                if case .fullWork = self.todayRegularScheduleType {
+                    // 출근시간 유지
+                }
+                
+                if case .fullVacation = self.todayRegularScheduleType {
+                    // 출근시간 버튼 활성화
+                }
+                
+                if case .fullHoliday = self.todayRegularScheduleType {
+                    // 출근시간 버튼 활성화
+                }
+                
+            case .afternoonWork:
+                if case .fullWork = self.todayRegularScheduleType {
+                    if self.schedule.startingWorkTime != nil {
+                        // 출근시간 조정 필요
+                    }
+                }
+                
+                if case .fullVacation = self.todayRegularScheduleType {
+                    // 출근시간 버튼 활성화
+                }
+                
+                if case .fullHoliday = self.todayRegularScheduleType {
+                    // 출근시간 버튼 활성화
+                }
+                
+            case .fullVacation:
+                if case .morningWork = self.todayRegularScheduleType {
+                    if self.schedule.startingWorkTime != nil {
+                        // 출근시간 조정 필요
+                    }
+                    // 출근시간 버튼 비활성화
+                }
+                
+                if case .afternoonWork = self.todayRegularScheduleType {
+                    if self.schedule.startingWorkTime != nil {
+                        // 출근시간 조정 필요
+                    }
+                    // 출근시간 버튼 비활성화
+                }
+                
+            case .fullHoliday:
+                if case .morningWork = self.todayRegularScheduleType {
+                    if self.schedule.startingWorkTime != nil {
+                        // 출근시간 조정 필요
+                    }
+                    // 출근시간 버튼 비활성화
+                }
+                
+                if case .afternoonWork = self.todayRegularScheduleType {
+                    if self.schedule.startingWorkTime != nil {
+                        // 출근시간 조정 필요
+                    }
+                    // 출근시간 버튼 비활성화
+                }
+            }
+        }
+        
+        self.todayRegularScheduleType = regularScheduleType
+    }
+    
+    func determineTodayRegularScheduleTypeAfterAddingRegularSchedule(_ schedule: WorkScheduleModel) {
         guard let regularScheduleType = self.determineRegularSchedule(schedule) else {
             return
         }
