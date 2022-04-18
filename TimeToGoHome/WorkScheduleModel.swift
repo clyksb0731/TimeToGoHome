@@ -60,11 +60,13 @@ struct WorkScheduleModel {
         didSet {
             guard let startingWorkTime = self.startingWorkTime else {
                 self.startingWorkTimeSecondsSinceReferenceDate = nil
+                self.determineFinishingRegularWorkTime()
                 
                 return
             }
             
             self.startingWorkTimeSecondsSinceReferenceDate =  Int(startingWorkTime.timeIntervalSinceReferenceDate)
+            self.determineFinishingRegularWorkTime()
         }
     }
     private(set) var startingWorkTimeSecondsSinceReferenceDate: Int?
@@ -144,7 +146,7 @@ struct WorkScheduleModel {
 
 // MARK: - Extension for methods added
 extension WorkScheduleModel {
-    mutating func updateStartingWorkTime(_ startingWorkTimeDate: Date) {
+    mutating func updateStartingWorkTime(_ startingWorkTimeDate: Date?) {
         SupportingMethods.shared.setAppSetting(with: startingWorkTimeDate, for: .startingWorkTimeValue)
         self.startingWorkTime = startingWorkTimeDate
         
@@ -257,8 +259,8 @@ extension WorkScheduleModel {
         self.workType = self.makeWorkType()
         self.startingWorkTime = self.makeStartingWorkTimeDate()
         self.lunchTime = self.makeLunchTimeDate()
-        self.morning = .morning(.work) // FIXME: Temp
-        self.afternoon = .afternoon(.work) // FIXME: Temp
+        //self.morning = .morning(.work) // FIXME: Temp
+        //self.afternoon = .afternoon(.work) // FIXME: Temp
     }
     
     @discardableResult mutating func addSchedule(_ schedule: ScheduleType?) -> Bool {

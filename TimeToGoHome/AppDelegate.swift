@@ -59,12 +59,12 @@ extension AppDelegate {
 //            tabBarVC.viewControllers = [staggeredWorkTypeVC, normalWorkTypeVC]
 //            self.window?.rootViewController = tabBarVC
             
-//            let mainVC = MainViewController()
-//            let mainNaviVC = UINavigationController(rootViewController: mainVC)
-//            self.window?.rootViewController = mainNaviVC
+            let mainVC = MainViewController()
+            let mainNaviVC = UINavigationController(rootViewController: mainVC)
+            self.window?.rootViewController = mainNaviVC
             
-            let dayOffVC = DayOffViewController()
-            self.window?.rootViewController = dayOffVC
+//            let dayOffVC = DayOffViewController()
+//            self.window?.rootViewController = dayOffVC
         }
         
         self.window?.makeKeyAndVisible()

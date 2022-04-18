@@ -64,7 +64,12 @@ class WhiteButtonView: UIView {
     var isEnabled: Bool = true {
         didSet {
             self.button.isEnabled = self.isEnabled
-            self.isSelected = self.isEnabled;
+            if self.isEnabled {
+                self.alpha = self.isSelected ? 1.0 : 0.5
+                
+            } else {
+                self.alpha = 0.5
+            }
         }
     }
 

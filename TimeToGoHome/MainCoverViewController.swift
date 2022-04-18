@@ -7,8 +7,14 @@
 
 import UIKit
 
+enum NormalButtonType {
+    case allButton
+    case vacation
+    case holiday
+}
+
 enum MainCoverType {
-    case normalSchedule(ScheduleType?)
+    case normalSchedule(ScheduleType?, NormalButtonType)
     case overtimeSchedule(finishingRegularTime: Date, overtime: Date?,  isEditingModeBeforPresented: Bool)
     case startingWorkTime(WorkScheduleModel)
 }
@@ -111,6 +117,7 @@ class MainCoverViewController: UIViewController {
         let button = UIButton()
         button.backgroundColor = .useRGB(red: 120, green: 223, blue: 238)
         button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.useRGB(red: 200, green: 200, blue: 200), for: .disabled)
         button.setTitle("휴가", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 24, weight: .semibold)
         button.layer.cornerRadius = 10
@@ -124,6 +131,7 @@ class MainCoverViewController: UIViewController {
         let button = UIButton()
         button.backgroundColor = .useRGB(red: 252, green: 247, blue: 143)
         button.setTitleColor(.useRGB(red: 130, green: 130, blue: 130), for: .normal)
+        button.setTitleColor(.useRGB(red: 200, green: 200, blue: 200), for: .disabled)
         button.setTitle("휴일", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 24, weight: .semibold)
         button.layer.cornerRadius = 10
@@ -244,6 +252,30 @@ extension MainCoverViewController {
     
     // Initialize views
     func initializeViews() {
+        if case .normalSchedule(_, let buttonType) = self.mainCoverType {
+            switch buttonType {
+            case .allButton:
+                print("All buttons are available")
+                self.workButton.isEnabled = true
+                self.vacationButton.isEnabled = true
+                self.holidayButton.isEnabled = true
+                
+            case .vacation:
+                print("Work and vacation are available")
+                self.workButton.isEnabled = true
+                self.holidayButton.backgroundColor = .useRGB(red: 241, green: 241, blue: 241)
+                self.holidayButton.isEnabled = false
+                self.vacationButton.isEnabled = true
+                
+            case .holiday:
+                print("Work and holiday are available")
+                self.workButton.isEnabled = true
+                self.vacationButton.backgroundColor = .useRGB(red: 241, green: 241, blue: 241)
+                self.vacationButton.isEnabled = false
+                self.holidayButton.isEnabled = true
+            }
+        }
+        
         if case .overtimeSchedule(let finishingRegularTime, let overtime, let isEditingBeforePresented) = self.mainCoverType {
             let now = Date()
             
@@ -547,7 +579,7 @@ extension MainCoverViewController {
     @objc func workButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
-        if case .normalSchedule(let scheduleType) = self.mainCoverType {
+        if case .normalSchedule(let scheduleType, _) = self.mainCoverType {
             if case .morning = scheduleType {
                 self.delegate?.mainCoverDidDetermineNormalSchedule(.morning(.work))
             }
@@ -563,7 +595,7 @@ extension MainCoverViewController {
     @objc func vacationButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
-        if case .normalSchedule(let scheduleType) = self.mainCoverType {
+        if case .normalSchedule(let scheduleType, _) = self.mainCoverType {
             if case .morning = scheduleType {
                 self.delegate?.mainCoverDidDetermineNormalSchedule(.morning(.vacation))
             }
@@ -579,7 +611,7 @@ extension MainCoverViewController {
     @objc func holidayButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
-        if case .normalSchedule(let scheduleType) = self.mainCoverType {
+        if case .normalSchedule(let scheduleType, _) = self.mainCoverType {
             if case .morning = scheduleType {
                 self.delegate?.mainCoverDidDetermineNormalSchedule(.morning(.holiday))
             }
