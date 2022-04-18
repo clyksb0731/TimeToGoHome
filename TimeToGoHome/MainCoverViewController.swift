@@ -28,12 +28,33 @@ extension MainCoverDelegate {
 
 class MainCoverViewController: UIViewController {
     
-    var baseView: UIView = {
+    lazy var baseView: UIView = {
         let view = UIView()
         view.backgroundColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.5)
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
+    }()
+    
+    lazy var instanceMessageView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 254, green: 106, blue: 106)
+        view.layer.cornerRadius = 16
+        view.isHidden = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view;
+    }()
+    
+    lazy var instanceMessageLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 18, weight: .bold)
+        label.textAlignment = .center
+        label.textColor = .white
+        label.text = "점심시간은 피해주세요"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
     }()
     
     lazy var popUpPanelView: UIView = {
@@ -246,49 +267,59 @@ extension MainCoverViewController {
         }
         
         if case .startingWorkTime(let schedule) = self.mainCoverType {
-            if let startingWorkTime = schedule.startingWorkTime {
-                self.datePicker.date = startingWorkTime
+            if case .morning(let workType) = schedule.morning, case .work = workType,
+               case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+                let morningStartingWorkTimeValueRange = SupportingMethods.shared.useAppSetting(for: .morningStartingworkTimeValueRange) as! [String:Double]
                 
-            } else {
-                if case .morning(let workType) = schedule.morning, case .work = workType,
-                   case .afternoon(let workType) = schedule.afternoon, case .work = workType {
-                    let morningStartingWorkTimeValueRange = SupportingMethods.shared.useAppSetting(for: .morningStartingworkTimeValueRange) as! [String:Double]
-                    
-                    let morningEarliestTimeValue = morningStartingWorkTimeValueRange["earliestTime"]!
-                    let morningLatestTime = morningStartingWorkTimeValueRange["latestTime"]!
-                    
-                    self.datePicker.minimumDate = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)
-                    self.datePicker.maximumDate = SupportingMethods.shared.makeTimeDateWithValue(morningLatestTime)
-                    
-                    self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)!
-                    
-                } else if case .morning(let workType) = schedule.morning, case .work = workType {
-                    let morningStartingWorkTimeValueRange = SupportingMethods.shared.useAppSetting(for: .morningStartingworkTimeValueRange) as! [String:Double]
-                    
-                    let morningEarliestTimeValue = morningStartingWorkTimeValueRange["earliestTime"]!
-                    let morningLatestTime = morningStartingWorkTimeValueRange["latestTime"]!
-                    
-                    self.datePicker.minimumDate = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)
-                    self.datePicker.maximumDate = SupportingMethods.shared.makeTimeDateWithValue(morningLatestTime)
-                    
-                    self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)!
-                    
-                } else if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
-                    let afternoonStartingWorkTimeValueRage = SupportingMethods.shared.useAppSetting(for: .afternoonStartingworkTimeValueRange) as! [String:Double]
-                    
-                    let afternoonEarliestTimeValue = afternoonStartingWorkTimeValueRage["earliestTime"]!
-                    let afternoonLatestTime = afternoonStartingWorkTimeValueRage["latestTime"]!
-                    
-                    self.datePicker.minimumDate = SupportingMethods.shared.makeTimeDateWithValue(afternoonEarliestTimeValue)
-                    self.datePicker.maximumDate = SupportingMethods.shared.makeTimeDateWithValue(afternoonLatestTime)
-                    
-                    self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(afternoonEarliestTimeValue)!
-                    
-                    self.datePicker.addTarget(self, action: #selector(datePicker(_:)), for: .valueChanged)
+                let morningEarliestTimeValue = morningStartingWorkTimeValueRange["earliestTime"]!
+                let morningLatestTime = morningStartingWorkTimeValueRange["latestTime"]!
+                
+                self.datePicker.minimumDate = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)
+                self.datePicker.maximumDate = SupportingMethods.shared.makeTimeDateWithValue(morningLatestTime)
+                
+                if let startingWorkTime = schedule.startingWorkTime {
+                    self.datePicker.date = startingWorkTime
                     
                 } else {
-                    // vaction, holiday
+                    self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)!
                 }
+                
+            } else if case .morning(let workType) = schedule.morning, case .work = workType {
+                let morningStartingWorkTimeValueRange = SupportingMethods.shared.useAppSetting(for: .morningStartingworkTimeValueRange) as! [String:Double]
+                
+                let morningEarliestTimeValue = morningStartingWorkTimeValueRange["earliestTime"]!
+                let morningLatestTime = morningStartingWorkTimeValueRange["latestTime"]!
+                
+                self.datePicker.minimumDate = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)
+                self.datePicker.maximumDate = SupportingMethods.shared.makeTimeDateWithValue(morningLatestTime)
+                
+                if let startingWorkTime = schedule.startingWorkTime {
+                    self.datePicker.date = startingWorkTime
+                    
+                } else {
+                    self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)!
+                }
+                
+            } else if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+                let afternoonStartingWorkTimeValueRage = SupportingMethods.shared.useAppSetting(for: .afternoonStartingworkTimeValueRange) as! [String:Double]
+                
+                let afternoonEarliestTimeValue = afternoonStartingWorkTimeValueRage["earliestTime"]!
+                let afternoonLatestTime = afternoonStartingWorkTimeValueRage["latestTime"]!
+                
+                self.datePicker.minimumDate = SupportingMethods.shared.makeTimeDateWithValue(afternoonEarliestTimeValue)
+                self.datePicker.maximumDate = SupportingMethods.shared.makeTimeDateWithValue(afternoonLatestTime)
+                
+                if let startingWorkTime = schedule.startingWorkTime {
+                    self.datePicker.date = startingWorkTime
+                    
+                } else {
+                    self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(afternoonEarliestTimeValue)!
+                }
+                
+                self.datePicker.addTarget(self, action: #selector(datePicker(_:)), for: .valueChanged)
+                
+            } else {
+                // vaction, holiday
             }
         }
     }
@@ -335,7 +366,22 @@ extension MainCoverViewController {
                 self.holidayButton
             ], to: self.normalScheduleListView)
             
-        case .overtimeSchedule, .startingWorkTime:
+        case .overtimeSchedule:
+            SupportingMethods.shared.addSubviews([
+                self.datePicker,
+                self.confirmButton,
+                self.declineButton
+            ], to: self.popUpPanelView)
+            
+        case .startingWorkTime:
+            SupportingMethods.shared.addSubviews([
+                self.instanceMessageView
+            ], to: self.baseView)
+            
+            SupportingMethods.shared.addSubviews([
+                self.instanceMessageLabel
+            ], to: self.instanceMessageView)
+            
             SupportingMethods.shared.addSubviews([
                 self.datePicker,
                 self.confirmButton,
@@ -412,7 +458,43 @@ extension MainCoverViewController {
                 self.holidayButton.trailingAnchor.constraint(equalTo: self.normalScheduleListView.trailingAnchor)
             ])
             
-        case .overtimeSchedule, .startingWorkTime: // MARK: startingWorkTime
+        case .overtimeSchedule: // MARK: Overtime schedule
+            // Overtime date picker layout
+            NSLayoutConstraint.activate([
+                self.datePicker.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 10),
+                self.datePicker.heightAnchor.constraint(equalToConstant: 195),
+                self.datePicker.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor, constant: 5),
+                self.datePicker.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor, constant: -5)
+            ])
+            
+            // Starting work time confirm button layout
+            NSLayoutConstraint.activate([
+                self.confirmButton.topAnchor.constraint(equalTo: self.datePicker.bottomAnchor, constant: 10),
+                self.confirmButton.heightAnchor.constraint(equalToConstant: 35),
+                self.confirmButton.trailingAnchor.constraint(equalTo: self.popUpPanelView.centerXAnchor, constant: -5),
+                self.confirmButton.widthAnchor.constraint(equalToConstant: 97)
+            ])
+            
+            // Starting work time decline button layout layout
+            NSLayoutConstraint.activate([
+                self.declineButton.topAnchor.constraint(equalTo: self.datePicker.bottomAnchor, constant: 10),
+                self.declineButton.heightAnchor.constraint(equalToConstant: 35),
+                self.declineButton.leadingAnchor.constraint(equalTo: self.popUpPanelView.centerXAnchor, constant: 5),
+                self.declineButton.widthAnchor.constraint(equalToConstant: 97)
+            ])
+            
+        case .startingWorkTime: // MARK: Starting worktime
+            // instanceMessageView layout
+            NSLayoutConstraint.activate([
+                self.instanceMessageView.bottomAnchor.constraint(equalTo: self.popUpPanelView.topAnchor, constant: -16),
+                self.instanceMessageView.heightAnchor.constraint(equalToConstant: 32),
+                self.instanceMessageView.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor),
+                self.instanceMessageView.widthAnchor.constraint(equalToConstant: 180)
+            ])
+            
+            // instanceMessageLabel layout
+            SupportingMethods.shared.makeSameBoundConstraints(self.instanceMessageLabel, self.instanceMessageView)
+            
             // Starting work time date picker layout
             NSLayoutConstraint.activate([
                 self.datePicker.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 10),
@@ -442,7 +524,22 @@ extension MainCoverViewController {
 
 // MARK: - Extension for methods added
 extension MainCoverViewController {
-    
+    func showInstanceMessage(_ completion:(() -> ())? = nil) {
+        self.instanceMessageView.alpha = 1
+        self.instanceMessageView.isHidden = false
+        
+        UIView.animate(withDuration: 1.5) {
+            self.instanceMessageView.alpha = 0
+            
+        } completion: { finished in
+            if finished {
+                self.instanceMessageView.isHidden = true
+                self.instanceMessageView.alpha = 1
+                
+                completion?()
+            }
+        }
+    }
 }
 
 // MARK: - Extension for Selector methods
@@ -542,11 +639,11 @@ extension MainCoverViewController {
         
         if dateInterval >= lunchTimeDateInterval && dateInterval < lunchTimeDateInterval + 3600 {
             self.confirmButton.isEnabled = false
-            
             self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(afternoonStartingWorkTimeValueRage["earliestTime"]!)!
             
-        } else {
-            self.confirmButton.isEnabled = true
+            self.showInstanceMessage {
+                self.confirmButton.isEnabled = true
+            }
         }
     }
 }
