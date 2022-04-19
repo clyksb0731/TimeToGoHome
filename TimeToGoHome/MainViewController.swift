@@ -362,7 +362,7 @@ class MainViewController: UIViewController {
         return buttonView
     }()
     
-    weak var timer: Timer!
+    weak var timer: Timer?
     
     let workScheduleViewHeight = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.27
     let overWorkScheduleViewHeight = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.17
@@ -374,7 +374,7 @@ class MainViewController: UIViewController {
     
     var schedule: WorkScheduleModel = WorkScheduleModel.today
     var tempSchedule: WorkScheduleModel?
-    lazy var todayRegularScheduleType: RegularScheduleType? = self.determineRegularSchedule(self.schedule)
+    var todayRegularScheduleType: RegularScheduleType?
     
     var isEditingMode: Bool = false {
         didSet {
@@ -782,12 +782,30 @@ extension MainViewController {
 // MARK: - Extension for methods added
 extension MainViewController {
     func determineToday() {
-        self.determineScheduleButtonState(for: self.schedule)
-        self.determineStartingWorkTimeButtonTitleWithSchedule(self.schedule)
-        
         if case .normal = self.schedule.workType {
             self.startWorkingTimeButton.isEnabled = false
         }
+        
+        self.todayRegularScheduleType = self.determineRegularSchedule(self.schedule)
+        switch self.todayRegularScheduleType! {
+        case .fullWork, .morningWork, .afternoonWork:
+            self.remainingTimeButtonView.isEnabled = true
+            self.progressTimeButtonView.isEnabled = true
+            self.progressRateButtonView.isEnabled = true
+            
+            self.startWorkingTimeMarkLabel.isHidden = false
+            self.startWorkingTimeButton.isHidden = false
+            
+        case .fullVacation, .fullHoliday:
+            self.remainingTimeButtonView.isEnabled = false
+            self.progressTimeButtonView.isEnabled = false
+            self.progressRateButtonView.isEnabled = false
+            
+            self.startWorkingTimeMarkLabel.isHidden = true
+            self.startWorkingTimeButton.isHidden = true
+        }
+        
+        self.determineScheduleButtonState(for: self.schedule)
         
         if self.schedule.startingWorkTime != nil {
             if self.timer == nil {
@@ -1548,6 +1566,7 @@ extension MainViewController {
                 if self.schedule.startingWorkTime != nil {
                     let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
                     let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
+                        self.timer?.invalidate()
                         self.schedule.updateStartingWorkTime(nil)
                         self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
                         self.resetMainTimeViewValues(regularScheduleType)
@@ -1629,6 +1648,7 @@ extension MainViewController {
                 if self.schedule.startingWorkTime != nil {
                     let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
                     let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
+                        self.timer?.invalidate()
                         self.schedule.updateStartingWorkTime(nil)
                         self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
                         self.resetMainTimeViewValues(regularScheduleType)
@@ -1707,6 +1727,7 @@ extension MainViewController {
                 if self.schedule.startingWorkTime != nil {
                     let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
                     let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
+                        self.timer?.invalidate()
                         self.schedule.updateStartingWorkTime(nil)
                         self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
                         self.resetMainTimeViewValues(regularScheduleType)
@@ -1726,6 +1747,7 @@ extension MainViewController {
                 if self.schedule.startingWorkTime != nil {
                     let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
                     let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
+                        self.timer?.invalidate()
                         self.schedule.updateStartingWorkTime(nil)
                         self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
                         self.resetMainTimeViewValues(regularScheduleType)
@@ -1808,6 +1830,7 @@ extension MainViewController {
                 self.startWorkingTimeMarkLabel.isHidden = true
                 self.startWorkingTimeButton.isHidden = true
                 
+                self.timer?.invalidate()
                 self.schedule.updateStartingWorkTime(nil)
                 self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
                 self.resetMainTimeViewValues(regularScheduleType)
@@ -1822,6 +1845,7 @@ extension MainViewController {
                 self.startWorkingTimeMarkLabel.isHidden = true
                 self.startWorkingTimeButton.isHidden = true
                 
+                self.timer?.invalidate()
                 self.schedule.updateStartingWorkTime(nil)
                 self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
                 self.resetMainTimeViewValues(regularScheduleType)
@@ -1836,6 +1860,7 @@ extension MainViewController {
                 self.startWorkingTimeMarkLabel.isHidden = true
                 self.startWorkingTimeButton.isHidden = true
                 
+                self.timer?.invalidate()
                 self.schedule.updateStartingWorkTime(nil)
                 self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
                 self.resetMainTimeViewValues(regularScheduleType)
@@ -1858,6 +1883,7 @@ extension MainViewController {
                 self.startWorkingTimeMarkLabel.isHidden = true
                 self.startWorkingTimeButton.isHidden = true
                 
+                self.timer?.invalidate()
                 self.schedule.updateStartingWorkTime(nil)
                 self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
                 self.resetMainTimeViewValues(regularScheduleType)
@@ -1872,6 +1898,7 @@ extension MainViewController {
                 self.startWorkingTimeMarkLabel.isHidden = true
                 self.startWorkingTimeButton.isHidden = true
                 
+                self.timer?.invalidate()
                 self.schedule.updateStartingWorkTime(nil)
                 self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
                 self.resetMainTimeViewValues(regularScheduleType)
@@ -1886,6 +1913,7 @@ extension MainViewController {
                 self.startWorkingTimeMarkLabel.isHidden = true
                 self.startWorkingTimeButton.isHidden = true
                 
+                self.timer?.invalidate()
                 self.schedule.updateStartingWorkTime(nil)
                 self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
                 self.resetMainTimeViewValues(regularScheduleType)
@@ -1949,8 +1977,15 @@ extension MainViewController {
     }
     
     @objc func timer(_ timer: Timer) {
-        if self.schedule.startingWorkTimeSecondsSinceReferenceDate! >= SupportingMethods.getCurrentTimeSeconds() {
+        guard let startingWorkTimeSecondsSinceReferenceDate = self.schedule.startingWorkTimeSecondsSinceReferenceDate else {
+            return
+        }
+        
+        if startingWorkTimeSecondsSinceReferenceDate >= SupportingMethods.getCurrentTimeSeconds() {
             self.startWorkingTimeButton.setTitle("출근전", for: .normal)
+            
+        } else {
+            self.determineStartingWorkTimeButtonTitleWithSchedule(self.schedule)
         }
         
         switch self.mainTimeViewButtonType {
@@ -2576,7 +2611,6 @@ extension MainViewController: MainCoverDelegate {
     func mianCoverDidDetermineStartingWorkTime(_ startingWorkTime: Date) {
         self.schedule.updateStartingWorkTime(startingWorkTime)
         
-        self.determineStartingWorkTimeButtonTitleWithSchedule(self.schedule)
         self.determineScheduleButtonState(for: self.schedule)
         
         if self.timer == nil {
