@@ -577,51 +577,54 @@ extension MainCoverViewController {
 // MARK: - Extension for Selector methods
 extension MainCoverViewController {
     @objc func workButton(_ sender: UIButton) {
-        UIDevice.lightHaptic()
-        
-        if case .normalSchedule(let scheduleType, _) = self.mainCoverType {
-            if case .morning = scheduleType {
-                self.delegate?.mainCoverDidDetermineNormalSchedule(.morning(.work))
-            }
+        let tempSelf = self
+        self.dismiss(animated: false) {
+            UIDevice.lightHaptic()
             
-            if case .afternoon = scheduleType {
-                self.delegate?.mainCoverDidDetermineNormalSchedule(.afternoon(.work))
+            if case .normalSchedule(let scheduleType, _) = tempSelf.mainCoverType {
+                if case .morning = scheduleType {
+                    tempSelf.delegate?.mainCoverDidDetermineNormalSchedule(.morning(.work))
+                }
+                
+                if case .afternoon = scheduleType {
+                    tempSelf.delegate?.mainCoverDidDetermineNormalSchedule(.afternoon(.work))
+                }
             }
         }
-        
-        self.dismiss(animated: false)
     }
     
     @objc func vacationButton(_ sender: UIButton) {
-        UIDevice.lightHaptic()
-        
-        if case .normalSchedule(let scheduleType, _) = self.mainCoverType {
-            if case .morning = scheduleType {
-                self.delegate?.mainCoverDidDetermineNormalSchedule(.morning(.vacation))
-            }
+        let tempSelf = self
+        self.dismiss(animated: false) {
+            UIDevice.lightHaptic()
             
-            if case .afternoon = scheduleType {
-                self.delegate?.mainCoverDidDetermineNormalSchedule(.afternoon(.vacation))
+            if case .normalSchedule(let scheduleType, _) = tempSelf.mainCoverType {
+                if case .morning = scheduleType {
+                    tempSelf.delegate?.mainCoverDidDetermineNormalSchedule(.morning(.vacation))
+                }
+                
+                if case .afternoon = scheduleType {
+                    tempSelf.delegate?.mainCoverDidDetermineNormalSchedule(.afternoon(.vacation))
+                }
             }
         }
-        
-        self.dismiss(animated: false)
     }
     
     @objc func holidayButton(_ sender: UIButton) {
-        UIDevice.lightHaptic()
-        
-        if case .normalSchedule(let scheduleType, _) = self.mainCoverType {
-            if case .morning = scheduleType {
-                self.delegate?.mainCoverDidDetermineNormalSchedule(.morning(.holiday))
-            }
+        let tempSelf = self
+        self.dismiss(animated: false) {
+            UIDevice.lightHaptic()
             
-            if case .afternoon = scheduleType {
-                self.delegate?.mainCoverDidDetermineNormalSchedule(.afternoon(.holiday))
+            if case .normalSchedule(let scheduleType, _) = tempSelf.mainCoverType {
+                if case .morning = scheduleType {
+                    tempSelf.delegate?.mainCoverDidDetermineNormalSchedule(.morning(.holiday))
+                }
+                
+                if case .afternoon = scheduleType {
+                    tempSelf.delegate?.mainCoverDidDetermineNormalSchedule(.afternoon(.holiday))
+                }
             }
         }
-        
-        self.dismiss(animated: false)
     }
     
     @objc func closeNormalScheduleButton(_ sender: UIButton) {
@@ -629,19 +632,20 @@ extension MainCoverViewController {
     }
     
     @objc func confirmButton(_ sender: UIButton) {
-        var calendar = Calendar.current
-        calendar.timeZone = TimeZone.current
-        let datePickerComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.datePicker.date)
-        
-        if case .overtimeSchedule = self.mainCoverType {
-            self.delegate?.mainCoverDidDetermineOvertimeSchedule(.overtime(calendar.date(from: datePickerComponents)!), isEditingModeBeforPresenting: self.isEditingBeforePresented)
+        let tempSelf = self
+        self.dismiss(animated: false) {
+            var calendar = Calendar.current
+            calendar.timeZone = TimeZone.current
+            let datePickerComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.datePicker.date)
+            
+            if case .overtimeSchedule = tempSelf.mainCoverType {
+                tempSelf.delegate?.mainCoverDidDetermineOvertimeSchedule(.overtime(calendar.date(from: datePickerComponents)!), isEditingModeBeforPresenting: self.isEditingBeforePresented)
+            }
+            
+            if case .startingWorkTime = tempSelf.mainCoverType {
+                tempSelf.delegate?.mianCoverDidDetermineStartingWorkTime(calendar.date(from: datePickerComponents)!)
+            }
         }
-        
-        if case .startingWorkTime = self.mainCoverType {
-            self.delegate?.mianCoverDidDetermineStartingWorkTime(calendar.date(from: datePickerComponents)!)
-        }
-        
-        self.dismiss(animated: false)
     }
     
     @objc func declineButton(_ sender: UIButton) {
