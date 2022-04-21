@@ -11,6 +11,8 @@ class DayOffViewController: UIViewController {
 
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
+        scrollView.tag = 1
+        scrollView.delegate = self
         scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
         scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width,
@@ -284,6 +286,7 @@ class DayOffViewController: UIViewController {
     
     lazy var startButtonView: UIView = {
         let view = UIView()
+        view.layer.useSketchShadow(color: .black, alpha: 1, x: 0, y: 1, blur: 4, spread: 0)
         view.backgroundColor = UIColor.useRGB(red: 146, green: 243, blue: 205)
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -561,6 +564,10 @@ class DayOffViewController: UIViewController {
         super.viewWillAppear(animated)
         
         self.setViewFoundation()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        self.startButtonView.layer.shadowOpacity = self.scrollView.contentSize.height - self.scrollView.frame.height > 0 ? 1 : 0
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -1330,5 +1337,14 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
         self.afternoonVacationButtonView.isEnable = true
         
         collectionView.reloadData()
+    }
+}
+
+// MARK: Extension for UIScrollViewDelegate
+extension DayOffViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.tag == 1 {
+            self.startButtonView.layer.shadowOpacity = scrollView.contentSize.height - scrollView.frame.height > scrollView.contentOffset.y ? 1 : 0
+        }
     }
 }
