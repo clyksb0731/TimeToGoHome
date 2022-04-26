@@ -52,7 +52,9 @@ struct WorkScheduleModel {
         }
     }
     
-    static let today: WorkScheduleModel = WorkScheduleModel(date: Date())
+    static var today: WorkScheduleModel {
+        return WorkScheduleModel(date: Date())
+    }
     
     private(set) var dateId: String
     private(set) var workType: WorkType?
