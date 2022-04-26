@@ -66,19 +66,7 @@ class MainViewController: UIViewController {
         label.textColor = .white
         label.font = .systemFont(ofSize: 43)
         label.textAlignment = .center
-        if case .morning(let workType) = self.schedule.morning, case .work = workType,
-           case .afternoon(let workType) = self.schedule.afternoon, case .work = workType {
-            label.text = "08"
-            
-        } else if case .morning(let workType) = self.schedule.morning, case .work = workType {
-            label.text = "04"
-            
-        } else if case .afternoon(let workType) = self.schedule.afternoon, case .work = workType {
-            label.text = "04"
-            
-        } else {
-            label.text = "00"
-        }
+        label.text = "00"
         
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -375,6 +363,8 @@ class MainViewController: UIViewController {
     var schedule: WorkScheduleModel = WorkScheduleModel.today
     var tempSchedule: WorkScheduleModel?
     var todayRegularScheduleType: RegularScheduleType?
+    var todayTimeValue: Int = 0
+    var tomorrowTimeValue: Int = 0
     
     var isEditingMode: Bool = false {
         didSet {
@@ -782,11 +772,15 @@ extension MainViewController {
 // MARK: - Extension for methods added
 extension MainViewController {
     func determineToday() {
+        self.todayTimeValue = self.determineTodayTimeValue()
+        self.tomorrowTimeValue = self.determineTodayTimeValue() + 86400
+        
         if case .normal = self.schedule.workType {
             self.startWorkingTimeButton.isEnabled = false
         }
         
         self.todayRegularScheduleType = self.determineRegularSchedule(self.schedule)
+        self.resetMainTimeViewValues(self.todayRegularScheduleType)
         switch self.todayRegularScheduleType! {
         case .fullWork, .morningWork, .afternoonWork:
             self.remainingTimeButtonView.isEnabled = true
@@ -807,7 +801,17 @@ extension MainViewController {
         
         self.determineScheduleButtonState(for: self.schedule)
         
-        if self.schedule.startingWorkTime != nil {
+        if self.schedule.startingWorkTime == nil {
+            self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
+
+        } else {
+            if self.schedule.startingWorkTimeSecondsSinceReferenceDate! >= SupportingMethods.getCurrentTimeSeconds() {
+                self.startWorkingTimeButton.setTitle("출근전", for: .normal)
+                
+            } else {
+                // No need to reset main time view values
+            }
+            
             if self.timer == nil {
                 let timer = self.makeTimerForSchedule()
                 self.timer = timer
@@ -822,6 +826,15 @@ extension MainViewController {
     
     func makeTimerForSchedule() -> Timer {
         return Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
+    }
+    
+    func determineTodayTimeValue() -> Int {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let todayDayComponents = calendar.dateComponents([.year, .month, .day], from: Date())
+        let todaySecondComponents = DateComponents(year: todayDayComponents.year!, month: todayDayComponents.month!, day: todayDayComponents.day!, hour: 0, minute: 0, second: 0)
+        
+        return Int(calendar.date(from: todaySecondComponents)!.timeIntervalSinceReferenceDate)
     }
     
     func calculateTableViewHeight(for schedule: WorkScheduleModel) {
@@ -1705,7 +1718,6 @@ extension MainViewController {
     }
     
     func determineTodayRegularScheduleTypeAfterAddingRegularSchedule(_ schedule: WorkScheduleModel, completion:((RegularScheduleType) -> ())? = nil) {
-        var schedule = schedule
         
         guard let regularScheduleType = self.determineRegularSchedule(schedule) else {
             return
@@ -2063,29 +2075,36 @@ extension MainViewController {
         }
     }
     
-    func resetMainTimeViewValues(_ regularScheduleType: RegularScheduleType) {
-        switch regularScheduleType {
-        case .fullWork:
-            self.mainTimeViewRemainingHourValueLabel.text = "08"
-            self.mainTimeViewRemainingMinuteValueLabel.text = "00"
-            self.mainTimeViewRemainingSecondValueLabel.text = "00"
+    func resetMainTimeViewValues(_ regularScheduleType: RegularScheduleType?) {
+        if let regularScheduleType = regularScheduleType {
+            switch regularScheduleType {
+            case .fullWork:
+                self.mainTimeViewRemainingHourValueLabel.text = "08"
+                self.mainTimeViewRemainingMinuteValueLabel.text = "00"
+                self.mainTimeViewRemainingSecondValueLabel.text = "00"
+                
+            case .morningWork:
+                self.mainTimeViewRemainingHourValueLabel.text = "04"
+                self.mainTimeViewRemainingMinuteValueLabel.text = "00"
+                self.mainTimeViewRemainingSecondValueLabel.text = "00"
+                
+            case .afternoonWork:
+                self.mainTimeViewRemainingHourValueLabel.text = "04"
+                self.mainTimeViewRemainingMinuteValueLabel.text = "00"
+                self.mainTimeViewRemainingSecondValueLabel.text = "00"
+                
+            case .fullVacation:
+                self.mainTimeViewRemainingHourValueLabel.text = "00"
+                self.mainTimeViewRemainingMinuteValueLabel.text = "00"
+                self.mainTimeViewRemainingSecondValueLabel.text = "00"
+                
+            case .fullHoliday:
+                self.mainTimeViewRemainingHourValueLabel.text = "00"
+                self.mainTimeViewRemainingMinuteValueLabel.text = "00"
+                self.mainTimeViewRemainingSecondValueLabel.text = "00"
+            }
             
-        case .morningWork:
-            self.mainTimeViewRemainingHourValueLabel.text = "04"
-            self.mainTimeViewRemainingMinuteValueLabel.text = "00"
-            self.mainTimeViewRemainingSecondValueLabel.text = "00"
-            
-        case .afternoonWork:
-            self.mainTimeViewRemainingHourValueLabel.text = "04"
-            self.mainTimeViewRemainingMinuteValueLabel.text = "00"
-            self.mainTimeViewRemainingSecondValueLabel.text = "00"
-            
-        case .fullVacation:
-            self.mainTimeViewRemainingHourValueLabel.text = "00"
-            self.mainTimeViewRemainingMinuteValueLabel.text = "00"
-            self.mainTimeViewRemainingSecondValueLabel.text = "00"
-            
-        case .fullHoliday:
+        } else {
             self.mainTimeViewRemainingHourValueLabel.text = "00"
             self.mainTimeViewRemainingMinuteValueLabel.text = "00"
             self.mainTimeViewRemainingSecondValueLabel.text = "00"
@@ -2115,27 +2134,36 @@ extension MainViewController {
             return
         }
         
-        // FIXME: Need to handle timer after 24:00
+        let now = SupportingMethods.getCurrentTimeSeconds()
         
-        if startingWorkTimeSecondsSinceReferenceDate >= SupportingMethods.getCurrentTimeSeconds() {
-            self.startWorkingTimeButton.setTitle("출근전", for: .normal)
+        if (now >= self.tomorrowTimeValue) {
+            self.timer?.invalidate()
+            
+            self.schedule = WorkScheduleModel.today
+            
+            self.determineToday()
             
         } else {
-            self.determineStartingWorkTimeButtonTitleWithSchedule(self.schedule)
-        }
-        
-        switch self.mainTimeViewButtonType {
-        case .remainingTime:
-            self.determineRemainingTimeOnMainTimeView()
+            if startingWorkTimeSecondsSinceReferenceDate >= now {
+                self.startWorkingTimeButton.setTitle("출근전", for: .normal)
+                
+            } else {
+                self.determineStartingWorkTimeButtonTitleWithSchedule(self.schedule)
+            }
             
-        case .progressTime:
-            self.determineProgressTimeOnMainTimeView()
+            switch self.mainTimeViewButtonType {
+            case .remainingTime:
+                self.determineRemainingTimeOnMainTimeView()
+                
+            case .progressTime:
+                self.determineProgressTimeOnMainTimeView()
+                
+            case .progressRate:
+                self.determineProgressRateOnMainTimeView()
+            }
             
-        case .progressRate:
-            self.determineProgressRateOnMainTimeView()
+            self.determineScheduleButtonState(for: self.schedule)
         }
-        
-        self.determineScheduleButtonState(for: self.schedule)
     }
     
     @objc func remainingTimeButtonView(_ sender: UIButton) {
