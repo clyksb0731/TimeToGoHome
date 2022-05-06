@@ -150,7 +150,6 @@ struct WorkScheduleModel {
 extension WorkScheduleModel {
     mutating func updateStartingWorkTime(_ startingWorkTimeDate: Date?) {
         SupportingMethods.shared.setAppSetting(with: startingWorkTimeDate, for: .startingWorkTimeValue)
-        //self.startingWorkTime = startingWorkTimeDate
         
         self.refreshToday()
     }
@@ -190,7 +189,6 @@ extension WorkScheduleModel {
                     
                 } else {
                     SupportingMethods.shared.setAppSetting(with: nil, for: .startingWorkTimeValue)
-                    self.startingWorkTime = nil
                     
                     return nil
                 }

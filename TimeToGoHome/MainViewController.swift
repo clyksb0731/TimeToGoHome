@@ -773,7 +773,7 @@ extension MainViewController {
 extension MainViewController {
     func determineToday() {
         self.todayTimeValue = self.determineTodayTimeValue()
-        self.tomorrowTimeValue = self.determineTodayTimeValue() + 86400
+        self.tomorrowTimeValue = self.todayTimeValue + 86400
         
         if case .normal = self.schedule.workType {
             self.startWorkingTimeButton.isEnabled = false
