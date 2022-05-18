@@ -11,17 +11,29 @@ import UIKit
  Variables for app setting on UserDefaults
  */
 enum PListVariable: String {
-    case joiningDate
-    case workType
-    case morningStartingworkTimeValueRange
-    case afternoonStartingworkTimeValueRange
-    case startingWorkTimeValue
-    case lunchTimeValue
-    case isIgnoredLunchTimeForHalfVacation
-    case fixedAfternoonStartingWorkTimeValue
-    case vacationType
-    case numberOfTotalVacations
-    case initiallySetting
+    // 회사 정보
+    case companyName // 현 회사이름
+    case joiningDate // 현 입사날짜
+    case companyAddress // 현 회사주소
+    case companyLatitude // 현 회사위치 위도
+    case companyLongitude // 현 회사위치 경도
+    
+    // 근무 정보
+    case workType // 근무형태
+    case morningStartingworkTimeValueRange // 출근시간범위 (빠른/늦은)
+    case startingWorkTimeValue // 출근시간 (그냥 출근시간)
+    case afternoonStartingworkTimeValueRange // 오후 출근시간범위 (빠른/늦은)
+    case afternoonStartingworkTimeValue // 오후 출근시간 (그냥 오후 출근시간)
+    case lunchTimeValue // 점심시간
+    case isIgnoredLunchTimeForHalfVacation // 반차 시 점심시간 무시 여부
+    
+    // 휴무 정보
+    case holidays // 정기 휴일
+    case vacationType // 휴가기준 (회계연도/입사날짜)
+    case numberOfTotalVacations // 연차 개수
+    
+    // 초기 설정 완료 여보
+    case hasInitialSetting
 }
 
 enum CoverViewState {
