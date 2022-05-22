@@ -112,7 +112,7 @@ class InitialViewController: UIViewController {
         return button
     }()
     
-    var entryDateLabel: UILabel = {
+    var joiningDateLabel: UILabel = {
         let label = UILabel()
         label.text = "입사 일자"
         label.textAlignment = .center
@@ -123,7 +123,7 @@ class InitialViewController: UIViewController {
         return label
     }()
     
-    var entryDateView: UIView = {
+    var joiningDateView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -217,7 +217,7 @@ class InitialViewController: UIViewController {
         return view
     }()
     
-    var entryDateEffectView: UIView = {
+    var joiningDateEffectView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 15
         view.backgroundColor = UIColor.useRGB(red: 200, green: 200, blue: 200)
@@ -227,21 +227,21 @@ class InitialViewController: UIViewController {
         return view
     }()
     
-    var entryDateButton: UIButton = {
+    var joiningDateButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
     
-    var entryDatePickerView: UIView = {
+    var joiningDatePickerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
     
-    var entryDatePicker: UIDatePicker = {
+    var joiningDatePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.preferredDatePickerStyle = .wheels
         datePicker.timeZone = TimeZone.current
@@ -276,6 +276,8 @@ class InitialViewController: UIViewController {
         
         return button
     }()
+    
+    var joiningDate: Date = Date()
     
     var initialContentHeight: CGFloat!
     var upperViewTopAnchorConstant: NSLayoutConstraint!
@@ -340,7 +342,9 @@ extension InitialViewController {
         self.monthLabel.text = "\(todayDateComponents.month!)"
         self.dayLabel.text = "\(todayDateComponents.day!)"
         
-        self.entryDatePicker.maximumDate = today
+        self.joiningDate = today
+        
+        self.joiningDatePicker.maximumDate = today
     }
     
     // Initialize views
@@ -352,8 +356,8 @@ extension InitialViewController {
     func setTargets() {
         self.companyNameTextField.addTarget(self, action: #selector(companyNameTextField(_:)), for: .editingChanged)
         self.companyNameEraserButton.addTarget(self, action: #selector(companyNameEraserButton(_:)), for: .touchUpInside)
-        self.entryDateButton.addTarget(self, action: #selector(entryDateButton(_:)), for: .touchUpInside)
-        self.entryDatePicker.addTarget(self, action: #selector(entryDatePicker(_:)), for: .valueChanged)
+        self.joiningDateButton.addTarget(self, action: #selector(joiningDateButton(_:)), for: .touchUpInside)
+        self.joiningDatePicker.addTarget(self, action: #selector(joiningDatePicker(_:)), for: .valueChanged)
         self.nextButton.addTarget(self, action: #selector(nextButton(_:)), for: .touchUpInside)
     }
     
@@ -400,11 +404,11 @@ extension InitialViewController {
             self.companyNameLineView,
             self.companyNameTextField,
             self.companyNameEraserButton,
-            self.entryDateLabel,
-            self.entryDateView,
-            self.entryDateEffectView,
-            self.entryDateButton,
-            self.entryDatePickerView
+            self.joiningDateLabel,
+            self.joiningDateView,
+            self.joiningDateEffectView,
+            self.joiningDateButton,
+            self.joiningDatePickerView
         ], to: self.lowerView)
         
         SupportingMethods.shared.addSubviews([
@@ -417,11 +421,11 @@ extension InitialViewController {
             self.dayLabel,
             self.dayMarkLabel,
             self.dayLineView,
-            ], to: self.entryDateView)
+            ], to: self.joiningDateView)
         
         SupportingMethods.shared.addSubviews([
-            self.entryDatePicker
-        ], to: self.entryDatePickerView)
+            self.joiningDatePicker
+        ], to: self.joiningDatePickerView)
         
         SupportingMethods.shared.addSubviews([
             self.nextButtonImageView,
@@ -526,39 +530,39 @@ extension InitialViewController {
             self.companyNameEraserButton.widthAnchor.constraint(equalToConstant: 17)
         ])
         
-        // Entry date label layout
+        // Joining date label layout
         NSLayoutConstraint.activate([
-            self.entryDateLabel.topAnchor.constraint(equalTo: self.companyNameLineView.bottomAnchor, constant: 36),
-            self.entryDateLabel.heightAnchor.constraint(equalToConstant: 22),
-            self.entryDateLabel.centerXAnchor.constraint(equalTo: self.lowerView.centerXAnchor),
-            self.entryDateLabel.widthAnchor.constraint(equalToConstant: 63)
+            self.joiningDateLabel.topAnchor.constraint(equalTo: self.companyNameLineView.bottomAnchor, constant: 36),
+            self.joiningDateLabel.heightAnchor.constraint(equalToConstant: 22),
+            self.joiningDateLabel.centerXAnchor.constraint(equalTo: self.lowerView.centerXAnchor),
+            self.joiningDateLabel.widthAnchor.constraint(equalToConstant: 63)
         ])
         
-        // Entry date view layout
+        // Joining date view layout
         NSLayoutConstraint.activate([
-            self.entryDateView.topAnchor.constraint(equalTo: self.entryDateLabel.bottomAnchor, constant: 10),
-            self.entryDateView.heightAnchor.constraint(equalToConstant: 34),
-            self.entryDateView.centerXAnchor.constraint(equalTo: self.lowerView.centerXAnchor),
-            self.entryDateView.widthAnchor.constraint(greaterThanOrEqualToConstant: 150)
+            self.joiningDateView.topAnchor.constraint(equalTo: self.joiningDateLabel.bottomAnchor, constant: 10),
+            self.joiningDateView.heightAnchor.constraint(equalToConstant: 34),
+            self.joiningDateView.centerXAnchor.constraint(equalTo: self.lowerView.centerXAnchor),
+            self.joiningDateView.widthAnchor.constraint(greaterThanOrEqualToConstant: 150)
         ])
         
         // Year label layout
         NSLayoutConstraint.activate([
-            self.yearLabel.topAnchor.constraint(equalTo: self.entryDateView.topAnchor),
-            self.yearLabel.bottomAnchor.constraint(equalTo: self.entryDateView.bottomAnchor),
-            self.yearLabel.leadingAnchor.constraint(equalTo: self.entryDateView.leadingAnchor)
+            self.yearLabel.topAnchor.constraint(equalTo: self.joiningDateView.topAnchor),
+            self.yearLabel.bottomAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor),
+            self.yearLabel.leadingAnchor.constraint(equalTo: self.joiningDateView.leadingAnchor)
         ])
         
         // Year mark label layout
         NSLayoutConstraint.activate([
-            self.yearMarkLabel.topAnchor.constraint(equalTo: self.entryDateView.topAnchor),
-            self.yearMarkLabel.bottomAnchor.constraint(equalTo: self.entryDateView.bottomAnchor),
+            self.yearMarkLabel.topAnchor.constraint(equalTo: self.joiningDateView.topAnchor),
+            self.yearMarkLabel.bottomAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor),
             self.yearMarkLabel.leadingAnchor.constraint(equalTo: self.yearLabel.trailingAnchor)
         ])
         
         // Year line view layout
         NSLayoutConstraint.activate([
-            self.yearLineView.bottomAnchor.constraint(equalTo: self.entryDateView.bottomAnchor),
+            self.yearLineView.bottomAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor),
             self.yearLineView.heightAnchor.constraint(equalToConstant: 1),
             self.yearLineView.leadingAnchor.constraint(equalTo: self.yearLabel.leadingAnchor),
             self.yearLineView.trailingAnchor.constraint(equalTo: self.yearLabel.trailingAnchor)
@@ -566,21 +570,21 @@ extension InitialViewController {
         
         // Month label layout
         NSLayoutConstraint.activate([
-            self.monthLabel.topAnchor.constraint(equalTo: self.entryDateView.topAnchor),
-            self.monthLabel.bottomAnchor.constraint(equalTo: self.entryDateView.bottomAnchor),
+            self.monthLabel.topAnchor.constraint(equalTo: self.joiningDateView.topAnchor),
+            self.monthLabel.bottomAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor),
             self.monthLabel.leadingAnchor.constraint(equalTo: self.yearMarkLabel.trailingAnchor, constant: 15)
         ])
         
         // Month mark label layout
         NSLayoutConstraint.activate([
-            self.monthMarkLabel.topAnchor.constraint(equalTo: self.entryDateView.topAnchor),
-            self.monthMarkLabel.bottomAnchor.constraint(equalTo: self.entryDateView.bottomAnchor),
+            self.monthMarkLabel.topAnchor.constraint(equalTo: self.joiningDateView.topAnchor),
+            self.monthMarkLabel.bottomAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor),
             self.monthMarkLabel.leadingAnchor.constraint(equalTo: self.monthLabel.trailingAnchor)
         ])
         
         // Month line view layout
         NSLayoutConstraint.activate([
-            self.monthLineView.bottomAnchor.constraint(equalTo: self.entryDateView.bottomAnchor),
+            self.monthLineView.bottomAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor),
             self.monthLineView.heightAnchor.constraint(equalToConstant: 1),
             self.monthLineView.leadingAnchor.constraint(equalTo: self.monthLabel.leadingAnchor),
             self.monthLineView.trailingAnchor.constraint(equalTo: self.monthLabel.trailingAnchor)
@@ -588,57 +592,57 @@ extension InitialViewController {
         
         // Day label layout
         NSLayoutConstraint.activate([
-            self.dayLabel.topAnchor.constraint(equalTo: self.entryDateView.topAnchor),
-            self.dayLabel.bottomAnchor.constraint(equalTo: self.entryDateView.bottomAnchor),
+            self.dayLabel.topAnchor.constraint(equalTo: self.joiningDateView.topAnchor),
+            self.dayLabel.bottomAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor),
             self.dayLabel.leadingAnchor.constraint(equalTo: self.monthMarkLabel.trailingAnchor, constant: 15)
         ])
         
         // Day mark label layout
         NSLayoutConstraint.activate([
-            self.dayMarkLabel.topAnchor.constraint(equalTo: self.entryDateView.topAnchor),
-            self.dayMarkLabel.bottomAnchor.constraint(equalTo: self.entryDateView.bottomAnchor),
+            self.dayMarkLabel.topAnchor.constraint(equalTo: self.joiningDateView.topAnchor),
+            self.dayMarkLabel.bottomAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor),
             self.dayMarkLabel.leadingAnchor.constraint(equalTo: self.dayLabel.trailingAnchor),
-            self.dayMarkLabel.trailingAnchor.constraint(equalTo: self.entryDateView.trailingAnchor)
+            self.dayMarkLabel.trailingAnchor.constraint(equalTo: self.joiningDateView.trailingAnchor)
         ])
         
         // Day line view layout
         NSLayoutConstraint.activate([
-            self.dayLineView.bottomAnchor.constraint(equalTo: self.entryDateView.bottomAnchor),
+            self.dayLineView.bottomAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor),
             self.dayLineView.heightAnchor.constraint(equalToConstant: 1),
             self.dayLineView.leadingAnchor.constraint(equalTo: self.dayLabel.leadingAnchor),
             self.dayLineView.trailingAnchor.constraint(equalTo: self.dayLabel.trailingAnchor)
         ])
         
-        // Entry date effect view layout
+        // Joining date effect view layout
         NSLayoutConstraint.activate([
-            self.entryDateEffectView.topAnchor.constraint(equalTo: self.entryDateView.topAnchor, constant: -10),
-            self.entryDateEffectView.bottomAnchor.constraint(equalTo: self.entryDateView.bottomAnchor, constant: 10),
-            self.entryDateEffectView.leadingAnchor.constraint(equalTo: self.entryDateView.leadingAnchor, constant: -10),
-            self.entryDateEffectView.trailingAnchor.constraint(equalTo: self.entryDateView.trailingAnchor, constant: 10)
+            self.joiningDateEffectView.topAnchor.constraint(equalTo: self.joiningDateView.topAnchor, constant: -10),
+            self.joiningDateEffectView.bottomAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor, constant: 10),
+            self.joiningDateEffectView.leadingAnchor.constraint(equalTo: self.joiningDateView.leadingAnchor, constant: -10),
+            self.joiningDateEffectView.trailingAnchor.constraint(equalTo: self.joiningDateView.trailingAnchor, constant: 10)
         ])
         
-        // Entry date button layout
+        // Joining date button layout
         NSLayoutConstraint.activate([
-            self.entryDateButton.topAnchor.constraint(equalTo: self.entryDateView.topAnchor),
-            self.entryDateButton.bottomAnchor.constraint(equalTo: self.entryDateView.bottomAnchor),
-            self.entryDateButton.leadingAnchor.constraint(equalTo: self.entryDateView.leadingAnchor),
-            self.entryDateButton.trailingAnchor.constraint(equalTo: self.entryDateView.trailingAnchor)
+            self.joiningDateButton.topAnchor.constraint(equalTo: self.joiningDateView.topAnchor),
+            self.joiningDateButton.bottomAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor),
+            self.joiningDateButton.leadingAnchor.constraint(equalTo: self.joiningDateView.leadingAnchor),
+            self.joiningDateButton.trailingAnchor.constraint(equalTo: self.joiningDateView.trailingAnchor)
         ])
         
-        // Entry date picker view layout
+        // Joining date picker view layout
         NSLayoutConstraint.activate([
-            self.entryDatePickerView.topAnchor.constraint(equalTo: self.entryDateView.bottomAnchor),
-            self.entryDatePickerView.bottomAnchor.constraint(equalTo: self.nextButton.topAnchor),
-            self.entryDatePickerView.leadingAnchor.constraint(equalTo: self.lowerView.leadingAnchor),
-            self.entryDatePickerView.trailingAnchor.constraint(equalTo: self.lowerView.trailingAnchor)
+            self.joiningDatePickerView.topAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor),
+            self.joiningDatePickerView.bottomAnchor.constraint(equalTo: self.nextButton.topAnchor),
+            self.joiningDatePickerView.leadingAnchor.constraint(equalTo: self.lowerView.leadingAnchor),
+            self.joiningDatePickerView.trailingAnchor.constraint(equalTo: self.lowerView.trailingAnchor)
         ])
         
-        // Entry date picker layout
+        // Joining date picker layout
         NSLayoutConstraint.activate([
-            self.entryDatePicker.topAnchor.constraint(equalTo: self.entryDatePickerView.topAnchor),
-            self.entryDatePicker.bottomAnchor.constraint(equalTo: self.entryDatePickerView.bottomAnchor),
-            self.entryDatePicker.leadingAnchor.constraint(equalTo: self.entryDatePickerView.leadingAnchor),
-            self.entryDatePicker.trailingAnchor.constraint(equalTo: self.entryDatePickerView.trailingAnchor)
+            self.joiningDatePicker.topAnchor.constraint(equalTo: self.joiningDatePickerView.topAnchor),
+            self.joiningDatePicker.bottomAnchor.constraint(equalTo: self.joiningDatePickerView.bottomAnchor),
+            self.joiningDatePicker.leadingAnchor.constraint(equalTo: self.joiningDatePickerView.leadingAnchor),
+            self.joiningDatePicker.trailingAnchor.constraint(equalTo: self.joiningDatePickerView.trailingAnchor)
         ])
         
         // Next button view layout
@@ -694,14 +698,14 @@ extension InitialViewController {
                     UIView.animate(withDuration: 0.2, animations: {
                         self.view.layoutIfNeeded()
                         
-                        self.entryDatePicker.alpha = 0
+                        self.joiningDatePicker.alpha = 0
                     }, completion: nil)
                 }
                 
             } else {
                 targetY = self.view.safeAreaInsets.top +
                     self.view.safeAreaLayoutGuide.layoutFrame.height / 2 +
-                    self.entryDateView.frame.origin.y +
+                    self.joiningDateView.frame.origin.y +
                     self.yearLineView.frame.origin.y + 10 // 10 more than actual target y
                 targetHeight = self.view.bounds.size.height - targetY
             }
@@ -754,15 +758,15 @@ extension InitialViewController {
         self.nextButton.isEnabled = false
     }
     
-    @objc func entryDateButton(_ sender: UIButton) {
+    @objc func joiningDateButton(_ sender: UIButton) {
         // Effect for touching button
         UIView.animate(withDuration: 0.15) {
-            self.entryDateEffectView.alpha = 0.3
+            self.joiningDateEffectView.alpha = 0.3
             
         } completion: { (finish) in
             if finish {
                 UIView.animate(withDuration: 0.15, animations: {
-                    self.entryDateEffectView.alpha = 0
+                    self.joiningDateEffectView.alpha = 0
                 }, completion: nil)
             }
         }
@@ -774,7 +778,7 @@ extension InitialViewController {
             UIView.animate(withDuration: 0.2) {
                 self.view.layoutIfNeeded()
                 
-                self.entryDatePicker.alpha = 1
+                self.joiningDatePicker.alpha = 1
                 
             } completion: { finished in
                 if finished {
@@ -784,7 +788,7 @@ extension InitialViewController {
             
         } else {
             self.upperViewTopAnchorConstant.constant = 0
-            self.entryDatePicker.alpha = 0
+            self.joiningDatePicker.alpha = 0
             
             UIView.animate(withDuration: 0.2) {
                 self.view.layoutIfNeeded()
@@ -797,7 +801,7 @@ extension InitialViewController {
         }
     }
     
-    @objc func entryDatePicker(_ sender: UIDatePicker) {
+    @objc func joiningDatePicker(_ sender: UIDatePicker) {
         var calendar = Calendar.current
         calendar.timeZone = TimeZone.current
         calendar.locale = Locale(identifier: "ko_KR")
@@ -807,6 +811,8 @@ extension InitialViewController {
         self.yearLabel.text = "\(todayDateComponents.year!)"
         self.monthLabel.text = "\(todayDateComponents.month!)"
         self.dayLabel.text = "\(todayDateComponents.day!)"
+        
+        self.joiningDate = sender.date
         
         /*
         if let year = todayDateComponents.year {
@@ -824,13 +830,21 @@ extension InitialViewController {
     }
     
     @objc func nextButton(_ sender: UIButton) {
+        guard let companyName = self.companyNameTextField.text else {
+            return
+        }
+        
+        // Temporary data for initial setting
+        SupportingMethods.shared.temporaryInitialData.updateValue(companyName, forKey: "companyName")
+        SupportingMethods.shared.temporaryInitialData.updateValue(self.joiningDate, forKey: "joiningDate")
+        
         let companyLocationVC = CompanyLocationViewController()
         let naviVC = UINavigationController(rootViewController: companyLocationVC)
         naviVC.modalPresentationStyle = .fullScreen
         
         self.present(naviVC, animated: true, completion: {
             self.upperViewTopAnchorConstant.constant = 0
-            self.entryDatePicker.alpha = 0
+            self.joiningDatePicker.alpha = 0
         })
     }
     

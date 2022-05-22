@@ -43,6 +43,7 @@ enum CoverViewState {
 
 class SupportingMethods {
     private var coverViewArray: Array<UIView> = []
+    var temporaryInitialData: Dictionary<String,Any> = [:]
     
     static let shared = SupportingMethods()
     
