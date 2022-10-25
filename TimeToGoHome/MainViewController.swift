@@ -2282,7 +2282,7 @@ extension MainViewController {
     @objc func scheduleCellLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
         if let scheduleCell = gesture.view {
             if gesture.state == .began {
-                UIDevice.lightHaptic()
+                UIDevice.heavyHaptic()
                 
                 if scheduleCell.tag == 1 {
                     print("Long Pressed for morning")
