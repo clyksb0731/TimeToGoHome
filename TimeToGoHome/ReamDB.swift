@@ -18,7 +18,7 @@ class Company: Object {
     @Persisted var isCurrent: Bool = false
     @Persisted var schedule: List<Schedule>
     
-    init(joiningDateId: String,
+    convenience init(joiningDateId: String,
          joingingDate: Date,
          name: String,
          address: String,
@@ -26,7 +26,7 @@ class Company: Object {
          longitude: Double,
          isCurrent: Bool) {
         self.init()
-        
+
         self.joiningDateId = joiningDateId
         self.joingingDate = joingingDate
         self.name = name
