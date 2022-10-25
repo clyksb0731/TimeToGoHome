@@ -288,3 +288,22 @@ extension UIPickerView {
             }
         }
 }
+
+// MARK: - View Protocol
+protocol EssentialViewMethods {
+    func setViewFoundation()
+    func initializeObjects()
+    func setDelegates()
+    func setGestures()
+    func setNotificationCenters()
+    func setSubviews()
+    func setLayouts()
+}
+
+// MARK: - Cell Protocol
+protocol EssentialCellMethods {
+    func setViewFoundation()
+    func initializeObjects()
+    func setSubviews()
+    func setLayouts()
+}
