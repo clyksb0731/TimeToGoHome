@@ -167,6 +167,23 @@ extension SupportingMethods {
     }
     
     // MARK: About time
+    func makeDateFormatter(_ format: String) -> DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        dateFormatter.timeZone = TimeZone.current
+        dateFormatter.dateFormat = format
+        
+        return dateFormatter
+    }
+    
+    func makeYearMonthDay(_ date: Date) -> (year: String, month: String, day: String) {
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone.current
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
+        
+        return (year: "\(dateComponents.year!)", month: String(format: "%02d", dateComponents.month!), day: String(format: "%02d", dateComponents.day!))
+    }
+    
     func determineAdditionalHourAndMinuteUsingMinute(_ minutes: Int) -> String {
         let hours = minutes / 60
         let minuteLeft = minutes % 60
