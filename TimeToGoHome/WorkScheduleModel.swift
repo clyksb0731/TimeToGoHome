@@ -137,7 +137,7 @@ struct WorkScheduleModel {
         // Check DB if there is already today schedule.
         // &&
         // Check tody schedule condition for initial setting.
-        self.workType = self.makeWorkType() // FIXME: From app setting
+        self.workType = self.makeWorkType()
         self.startingWorkTime = self.makeStartingWorkTimeDate()
         self.lunchTime = self.makeLunchTimeDate()
         self.morning = .morning(.work) // FIXME: Temp

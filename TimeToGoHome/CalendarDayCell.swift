@@ -7,14 +7,14 @@
 
 import UIKit
 
+enum VacationType: String {
+    case none
+    case morning
+    case afternoon
+    case fullDay
+}
+
 class CalendarDayCell: UICollectionViewCell {
-    enum VacationType {
-        case none
-        case morningVacation
-        case afternoonVacation
-        case fullDayVacation
-    }
-    
     lazy private var baseView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -232,17 +232,17 @@ extension CalendarDayCell {
                 self.afternoonVacationShapeView.isHidden = true
                 self.fullDayVacationShapeView.isHidden = true
                 
-            case .morningVacation:
+            case .morning:
                 self.morningVacationShapeView.isHidden = false
                 self.afternoonVacationShapeView.isHidden = true
                 self.fullDayVacationShapeView.isHidden = true
                 
-            case .afternoonVacation:
+            case .afternoon:
                 self.morningVacationShapeView.isHidden = true
                 self.afternoonVacationShapeView.isHidden = false
                 self.fullDayVacationShapeView.isHidden = true
                 
-            case .fullDayVacation:
+            case .fullDay:
                 self.morningVacationShapeView.isHidden = true
                 self.afternoonVacationShapeView.isHidden = true
                 self.fullDayVacationShapeView.isHidden = false

@@ -436,7 +436,7 @@ extension MainViewController {
         navigationBarAppearance.backgroundColor = .white
         navigationBarAppearance.titleTextAttributes = [
             .foregroundColor : UIColor.black,
-            .font : UIFont.systemFont(ofSize: 22, weight: .semibold)
+            .font : UIFont.systemFont(ofSize: 22, weight: .bold)
         ]
         
         self.navigationItem.scrollEdgeAppearance = navigationBarAppearance
@@ -446,7 +446,7 @@ extension MainViewController {
         self.navigationController?.setNavigationBarHidden(false, animated: true);
         self.navigationController?.navigationBar.isTranslucent = true
         
-        self.navigationItem.title = "Work Schedule"
+        self.navigationItem.title = "오늘의 일정"
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "menuBarButton"), style: .plain, target: self, action: #selector(menuBarButtonItem(_:)))
         self.navigationItem.leftBarButtonItem?.tintColor = UIColor.useRGB(red: 151, green: 151, blue: 151)
         

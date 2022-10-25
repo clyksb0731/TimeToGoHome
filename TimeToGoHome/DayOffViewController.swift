@@ -1114,7 +1114,7 @@ extension DayOffViewController {
     @objc func vacationButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
-        if let buttonView = sender.superview as? DayButtonView {
+        if let buttonView = sender.superview as? VacationButtonView {
             buttonView.isSelected.toggle()
             
             if sender.tag == 1 {
@@ -1122,7 +1122,7 @@ extension DayOffViewController {
             }
             
             if sender.tag == 2{
-                print("morning")
+                print("afternoon")
             }
         }
     }

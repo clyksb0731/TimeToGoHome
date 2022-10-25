@@ -50,7 +50,7 @@ extension AppDelegate {
         if let initialSet = SupportingMethods.shared.useAppSetting(for: .hasInitialSetting) as? Bool, initialSet {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let mainVC = storyboard.instantiateInitialViewController() as! MainViewController
-            self.window?.rootViewController = mainVC
+            self.window?.rootViewController = CustomizedNavigationController(rootViewController: mainVC)
             
         } else {
 //            let staggeredWorkTypeVC = StaggeredWorkTypeViewController()
@@ -59,12 +59,12 @@ extension AppDelegate {
 //            tabBarVC.viewControllers = [staggeredWorkTypeVC, normalWorkTypeVC]
 //            self.window?.rootViewController = tabBarVC
             
-            let mainVC = MainViewController()
-            let mainNaviVC = UINavigationController(rootViewController: mainVC)
-            self.window?.rootViewController = mainNaviVC
+//            let mainVC = MainViewController()
+//            let mainNaviVC = CustomizedNavigationController(rootViewController: mainVC)
+//            self.window?.rootViewController = mainNaviVC
             
-//            let dayOffVC = DayOffViewController()
-//            self.window?.rootViewController = dayOffVC
+            let dayOffVC = DayOffViewController()
+            self.window?.rootViewController = dayOffVC
         }
         
         self.window?.makeKeyAndVisible()
@@ -272,6 +272,7 @@ extension AppDelegate {
         SupportingMethods.shared.setAppSetting(with: true, for: .isIgnoredLunchTimeForHalfVacation)
         //SupportingMethods.shared.setAppSetting(with: "fiscalYear", for: .vacationType)
         SupportingMethods.shared.setAppSetting(with: "joiningDay", for: .vacationType)
+        SupportingMethods.shared.setAppSetting(with: [1,7], for: .holidays)
         SupportingMethods.shared.setAppSetting(with: 15, for: .numberOfTotalVacations)
     }
 }
