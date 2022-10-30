@@ -17,27 +17,25 @@ class Company: Object {
     @Persisted var address: String = ""
     @Persisted var latitude: Double = 0
     @Persisted var longitude: Double = 0
-    @Persisted var isCurrent: Bool = false
     @Persisted var schedule: List<Schedule>
     
-    convenience init(entryDate: Date, name: String, address: String, latitude: Double, longitude: Double, isCurrent: Bool) {
+    convenience init(entryDate: Date, name: String, address: String, latitude: Double, longitude: Double) {
         self.init()
         
         self.entryDateId = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: entryDate)
-        let yearMonthDay = SupportingMethods.shared.makeYearMonthDay(entryDate)
-        self.year = yearMonthDay.year
-        self.month = yearMonthDay.month
-        self.day = yearMonthDay.day
+        let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(entryDate)
+        self.year = String(format: "%02d", yearMonthDay.year)
+        self.month = String(format: "%02d", yearMonthDay.month)
+        self.day = String(format: "%02d", yearMonthDay.day)
         self.name = name
         self.address = address
         self.latitude = latitude
         self.longitude = longitude
-        self.isCurrent = isCurrent
     }
 }
 
 class Schedule: EmbeddedObject {
-    @Persisted(primaryKey: true) var dateId: String = ""
+    //@Persisted(primaryKey: true) var dateId: String = ""
     @Persisted var year: String = ""
     @Persisted var month: String = ""
     @Persisted var day: String = ""
@@ -48,11 +46,11 @@ class Schedule: EmbeddedObject {
     convenience init(date: Date, morningType morning: WorkTimeType, afternoonType afternoon: WorkTimeType, overtime: Int) {
         self.init()
         
-        self.dateId = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date)
-        let yearMonthDay = SupportingMethods.shared.makeYearMonthDay(date)
-        self.year = yearMonthDay.year
-        self.month = yearMonthDay.month
-        self.day = yearMonthDay.day
+        //self.dateId = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date)
+        let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
+        self.year = String(format: "%02d", yearMonthDay.year)
+        self.month = String(format: "%02d", yearMonthDay.month)
+        self.day = String(format: "%02d", yearMonthDay.day)
         self.morning = morning.rawValue
         self.afternoon = afternoon.rawValue
         self.overtime = overtime
@@ -70,10 +68,10 @@ class Vacation: Object {
         self.init()
         
         self.dateId = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date)
-        let yearMonthDay = SupportingMethods.shared.makeYearMonthDay(date)
-        self.year = yearMonthDay.year
-        self.month = yearMonthDay.month
-        self.day = yearMonthDay.day
+        let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
+        self.year = String(format: "%02d", yearMonthDay.year)
+        self.month = String(format: "%02d", yearMonthDay.month)
+        self.day = String(format: "%02d", yearMonthDay.day)
         self.vacationType = vacationType.rawValue
     }
 }

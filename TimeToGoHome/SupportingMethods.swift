@@ -42,7 +42,7 @@ enum CoverViewState {
 }
 
 class SupportingMethods {
-    private var coverViewArray: Array<UIView> = []
+    private var coverView: UIView?
     var temporaryInitialData: Dictionary<String,Any> = [:]
     
     static let shared = SupportingMethods()
@@ -130,9 +130,9 @@ extension SupportingMethods {
             activityIndicator.translatesAutoresizingMaskIntoConstraints = false
             
             coverView.addSubview(activityIndicator)
-            on.addSubview(coverView)
+            self.coverView = coverView
             
-            self.coverViewArray.append(coverView)
+            on.addSubview(coverView)
             
             NSLayoutConstraint.activate([
                 // Activity Indicator
@@ -149,18 +149,15 @@ extension SupportingMethods {
             activityIndicator.startAnimating()
             
         case .off:
-            if let view = on.subviews.last {
-                for i in 0..<self.coverViewArray.count {
-                    if view === self.coverViewArray[i] {
-                        if let activityIndicator = view.subviews.first as? UIActivityIndicatorView {
-                            activityIndicator.stopAnimating()
-                        }
-                        
-                        view.removeFromSuperview()
-                        
-                        self.coverViewArray.remove(at: i)
-                        break;
+            for view in on.subviews {
+                if view === self.coverView {
+                    if let activityIndicator = view.subviews.first as? UIActivityIndicatorView {
+                        activityIndicator.stopAnimating()
                     }
+                    view.removeFromSuperview()
+                    self.coverView = nil
+                    
+                    break
                 }
             }
         }
@@ -176,12 +173,48 @@ extension SupportingMethods {
         return dateFormatter
     }
     
-    func makeYearMonthDay(_ date: Date) -> (year: String, month: String, day: String) {
+    func getYearMonthAndDayOf(_ date: Date) -> (year: Int, month: Int, day: Int) {
         var calendar = Calendar.current
-        calendar.timeZone = TimeZone.current
+        calendar.timeZone = .current
         let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
         
-        return (year: "\(dateComponents.year!)", month: String(format: "%02d", dateComponents.month!), day: String(format: "%02d", dateComponents.day!))
+        return (dateComponents.year!, dateComponents.month!, dateComponents.day!)
+    }
+    
+    func makeDateWithYear(_ year: Int, month: Int, andDay day: Int = 1) -> Date {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        
+        let dateComponents = DateComponents(year: year, month: month, day: day)
+        
+        return calendar.date(from: dateComponents)!
+    }
+    
+    func getWeeksOfMonthFor(_ date: Date) -> Int {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let weeksOfMonth = calendar.range(of: .weekOfMonth, in: .month, for: date)
+        
+        return (weeksOfMonth?.count)!
+    }
+    
+    func getDaysOfMonthFor(_ date: Date) -> Int {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let daysOfMonth = calendar.range(of: .day, in: .month, for: date)
+        
+        return (daysOfMonth?.count)!
+    }
+    
+    func getFirstWeekdayFor(_ date: Date) -> Int {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
+        var firstDayDateComponents = DateComponents(year: dateComponents.year!, month: dateComponents.month!, day: 1)
+        let firstDate = calendar.date(from: firstDayDateComponents)!
+        firstDayDateComponents = calendar.dateComponents([.weekday], from: firstDate)
+        
+        return firstDayDateComponents.weekday!
     }
     
     func determineAdditionalHourAndMinuteUsingMinute(_ minutes: Int) -> String {
