@@ -551,7 +551,7 @@ class DayOffViewController: UIViewController {
     
     var realmNotification: NotificationToken?
     
-    lazy var results: Results = {
+    lazy var results: Results<Vacation> = {
         let realm = try! Realm()
         let results = realm.objects(Vacation.self)
         
