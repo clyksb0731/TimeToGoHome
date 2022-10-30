@@ -27,7 +27,7 @@ class VacationButtonView: UIView {
     
     override var tag: Int {
         get {
-            return coverButton.tag
+            return self.coverButton.tag
         }
         
         set {

@@ -551,6 +551,12 @@ class DayOffViewController: UIViewController {
     
     var realmNotification: NotificationToken?
     
+    lazy var results: Results = {
+        let realm = try! Realm()
+        let results = realm.objects(Vacation.self)
+        
+        return results
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -599,24 +605,32 @@ extension DayOffViewController {
     
     // Initialize views
     func initializeViews() {
-        let realm = try! Realm()
-        let results = realm.objects(Vacation.self)
-        
-        self.realmNotification = results.observe({ [weak self] (changes: RealmCollectionChange) in
+        self.realmNotification = self.results.observe({ [weak self] (changes: RealmCollectionChange) in
             guard let calendarCollectionView = self?.calendarCollectionView else { return }
             switch changes {
-            case .initial(let results):
+            case .initial(_):
                 calendarCollectionView.reloadData()
                 
-            case .update(let results, deletions: let deletions, insertions: let insertions, modifications: let modifications):
-                calendarCollectionView.performBatchUpdates {
-                    calendarCollectionView.deleteItems(at: deletions.map({IndexPath(row: $0, section: 0)}))
-                    calendarCollectionView.insertItems(at: insertions.map({IndexPath(row: $0, section: 0)}))
-                    calendarCollectionView.reloadItems(at: modifications.map({IndexPath(row: $0, section: 0)}))
-                    
-                } completion: { finished in
-                    // completion
-                }
+            case .update(_, deletions: _, insertions: _, modifications: _):
+                calendarCollectionView.reloadData()
+                
+//            case .update(_, deletions: let deletions, insertions: let insertions, modifications: let modifications):
+//                calendarCollectionView.performBatchUpdates {
+//                    if deletions.count > 0 {
+//                        calendarCollectionView.deleteItems(at: deletions.map({IndexPath(row: $0, section: 0)}))
+//                    }
+//
+//                    if insertions.count > 0 {
+//                        calendarCollectionView.insertItems(at: insertions.map({IndexPath(row: $0, section: 0)}))
+//                    }
+//
+//                    if modifications.count > 0 {
+//                        calendarCollectionView.reloadItems(at: modifications.map({IndexPath(row: $0, section: 0)}))
+//                    }
+//
+//                } completion: { finished in
+//                    // completion
+//                }
                 
             case .error(let error):
                 fatalError("\(error.localizedDescription)")
@@ -1098,24 +1112,52 @@ extension DayOffViewController {
         if let buttonView = sender.superview as? VacationButtonView {
             buttonView.isSelected.toggle()
             
-            if sender.tag == 1 {
+            let realm = try! Realm()
+            var vacation: Vacation!
+            
+            if buttonView.tag == 1 {
                 print("morning")
-                if self.afternoonVacationButtonView.isSelected {
-                    let realm = try! Realm()
-                    //Vacation(date: <#T##Date#>, vacationType: <#T##VacationType#>)
+                
+                if buttonView.isSelected {
+                    if self.afternoonVacationButtonView.isSelected {
+                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .fullDay)
+                        
+                    } else {
+                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .morning)
+                    }
                     
                 } else {
+                    if self.afternoonVacationButtonView.isSelected {
+                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .afternoon)
+                        
+                    } else {
+                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .none)
+                    }
+                }
+                
+            } else {
+                print("afternoon")
+                
+                if buttonView.isSelected {
+                    if self.morningVacationButtonView.isSelected {
+                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .fullDay)
+                        
+                    } else {
+                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .afternoon)
+                    }
                     
+                } else {
+                    if self.morningVacationButtonView.isSelected {
+                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .morning)
+                        
+                    } else {
+                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .none)
+                    }
                 }
             }
             
-            if sender.tag == 2 {
-                print("afternoon")
-                if self.morningVacationButtonView.isSelected {
-                    
-                } else {
-                    
-                }
+            try! realm.write {
+                realm.add(vacation, update: .modified)
             }
         }
     }
@@ -1142,6 +1184,8 @@ extension DayOffViewController {
         
         sender.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).month)
         self.nextMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).month)
+        
+        UIDevice.lightHaptic()
     }
     
     @objc func nextMonthButton(_ sender: UIButton) {
@@ -1166,6 +1210,8 @@ extension DayOffViewController {
         
         self.previousMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).month)
         sender.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).month)
+        
+        UIDevice.lightHaptic()
     }
     
     @objc func numberOfVacationButton(_ sender: UIButton) {
@@ -1291,12 +1337,16 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
             let dateOfDay = SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, andDay: day)
             let isEnable = dateOfDay >= self.vacationScheduleDateRange.startDate && dateOfDay <= self.vacationScheduleDateRange.endDate
             
+            let realm = try! Realm()
+            let vaction: Vacation? = realm.object(ofType: Vacation.self, forPrimaryKey: dateId)
+            
             item.setItem(dateId,
                          day: day,
                          isToday: isToday,
                          isSelected: isSelected,
                          isEnable: isEnable,
-                         vacationType: .none) // FIXME: from DB
+                         vacationType: vaction == nil ?
+                         VacationType.none : VacationType(rawValue: vaction!.vacationType))
             
         } else {
             item.setItem(nil)
@@ -1328,6 +1378,33 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
         // FIXME: determine state from DB
         self.morningVacationButtonView.isEnable = true
         self.afternoonVacationButtonView.isEnable = true
+        
+        let dateId: String = String(format: "\(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year)%02d%02d", SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, day)
+        
+        let realm = try! Realm()
+        if let vaction = realm.object(ofType: Vacation.self, forPrimaryKey: dateId) {
+            switch VacationType(rawValue: vaction.vacationType)! {
+            case .none:
+                self.morningVacationButtonView.isSelected = false
+                self.afternoonVacationButtonView.isSelected = false
+                
+            case .morning:
+                self.morningVacationButtonView.isSelected = true
+                self.afternoonVacationButtonView.isSelected = false
+                
+            case .afternoon:
+                self.morningVacationButtonView.isSelected = false
+                self.afternoonVacationButtonView.isSelected = true
+                
+            case .fullDay:
+                self.morningVacationButtonView.isSelected = true
+                self.afternoonVacationButtonView.isSelected = true
+            }
+            
+        } else {
+            self.morningVacationButtonView.isSelected = false
+            self.afternoonVacationButtonView.isSelected = false
+        }
         
         collectionView.reloadData()
     }

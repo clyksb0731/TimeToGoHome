@@ -218,7 +218,7 @@ extension CalendarDayCell {
                  isToday: Bool = false,
                  isSelected: Bool = false,
                  isEnable: Bool = false,
-                 vacationType: VacationType = .none) {
+                 vacationType: VacationType? = VacationType.none) {
         
         if let dateId = dateId {
             self.baseView.isHidden = false
@@ -226,26 +226,33 @@ extension CalendarDayCell {
             
             self.dayLabel.text = "\(day)"
             
-            switch vacationType {
-            case .none:
+            if let vacationType = vacationType {
+                switch vacationType {
+                case .none:
+                    self.morningVacationShapeView.isHidden = true
+                    self.afternoonVacationShapeView.isHidden = true
+                    self.fullDayVacationShapeView.isHidden = true
+                    
+                case .morning:
+                    self.morningVacationShapeView.isHidden = false
+                    self.afternoonVacationShapeView.isHidden = true
+                    self.fullDayVacationShapeView.isHidden = true
+                    
+                case .afternoon:
+                    self.morningVacationShapeView.isHidden = true
+                    self.afternoonVacationShapeView.isHidden = false
+                    self.fullDayVacationShapeView.isHidden = true
+                    
+                case .fullDay:
+                    self.morningVacationShapeView.isHidden = true
+                    self.afternoonVacationShapeView.isHidden = true
+                    self.fullDayVacationShapeView.isHidden = false
+                }
+                
+            } else {
                 self.morningVacationShapeView.isHidden = true
                 self.afternoonVacationShapeView.isHidden = true
                 self.fullDayVacationShapeView.isHidden = true
-                
-            case .morning:
-                self.morningVacationShapeView.isHidden = false
-                self.afternoonVacationShapeView.isHidden = true
-                self.fullDayVacationShapeView.isHidden = true
-                
-            case .afternoon:
-                self.morningVacationShapeView.isHidden = true
-                self.afternoonVacationShapeView.isHidden = false
-                self.fullDayVacationShapeView.isHidden = true
-                
-            case .fullDay:
-                self.morningVacationShapeView.isHidden = true
-                self.afternoonVacationShapeView.isHidden = true
-                self.fullDayVacationShapeView.isHidden = false
             }
             
             self.dayLabel.textColor = isEnable ? .black : .useRGB(red: 185, green: 185, blue: 185)
