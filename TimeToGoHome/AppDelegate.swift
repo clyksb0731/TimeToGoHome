@@ -53,6 +53,9 @@ extension AppDelegate {
             self.window?.rootViewController = CustomizedNavigationController(rootViewController: mainVC)
             
         } else {
+//            let initialVC = InitialViewController()
+//            self.window?.rootViewController = initialVC
+            
 //            let staggeredWorkTypeVC = StaggeredWorkTypeViewController()
 //            let normalWorkTypeVC = NormalWorkTypeViewController()
 //            let tabBarVC = UITabBarController()
@@ -271,7 +274,7 @@ extension AppDelegate {
         }(), for: .joiningDate)
         SupportingMethods.shared.setAppSetting(with: true, for: .isIgnoredLunchTimeForHalfVacation)
         //SupportingMethods.shared.setAppSetting(with: "fiscalYear", for: .vacationType)
-        SupportingMethods.shared.setAppSetting(with: "joiningDay", for: .vacationType)
+        SupportingMethods.shared.setAppSetting(with: "joiningDay", for: .annualVacationType)
         SupportingMethods.shared.setAppSetting(with: [1,7], for: .holidays)
         SupportingMethods.shared.setAppSetting(with: 15, for: .numberOfTotalVacations)
     }

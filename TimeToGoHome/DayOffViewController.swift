@@ -8,6 +8,11 @@
 import UIKit
 import RealmSwift
 
+enum AnnualVacationType: String {
+    case fiscalYear
+    case joiningDay
+}
+
 class DayOffViewController: UIViewController {
 
     lazy var scrollView: UIScrollView = {
@@ -354,10 +359,7 @@ class DayOffViewController: UIViewController {
         button.setImage(UIImage(named: "settingVacationNormalButton"), for: .normal)
         button.setImage(UIImage(named: "settingVacationSelectedButton"), for: .selected)
         button.addTarget(self, action: #selector(fiscalYearButton(_:)), for: .touchUpInside)
-        button.isSelected = {
-            let vacationType = SupportingMethods.shared.useAppSetting(for: .vacationType) as! String
-            return vacationType == "fiscalYear"
-        }()
+        button.isSelected = self.annualVactionType == .fiscalYear
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -379,10 +381,7 @@ class DayOffViewController: UIViewController {
         button.setImage(UIImage(named: "settingVacationNormalButton"), for: .normal)
         button.setImage(UIImage(named: "settingVacationSelectedButton"), for: .selected)
         button.addTarget(self, action: #selector(joiningDayButton(_:)), for: .touchUpInside)
-        button.isSelected = {
-            let vacationType = SupportingMethods.shared.useAppSetting(for: .vacationType) as! String
-            return vacationType == "joiningDay"
-        }()
+        button.isSelected = self.annualVactionType == .joiningDay
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -473,7 +472,7 @@ class DayOffViewController: UIViewController {
         calendar.timeZone = .current
         let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
         
-        if SupportingMethods.shared.useAppSetting(for: .vacationType) as! String == "fiscalYear" {
+        if SupportingMethods.shared.useAppSetting(for: .annualVacationType) as! String == AnnualVacationType.fiscalYear.rawValue {
             let firstDayOfYearDateComponents = DateComponents(year: todayDateComponents.year!, month: 1, day: 1)
             let lastDayOfYearDateComponents = DateComponents(year: todayDateComponents.year!, month: 12, day: 31)
             
@@ -546,7 +545,7 @@ class DayOffViewController: UIViewController {
     var numberOfTotalVacations: Int = SupportingMethods.shared.useAppSetting(for: .numberOfTotalVacations) as! Int
     lazy var numberOfVacationsHold: Double = {
         // FIXME: from DB
-        return 5.5
+        return 0
     }()
     
     var realmNotification: NotificationToken?
@@ -558,7 +557,25 @@ class DayOffViewController: UIViewController {
         return results
     }()
     
-    var holidays: Set<Int> = []
+    var holidays: Set<Int> = [1,7]
+    var annualVactionType: AnnualVacationType = {
+        if let annualVacationType = SupportingMethods.shared.useAppSetting(for: .annualVacationType) as? String {
+            if annualVacationType == AnnualVacationType.fiscalYear.rawValue {
+                return .fiscalYear
+                
+            } else {
+                return .joiningDay
+            }
+            
+        } else {
+            return .fiscalYear
+        }
+    }() {
+        didSet {
+            self.fiscalYearButton.isSelected = self.annualVactionType == .fiscalYear
+            self.joiningDayButton.isSelected = self.annualVactionType == .joiningDay
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -1315,15 +1332,13 @@ extension DayOffViewController {
     @objc func fiscalYearButton(_ sender: UIButton) {
         UIDevice.softHaptic()
         
-        sender.isSelected.toggle()
-        self.joiningDayButton.isSelected = false
+        self.annualVactionType = .fiscalYear
     }
     
     @objc func joiningDayButton(_ sender: UIButton) {
         UIDevice.softHaptic()
         
-        sender.isSelected.toggle()
-        self.fiscalYearButton.isSelected = false
+        self.annualVactionType = .joiningDay
     }
     
     @objc func minusButton(_ sender: UIButton) {
