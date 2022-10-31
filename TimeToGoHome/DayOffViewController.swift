@@ -1232,66 +1232,73 @@ extension DayOffViewController {
             
             switch buttonView.day {
             case .sunday:
-                print("sunday")
                 if buttonView.isSelected {
                     self.holidays.insert(1)
+                    print("sunday on")
                     
                 } else {
                     self.holidays.remove(1)
+                    print("sunday off")
                 }
                 
             case .monday:
-                print("monday")
                 if buttonView.isSelected {
                     self.holidays.insert(2)
+                    print("monday on")
                     
                 } else {
                     self.holidays.remove(2)
+                    print("monday off")
                 }
                 
             case .tuesday:
-                print("tuesday")
                 if buttonView.isSelected {
                     self.holidays.insert(3)
+                    print("tuesday on")
                     
                 } else {
                     self.holidays.remove(3)
+                    print("tuesday off")
                 }
                 
             case .wednesday:
-                print("wednesday")
                 if buttonView.isSelected {
                     self.holidays.insert(4)
+                    print("wednesday on")
                     
                 } else {
                     self.holidays.remove(4)
+                    print("wednesday off")
                 }
                 
             case .thursday:
-                print("thursday")
                 if buttonView.isSelected {
                     self.holidays.insert(5)
+                    print("thursday on")
                     
                 } else {
                     self.holidays.remove(5)
+                    print("thursday off")
                 }
                 
             case .friday:
-                print("friday")
                 if buttonView.isSelected {
                     self.holidays.insert(6)
+                    print("friday on")
                     
                 } else {
                     self.holidays.remove(6)
+                    print("friday off")
                 }
                 
             case .saturday:
-                print("saturday")
                 if buttonView.isSelected {
                     self.holidays.insert(7)
+                    print("saturday on")
                     
                 } else {
                     self.holidays.remove(7)
+                    print("saturday off")
                 }
             }
         }
