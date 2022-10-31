@@ -220,14 +220,20 @@ extension CompanyDetailedAddressViewController {
     }
     
     @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
+//        let workTypeVC = WorkTypeViewController()
+//        workTypeVC.modalPresentationStyle = .fullScreen
+        
         SupportingMethods.shared.temporaryInitialData.updateValue(self.selectedCenter.latitude, forKey: PListVariable.companyLatitude.rawValue)
         SupportingMethods.shared.temporaryInitialData.updateValue(self.selectedCenter.longitude, forKey: PListVariable.companyLongitude.rawValue)
         
         SupportingMethods.shared.temporaryInitialData.updateValue(String(format: "%@ %@", self.selectedAddress, self.detailAddressTextField.text!), forKey: PListVariable.companyAddress.rawValue)
         
-        let workTypeVC = WorkTypeViewController()
-        workTypeVC.modalPresentationStyle = .fullScreen
+        let staggeredWorkTypeVC = StaggeredWorkTypeViewController()
+        let normalWorkTypeVC = NormalWorkTypeViewController()
+        let tabBarVC = CustomizedTabBarController()
+        tabBarVC.viewControllers = [staggeredWorkTypeVC, normalWorkTypeVC]
+        tabBarVC.modalPresentationStyle = .fullScreen
         
-        self.present(workTypeVC, animated: true, completion: nil)
+        self.present(tabBarVC, animated: true, completion: nil)
     }
 }

@@ -61,7 +61,7 @@ extension AppDelegate {
             
 //            let staggeredWorkTypeVC = StaggeredWorkTypeViewController()
 //            let normalWorkTypeVC = NormalWorkTypeViewController()
-//            let tabBarVC = UITabBarController()
+//            let tabBarVC = CustomizedTabBarController()
 //            tabBarVC.viewControllers = [staggeredWorkTypeVC, normalWorkTypeVC]
 //            self.window?.rootViewController = tabBarVC
             

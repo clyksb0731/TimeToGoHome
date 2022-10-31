@@ -18,4 +18,8 @@ class CustomizedNavigationController: UINavigationController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return self.topViewController?.preferredStatusBarStyle ?? .default
     }
+    
+    deinit {
+            print("----------------------------------- CustomizedNavigationController disposed -----------------------------------")
+    }
 }

@@ -14,6 +14,7 @@
 		CA22676B274402D60035663D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA22676A274402D60035663D /* Assets.xcassets */; };
 		CA22676E274402D60035663D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA22676C274402D60035663D /* LaunchScreen.storyboard */; };
 		CA5327092907BAB0003D66A9 /* CustomizedNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5327082907BAB0003D66A9 /* CustomizedNavigationController.swift */; };
+		CA6D12FB2910215300835CB6 /* CustomizedTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6D12FA2910215300835CB6 /* CustomizedTabBarController.swift */; };
 		CA79A8E627D85550000F58E2 /* TemplateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA79A8E527D85550000F58E2 /* TemplateCell.swift */; };
 		CAA3B24B2801755D00FFF892 /* CalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24A2801755D00FFF892 /* CalendarDayCell.swift */; };
 		CAA3B24D2801758200FFF892 /* CalendarHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */; };
@@ -56,6 +57,7 @@
 		CA22676D274402D60035663D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CA22676F274402D60035663D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CA5327082907BAB0003D66A9 /* CustomizedNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizedNavigationController.swift; sourceTree = "<group>"; };
+		CA6D12FA2910215300835CB6 /* CustomizedTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizedTabBarController.swift; sourceTree = "<group>"; };
 		CA79A8E527D85550000F58E2 /* TemplateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateCell.swift; sourceTree = "<group>"; };
 		CAA3B24A2801755D00FFF892 /* CalendarDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayCell.swift; sourceTree = "<group>"; };
 		CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderView.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				CAB7CF3C2750C7F3005C9232 /* CompanyLocationAlertViewController.swift */,
 				CAB7CF432750CD01005C9232 /* CompanyDetailedAddressViewController.swift */,
 				CAB7CF452750CD66005C9232 /* WorkTypeViewController.swift */,
+				CA6D12FA2910215300835CB6 /* CustomizedTabBarController.swift */,
 				CAB6C93827FA9A9E00B67F1A /* StaggeredWorkTypeViewController.swift */,
 				CAB6C93A27FA9AAC00B67F1A /* NormalWorkTypeViewController.swift */,
 				CAB6C93C27FA9C4800B67F1A /* DayOffViewController.swift */,
@@ -241,6 +244,7 @@
 				CAB7CF332750B5C7005C9232 /* MainViewController.swift in Sources */,
 				CAB7CF292750B0FA005C9232 /* LocationManager.swift in Sources */,
 				CAB7CF482750CDCE005C9232 /* DayButtonView.swift in Sources */,
+				CA6D12FB2910215300835CB6 /* CustomizedTabBarController.swift in Sources */,
 				CAFD580227DB2D0E0027811C /* SchedulingCell.swift in Sources */,
 				CAA3B24B2801755D00FFF892 /* CalendarDayCell.swift in Sources */,
 				CAA3B24F28018ED600FFF892 /* VacationButtonView.swift in Sources */,
