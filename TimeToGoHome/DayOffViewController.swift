@@ -557,6 +557,8 @@ class DayOffViewController: UIViewController {
         
         return results
     }()
+    
+    var holidays: Set<Int> = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -1231,24 +1233,66 @@ extension DayOffViewController {
             switch buttonView.day {
             case .sunday:
                 print("sunday")
+                if buttonView.isSelected {
+                    self.holidays.insert(1)
+                    
+                } else {
+                    self.holidays.remove(1)
+                }
                 
             case .monday:
                 print("monday")
+                if buttonView.isSelected {
+                    self.holidays.insert(2)
+                    
+                } else {
+                    self.holidays.remove(2)
+                }
                 
             case .tuesday:
                 print("tuesday")
+                if buttonView.isSelected {
+                    self.holidays.insert(3)
+                    
+                } else {
+                    self.holidays.remove(3)
+                }
                 
             case .wednesday:
                 print("wednesday")
+                if buttonView.isSelected {
+                    self.holidays.insert(4)
+                    
+                } else {
+                    self.holidays.remove(4)
+                }
                 
             case .thursday:
                 print("thursday")
+                if buttonView.isSelected {
+                    self.holidays.insert(5)
+                    
+                } else {
+                    self.holidays.remove(5)
+                }
                 
             case .friday:
                 print("friday")
+                if buttonView.isSelected {
+                    self.holidays.insert(6)
+                    
+                } else {
+                    self.holidays.remove(6)
+                }
                 
             case .saturday:
                 print("saturday")
+                if buttonView.isSelected {
+                    self.holidays.insert(7)
+                    
+                } else {
+                    self.holidays.remove(7)
+                }
             }
         }
     }
