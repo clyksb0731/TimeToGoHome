@@ -835,11 +835,11 @@ extension InitialViewController {
         }
         
         // Temporary data for initial setting
-        SupportingMethods.shared.temporaryInitialData.updateValue(companyName, forKey: "companyName")
-        SupportingMethods.shared.temporaryInitialData.updateValue(self.joiningDate, forKey: "joiningDate")
+        SupportingMethods.shared.temporaryInitialData.updateValue(companyName, forKey: PListVariable.companyName.rawValue)
+        SupportingMethods.shared.temporaryInitialData.updateValue(self.joiningDate, forKey: PListVariable.joiningDate.rawValue)
         
         let companyLocationVC = CompanyLocationViewController()
-        let naviVC = UINavigationController(rootViewController: companyLocationVC)
+        let naviVC = CustomizedNavigationController(rootViewController: companyLocationVC)
         naviVC.modalPresentationStyle = .fullScreen
         
         self.present(naviVC, animated: true, completion: {

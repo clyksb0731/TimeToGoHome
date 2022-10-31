@@ -1323,7 +1323,7 @@ extension DayOffViewController {
     
     @objc func startButton(_ sender: UIButton) {
         let mainVC = MainViewController()
-        let mainNaviVC = UINavigationController(rootViewController: mainVC)
+        let mainNaviVC = CustomizedNavigationController(rootViewController: mainVC)
         mainNaviVC.modalPresentationStyle = .fullScreen
         
         self.present(mainNaviVC, animated: true)

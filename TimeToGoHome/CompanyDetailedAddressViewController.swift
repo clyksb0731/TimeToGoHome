@@ -57,6 +57,8 @@ class CompanyDetailedAddressViewController: UIViewController {
         return view
     }()
     
+    var selectedAddress: String!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -78,6 +80,7 @@ class CompanyDetailedAddressViewController: UIViewController {
     init(selectedAddress: String) {
         super.init(nibName: nil, bundle: nil)
         
+        self.selectedAddress = selectedAddress
         self.selectedAddressLabel.text = selectedAddress
     }
     
@@ -214,6 +217,8 @@ extension CompanyDetailedAddressViewController {
     }
     
     @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
+        SupportingMethods.shared.temporaryInitialData.updateValue(String(format: "%@ %@", self.selectedAddress, self.detailAddressTextField.text!), forKey: PListVariable.companyAddress.rawValue)
+        
         let workTypeVC = WorkTypeViewController()
         workTypeVC.modalPresentationStyle = .fullScreen
         

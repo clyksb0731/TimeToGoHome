@@ -41,6 +41,7 @@ class CompanyMapViewController: UIViewController {
     var currentLocation: CLLocationCoordinate2D!
     
     var address: CompanyAddressResponse.Document!
+    var selectedAddress: String!
     
     var apiRequest: DataRequest!
     
@@ -194,6 +195,8 @@ extension CompanyMapViewController {
         pin.coordinate = center
         pin.title = title
         self.mapView.addAnnotation(pin)
+        
+        self.selectedAddress = title
     }
     
     func setRegion(center: CLLocationCoordinate2D) {
@@ -201,7 +204,7 @@ extension CompanyMapViewController {
         self.mapView.setRegion(region, animated: true)
     }
     
-    func findAddressWitdhCenter(_ center: CLLocationCoordinate2D) {
+    func findAddressWithCenter(_ center: CLLocationCoordinate2D) {
         let parameters: Parameters = ["x":String(center.longitude), "y":String(center.latitude)]
         
         self.apiRequest = AF.request("https://dapi.kakao.com/v2/local/geo/coord2address.json", method: .get, parameters: parameters, encoding: URLEncoding.default, headers: ["Authorization":ReferenceValues.kakaoAuthKey])
@@ -255,7 +258,9 @@ extension CompanyMapViewController {
     }
     
     @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
-        // right bar button
+        let detailCompanyAddressVC = CompanyDetailedAddressViewController(selectedAddress: self.selectedAddress)
+        
+        self.navigationController?.pushViewController(detailCompanyAddressVC, animated: true)
     }
     
     @objc func currentLocationButton(_ sender: UIButton) {
@@ -273,7 +278,7 @@ extension CompanyMapViewController {
             let gesturedPoint = gesture.location(in: self.mapView)
             let newCenter = self.mapView.convert(gesturedPoint, toCoordinateFrom: self.mapView)
             
-            self.findAddressWitdhCenter(newCenter)
+            self.findAddressWithCenter(newCenter)
         }
     }
 }
