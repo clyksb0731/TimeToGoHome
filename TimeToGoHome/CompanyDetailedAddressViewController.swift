@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 class CompanyDetailedAddressViewController: UIViewController {
 
@@ -57,6 +58,7 @@ class CompanyDetailedAddressViewController: UIViewController {
         return view
     }()
     
+    var selectedCenter: CLLocationCoordinate2D!
     var selectedAddress: String!
     
     override func viewDidLoad() {
@@ -77,9 +79,10 @@ class CompanyDetailedAddressViewController: UIViewController {
         self.setViewFoundation()
     }
     
-    init(selectedAddress: String) {
+    init(selectedCenter: CLLocationCoordinate2D, selectedAddress: String) {
         super.init(nibName: nil, bundle: nil)
         
+        self.selectedCenter = selectedCenter
         self.selectedAddress = selectedAddress
         self.selectedAddressLabel.text = selectedAddress
     }
@@ -217,6 +220,9 @@ extension CompanyDetailedAddressViewController {
     }
     
     @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
+        SupportingMethods.shared.temporaryInitialData.updateValue(self.selectedCenter.latitude, forKey: PListVariable.companyLatitude.rawValue)
+        SupportingMethods.shared.temporaryInitialData.updateValue(self.selectedCenter.longitude, forKey: PListVariable.companyLongitude.rawValue)
+        
         SupportingMethods.shared.temporaryInitialData.updateValue(String(format: "%@ %@", self.selectedAddress, self.detailAddressTextField.text!), forKey: PListVariable.companyAddress.rawValue)
         
         let workTypeVC = WorkTypeViewController()

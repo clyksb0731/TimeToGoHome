@@ -459,7 +459,9 @@ extension CompanyLocationViewController {
     }
     
     @objc func nextButton(_ sender: UIButton) {
-        let detailCompanyAddressVC = CompanyDetailedAddressViewController(selectedAddress: self.addresses[self.selectedLocationIndex!].addressName)
+        let center = CLLocationCoordinate2D(latitude: Double(self.addresses[self.selectedLocationIndex!].latitude)!, longitude: Double(self.addresses[self.selectedLocationIndex!].longitude)!)
+        
+        let detailCompanyAddressVC = CompanyDetailedAddressViewController(selectedCenter: center, selectedAddress: self.addresses[self.selectedLocationIndex!].addressName)
         
         self.navigationController?.pushViewController(detailCompanyAddressVC, animated: true)
         

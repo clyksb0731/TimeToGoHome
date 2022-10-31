@@ -41,6 +41,7 @@ class CompanyMapViewController: UIViewController {
     var currentLocation: CLLocationCoordinate2D!
     
     var address: CompanyAddressResponse.Document!
+    var selectedCenter: CLLocationCoordinate2D!
     var selectedAddress: String!
     
     var apiRequest: DataRequest!
@@ -196,6 +197,7 @@ extension CompanyMapViewController {
         pin.title = title
         self.mapView.addAnnotation(pin)
         
+        self.selectedCenter = center
         self.selectedAddress = title
     }
     
@@ -258,7 +260,7 @@ extension CompanyMapViewController {
     }
     
     @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
-        let detailCompanyAddressVC = CompanyDetailedAddressViewController(selectedAddress: self.selectedAddress)
+        let detailCompanyAddressVC = CompanyDetailedAddressViewController(selectedCenter: self.selectedCenter, selectedAddress: self.selectedAddress)
         
         self.navigationController?.pushViewController(detailCompanyAddressVC, animated: true)
     }

@@ -53,11 +53,11 @@ extension AppDelegate {
             self.window?.rootViewController = CustomizedNavigationController(rootViewController: mainVC)
             
         } else {
-//            let initialVC = InitialViewController()
-//            self.window?.rootViewController = initialVC
+            let initialVC = InitialViewController()
+            self.window?.rootViewController = initialVC
             
-            let companyLocationVC = CompanyLocationViewController()
-            self.window?.rootViewController = CustomizedNavigationController(rootViewController: companyLocationVC)
+//            let companyLocationVC = CompanyLocationViewController()
+//            self.window?.rootViewController = CustomizedNavigationController(rootViewController: companyLocationVC)
             
 //            let staggeredWorkTypeVC = StaggeredWorkTypeViewController()
 //            let normalWorkTypeVC = NormalWorkTypeViewController()
