@@ -149,13 +149,13 @@ struct WorkScheduleModel {
 // MARK: - Extension for methods added
 extension WorkScheduleModel {
     mutating func updateStartingWorkTime(_ startingWorkTimeDate: Date?) {
-        SupportingMethods.shared.setAppSetting(with: startingWorkTimeDate, for: .morningStartingWorkTimeValue)
+        SupportingMethods.shared.setAppSetting(with: startingWorkTimeDate, for: .todayStartingTimeDate)
         
         self.refreshToday()
     }
     
     mutating func makeWorkType() -> WorkType? {
-        guard let workTypeString = SupportingMethods.shared.useAppSetting(for: .workType) as? String else {
+        guard let workTypeString = ReferenceValues.initialSetting[InitialSetting.workType.rawValue] as? String else {
             return nil
         }
         
@@ -174,7 +174,7 @@ extension WorkScheduleModel {
         
         switch workType {
         case .staggered:
-            if let startingWorkTimeDate = SupportingMethods.shared.useAppSetting(for: .morningStartingWorkTimeValue) as? Date {
+            if let startingWorkTimeDate = SupportingMethods.shared.useAppSetting(for: .todayStartingTimeDate) as? Date {
                 
                 var calendar = Calendar.current
                 calendar.timeZone = TimeZone.current
@@ -188,7 +188,7 @@ extension WorkScheduleModel {
                     return startingWorkTimeDate
                     
                 } else {
-                    SupportingMethods.shared.setAppSetting(with: nil, for: .morningStartingWorkTimeValue)
+                    SupportingMethods.shared.setAppSetting(with: nil, for: .todayStartingTimeDate)
                     
                     return nil
                 }
@@ -198,7 +198,7 @@ extension WorkScheduleModel {
             }
             
         case .normal:
-            guard let startingWorkTimeValue = SupportingMethods.shared.useAppSetting(for: .morningStartingWorkTimeValue) as? Double else {
+            guard let startingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValue.rawValue] as? Double else {
                 return nil
             }
             
@@ -215,7 +215,7 @@ extension WorkScheduleModel {
     }
     
     mutating func makeLunchTimeDate() -> Date! {
-        guard let lunchTimeValue = SupportingMethods.shared.useAppSetting(for: .lunchTimeValue) as? Double else {
+        guard let lunchTimeValue = ReferenceValues.initialSetting[InitialSetting.lunchTimeValue.rawValue] as? Double else {
             return nil
         }
         
@@ -420,7 +420,7 @@ extension WorkScheduleModel {
             return
         }
         
-        let isIgnoredLunchTimeForHalfVacation = SupportingMethods.shared.useAppSetting(for: .isIgnoredLunchTimeForHalfVacation) as! Bool
+        let isIgnoredLunchTimeForHalfVacation = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as! Bool
         
         if case .morning(let workType) = self.morning, case .work = workType,
            case .afternoon(let workType) = self.afternoon, case .work = workType {

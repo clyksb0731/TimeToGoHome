@@ -3062,23 +3062,23 @@ extension StaggeredWorkTypeViewController {
         print("Afternoon Attendance Time Range: \(afternoonAttendanceTimeRange.earliestTime) ~ \(afternoonAttendanceTimeRange.latestTime)")
         
         // Work type
-        SupportingMethods.shared.temporaryInitialData.updateValue(WorkType.staggered, forKey: PListVariable.workType.rawValue)
+        ReferenceValues.initialSetting.updateValue(WorkType.staggered.rawValue, forKey: InitialSetting.workType.rawValue)
         
         // Morning attendance time range
-        SupportingMethods.shared.temporaryInitialData.updateValue(
+        ReferenceValues.initialSetting.updateValue(
             [TimeRange.earliestTime.rawValue:morningAttendanceTimeRange.earliestTime,
-             TimeRange.latestTime.rawValue:morningAttendanceTimeRange.latestTime], forKey: PListVariable.morningStartingworkTimeValueRange.rawValue)
+             TimeRange.latestTime.rawValue:morningAttendanceTimeRange.latestTime], forKey: InitialSetting.morningStartingworkTimeValueRange.rawValue)
         
         // Lunch time
-        SupportingMethods.shared.temporaryInitialData.updateValue(lunchTime, forKey: PListVariable.lunchTimeValue.rawValue)
+        ReferenceValues.initialSetting.updateValue(lunchTime, forKey: InitialSetting.lunchTimeValue.rawValue)
         
         // Afternoon attendance time
-        SupportingMethods.shared.temporaryInitialData.updateValue(
+        ReferenceValues.initialSetting.updateValue(
             [TimeRange.earliestTime.rawValue:afternoonAttendanceTimeRange.earliestTime,
-             TimeRange.latestTime.rawValue:afternoonAttendanceTimeRange.latestTime], forKey: PListVariable.afternoonStartingworkTimeValueRange.rawValue)
+             TimeRange.latestTime.rawValue:afternoonAttendanceTimeRange.latestTime], forKey: InitialSetting.afternoonStartingworkTimeValueRange.rawValue)
         
         // Is ignore lunch time for half vacation
-        SupportingMethods.shared.temporaryInitialData.updateValue(self.ignoringLunchTimeButton.isSelected, forKey: PListVariable.isIgnoredLunchTimeForHalfVacation.rawValue)
+        ReferenceValues.initialSetting.updateValue(self.ignoringLunchTimeButton.isSelected, forKey: InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue)
         
         // Day Off VC
         let dayOffVC = DayOffViewController()

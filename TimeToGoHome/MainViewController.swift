@@ -876,7 +876,7 @@ extension MainViewController {
             return
         }
         
-        let isIgnoredLunchTimeForHalfVacation = SupportingMethods.shared.useAppSetting(for: .isIgnoredLunchTimeForHalfVacation) as! Bool
+        let isIgnoredLunchTimeForHalfVacation = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as! Bool
         
         let currentTimeSeconds = SupportingMethods.getCurrentTimeSeconds()
         let startingWorkTimeSeconds = self.schedule.startingWorkTimeSecondsSinceReferenceDate!
@@ -998,7 +998,7 @@ extension MainViewController {
             return
         }
         
-        let isIgnoredLunchTimeForHalfVacation = SupportingMethods.shared.useAppSetting(for: .isIgnoredLunchTimeForHalfVacation) as! Bool
+        let isIgnoredLunchTimeForHalfVacation = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as! Bool
         
         let currentTimeSeconds = SupportingMethods.getCurrentTimeSeconds()
         let startingWorkTimeSeconds = self.schedule.startingWorkTimeSecondsSinceReferenceDate!
@@ -1136,7 +1136,7 @@ extension MainViewController {
             return
         }
         
-        let isIgnoredLunchTimeForHalfVacation = SupportingMethods.shared.useAppSetting(for: .isIgnoredLunchTimeForHalfVacation) as! Bool
+        let isIgnoredLunchTimeForHalfVacation = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as! Bool
         
         let currentTimeSeconds = SupportingMethods.getCurrentTimeSeconds()
         let startingWorkTimeSeconds = self.schedule.startingWorkTimeSecondsSinceReferenceDate!

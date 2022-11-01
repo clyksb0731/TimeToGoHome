@@ -28,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // FIXME: to test
         self.checkData()
-        self.makeTempAppSetting()
+        //self.makeTempAppSetting()
         
         // determine root view controller
         self.determineRootVC()
@@ -47,7 +47,7 @@ extension AppDelegate {
     func determineRootVC() {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         
-        if let initialSet = SupportingMethods.shared.useAppSetting(for: .hasInitialSetting) as? Bool, initialSet {
+        if !ReferenceValues.initialSetting.isEmpty {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let mainVC = storyboard.instantiateInitialViewController() as! MainViewController
             self.window?.rootViewController = CustomizedNavigationController(rootViewController: mainVC)
@@ -257,10 +257,10 @@ extension AppDelegate: LocationManagerDelegate {
 extension AppDelegate {
     func makeTempAppSetting() {
         // FIXME: Temp, WorkType - Staggered
-        SupportingMethods.shared.setAppSetting(with: WorkType.staggered.rawValue, for: .workType)
-        SupportingMethods.shared.setAppSetting(with: 12.5, for: .lunchTimeValue)
-        SupportingMethods.shared.setAppSetting(with: ["earliestTime":8.0, "latestTime":11.0], for: .morningStartingworkTimeValueRange)
-        SupportingMethods.shared.setAppSetting(with: ["earliestTime":11.0, "latestTime":15.0], for: .afternoonStartingworkTimeValueRange)
+//        SupportingMethods.shared.setAppSetting(with: WorkType.staggered.rawValue, for: .workType)
+//        SupportingMethods.shared.setAppSetting(with: 12.5, for: .lunchTimeValue)
+//        SupportingMethods.shared.setAppSetting(with: ["earliestTime":8.0, "latestTime":11.0], for: .morningStartingworkTimeValueRange)
+//        SupportingMethods.shared.setAppSetting(with: ["earliestTime":11.0, "latestTime":15.0], for: .afternoonStartingworkTimeValueRange)
         
         // FIXME: Temp, WorkType - Noraml
 //        SupportingMethods.shared.setAppSetting(with: WorkType.normal.rawValue, for: .workType)
@@ -268,17 +268,17 @@ extension AppDelegate {
 //        SupportingMethods.shared.setAppSetting(with: 12.5, for: .lunchTimeValue)
         
         // FIXME: Temp, common
-        SupportingMethods.shared.setAppSetting(with: {
-            let dateComonents = DateComponents(year: 2019, month: 10, day: 1)
-            var calendar = Calendar.current
-            calendar.timeZone = .current
-            
-            return calendar.date(from: dateComonents)!
-        }(), for: .joiningDate)
-        SupportingMethods.shared.setAppSetting(with: true, for: .isIgnoredLunchTimeForHalfVacation)
-        //SupportingMethods.shared.setAppSetting(with: "fiscalYear", for: .vacationType)
-        SupportingMethods.shared.setAppSetting(with: "joiningDay", for: .annualVacationType)
-        SupportingMethods.shared.setAppSetting(with: [1,7], for: .holidays)
-        SupportingMethods.shared.setAppSetting(with: 15, for: .numberOfTotalVacations)
+//        SupportingMethods.shared.setAppSetting(with: {
+//            let dateComonents = DateComponents(year: 2019, month: 10, day: 1)
+//            var calendar = Calendar.current
+//            calendar.timeZone = .current
+//            
+//            return calendar.date(from: dateComonents)!
+//        }(), for: .joiningDate)
+//        SupportingMethods.shared.setAppSetting(with: true, for: .isIgnoredLunchTimeForHalfVacation)
+//        //SupportingMethods.shared.setAppSetting(with: "fiscalYear", for: .vacationType)
+//        SupportingMethods.shared.setAppSetting(with: "joiningDay", for: .annualVacationType)
+//        SupportingMethods.shared.setAppSetting(with: [1,7], for: .holidays)
+//        SupportingMethods.shared.setAppSetting(with: 15, for: .numberOfTotalVacations)
     }
 }

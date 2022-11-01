@@ -835,8 +835,8 @@ extension InitialViewController {
         }
         
         // Temporary data for initial setting
-        SupportingMethods.shared.temporaryInitialData.updateValue(companyName, forKey: PListVariable.companyName.rawValue)
-        SupportingMethods.shared.temporaryInitialData.updateValue(self.joiningDate, forKey: PListVariable.joiningDate.rawValue)
+        ReferenceValues.initialSetting.updateValue(companyName, forKey: InitialSetting.companyName.rawValue)
+        ReferenceValues.initialSetting.updateValue(self.joiningDate, forKey: InitialSetting.joiningDate.rawValue)
         
         let companyLocationVC = CompanyLocationViewController()
         let naviVC = CustomizedNavigationController(rootViewController: companyLocationVC)

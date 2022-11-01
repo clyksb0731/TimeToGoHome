@@ -1904,19 +1904,19 @@ extension NormalWorkTypeViewController {
         print("Afternoon Attendance Time: \(afternoonAttendanceTime)")
         
         // Work type
-        SupportingMethods.shared.temporaryInitialData.updateValue(WorkType.normal, forKey: PListVariable.workType.rawValue)
+        ReferenceValues.initialSetting.updateValue(WorkType.normal.rawValue, forKey: InitialSetting.workType.rawValue)
         
         // Morning attendance time range
-        SupportingMethods.shared.temporaryInitialData.updateValue(morningAttendanceTime, forKey: PListVariable.morningStartingWorkTimeValue.rawValue)
+        ReferenceValues.initialSetting.updateValue(morningAttendanceTime, forKey: InitialSetting.morningStartingWorkTimeValue.rawValue)
         
         // Lunch time
-        SupportingMethods.shared.temporaryInitialData.updateValue(lunchTime, forKey: PListVariable.lunchTimeValue.rawValue)
+        ReferenceValues.initialSetting.updateValue(lunchTime, forKey: InitialSetting.lunchTimeValue.rawValue)
         
         // Afternoon attendance time
-        SupportingMethods.shared.temporaryInitialData.updateValue(afternoonAttendanceTime, forKey: PListVariable.afternoonStartingworkTimeValue.rawValue)
+        ReferenceValues.initialSetting.updateValue(afternoonAttendanceTime, forKey: InitialSetting.afternoonStartingworkTimeValue.rawValue)
         
         // Is ignore lunch time for half vacation
-        SupportingMethods.shared.temporaryInitialData.updateValue(self.ignoringLunchTimeButton.isSelected, forKey: PListVariable.isIgnoredLunchTimeForHalfVacation.rawValue)
+        ReferenceValues.initialSetting.updateValue(self.ignoringLunchTimeButton.isSelected, forKey: InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue)
         
         // Day Off VC
         let dayOffVC = DayOffViewController()

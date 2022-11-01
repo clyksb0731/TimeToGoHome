@@ -223,10 +223,10 @@ extension CompanyDetailedAddressViewController {
 //        let workTypeVC = WorkTypeViewController()
 //        workTypeVC.modalPresentationStyle = .fullScreen
         
-        SupportingMethods.shared.temporaryInitialData.updateValue(self.selectedCenter.latitude, forKey: PListVariable.companyLatitude.rawValue)
-        SupportingMethods.shared.temporaryInitialData.updateValue(self.selectedCenter.longitude, forKey: PListVariable.companyLongitude.rawValue)
+        ReferenceValues.initialSetting.updateValue(self.selectedCenter.latitude, forKey: InitialSetting.companyLatitude.rawValue)
+        ReferenceValues.initialSetting.updateValue(self.selectedCenter.longitude, forKey: InitialSetting.companyLongitude.rawValue)
         
-        SupportingMethods.shared.temporaryInitialData.updateValue(String(format: "%@ %@", self.selectedAddress, self.detailAddressTextField.text!), forKey: PListVariable.companyAddress.rawValue)
+        ReferenceValues.initialSetting.updateValue(String(format: "%@ %@", self.selectedAddress, self.detailAddressTextField.text!), forKey: InitialSetting.companyAddress.rawValue)
         
         let staggeredWorkTypeVC = StaggeredWorkTypeViewController()
         let normalWorkTypeVC = NormalWorkTypeViewController()

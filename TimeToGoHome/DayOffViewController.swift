@@ -468,19 +468,19 @@ class DayOffViewController: UIViewController {
     
     var targetYearMonthDate: Date = Date()
     
-    var vacationScheduleDateRange: (startDate: Date, endDate: Date) = {
+    lazy var vacationScheduleDateRange: (startDate: Date, endDate: Date) = {
         var calendar = Calendar.current
         calendar.timeZone = .current
         let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
         
-        if SupportingMethods.shared.useAppSetting(for: .annualVacationType) as! String == AnnualVacationType.fiscalYear.rawValue {
+        if self.annualVactionType == .fiscalYear {
             let firstDayOfYearDateComponents = DateComponents(year: todayDateComponents.year!, month: 1, day: 1)
             let lastDayOfYearDateComponents = DateComponents(year: todayDateComponents.year!, month: 12, day: 31)
             
             return (calendar.date(from: firstDayOfYearDateComponents)!, calendar.date(from: lastDayOfYearDateComponents)!)
             
         } else { // joiningDay
-            var firstDayOfVacationDate = SupportingMethods.shared.useAppSetting(for: .joiningDate) as! Date
+            var firstDayOfVacationDate = ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date
             let joiningDateComponents = calendar.dateComponents([.year, .month, .day], from: firstDayOfVacationDate)
             var endDayOfVacationDate: Date
             
@@ -543,7 +543,16 @@ class DayOffViewController: UIViewController {
     var contentViewHeightAnchor: NSLayoutConstraint!
     var selectedIndexOfYearMonthAndDay: (year: Int, month: Int, day: Int)?
     
-    var numberOfTotalVacations: Int = SupportingMethods.shared.useAppSetting(for: .numberOfTotalVacations) as! Int
+    var numberOfTotalVacations: Int = {
+        if let initialSetting = SupportingMethods.shared.useAppSetting(for: .initialSetting) as? [String:Any],
+            let numberOfTotalVacations = initialSetting[InitialSetting.numberOfTotalVacations.rawValue] as? Int {
+            return numberOfTotalVacations
+            
+        } else {
+            return 15
+        }
+    }()
+    
     lazy var numberOfVacationsHold: Double = {
         // FIXME: from DB
         return 0
@@ -560,13 +569,9 @@ class DayOffViewController: UIViewController {
     
     var holidays: Set<Int> = [1,7]
     var annualVactionType: AnnualVacationType = {
-        if let annualVacationType = SupportingMethods.shared.useAppSetting(for: .annualVacationType) as? String {
-            if annualVacationType == AnnualVacationType.fiscalYear.rawValue {
-                return .fiscalYear
-                
-            } else {
-                return .joiningDay
-            }
+        if let annualVacationType = ReferenceValues.initialSetting[InitialSetting.annualVacationType.rawValue] as? String,
+            let annualVacationType = AnnualVacationType(rawValue: annualVacationType) {
+            return annualVacationType
             
         } else {
             return .fiscalYear
@@ -1122,6 +1127,10 @@ extension DayOffViewController {
         
         self.numberOfVacationLabel.attributedText = attributedText
     }
+    
+    func completeInitialSettings() {
+        SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+    }
 }
 
 // MARK: - Extension for Selector methods
@@ -1327,6 +1336,8 @@ extension DayOffViewController {
     }
     
     @objc func startButton(_ sender: UIButton) {
+        self.completeInitialSettings()
+        
         let mainVC = MainViewController()
         let mainNaviVC = CustomizedNavigationController(rootViewController: mainVC)
         mainNaviVC.modalPresentationStyle = .fullScreen
@@ -1365,7 +1376,7 @@ extension DayOffViewController {
     }
     
     @objc func confirmButton(_ sender: UIButton) {
-        SupportingMethods.shared.setAppSetting(with: self.numberOfTotalVacations, for: .numberOfTotalVacations)
+        ReferenceValues.initialSetting.updateValue(self.numberOfTotalVacations, forKey: InitialSetting.numberOfTotalVacations.rawValue)
         
         self.applyVacationsToLabel()
         
@@ -1373,8 +1384,6 @@ extension DayOffViewController {
     }
     
     @objc func declineButton(_ sender: UIButton) {
-        self.numberOfTotalVacations = SupportingMethods.shared.useAppSetting(for: .numberOfTotalVacations) as! Int
-        
         self.coverView.isHidden = true
     }
 }

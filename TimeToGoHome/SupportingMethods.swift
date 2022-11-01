@@ -11,6 +11,12 @@ import UIKit
  Variables for app setting on UserDefaults
  */
 enum PListVariable: String {
+    // 초기 설정
+    case initialSetting
+    case todayStartingTimeDate
+}
+
+enum InitialSetting: String {
     // 회사 정보
     case companyName // 현 회사이름
     case joiningDate // 현 입사날짜
@@ -31,9 +37,6 @@ enum PListVariable: String {
     case holidays // 정기 휴무 요일
     case annualVacationType // 휴가기준 (회계연도/입사날짜)
     case numberOfTotalVacations // 연차 개수
-    
-    // 초기 설정 완료 여보
-    case hasInitialSetting
 }
 
 enum CoverViewState {
@@ -43,7 +46,7 @@ enum CoverViewState {
 
 class SupportingMethods {
     private var coverView: UIView?
-    var temporaryInitialData: Dictionary<String,Any> = [:]
+    //var temporaryInitialData: Dictionary<String,Any> = [:]
     
     static let shared = SupportingMethods()
     
