@@ -149,7 +149,7 @@ struct WorkScheduleModel {
 // MARK: - Extension for methods added
 extension WorkScheduleModel {
     mutating func updateStartingWorkTime(_ startingWorkTimeDate: Date?) {
-        SupportingMethods.shared.setAppSetting(with: startingWorkTimeDate, for: .startingWorkTimeValue)
+        SupportingMethods.shared.setAppSetting(with: startingWorkTimeDate, for: .morningStartingWorkTimeValue)
         
         self.refreshToday()
     }
@@ -174,7 +174,7 @@ extension WorkScheduleModel {
         
         switch workType {
         case .staggered:
-            if let startingWorkTimeDate = SupportingMethods.shared.useAppSetting(for: .startingWorkTimeValue) as? Date {
+            if let startingWorkTimeDate = SupportingMethods.shared.useAppSetting(for: .morningStartingWorkTimeValue) as? Date {
                 
                 var calendar = Calendar.current
                 calendar.timeZone = TimeZone.current
@@ -188,7 +188,7 @@ extension WorkScheduleModel {
                     return startingWorkTimeDate
                     
                 } else {
-                    SupportingMethods.shared.setAppSetting(with: nil, for: .startingWorkTimeValue)
+                    SupportingMethods.shared.setAppSetting(with: nil, for: .morningStartingWorkTimeValue)
                     
                     return nil
                 }
@@ -198,7 +198,7 @@ extension WorkScheduleModel {
             }
             
         case .normal:
-            guard let startingWorkTimeValue = SupportingMethods.shared.useAppSetting(for: .startingWorkTimeValue) as? Double else {
+            guard let startingWorkTimeValue = SupportingMethods.shared.useAppSetting(for: .morningStartingWorkTimeValue) as? Double else {
                 return nil
             }
             

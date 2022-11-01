@@ -38,6 +38,7 @@ class DayOffViewController: UIViewController {
     lazy var dismissButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "dismissButtonImage"), for: .normal)
+        button.addTarget(self, action: #selector(dismissButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -1125,6 +1126,10 @@ extension DayOffViewController {
 
 // MARK: - Extension for Selector methods
 extension DayOffViewController {
+    @objc func dismissButton(_ sender: UIButton) {
+        self.dismiss(animated: false)
+    }
+    
     @objc func vacationButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
@@ -1441,10 +1446,10 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
                                                SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month,
                                                day)
         
-        // FIXME: determine state from DB
         self.morningVacationButtonView.isEnable = true
         self.afternoonVacationButtonView.isEnable = true
         
+        // Determine vacation button state
         let dateId: String = String(format: "\(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year)%02d%02d", SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, day)
         
         let realm = try! Realm()

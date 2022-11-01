@@ -20,6 +20,11 @@ enum WorkType: String {
     case normal
 }
 
+enum TimeRange: String {
+    case earliestTime
+    case latestTime
+}
+
 class StaggeredWorkTypeViewController: UIViewController {
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -2623,16 +2628,33 @@ extension StaggeredWorkTypeViewController {
         }
     }
     
-    func determineStaggeredWorkTimeValue() -> (Double, Double)? {
-        guard let earliestTime = self.getWorkTimeValue(self.morningEarliestAttendaceTimeBarMarkingViewConstraint.constant),
-           let latestTime = self.getWorkTimeValue(self.morningLatestAttendaceTimeBarMarkingViewConstraint.constant) else {
+    func determineMorningAttendanceTimeValue() -> (earliestTime: Double, latestTime: Double)? {
+        guard let earliestTime = self.getMorningAttendaceTimeValue(self.morningEarliestAttendaceTimeBarMarkingViewConstraint.constant),
+           let latestTime = self.getMorningAttendaceTimeValue(self.morningLatestAttendaceTimeBarMarkingViewConstraint.constant) else {
             return nil
         }
         
         return (earliestTime, latestTime)
     }
     
-    func getWorkTimeValue(_ from: CGFloat) -> Double? {
+    func determineLunchTimeValue() -> Double? {
+        guard let lunchTime = self.getLunchTimeValue(self.lunchTimeTimeBarMarkingViewConstraint.constant) else {
+            return nil
+        }
+        
+        return lunchTime
+    }
+    
+    func determineAfternoonAttendanceTimeValue() -> (earliestTime: Double, latestTime: Double)? {
+        guard let earliestTime = self.getAfternoonEarliestAttendaceTimeValue(self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant),
+           let latestTime = self.getAfternoonLatestAttendaceTimeValue(self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant) else {
+            return nil
+        }
+        
+        return (earliestTime, latestTime)
+    }
+    
+    func getMorningAttendaceTimeValue(_ from: CGFloat) -> Double? {
         switch from {
         case 12:
             return 7.0
@@ -2660,6 +2682,102 @@ extension StaggeredWorkTypeViewController {
             
         case 198:
             return 11.0
+            
+        default:
+            return nil
+        }
+    }
+    
+    func getLunchTimeValue(_ from: CGFloat) -> Double? {
+        switch from {
+        case 12:
+            return 11.0
+            
+        case 35.25:
+            return 11.5
+            
+        case 58.5:
+            return 12.0
+            
+        case 81.75:
+            return 12.5
+            
+        case 105:
+            return 13.0
+            
+        case 128.25:
+            return 13.5
+            
+        case 151.5:
+            return 14.0
+            
+        default:
+            return nil
+        }
+    }
+    
+    func getAfternoonEarliestAttendaceTimeValue(_ from: CGFloat) -> Double? {
+        switch from {
+        case 12:
+            return 11.0
+            
+        case 35.25:
+            return 11.5
+            
+        case 58.5:
+            return 12.0
+            
+        case 81.75:
+            return 12.5
+            
+        case 105:
+            return 13.0
+            
+        case 128.25:
+            return 13.5
+            
+        case 151.5:
+            return 14.0
+            
+        case 174.75:
+            return 14.5
+            
+        case 198:
+            return 15.0
+            
+        default:
+            return nil
+        }
+    }
+    
+    func getAfternoonLatestAttendaceTimeValue(_ from: CGFloat) -> Double? {
+        switch from {
+        case 12:
+            return 12.0
+            
+        case 35.25:
+            return 12.5
+            
+        case 58.5:
+            return 13.0
+            
+        case 81.75:
+            return 13.5
+            
+        case 105:
+            return 14.0
+            
+        case 128.25:
+            return 14.5
+            
+        case 151.5:
+            return 15.0
+            
+        case 174.75:
+            return 15.5
+            
+        case 198:
+            return 16.0
             
         default:
             return nil
@@ -2931,6 +3049,38 @@ extension StaggeredWorkTypeViewController {
     }
     
     @objc func nextButton(_ sender: UIButton) {
+        guard let morningAttendanceTimeRange = self.determineMorningAttendanceTimeValue(),
+              let lunchTime = self.determineLunchTimeValue(),
+              let afternoonAttendanceTimeRange = self.determineAfternoonAttendanceTimeValue() else {
+                  return
+        }
+        
+        print("Work type is staggered work type")
+        print("Morning Attendance Time Range: \(morningAttendanceTimeRange.earliestTime) ~ \(morningAttendanceTimeRange.latestTime)")
+        print("Lunch Time: \(lunchTime)")
+        print("Is ignore lunch time for half vacation: \(self.ignoringLunchTimeButton.isSelected ? "Yes" : "No")")
+        print("Afternoon Attendance Time Range: \(afternoonAttendanceTimeRange.earliestTime) ~ \(afternoonAttendanceTimeRange.latestTime)")
+        
+        // Work type
+        SupportingMethods.shared.temporaryInitialData.updateValue(WorkType.staggered, forKey: PListVariable.workType.rawValue)
+        
+        // Morning attendance time range
+        SupportingMethods.shared.temporaryInitialData.updateValue(
+            [TimeRange.earliestTime.rawValue:morningAttendanceTimeRange.earliestTime,
+             TimeRange.latestTime.rawValue:morningAttendanceTimeRange.latestTime], forKey: PListVariable.morningStartingworkTimeValueRange.rawValue)
+        
+        // Lunch time
+        SupportingMethods.shared.temporaryInitialData.updateValue(lunchTime, forKey: PListVariable.lunchTimeValue.rawValue)
+        
+        // Afternoon attendance time
+        SupportingMethods.shared.temporaryInitialData.updateValue(
+            [TimeRange.earliestTime.rawValue:afternoonAttendanceTimeRange.earliestTime,
+             TimeRange.latestTime.rawValue:afternoonAttendanceTimeRange.latestTime], forKey: PListVariable.afternoonStartingworkTimeValueRange.rawValue)
+        
+        // Is ignore lunch time for half vacation
+        SupportingMethods.shared.temporaryInitialData.updateValue(self.ignoringLunchTimeButton.isSelected, forKey: PListVariable.isIgnoredLunchTimeForHalfVacation.rawValue)
+        
+        // Day Off VC
         let dayOffVC = DayOffViewController()
         dayOffVC.modalPresentationStyle = .fullScreen
 

@@ -1649,6 +1649,126 @@ extension NormalWorkTypeViewController {
             }
         }
     }
+    
+    func determineMorningAttendanceTimeValue() -> Double? {
+        guard let attendanceTime = self.getMorningAttendaceTimeValue(self.morningAttendaceTimeBarMarkingViewConstraint.constant) else {
+            return nil
+        }
+        
+        return attendanceTime
+    }
+    
+    func determineLunchTimeValue() -> Double? {
+        guard let lunchTime = self.getLunchTimeValue(self.lunchTimeTimeBarMarkingViewConstraint.constant) else {
+            return nil
+        }
+        
+        return lunchTime
+    }
+    
+    func determineAfternoonAttendanceTimeValue() -> Double? {
+        guard let attendanceTime = self.getAfternoonAttendaceTimeValue(self.afternoonAttendaceTimeBarMarkingViewConstraint.constant) else {
+            return nil
+        }
+        
+        return attendanceTime
+    }
+    
+    func getMorningAttendaceTimeValue(_ from: CGFloat) -> Double? {
+        switch from {
+        case 12:
+            return 7.0
+            
+        case 35.25:
+            return 7.5
+            
+        case 58.5:
+            return 8.0
+            
+        case 81.75:
+            return 8.5
+            
+        case 105:
+            return 9.0
+            
+        case 128.25:
+            return 9.5
+            
+        case 151.5:
+            return 10.0
+            
+        case 174.75:
+            return 10.5
+            
+        case 198:
+            return 11.0
+            
+        default:
+            return nil
+        }
+    }
+    
+    func getLunchTimeValue(_ from: CGFloat) -> Double? {
+        switch from {
+        case 12:
+            return 11.0
+            
+        case 35.25:
+            return 11.5
+            
+        case 58.5:
+            return 12.0
+            
+        case 81.75:
+            return 12.5
+            
+        case 105:
+            return 13.0
+            
+        case 128.25:
+            return 13.5
+            
+        case 151.5:
+            return 14.0
+            
+        default:
+            return nil
+        }
+    }
+    
+    func getAfternoonAttendaceTimeValue(_ from: CGFloat) -> Double? {
+        switch from {
+        case 12:
+            return 11.0
+            
+        case 35.25:
+            return 11.5
+            
+        case 58.5:
+            return 12.0
+            
+        case 81.75:
+            return 12.5
+            
+        case 105:
+            return 13.0
+            
+        case 128.25:
+            return 13.5
+            
+        case 151.5:
+            return 14.0
+            
+        case 174.75:
+            return 14.5
+            
+        case 198:
+            return 15.0
+            
+        default:
+            return nil
+        }
+    }
 }
 
 // MARK: - Extension for Selector methods
@@ -1771,6 +1891,34 @@ extension NormalWorkTypeViewController {
     }
     
     @objc func nextButton(_ sender: UIButton) {
+        guard let morningAttendanceTime = self.determineMorningAttendanceTimeValue(),
+              let lunchTime = self.determineLunchTimeValue(),
+              let afternoonAttendanceTime = self.determineAfternoonAttendanceTimeValue() else {
+                  return
+        }
+        
+        print("Work type is normal work type")
+        print("Morning Attendance Time: \(morningAttendanceTime)")
+        print("Lunch Time: \(lunchTime)")
+        print("Is ignore lunch time for half vacation: \(self.ignoringLunchTimeButton.isSelected ? "Yes" : "No")")
+        print("Afternoon Attendance Time: \(afternoonAttendanceTime)")
+        
+        // Work type
+        SupportingMethods.shared.temporaryInitialData.updateValue(WorkType.normal, forKey: PListVariable.workType.rawValue)
+        
+        // Morning attendance time range
+        SupportingMethods.shared.temporaryInitialData.updateValue(morningAttendanceTime, forKey: PListVariable.morningStartingWorkTimeValue.rawValue)
+        
+        // Lunch time
+        SupportingMethods.shared.temporaryInitialData.updateValue(lunchTime, forKey: PListVariable.lunchTimeValue.rawValue)
+        
+        // Afternoon attendance time
+        SupportingMethods.shared.temporaryInitialData.updateValue(afternoonAttendanceTime, forKey: PListVariable.afternoonStartingworkTimeValue.rawValue)
+        
+        // Is ignore lunch time for half vacation
+        SupportingMethods.shared.temporaryInitialData.updateValue(self.ignoringLunchTimeButton.isSelected, forKey: PListVariable.isIgnoredLunchTimeForHalfVacation.rawValue)
+        
+        // Day Off VC
         let dayOffVC = DayOffViewController()
         dayOffVC.modalPresentationStyle = .fullScreen
 

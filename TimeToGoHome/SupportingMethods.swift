@@ -21,7 +21,7 @@ enum PListVariable: String {
     // 근무 정보
     case workType // 근무형태
     case morningStartingworkTimeValueRange // 출근시간범위 (빠른/늦은)
-    case startingWorkTimeValue // 출근시간 (그냥 출근시간)
+    case morningStartingWorkTimeValue // 출근시간 (그냥 출근시간)
     case afternoonStartingworkTimeValueRange // 오후 출근시간범위 (빠른/늦은)
     case afternoonStartingworkTimeValue // 오후 출근시간 (그냥 오후 출근시간)
     case lunchTimeValue // 점심시간
