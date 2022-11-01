@@ -180,7 +180,7 @@ class DayOffViewController: UIViewController {
         paragraphStyle.alignment = .center
         
         let attributedText = NSMutableAttributedString()
-        let usedVacationText = NSAttributedString(string: "\(self.numberOfVacationsHold)일 |", attributes: [
+        let usedVacationText = NSAttributedString(string: "\(self.numberOfVacationsHold == 0 ? "0" : "\(self.numberOfVacationsHold)")일 |", attributes: [
             .font:UIFont.systemFont(ofSize: 16),
             .foregroundColor:UIColor.black,
             .paragraphStyle:paragraphStyle
@@ -1101,18 +1101,12 @@ extension DayOffViewController {
 
 // MARK: - Extension for methods added
 extension DayOffViewController {
-    func getVacationsHold() -> Double {
-        // FIXME: from DB
-        
-        return 5.5
-    }
-    
     func applyVacationsToLabel() {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         
         let attributedText = NSMutableAttributedString()
-        let usedVacationText = NSAttributedString(string: "\(self.numberOfVacationsHold)일 |", attributes: [
+        let usedVacationText = NSAttributedString(string: "\(self.numberOfVacationsHold == 0 ? "0" : "\(self.numberOfVacationsHold)")일 |", attributes: [
             .font:UIFont.systemFont(ofSize: 16),
             .foregroundColor:UIColor.black,
             .paragraphStyle:paragraphStyle
