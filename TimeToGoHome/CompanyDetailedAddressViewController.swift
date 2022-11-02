@@ -45,6 +45,7 @@ class CompanyDetailedAddressViewController: UIViewController {
         textField.font = UIFont.systemFont(ofSize: 17)
         textField.textColor = .black
         textField.textAlignment = .left
+        textField.returnKeyType = .done
         textField.translatesAutoresizingMaskIntoConstraints = false
         
         return textField
@@ -143,7 +144,7 @@ extension CompanyDetailedAddressViewController {
     
     // Set delegates
     func setDelegates() {
-        
+        self.detailAddressTextField.delegate = self
     }
     
     // Set notificationCenters
@@ -211,6 +212,15 @@ extension CompanyDetailedAddressViewController {
 // MARK: - Extension for methods added
 extension CompanyDetailedAddressViewController {
     
+}
+
+// MARK: - Extension for UITextFieldDelegate
+extension CompanyDetailedAddressViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        
+        return true
+    }
 }
 
 // MARK: - Extension for Selector methods

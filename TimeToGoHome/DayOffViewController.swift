@@ -544,8 +544,7 @@ class DayOffViewController: UIViewController {
     var selectedIndexOfYearMonthAndDay: (year: Int, month: Int, day: Int)?
     
     var numberOfTotalVacations: Int = {
-        if let initialSetting = SupportingMethods.shared.useAppSetting(for: .initialSetting) as? [String:Any],
-            let numberOfTotalVacations = initialSetting[InitialSetting.numberOfTotalVacations.rawValue] as? Int {
+        if let numberOfTotalVacations = ReferenceValues.initialSetting[InitialSetting.numberOfTotalVacations.rawValue] as? Int {
             return numberOfTotalVacations
             
         } else {
@@ -553,14 +552,20 @@ class DayOffViewController: UIViewController {
         }
     }()
     
+    var tempNumberOfTotalVacations: Int!
+    
     lazy var numberOfVacationsHold: Double = {
-        // FIXME: from DB
-        return 0
-    }()
+        return self.calculateVacationValue()
+        
+    }() {
+        didSet {
+            self.applyVacationsToLabel()
+        }
+    }
     
-    var realmNotification: NotificationToken?
+    var vacationNotification: NotificationToken?
     
-    lazy var results: Results<Vacation> = {
+    var vacations: Results<Vacation> = {
         let realm = try! Realm()
         let results = realm.objects(Vacation.self)
         
@@ -630,14 +635,21 @@ extension DayOffViewController {
     
     // Initialize views
     func initializeViews() {
-        self.realmNotification = self.results.observe({ [weak self] (changes: RealmCollectionChange) in
-            guard let calendarCollectionView = self?.calendarCollectionView else { return }
+        self.vacationNotification = self.vacations.observe({ [weak self] (changes: RealmCollectionChange) in
+            guard let self = self else {
+                SupportingMethods.shared.turnCoverView(.off, on: self?.view)
+                
+                return
+            }
+            
             switch changes {
             case .initial(_):
-                calendarCollectionView.reloadData()
+                self.calendarCollectionView.reloadData()
                 
             case .update(_, deletions: _, insertions: _, modifications: _):
-                calendarCollectionView.reloadData()
+                self.calendarCollectionView.reloadData()
+                
+                self.numberOfVacationsHold = self.calculateVacationValue()
                 
 //            case .update(_, deletions: let deletions, insertions: let insertions, modifications: let modifications):
 //                calendarCollectionView.performBatchUpdates {
@@ -658,8 +670,10 @@ extension DayOffViewController {
 //                }
                 
             case .error(let error):
-                fatalError("\(error.localizedDescription)")
+                fatalError("vacationNotification error: \(error.localizedDescription)")
             }
+            
+            SupportingMethods.shared.turnCoverView(.off, on: self.view)
         })
     }
     
@@ -1101,6 +1115,29 @@ extension DayOffViewController {
 
 // MARK: - Extension for methods added
 extension DayOffViewController {
+    func calculateVacationValue() -> Double {
+        let realm = try! Realm()
+        let vacations = realm.objects(Vacation.self)
+        
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+        
+        let periodVacations = vacations.where {
+            $0.dateId >= Int(dateFormatter.string(from: self.vacationScheduleDateRange.startDate))!
+            && $0.dateId <= Int(dateFormatter.string(from: self.vacationScheduleDateRange.endDate))!
+        }
+        
+        let fullDayVacations = periodVacations.where {
+            $0.vacationType == VacationType.fullDay.rawValue
+        }
+        
+        let halfDayVacations = periodVacations.where {
+            $0.vacationType == VacationType.morning.rawValue ||
+            $0.vacationType == VacationType.afternoon.rawValue
+        }
+        
+        return Double(fullDayVacations.count) * 1 + Double(halfDayVacations.count) * 0.5
+    }
+    
     func applyVacationsToLabel() {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
@@ -1135,6 +1172,8 @@ extension DayOffViewController {
     
     @objc func vacationButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
+        
+        SupportingMethods.shared.turnCoverView(.on, on: self.view)
         
         if let buttonView = sender.superview as? VacationButtonView {
             buttonView.isSelected.toggle()
@@ -1244,6 +1283,7 @@ extension DayOffViewController {
     @objc func numberOfVacationButton(_ sender: UIButton) {
         UIDevice.softHaptic()
         
+        self.tempNumberOfTotalVacations = self.numberOfTotalVacations
         self.numberOfTotalVacationsLabel.text = "\(self.numberOfTotalVacations)"
         
         self.coverView.isHidden = false
@@ -1329,16 +1369,6 @@ extension DayOffViewController {
         }
     }
     
-    @objc func startButton(_ sender: UIButton) {
-        self.completeInitialSettings()
-        
-        let mainVC = MainViewController()
-        let mainNaviVC = CustomizedNavigationController(rootViewController: mainVC)
-        mainNaviVC.modalPresentationStyle = .fullScreen
-        
-        self.present(mainNaviVC, animated: true)
-    }
-    
     @objc func fiscalYearButton(_ sender: UIButton) {
         UIDevice.softHaptic()
         
@@ -1370,15 +1400,28 @@ extension DayOffViewController {
     }
     
     @objc func confirmButton(_ sender: UIButton) {
-        ReferenceValues.initialSetting.updateValue(self.numberOfTotalVacations, forKey: InitialSetting.numberOfTotalVacations.rawValue)
-        
         self.applyVacationsToLabel()
         
         self.coverView.isHidden = true
     }
     
     @objc func declineButton(_ sender: UIButton) {
+        self.numberOfTotalVacations = self.tempNumberOfTotalVacations
+        
         self.coverView.isHidden = true
+    }
+    
+    @objc func startButton(_ sender: UIButton) {
+        ReferenceValues.initialSetting.updateValue(self.numberOfTotalVacations, forKey: InitialSetting.numberOfTotalVacations.rawValue)
+        ReferenceValues.initialSetting.updateValue(Array<Int>(holidays), forKey: InitialSetting.holidays.rawValue)
+        
+        self.completeInitialSettings()
+        
+        let mainVC = MainViewController()
+        let mainNaviVC = CustomizedNavigationController(rootViewController: mainVC)
+        mainNaviVC.modalPresentationStyle = .fullScreen
+        
+        self.present(mainNaviVC, animated: true)
     }
 }
 
@@ -1395,7 +1438,7 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
         let day = indexPath.item - (SupportingMethods.shared.getFirstWeekdayFor(self.targetYearMonthDate) - 2)
         
         if day >= 1 {
-            let dateId: String = String(format: "\(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year)%02d%02d", SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, day)
+            let dateId: Int = Int(String(format: "\(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year)%02d%02d", SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, day))!
             
             let isToday: Bool = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year == self.todayDateComponents.year! &&
             SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month == self.todayDateComponents.month! &&
@@ -1426,6 +1469,13 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
             item.setItem(nil)
         }
         
+        self.morningVacationButtonView.isEnable = false
+        self.morningVacationButtonView.isSelected = false
+        self.afternoonVacationButtonView.isEnable = false
+        self.afternoonVacationButtonView.isSelected = false
+        
+        self.selectedIndexOfYearMonthAndDay = nil
+        
         return item
     }
     
@@ -1453,7 +1503,7 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
         self.afternoonVacationButtonView.isEnable = true
         
         // Determine vacation button state
-        let dateId: String = String(format: "\(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year)%02d%02d", SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, day)
+        let dateId: Int = Int(String(format: "\(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year)%02d%02d", SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, day))!
         
         let realm = try! Realm()
         if let vaction = realm.object(ofType: Vacation.self, forPrimaryKey: dateId) {

@@ -9,7 +9,7 @@ import UIKit
 import RealmSwift
 
 class Company: Object {
-    @Persisted(primaryKey: false) var entryDateId: String = ""
+    @Persisted(primaryKey: false) var entryDateId: Int = 0
     @Persisted var year: String = ""
     @Persisted var month: String = ""
     @Persisted var day: String = ""
@@ -22,7 +22,7 @@ class Company: Object {
     convenience init(entryDate: Date, name: String, address: String, latitude: Double, longitude: Double) {
         self.init()
         
-        self.entryDateId = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: entryDate)
+        self.entryDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: entryDate))!
         let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(entryDate)
         self.year = String(format: "%02d", yearMonthDay.year)
         self.month = String(format: "%02d", yearMonthDay.month)
@@ -58,7 +58,7 @@ class Schedule: EmbeddedObject {
 }
 
 class Vacation: Object {
-    @Persisted(primaryKey: true) var dateId: String = ""
+    @Persisted(primaryKey: true) var dateId: Int = 0
     @Persisted var year: String = ""
     @Persisted var month: String = ""
     @Persisted var day: String = ""
@@ -67,7 +67,7 @@ class Vacation: Object {
     convenience init(date: Date, vacationType: VacationType) {
         self.init()
         
-        self.dateId = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date)
+        self.dateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date))!
         let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
         self.year = String(format: "%02d", yearMonthDay.year)
         self.month = String(format: "%02d", yearMonthDay.month)

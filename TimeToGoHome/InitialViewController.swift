@@ -335,16 +335,13 @@ extension InitialViewController {
         calendar.locale = Locale(identifier: "ko_KR")
         calendar.timeZone = TimeZone.current
         
-        let today: Date = Date()
-        let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: today)
+        let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: self.joiningDate)
         
         self.yearLabel.text = "\(todayDateComponents.year!)"
         self.monthLabel.text = "\(todayDateComponents.month!)"
         self.dayLabel.text = "\(todayDateComponents.day!)"
         
-        self.joiningDate = today
-        
-        self.joiningDatePicker.maximumDate = today
+        self.joiningDatePicker.maximumDate = Date()
     }
     
     // Initialize views

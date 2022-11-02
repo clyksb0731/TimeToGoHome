@@ -119,7 +119,11 @@ extension SupportingMethods {
     }
     
     // MARK: Cover view
-    func turnCoverView(_ state: CoverViewState, on: UIView) {
+    func turnCoverView(_ state: CoverViewState, on: UIView?) {
+        guard let on = on else {
+            return
+        }
+        
         switch state {
         case .on:
             // Cover View

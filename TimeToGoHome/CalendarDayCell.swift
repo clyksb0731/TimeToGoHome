@@ -114,7 +114,7 @@ class CalendarDayCell: UICollectionViewCell {
         return view
     }()
     
-    private(set) var dateId: String?
+    private(set) var dateId: Int?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -213,7 +213,7 @@ extension CalendarDayCell {
 
 // MARK: - Extension for methods added
 extension CalendarDayCell {
-    func setItem(_ dateId: String?,
+    func setItem(_ dateId: Int?,
                  day: Int = 0,
                  isToday: Bool = false,
                  isSelected: Bool = false,
