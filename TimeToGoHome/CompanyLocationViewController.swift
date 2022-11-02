@@ -177,9 +177,11 @@ extension CompanyLocationViewController {
         self.addressTableView = {
             let tableView = UITableView()
             tableView.separatorStyle = .none
+            tableView.bounces = false
             tableView.register(CompanyAddressCell.self, forCellReuseIdentifier: "CompanyAddressCell")
             tableView.rowHeight = UITableView.automaticDimension
             tableView.estimatedRowHeight = 60
+            tableView.keyboardDismissMode = .onDrag
             tableView.translatesAutoresizingMaskIntoConstraints = false
             
             return tableView
@@ -257,7 +259,7 @@ extension CompanyLocationViewController {
         // Search textField layout
         NSLayoutConstraint.activate([
             self.searchTextField.bottomAnchor.constraint(equalTo: self.searchLineView.topAnchor),
-            self.searchTextField.heightAnchor.constraint(equalToConstant: 24),
+            self.searchTextField.heightAnchor.constraint(equalToConstant: 35), // + 11
             self.searchTextField.leadingAnchor.constraint(equalTo: self.searchLineView.leadingAnchor, constant: 4),
             self.searchTextField.trailingAnchor.constraint(equalTo: self.deleteSearchTextButton.leadingAnchor, constant: -10)
         ])
@@ -280,7 +282,7 @@ extension CompanyLocationViewController {
         
         // Search line view layout
         NSLayoutConstraint.activate([
-            self.searchLineView.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 53.5),
+            self.searchLineView.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 64.5), // + 11
             self.searchLineView.heightAnchor.constraint(equalToConstant: 1),
             self.searchLineView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
             self.searchLineView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16)
@@ -350,21 +352,19 @@ extension CompanyLocationViewController {
                 if let companyAddressResponse = try? JSONDecoder().decode(CompanyAddressResponse.self, from: data) {
                     print(companyAddressResponse)
                     print("Count" + "\(companyAddressResponse.documents.count)")
+                    
                     self.addresses = companyAddressResponse.documents
                     
+                    self.addressTableView.reloadData()
+                }
+                
+                DispatchQueue.main.async {
                     if self.addresses.isEmpty {
                         self.noResultTextLabel.isHidden = false
                         
                     } else {
                         self.noResultTextLabel.isHidden = true
-                        self.addressTableView.reloadData()
                     }
-                }
-                
-                DispatchQueue.main.async {
-                    self.nextButton.isEnabled = false
-                    self.nextButtonView.backgroundColor = UIColor.useRGB(red: 238, green: 238, blue: 238)
-                    self.nextButtonImageView.image = UIImage(named: "nextNormalImage")
                     
                     SupportingMethods.shared.turnCoverView(.off, on: self.view)
                 }
@@ -373,17 +373,13 @@ extension CompanyLocationViewController {
                 print("Error: \(error.localizedDescription)")
                 
                 self.noResultTextLabel.isHidden = false
-                self.nextButton.isEnabled = false
-                self.nextButtonView.backgroundColor = UIColor.useRGB(red: 238, green: 238, blue: 238)
-                self.nextButtonImageView.image = UIImage(named: "nextNormalImage")
+                
+                self.addresses = []
+                self.addressTableView.reloadData()
                 
                 SupportingMethods.shared.turnCoverView(.off, on: self.view)
             }
         }
-    }
-    
-    func resignAllTexts() {
-        self.view.endEditing(true)
     }
 }
 
@@ -415,6 +411,8 @@ extension CompanyLocationViewController {
     }
     
     @objc func deleteSearchTextButton(_ sender: UIButton) {
+        self.searchTextField.becomeFirstResponder()
+        
         sender.isHidden = true
         self.searchTextField.text = ""
         
@@ -425,10 +423,9 @@ extension CompanyLocationViewController {
         self.noResultTextLabel.isHidden = true
         
         self.selectedLocationIndex = nil
+        
         self.addresses = []
         self.addressTableView.reloadData()
-        
-        self.searchTextField.becomeFirstResponder()
     }
     
 //    @objc func searchButton(_ sender: UIButton) {
@@ -446,6 +443,8 @@ extension CompanyLocationViewController {
     }
     
     @objc func openLocationOnMap(_ sender: UIButton) {
+        self.searchTextField.resignFirstResponder()
+        
         if let _ = Double(self.addresses[sender.tag].latitude),
            let _ = Double(self.addresses[sender.tag].longitude) {
             let companyMapVC = CompanyMapViewController()
@@ -459,6 +458,8 @@ extension CompanyLocationViewController {
     }
     
     @objc func nextButton(_ sender: UIButton) {
+        self.searchTextField.resignFirstResponder()
+        
         let center = CLLocationCoordinate2D(latitude: Double(self.addresses[self.selectedLocationIndex!].latitude)!, longitude: Double(self.addresses[self.selectedLocationIndex!].longitude)!)
         
         let detailCompanyAddressVC = CompanyDetailedAddressViewController(selectedCenter: center, selectedAddress: self.addresses[self.selectedLocationIndex!].addressName)
@@ -517,16 +518,23 @@ extension CompanyLocationViewController: LocationManagerDelegate {
 // MARK: - Extension for UITextFieldDelegate
 extension CompanyLocationViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.resignAllTexts()
+        textField.resignFirstResponder()
+        
+        self.selectedLocationIndex = nil
+        
+        self.nextButton.isEnabled = false
+        self.nextButtonView.backgroundColor = UIColor.useRGB(red: 238, green: 238, blue: 238)
+        self.nextButtonImageView.image = UIImage(named: "nextNormalImage")
         
         if textField.text != "" &&
             textField.text?.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-            self.selectedLocationIndex = nil
-            
             self.searchAddress(self.searchTextField.text!)
             
         } else {
             self.noResultTextLabel.isHidden = false
+            
+            self.addresses = []
+            self.addressTableView.reloadData()
         }
         
         return true
@@ -554,12 +562,12 @@ extension CompanyLocationViewController: UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.selectedLocationIndex = indexPath.row
-        
-        self.addressTableView.reloadData()
+        self.searchTextField.resignFirstResponder()
         
         if let latitude = Double(self.addresses[indexPath.row].latitude),
            let longitude = Double(self.addresses[indexPath.row].longitude) {
+            self.selectedLocationIndex = indexPath.row
+            
             let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
             
             LocationManager.shared.companyRegion = CLCircularRegion(center: center, radius: 5, identifier: "companyLocation")
@@ -567,6 +575,8 @@ extension CompanyLocationViewController: UITableViewDelegate, UITableViewDataSou
             self.nextButton.isEnabled = true
             self.nextButtonView.backgroundColor = UIColor.useRGB(red: 146, green: 243, blue: 205)
             self.nextButtonImageView.image = UIImage(named: "nextSelectedImage")
+            
+            tableView.reloadData()
         }
     }
 }

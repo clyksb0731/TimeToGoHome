@@ -178,7 +178,7 @@ extension CompanyDetailedAddressViewController {
         // Selected address label layout
         NSLayoutConstraint.activate([
             self.selectedAddressLabel.topAnchor.constraint(equalTo: self.topLineView.bottomAnchor, constant: 71),
-            self.selectedAddressLabel.heightAnchor.constraint(equalToConstant: 24),
+            self.selectedAddressLabel.heightAnchor.constraint(equalToConstant: 39), // + 15
             self.selectedAddressLabel.leadingAnchor.constraint(equalTo: self.firstLineView.leadingAnchor, constant: 5),
             self.selectedAddressLabel.trailingAnchor.constraint(equalTo: self.firstLineView.trailingAnchor, constant: -5)
         ])
@@ -193,8 +193,8 @@ extension CompanyDetailedAddressViewController {
         
         // Detail address textField layout
         NSLayoutConstraint.activate([
-            self.detailAddressTextField.topAnchor.constraint(equalTo: self.firstLineView.bottomAnchor, constant: 27),
-            self.detailAddressTextField.heightAnchor.constraint(equalToConstant: 20),
+            self.detailAddressTextField.topAnchor.constraint(equalTo: self.firstLineView.bottomAnchor, constant: 17), // - 10
+            self.detailAddressTextField.heightAnchor.constraint(equalToConstant: 35), // + 15
             self.detailAddressTextField.leadingAnchor.constraint(equalTo: self.secondLineView.leadingAnchor, constant: 5),
             self.detailAddressTextField.trailingAnchor.constraint(equalTo: self.secondLineView.trailingAnchor, constant: -5)
         ])
@@ -211,28 +211,7 @@ extension CompanyDetailedAddressViewController {
 
 // MARK: - Extension for methods added
 extension CompanyDetailedAddressViewController {
-    
-}
-
-// MARK: - Extension for UITextFieldDelegate
-extension CompanyDetailedAddressViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        
-        return true
-    }
-}
-
-// MARK: - Extension for Selector methods
-extension CompanyDetailedAddressViewController {
-    @objc func leftBarButtonItem(_ sender: UIBarButtonItem) {
-        self.navigationController?.popViewController(animated: true)
-    }
-    
-    @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
-//        let workTypeVC = WorkTypeViewController()
-//        workTypeVC.modalPresentationStyle = .fullScreen
-        
+    func completeInitialLocationSetting() {
         ReferenceValues.initialSetting.updateValue(self.selectedCenter.latitude, forKey: InitialSetting.companyLatitude.rawValue)
         ReferenceValues.initialSetting.updateValue(self.selectedCenter.longitude, forKey: InitialSetting.companyLongitude.rawValue)
         
@@ -245,5 +224,27 @@ extension CompanyDetailedAddressViewController {
         tabBarVC.modalPresentationStyle = .fullScreen
         
         self.present(tabBarVC, animated: true, completion: nil)
+    }
+}
+
+// MARK: - Extension for UITextFieldDelegate
+extension CompanyDetailedAddressViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        
+        self.completeInitialLocationSetting()
+        
+        return true
+    }
+}
+
+// MARK: - Extension for Selector methods
+extension CompanyDetailedAddressViewController {
+    @objc func leftBarButtonItem(_ sender: UIBarButtonItem) {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
+        self.completeInitialLocationSetting()
     }
 }

@@ -739,7 +739,7 @@ class NormalWorkTypeViewController: UIViewController {
     }
     
     override func viewDidLayoutSubviews() {
-        self.nextButtonView.layer.shadowOpacity = self.scrollView.contentSize.height - self.scrollView.frame.height > 0 ? 1 : 0
+        self.nextButtonView.layer.shadowOpacity = self.scrollView.contentSize.height - self.scrollView.frame.height > self.scrollView.contentOffset.y ? 1 : 0
     }
     
     override var prefersStatusBarHidden: Bool {

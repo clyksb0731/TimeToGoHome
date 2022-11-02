@@ -22,7 +22,7 @@ class DayOffViewController: UIViewController {
         scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
         scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width,
-                                        height: 428 + 21+45*CGFloat(SupportingMethods.shared.getWeeksOfMonthFor(self.targetYearMonthDate)))
+                                        height: 428 - 27 + 21 + 45 * 6) // 6: number of month's weeks
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
         return scrollView
@@ -812,17 +812,17 @@ extension DayOffViewController {
         ])
         
         // calendarCollectionView layout
-        self.calendarCollectionViewHeightAnchor = self.calendarCollectionView.heightAnchor.constraint(equalToConstant: 21+45*CGFloat(SupportingMethods.shared.getWeeksOfMonthFor(self.targetYearMonthDate)))
+        self.calendarCollectionViewHeightAnchor = self.calendarCollectionView.heightAnchor.constraint(equalToConstant: 21 + 45 * 6)
         NSLayoutConstraint.activate([
             self.calendarCollectionView.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 32),
             self.calendarCollectionViewHeightAnchor,
             self.calendarCollectionView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
-            self.calendarCollectionView.widthAnchor.constraint(equalToConstant: 7*45)
+            self.calendarCollectionView.widthAnchor.constraint(equalToConstant: 7 * 45)
         ])
         
         // vacationSettingButtonView layout
         NSLayoutConstraint.activate([
-            self.vacationSettingButtonView.topAnchor.constraint(equalTo: self.calendarCollectionView.bottomAnchor, constant: 32),
+            self.vacationSettingButtonView.topAnchor.constraint(equalTo: self.calendarCollectionView.bottomAnchor, constant: 5), // - 27
             self.vacationSettingButtonView.heightAnchor.constraint(equalToConstant: 28),
             self.vacationSettingButtonView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
             self.vacationSettingButtonView.widthAnchor.constraint(equalToConstant: 295)
@@ -1229,8 +1229,11 @@ extension DayOffViewController {
     }
     
     @objc func perviousMonthButton(_ sender: UIButton) {
-        var year = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year
-        var month = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month
+        self.selectedIndexOfYearMonthAndDay = nil
+        
+        let initialYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
+        var year = initialYearMonth.year
+        var month = initialYearMonth.month
         
         month -= 1
         if month == 0 {
@@ -1238,25 +1241,38 @@ extension DayOffViewController {
             month = 12
         }
         self.targetYearMonthDate = SupportingMethods.shared.makeDateWithYear(year, month: month)
+        let targetYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
         
         self.scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width,
-                                        height: 428 + 21+45*CGFloat(SupportingMethods.shared.getWeeksOfMonthFor(self.targetYearMonthDate)))
-        self.contentViewHeightAnchor.constant = 428 + 21+45*CGFloat(SupportingMethods.shared.getWeeksOfMonthFor(self.targetYearMonthDate))
-        self.calendarCollectionViewHeightAnchor.constant = 21+45*CGFloat(SupportingMethods.shared.getWeeksOfMonthFor(self.targetYearMonthDate))
+                                        height: 428 - 27 + 21 + 45 * 6)
+        self.contentViewHeightAnchor.constant = 428 - 27 + 21 + 45 * 6
+        self.calendarCollectionViewHeightAnchor.constant = 21 + 45 * 6
         
         self.calendarCollectionView.reloadData()
         
-        self.yearMonthLabel.text = "\(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year)년 \(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month)월"
+        self.yearMonthLabel.text = "\(targetYearMonth.year)년 \(targetYearMonth.month)월"
         
-        sender.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).month)
-        self.nextMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).month)
+        let startingVacationRangeYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate)
+        let endingVacationRangeYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate)
+        
+        sender.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(startingVacationRangeYearMonth.year, month: startingVacationRangeYearMonth.month)
+        self.nextMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(endingVacationRangeYearMonth.year, month: endingVacationRangeYearMonth.month)
         
         UIDevice.lightHaptic()
+        
+        self.morningVacationButtonView.isEnable = false
+        self.morningVacationButtonView.isSelected = false
+        self.afternoonVacationButtonView.isEnable = false
+        self.afternoonVacationButtonView.isSelected = false
     }
     
     @objc func nextMonthButton(_ sender: UIButton) {
-        var year = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year
-        var month = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month
+        self.selectedIndexOfYearMonthAndDay = nil
+        
+        let initialYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
+        
+        var year = initialYearMonth.year
+        var month = initialYearMonth.month
         
         month += 1
         if month > 12 {
@@ -1264,20 +1280,29 @@ extension DayOffViewController {
             month = 1
         }
         self.targetYearMonthDate = SupportingMethods.shared.makeDateWithYear(year, month: month)
+        let targetYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
         
         self.scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width,
-                                        height: 428 + 21+45*CGFloat(SupportingMethods.shared.getWeeksOfMonthFor(self.targetYearMonthDate)))
-        self.contentViewHeightAnchor.constant = 428 + 21+45*CGFloat(SupportingMethods.shared.getWeeksOfMonthFor(self.targetYearMonthDate))
-        self.calendarCollectionViewHeightAnchor.constant = 21+45*CGFloat(SupportingMethods.shared.getWeeksOfMonthFor(self.targetYearMonthDate))
+                                        height: 428 - 27 + 21 + 45 * 6)
+        self.contentViewHeightAnchor.constant = 428 - 27 + 21 + 45 * 6
+        self.calendarCollectionViewHeightAnchor.constant = 21 + 45 * 6
         
         self.calendarCollectionView.reloadData()
         
-        self.yearMonthLabel.text = "\(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year)년 \(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month)월"
+        self.yearMonthLabel.text = "\(targetYearMonth.year)년 \(targetYearMonth.month)월"
         
-        self.previousMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate).month)
-        sender.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate).month)
+        let startingVacationRangeYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate)
+        let endingVacationRangeYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate)
+        
+        self.previousMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(startingVacationRangeYearMonth.year, month: startingVacationRangeYearMonth.month)
+        sender.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(endingVacationRangeYearMonth.year, month: endingVacationRangeYearMonth.month)
         
         UIDevice.lightHaptic()
+        
+        self.morningVacationButtonView.isEnable = false
+        self.morningVacationButtonView.isSelected = false
+        self.afternoonVacationButtonView.isEnable = false
+        self.afternoonVacationButtonView.isSelected = false
     }
     
     @objc func numberOfVacationButton(_ sender: UIButton) {
@@ -1468,13 +1493,6 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
         } else {
             item.setItem(nil)
         }
-        
-        self.morningVacationButtonView.isEnable = false
-        self.morningVacationButtonView.isSelected = false
-        self.afternoonVacationButtonView.isEnable = false
-        self.afternoonVacationButtonView.isSelected = false
-        
-        self.selectedIndexOfYearMonthAndDay = nil
         
         return item
     }
