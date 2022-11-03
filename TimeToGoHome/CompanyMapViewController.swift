@@ -10,15 +10,6 @@ import MapKit
 import Alamofire
 
 class CompanyMapViewController: UIViewController {
-
-    // Instead of navigation bar line
-//    var topLineView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = UIColor.useRGB(red: 151, green: 151, blue: 151, alpha: 0.3)
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//
-//        return view
-//    }()
     
     var mapView: MKMapView = {
         let mapView = MKMapView()
@@ -38,11 +29,31 @@ class CompanyMapViewController: UIViewController {
         return button
     }()
     
+    lazy var alertView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 24, green: 163, blue: 240, alpha: 0.6)
+        view.layer.cornerRadius = 20
+        view.isHidden = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var alertLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 17, weight: .bold)
+        label.textColor = .white
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
     var currentLocation: CLLocationCoordinate2D!
     
     var address: CompanyAddressResponse.Document!
-    var selectedCenter: CLLocationCoordinate2D!
-    var selectedAddress: String!
+    var selectedCenter: CLLocationCoordinate2D?
+    var selectedAddress: String?
     
     var apiRequest: DataRequest!
     
@@ -62,8 +73,11 @@ class CompanyMapViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.setPointAnnotation(center: self.initializeCenter().0, title: self.initializeCenter().1)
-        self.setRegion(center: self.initializeCenter().0)
+        self.mapView.removeAnnotations(self.mapView.annotations)
+        self.setPointAnnotation(center: self.initializeCenter().center, title: self.initializeCenter().address)
+        self.setRegion(center: self.initializeCenter().center)
+        
+        self.animateAlertLabel(message: "지도를 길게 눌러서 변경하세요.", for: 3.5)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -147,23 +161,19 @@ extension CompanyMapViewController {
     // Set subviews
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
-            //self.topLineView,
             self.mapView,
-            self.currentLocationButton
+            self.currentLocationButton,
+            self.alertView
         ], to: self.view)
+        
+        SupportingMethods.shared.addSubviews([
+            self.alertLabel
+        ], to: self.alertView)
     }
     
     // Set layouts
     func setLayouts() {
         let safeArea: UILayoutGuide = self.view.safeAreaLayoutGuide
-        
-//        // Top line view layout
-//        NSLayoutConstraint.activate([
-//            self.topLineView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-//            self.topLineView.heightAnchor.constraint(equalToConstant: 0.5),
-//            self.topLineView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-//            self.topLineView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
-//        ])
         
         // Map view layout
         NSLayoutConstraint.activate([
@@ -180,15 +190,37 @@ extension CompanyMapViewController {
             self.currentLocationButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16),
             self.currentLocationButton.widthAnchor.constraint(equalToConstant: 46)
         ])
+        
+        // alertView
+        NSLayoutConstraint.activate([
+            self.alertView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -30),
+            self.alertView.heightAnchor.constraint(equalToConstant: 40),
+            self.alertView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            self.alertView.widthAnchor.constraint(greaterThanOrEqualToConstant: 50)
+        ])
+        
+        // alertLabel
+        NSLayoutConstraint.activate([
+            self.alertLabel.centerYAnchor.constraint(equalTo: self.alertView.centerYAnchor),
+            self.alertLabel.leadingAnchor.constraint(equalTo: self.alertView.leadingAnchor, constant: 20),
+            self.alertLabel.trailingAnchor.constraint(equalTo: self.alertView.trailingAnchor, constant: -20)
+        ])
     }
 }
 
 // MARK: - Extension for methods added
 extension CompanyMapViewController {
-    func initializeCenter() -> (CLLocationCoordinate2D, String) {
-        let center = CLLocationCoordinate2D(latitude: Double(self.address.latitude)!, longitude: Double(self.address.longitude)!)
-        
-        return (center, self.address.addressName)
+    func initializeCenter() -> (center: CLLocationCoordinate2D, address: String) {
+        if let selectedCenter = self.selectedCenter, let selectedAddress = self.selectedAddress {
+            let center = CLLocationCoordinate2D(latitude: selectedCenter.latitude, longitude: selectedCenter.longitude)
+            
+            return (center, selectedAddress)
+            
+        } else {
+            let center = CLLocationCoordinate2D(latitude: Double(self.address.latitude)!, longitude: Double(self.address.longitude)!)
+            
+            return (center, self.address.addressName)
+        }
     }
     
     func setPointAnnotation(center: CLLocationCoordinate2D, title: String) {
@@ -251,6 +283,20 @@ extension CompanyMapViewController {
             }
         }
     }
+    
+    func animateAlertLabel(message: String, for time: TimeInterval) {
+        // Alert label
+        self.alertLabel.text = message
+        self.alertView.alpha = 1
+        self.alertView.isHidden = false
+        UIView.animate(withDuration: time) {
+            self.alertView.alpha = 0
+            
+        } completion: { finished in
+            self.alertView.isHidden = true
+            self.alertView.alpha = 1
+        }
+    }
 }
 
 // MARK: - Extension for Selector methods
@@ -260,7 +306,11 @@ extension CompanyMapViewController {
     }
     
     @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
-        let detailCompanyAddressVC = CompanyDetailedAddressViewController(selectedCenter: self.selectedCenter, selectedAddress: self.selectedAddress)
+        guard let selectedCenter = self.selectedCenter, let selectedAddress = self.selectedAddress else {
+            return
+        }
+        
+        let detailCompanyAddressVC = CompanyDetailedAddressViewController(selectedCenter: selectedCenter, selectedAddress: selectedAddress)
         
         self.navigationController?.pushViewController(detailCompanyAddressVC, animated: true)
     }
