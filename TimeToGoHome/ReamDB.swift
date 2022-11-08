@@ -17,7 +17,7 @@ class Company: Object {
     @Persisted var address: String = ""
     @Persisted var latitude: Double = 0
     @Persisted var longitude: Double = 0
-    @Persisted var schedule: List<Schedule>
+    @Persisted var schedules: List<Schedule>
     
     convenience init(joiningDate: Date, name: String, address: String, latitude: Double, longitude: Double) {
         self.init()
@@ -41,9 +41,9 @@ class Schedule: EmbeddedObject {
     @Persisted var day: String = ""
     @Persisted var morning: String = ""
     @Persisted var afternoon: String = ""
-    @Persisted var overtime: Int = 0
+    @Persisted var overtime: Int?
     
-    convenience init(date: Date, morningType morning: WorkTimeType, afternoonType afternoon: WorkTimeType, overtime: Int) {
+    convenience init(date: Date, morningType morning: WorkTimeType, afternoonType afternoon: WorkTimeType, overtime: Int? = nil) {
         self.init()
         
         //self.dateId = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date)

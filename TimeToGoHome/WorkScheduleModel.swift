@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RealmSwift
 
 enum WorkTimeType: String {
     case work = "work"
@@ -118,10 +119,7 @@ struct WorkScheduleModel {
     
     init(date: Date) {
         // Make today date id
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "ko_KR")
-        dateFormatter.timeZone = TimeZone.current
-        dateFormatter.dateFormat = "yyyyMMdd"
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
         self.dateId = dateFormatter.string(from: date)
         
         self.scheduling(dateId: self.dateId)
@@ -140,9 +138,88 @@ struct WorkScheduleModel {
         self.workType = self.makeWorkType()
         self.startingWorkTime = self.makeStartingWorkTimeDate()
         self.lunchTime = self.makeLunchTimeDate()
-        self.morning = .morning(.work) // FIXME: Temp
-        self.afternoon = .afternoon(.work) // FIXME: Temp
-        //self.overtime = .overtime(Date()) // FIXME: Temp
+        
+        let realm = try! Realm()
+        let today = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: dateId)!
+        let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(today)
+        let company = realm.object(ofType: Company.self, forPrimaryKey: Int(dateId)!)
+        for schedule in company!.schedules {
+            if schedule.year == String(yearMonthDay.year),
+                schedule.month == String(yearMonthDay.month),
+                schedule.day == String(yearMonthDay.day) {
+                
+                self.morning = .morning(WorkTimeType(rawValue: schedule.morning)!)
+                self.afternoon = .afternoon(WorkTimeType(rawValue: schedule.afternoon)!)
+                
+                if let overtime = schedule.overtime {
+                    self.overtime = .overtime(Date(timeIntervalSinceReferenceDate: Double(overtime)))
+                }
+                
+                return
+            }
+        }
+        
+        let holidays = ReferenceValues.initialSetting[InitialSetting.holidays.rawValue] as! [Int]
+        if holidays.contains(SupportingMethods.shared.getWeekdayOfToday(today)) {
+            self.morning = .morning(.holiday)
+            self.afternoon = .afternoon(.holiday)
+            
+        } else {
+            if let vacation = realm.object(ofType: Vacation.self, forPrimaryKey: Int(dateId)!) {
+                let vacationType = VacationType(rawValue: vacation.vacationType)!
+                
+                var morningWorkTimeType: WorkTimeType!
+                var afternoonWorkTimeType: WorkTimeType!
+                
+                switch vacationType {
+                case .none:
+                    self.morning = .morning(.work)
+                    self.afternoon = .afternoon(.work)
+                    
+                    morningWorkTimeType = WorkTimeType.work
+                    afternoonWorkTimeType = WorkTimeType.work
+                    
+                case .morning:
+                    self.morning = .morning(.vacation)
+                    self.afternoon = .afternoon(.work)
+                    
+                    morningWorkTimeType = WorkTimeType.vacation
+                    afternoonWorkTimeType = WorkTimeType.work
+                    
+                case .afternoon:
+                    self.morning = .morning(.work)
+                    self.afternoon = .afternoon(.vacation)
+                    
+                    morningWorkTimeType = WorkTimeType.work
+                    afternoonWorkTimeType = WorkTimeType.vacation
+                    
+                case .fullDay:
+                    self.morning = .morning(.vacation)
+                    self.afternoon = .afternoon(.vacation)
+                    
+                    morningWorkTimeType = WorkTimeType.vacation
+                    afternoonWorkTimeType = WorkTimeType.vacation
+                }
+                
+                let schedule = Schedule(date: today, morningType: morningWorkTimeType, afternoonType: afternoonWorkTimeType)
+                
+                // Realm DB
+                try! realm.write {
+                    // MARK: Handling DB
+                }
+                
+            } else {
+                self.morning = .morning(.work)
+                self.afternoon = .afternoon(.work)
+                
+                let schedule = Schedule(date: today, morningType: WorkTimeType.work, afternoonType: WorkTimeType.work)
+                
+                // Realm DB
+                try! realm.write {
+                    // MARK: Handling DB
+                }
+            }
+        }
     }
 }
 

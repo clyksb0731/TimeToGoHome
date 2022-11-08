@@ -179,6 +179,14 @@ extension SupportingMethods {
         return dateFormatter
     }
     
+    func getWeekdayOfToday(_ date: Date) -> Int { // 1: sunday ~ 7: saturday
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let dateComponents = calendar.dateComponents([.weekday], from: date)
+        
+        return dateComponents.weekday!
+    }
+    
     func getYearMonthAndDayOf(_ date: Date) -> (year: Int, month: Int, day: Int) {
         var calendar = Calendar.current
         calendar.timeZone = .current

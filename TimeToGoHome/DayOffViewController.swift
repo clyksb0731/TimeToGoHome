@@ -1159,6 +1159,18 @@ extension DayOffViewController {
     
     func completeInitialSettings() {
         SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+        
+        let realm = try! Realm()
+        
+        let company = Company(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date,
+                              name: ReferenceValues.initialSetting[InitialSetting.companyName.rawValue] as! String,
+                              address: ReferenceValues.initialSetting[InitialSetting.companyAddress.rawValue] as! String,
+                              latitude: ReferenceValues.initialSetting[InitialSetting.companyLatitude.rawValue] as! Double,
+                              longitude: ReferenceValues.initialSetting[InitialSetting.companyLongitude.rawValue] as! Double)
+        
+        try! realm.write {
+            realm.add(company, update: .all)
+        }
     }
 }
 
