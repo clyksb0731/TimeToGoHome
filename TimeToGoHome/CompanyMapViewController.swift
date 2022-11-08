@@ -51,11 +51,11 @@ class CompanyMapViewController: UIViewController {
     
     var currentLocation: CLLocationCoordinate2D!
     
-    var address: CompanyAddressResponse.Document!
+    var address: CompanyAddress.Document!
     var selectedCenter: CLLocationCoordinate2D?
     var selectedAddress: String?
     
-    var apiRequest: DataRequest!
+    var companyLocationModel: CompanyLocationModel = CompanyLocationModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -239,48 +239,48 @@ extension CompanyMapViewController {
     }
     
     func findAddressWithCenter(_ center: CLLocationCoordinate2D) {
-        let parameters: Parameters = ["x":String(center.longitude), "y":String(center.latitude)]
-        
-        self.apiRequest = AF.request("https://dapi.kakao.com/v2/local/geo/coord2address.json", method: .get, parameters: parameters, encoding: URLEncoding.default, headers: ["Authorization":ReferenceValues.kakaoAuthKey])
-        
-        self.apiRequest.responseData { (response) in
-            switch response.result {
-            case .success(let data):
-                if let companyMapResponse = try? JSONDecoder().decode(CompanyMapResponse.self, from:data) {
-                    print("Map Address: \(companyMapResponse)")
-                    if let jibeonAddress = companyMapResponse.documents.first?.address?.addressName,
-                       let roadAddress = companyMapResponse.documents.first?.roadAddress?.addressName {
-                        let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: jibeonAddress, road: roadAddress)) {
-                            self.mapView.removeAnnotations(self.mapView.annotations)
-                            
-                            self.setPointAnnotation(center: center, title: jibeonAddress)
-                        }
+        SupportingMethods.shared.turnCoverView(.on, on: self.view)
+        self.companyLocationModel.findAddressWithCenterRequest(latitude: String(center.latitude), longitude: String(center.longitude)) { companyMap in
+            if let jibeonAddress = companyMap.documents.first?.address?.addressName,
+               let roadAddress = companyMap.documents.first?.roadAddress?.addressName {
+                let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: jibeonAddress, road: roadAddress)) {
+                    self.mapView.removeAnnotations(self.mapView.annotations)
+                    
+                    self.setPointAnnotation(center: center, title: jibeonAddress)
+                }
 
-                        self.present(alertVC, animated: false, completion: nil)
-                        
-                    } else if let jibeonAddress = companyMapResponse.documents.first?.address?.addressName {
-                        let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: jibeonAddress, road: "")) {
-                            self.mapView.removeAnnotations(self.mapView.annotations)
-                            
-                            self.setPointAnnotation(center: center, title: jibeonAddress)
-                        }
-                        
-                        self.present(alertVC, animated: false, completion: nil)
-                        
-                    } else if let roadAddress = companyMapResponse.documents.first?.roadAddress?.addressName {
-                        let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: "", road: roadAddress)) {
-                            self.mapView.removeAnnotations(self.mapView.annotations)
-                            
-                            self.setPointAnnotation(center: center, title: roadAddress)
-                        }
-                        
-                        self.present(alertVC, animated: false, completion: nil)
-                    }
+                self.present(alertVC, animated: false, completion: nil)
+                
+            } else if let jibeonAddress = companyMap.documents.first?.address?.addressName {
+                let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: jibeonAddress, road: "")) {
+                    self.mapView.removeAnnotations(self.mapView.annotations)
+                    
+                    self.setPointAnnotation(center: center, title: jibeonAddress)
                 }
                 
-            case .failure(let error):
-                print("Error: \(error.localizedDescription)")
+                self.present(alertVC, animated: false, completion: nil)
+                
+            } else if let roadAddress = companyMap.documents.first?.roadAddress?.addressName {
+                let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: "", road: roadAddress)) {
+                    self.mapView.removeAnnotations(self.mapView.annotations)
+                    
+                    self.setPointAnnotation(center: center, title: roadAddress)
+                }
+                
+                self.present(alertVC, animated: false, completion: nil)
+                
+            } else {
+                let alertVC = UIAlertController(title: "오류", message: "선택한 위치의 주소를 알 수 없습니다.", preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+                alertVC.addAction(okAction)
+                
+                self.present(alertVC, animated: true)
             }
+            
+            SupportingMethods.shared.turnCoverView(.off, on: self.view)
+            
+        } failure: {
+            SupportingMethods.shared.turnCoverView(.off, on: self.view)
         }
     }
     

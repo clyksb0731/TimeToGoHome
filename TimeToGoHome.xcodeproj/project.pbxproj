@@ -32,9 +32,8 @@
 		CAB7CF352750C084005C9232 /* CompanyLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF342750C084005C9232 /* CompanyLocationViewController.swift */; };
 		CAB7CF372750C50F005C9232 /* CompanyAddressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF362750C50F005C9232 /* CompanyAddressCell.swift */; };
 		CAB7CF392750C5C9005C9232 /* CompanyMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF382750C5C9005C9232 /* CompanyMapViewController.swift */; };
-		CAB7CF3B2750C5F2005C9232 /* CompanyMapResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF3A2750C5F2005C9232 /* CompanyMapResponse.swift */; };
 		CAB7CF3D2750C7F3005C9232 /* CompanyLocationAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF3C2750C7F3005C9232 /* CompanyLocationAlertViewController.swift */; };
-		CAB7CF422750CBFD005C9232 /* CompanyAddressResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF412750CBFD005C9232 /* CompanyAddressResponse.swift */; };
+		CAB7CF422750CBFD005C9232 /* CompanyLocationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF412750CBFD005C9232 /* CompanyLocationModel.swift */; };
 		CAB7CF442750CD01005C9232 /* CompanyDetailedAddressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF432750CD01005C9232 /* CompanyDetailedAddressViewController.swift */; };
 		CAB7CF462750CD66005C9232 /* WorkTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF452750CD66005C9232 /* WorkTypeViewController.swift */; };
 		CAB7CF482750CDCE005C9232 /* DayButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB7CF472750CDCE005C9232 /* DayButtonView.swift */; };
@@ -74,9 +73,8 @@
 		CAB7CF342750C084005C9232 /* CompanyLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLocationViewController.swift; sourceTree = "<group>"; };
 		CAB7CF362750C50F005C9232 /* CompanyAddressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyAddressCell.swift; sourceTree = "<group>"; };
 		CAB7CF382750C5C9005C9232 /* CompanyMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyMapViewController.swift; sourceTree = "<group>"; };
-		CAB7CF3A2750C5F2005C9232 /* CompanyMapResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyMapResponse.swift; sourceTree = "<group>"; };
 		CAB7CF3C2750C7F3005C9232 /* CompanyLocationAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLocationAlertViewController.swift; sourceTree = "<group>"; };
-		CAB7CF412750CBFD005C9232 /* CompanyAddressResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyAddressResponse.swift; sourceTree = "<group>"; };
+		CAB7CF412750CBFD005C9232 /* CompanyLocationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLocationModel.swift; sourceTree = "<group>"; };
 		CAB7CF432750CD01005C9232 /* CompanyDetailedAddressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyDetailedAddressViewController.swift; sourceTree = "<group>"; };
 		CAB7CF452750CD66005C9232 /* WorkTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkTypeViewController.swift; sourceTree = "<group>"; };
 		CAB7CF472750CDCE005C9232 /* DayButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayButtonView.swift; sourceTree = "<group>"; };
@@ -125,9 +123,8 @@
 				CAB7CF302750B5B9005C9232 /* InitialViewController.swift */,
 				CAB7CF342750C084005C9232 /* CompanyLocationViewController.swift */,
 				CAB7CF362750C50F005C9232 /* CompanyAddressCell.swift */,
-				CAB7CF412750CBFD005C9232 /* CompanyAddressResponse.swift */,
+				CAB7CF412750CBFD005C9232 /* CompanyLocationModel.swift */,
 				CAB7CF382750C5C9005C9232 /* CompanyMapViewController.swift */,
-				CAB7CF3A2750C5F2005C9232 /* CompanyMapResponse.swift */,
 				CAB7CF3C2750C7F3005C9232 /* CompanyLocationAlertViewController.swift */,
 				CAB7CF432750CD01005C9232 /* CompanyDetailedAddressViewController.swift */,
 				CAB7CF452750CD66005C9232 /* WorkTypeViewController.swift */,
@@ -262,7 +259,7 @@
 				CAB7CF352750C084005C9232 /* CompanyLocationViewController.swift in Sources */,
 				CAB6C93B27FA9AAC00B67F1A /* NormalWorkTypeViewController.swift in Sources */,
 				CAB7CF392750C5C9005C9232 /* CompanyMapViewController.swift in Sources */,
-				CAB7CF422750CBFD005C9232 /* CompanyAddressResponse.swift in Sources */,
+				CAB7CF422750CBFD005C9232 /* CompanyLocationModel.swift in Sources */,
 				CA226762274402D50035663D /* AppDelegate.swift in Sources */,
 				CAB6C93927FA9A9E00B67F1A /* StaggeredWorkTypeViewController.swift in Sources */,
 				CA5327092907BAB0003D66A9 /* CustomizedNavigationController.swift in Sources */,
@@ -271,7 +268,6 @@
 				CAFEF7CF2839117200DE5BA9 /* ReamDB.swift in Sources */,
 				CA79A8E627D85550000F58E2 /* TemplateCell.swift in Sources */,
 				CAB7CF2D2750B280005C9232 /* ReferenceValues.swift in Sources */,
-				CAB7CF3B2750C5F2005C9232 /* CompanyMapResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

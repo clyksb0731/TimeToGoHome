@@ -108,10 +108,9 @@ class CompanyLocationViewController: UIViewController {
         return button
     }()
     
-    var apiRequest: DataRequest!
+    var addresses: [CompanyAddress.Document] = []
     
-    // Addresses
-    var addresses: [CompanyAddressResponse.Document] = []
+    var companyLocationModel: CompanyLocationModel = CompanyLocationModel()
     
     var selectedLocationIndex: Int?
     
@@ -332,53 +331,33 @@ extension CompanyLocationViewController {
 
 // MARK: - Extension for methods added
 extension CompanyLocationViewController {
-    func searchAddress(_ query: String) {
+    func searchAddress(_ text: String) {
         SupportingMethods.shared.turnCoverView(.on, on: self.view)
-        
-        let parameters: Parameters = [
-            "query":query, // 검색을 원하는 질의어
-            "analyze":"similar",
-            // similar: 입력한 건물명과 일부만 매칭될 경우에도 확장된 검색 결과 제공, 미지정 시 similar가 적용됨
-            // exact: 주소의 정확한 건물명이 입력된 주소패턴일 경우에 한해, 입력한 건물명과 정확히 일치하는 검색 결과 제공
-            "page":1, // 결과 페이지 번호: 1~45 사이의 값 (기본값: 1)
-            "size":20 // 한페이지에 보여질 문서의 개수: 1~30 사이의 값(기본값: 10)
-        ]
-        
-        self.apiRequest = AF.request("https://dapi.kakao.com/v2/local/search/address.json", method: .get, parameters: parameters, encoding: URLEncoding.default, headers: ["Authorization":ReferenceValues.kakaoAuthKey])
-        
-        self.apiRequest.responseData { (response) in
-            switch response.result {
-            case .success(let data):
-                if let companyAddressResponse = try? JSONDecoder().decode(CompanyAddressResponse.self, from: data) {
-                    print(companyAddressResponse)
-                    print("Count" + "\(companyAddressResponse.documents.count)")
+        self.companyLocationModel.searchAddressWithTextReqeust(text) { companyAddress in
+            print("Company Address Count: \(companyAddress.documents.count)")
+            
+            self.addresses = companyAddress.documents
+            
+            self.addressTableView.reloadData()
+            
+            DispatchQueue.main.async {
+                if self.addresses.isEmpty {
+                    self.noResultTextLabel.isHidden = false
                     
-                    self.addresses = companyAddressResponse.documents
-                    
-                    self.addressTableView.reloadData()
+                } else {
+                    self.noResultTextLabel.isHidden = true
                 }
-                
-                DispatchQueue.main.async {
-                    if self.addresses.isEmpty {
-                        self.noResultTextLabel.isHidden = false
-                        
-                    } else {
-                        self.noResultTextLabel.isHidden = true
-                    }
-                    
-                    SupportingMethods.shared.turnCoverView(.off, on: self.view)
-                }
-                
-            case .failure(let error):
-                print("Error: \(error.localizedDescription)")
-                
-                self.noResultTextLabel.isHidden = false
-                
-                self.addresses = []
-                self.addressTableView.reloadData()
                 
                 SupportingMethods.shared.turnCoverView(.off, on: self.view)
             }
+            
+        } failure: {
+            self.noResultTextLabel.isHidden = false
+            
+            self.addresses = []
+            self.addressTableView.reloadData()
+            
+            SupportingMethods.shared.turnCoverView(.off, on: self.view)
         }
     }
 }
