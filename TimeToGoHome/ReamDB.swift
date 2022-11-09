@@ -41,9 +41,9 @@ class Schedule: EmbeddedObject {
     @Persisted var day: String = ""
     @Persisted var morning: String = ""
     @Persisted var afternoon: String = ""
-    @Persisted var overtime: Int?
+    @Persisted var overtime: Double?
     
-    convenience init(date: Date, morningType morning: WorkTimeType, afternoonType afternoon: WorkTimeType, overtime: Int? = nil) {
+    convenience init(date: Date, morningType morning: WorkTimeType, afternoonType afternoon: WorkTimeType, overtime: Double? = nil) {
         self.init()
         
         //self.dateId = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date)

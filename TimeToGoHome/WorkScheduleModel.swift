@@ -143,20 +143,20 @@ struct WorkScheduleModel {
         let today = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: dateId)!
         let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(today)
         let company = realm.object(ofType: Company.self, forPrimaryKey: Int(dateId)!)
-        for schedule in company!.schedules {
-            if schedule.year == String(yearMonthDay.year),
-                schedule.month == String(yearMonthDay.month),
-                schedule.day == String(yearMonthDay.day) {
-                
-                self.morning = .morning(WorkTimeType(rawValue: schedule.morning)!)
-                self.afternoon = .afternoon(WorkTimeType(rawValue: schedule.afternoon)!)
-                
-                if let overtime = schedule.overtime {
-                    self.overtime = .overtime(Date(timeIntervalSinceReferenceDate: Double(overtime)))
-                }
-                
-                return
+        let schedules = company?.schedules.where {
+            $0.year == String(yearMonthDay.year) &&
+            $0.month == String(yearMonthDay.month) &&
+            $0.day == String(yearMonthDay.day)
+        }
+        if let schedule = schedules?.first {
+            self.morning = .morning(WorkTimeType(rawValue: schedule.morning)!)
+            self.afternoon = .afternoon(WorkTimeType(rawValue: schedule.afternoon)!)
+            
+            if let overtime = schedule.overtime {
+                self.overtime = .overtime(Date(timeIntervalSinceReferenceDate: overtime))
             }
+            
+            return
         }
         
         let holidays = ReferenceValues.initialSetting[InitialSetting.holidays.rawValue] as! [Int]
@@ -205,7 +205,7 @@ struct WorkScheduleModel {
                 
                 // Realm DB
                 try! realm.write {
-                    // MARK: Handling DB
+                    company?.schedules.append(schedule)
                 }
                 
             } else {
@@ -216,7 +216,7 @@ struct WorkScheduleModel {
                 
                 // Realm DB
                 try! realm.write {
-                    // MARK: Handling DB
+                    company?.schedules.append(schedule)
                 }
             }
         }
