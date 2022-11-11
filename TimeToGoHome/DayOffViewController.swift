@@ -505,7 +505,6 @@ class DayOffViewController: UIViewController {
         return results
     }()
     
-    var holidays: Set<Int> = [1,7]
     var annualVacationType: AnnualVacationType = {
         if let annualVacationType = ReferenceValues.initialSetting[InitialSetting.annualVacationType.rawValue] as? String,
             let annualVacationType = AnnualVacationType(rawValue: annualVacationType) {
@@ -516,6 +515,15 @@ class DayOffViewController: UIViewController {
         }
     }()
     lazy var tempAnnualVacationType: AnnualVacationType = self.annualVacationType
+    
+    var holidays: Set<Int> = {
+        if let holidays = ReferenceValues.initialSetting[InitialSetting.holidays.rawValue] as? [Int] {
+            return Set(holidays)
+            
+        } else {
+            return [1,7]
+        }
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -1394,6 +1402,18 @@ extension DayOffViewController {
                     print("saturday off")
                 }
             }
+            
+            if let selectedIndexOfYearMonthAndDay = self.selectedIndexOfYearMonthAndDay, self.holidays.contains(SupportingMethods.shared.getWeekdayOfToday(SupportingMethods.shared.makeDateWithYear(selectedIndexOfYearMonthAndDay.year, month: selectedIndexOfYearMonthAndDay.month, andDay: selectedIndexOfYearMonthAndDay.day))) {
+                self.selectedIndexOfYearMonthAndDay = nil
+                
+                self.morningVacationButtonView.isEnable = false
+                self.afternoonVacationButtonView.isEnable = false
+                
+                self.morningVacationButtonView.isSelected = false
+                self.afternoonVacationButtonView.isSelected = false
+            }
+            
+            self.calendarCollectionView.reloadData()
         }
     }
     
@@ -1484,7 +1504,7 @@ extension DayOffViewController {
     @objc func startButton(_ sender: UIButton) {
         ReferenceValues.initialSetting.updateValue(self.annualVacationType.rawValue, forKey: InitialSetting.annualVacationType.rawValue)
         ReferenceValues.initialSetting.updateValue(self.numberOfTotalVacations, forKey: InitialSetting.numberOfTotalVacations.rawValue)
-        ReferenceValues.initialSetting.updateValue(Array<Int>(holidays), forKey: InitialSetting.holidays.rawValue)
+        ReferenceValues.initialSetting.updateValue(Array(self.holidays), forKey: InitialSetting.holidays.rawValue)
         
         self.completeInitialSettings()
         
@@ -1528,7 +1548,8 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
             }
             
             let dateOfDay = SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, andDay: day)
-            let isEnable = dateOfDay >= self.vacationScheduleDateRange.startDate && dateOfDay <= self.vacationScheduleDateRange.endDate
+            
+            let isEnable = (dateOfDay >= self.vacationScheduleDateRange.startDate && dateOfDay <= self.vacationScheduleDateRange.endDate) && !(self.holidays.contains(SupportingMethods.shared.getWeekdayOfToday(dateOfDay)))
             
             let realm = try! Realm()
             let vaction: Vacation? = realm.object(ofType: Vacation.self, forPrimaryKey: dateId)
@@ -1558,7 +1579,7 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
         let day = indexPath.item - (SupportingMethods.shared.getFirstWeekdayFor(self.targetYearMonthDate) - 2)
         let dateOfDay = SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, andDay: day)
         
-        guard dateOfDay >= self.vacationScheduleDateRange.startDate && dateOfDay <= self.vacationScheduleDateRange.endDate else {
+        guard (dateOfDay >= self.vacationScheduleDateRange.startDate && dateOfDay <= self.vacationScheduleDateRange.endDate) && !(self.holidays.contains(SupportingMethods.shared.getWeekdayOfToday(dateOfDay))) else {
             return
         }
         
