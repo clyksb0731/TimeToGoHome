@@ -1564,42 +1564,55 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
         
         UIDevice.lightHaptic()
         
-        self.selectedIndexOfYearMonthAndDay = (SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year,
-                                               SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month,
-                                               day)
-        
-        self.morningVacationButtonView.isEnable = true
-        self.afternoonVacationButtonView.isEnable = true
-        
-        // Determine vacation button state
+        // Determine dateId
         let dateId: Int = Int(String(format: "\(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year)%02d%02d", SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, day))!
         
         let realm = try! Realm()
-        if let vaction = realm.object(ofType: Vacation.self, forPrimaryKey: dateId) {
-            switch VacationType(rawValue: vaction.vacationType)! {
-            case .none:
-                self.morningVacationButtonView.isSelected = false
-                self.afternoonVacationButtonView.isSelected = false
-                
-            case .morning:
-                self.morningVacationButtonView.isSelected = true
-                self.afternoonVacationButtonView.isSelected = false
-                
-            case .afternoon:
-                self.morningVacationButtonView.isSelected = false
-                self.afternoonVacationButtonView.isSelected = true
-                
-            case .fullDay:
-                self.morningVacationButtonView.isSelected = true
-                self.afternoonVacationButtonView.isSelected = true
-            }
-            
-        } else {
-            self.morningVacationButtonView.isSelected = false
-            self.afternoonVacationButtonView.isSelected = false
+        let schedules = realm.object(ofType: Company.self, forPrimaryKey: Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date))!)?.schedules
+        let schedule = schedules?.where {
+            $0.year == String(format: "%02d", SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year) &&
+            $0.month == String(format: "%02d", SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month) &&
+            $0.day == String(format: "%02d", day)
         }
         
-        collectionView.reloadData()
+        if let schedule = schedule, !schedule.isEmpty {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "수정 불가", andMessage: "이미 정해진 스케쥴이 있습니다. 스케쥴을 수정하세요.",
+                                               okAction: UIAlertAction(title: "확인", style: .default, handler: nil))
+            
+        } else {
+            self.selectedIndexOfYearMonthAndDay = (SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year,
+                                                   SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month,
+                                                   day)
+            
+            self.morningVacationButtonView.isEnable = true
+            self.afternoonVacationButtonView.isEnable = true
+            
+            if let vaction = realm.object(ofType: Vacation.self, forPrimaryKey: dateId) {
+                switch VacationType(rawValue: vaction.vacationType)! {
+                case .none:
+                    self.morningVacationButtonView.isSelected = false
+                    self.afternoonVacationButtonView.isSelected = false
+                    
+                case .morning:
+                    self.morningVacationButtonView.isSelected = true
+                    self.afternoonVacationButtonView.isSelected = false
+                    
+                case .afternoon:
+                    self.morningVacationButtonView.isSelected = false
+                    self.afternoonVacationButtonView.isSelected = true
+                    
+                case .fullDay:
+                    self.morningVacationButtonView.isSelected = true
+                    self.afternoonVacationButtonView.isSelected = true
+                }
+                
+            } else {
+                self.morningVacationButtonView.isSelected = false
+                self.afternoonVacationButtonView.isSelected = false
+            }
+            
+            collectionView.reloadData()
+        }
     }
 }
 

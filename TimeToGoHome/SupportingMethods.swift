@@ -169,6 +169,17 @@ extension SupportingMethods {
         }
     }
     
+    // MARK: Alert view
+    func makeAlert(on: UIViewController, withTitle title: String, andMessage message: String, okAction: UIAlertAction, cancelAction: UIAlertAction? = nil, completion: (() -> ())? = nil) {
+        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertVC.addAction(okAction)
+        if let cancelAction = cancelAction {
+            alertVC.addAction(cancelAction)
+        }
+        
+        on.present(alertVC, animated: false, completion: completion)
+    }
+    
     // MARK: About time
     func makeDateFormatter(_ format: String) -> DateFormatter {
         let dateFormatter = DateFormatter()
@@ -177,6 +188,15 @@ extension SupportingMethods {
         dateFormatter.dateFormat = format
         
         return dateFormatter
+    }
+    
+    func makeDateWithYear(_ year: Int, month: Int, andDay day: Int = 1) -> Date {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        
+        let dateComponents = DateComponents(year: year, month: month, day: day)
+        
+        return calendar.date(from: dateComponents)!
     }
     
     func getWeekdayOfToday(_ date: Date) -> Int { // 1: sunday ~ 7: saturday
@@ -193,15 +213,6 @@ extension SupportingMethods {
         let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
         
         return (dateComponents.year!, dateComponents.month!, dateComponents.day!)
-    }
-    
-    func makeDateWithYear(_ year: Int, month: Int, andDay day: Int = 1) -> Date {
-        var calendar = Calendar.current
-        calendar.timeZone = .current
-        
-        let dateComponents = DateComponents(year: year, month: month, day: day)
-        
-        return calendar.date(from: dateComponents)!
     }
     
     func getWeeksOfMonthFor(_ date: Date) -> Int {

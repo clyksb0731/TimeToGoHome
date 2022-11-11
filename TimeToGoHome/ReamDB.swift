@@ -9,7 +9,7 @@ import UIKit
 import RealmSwift
 
 class Company: Object {
-    @Persisted(primaryKey: false) var joiningDate: Int = 0
+    @Persisted(primaryKey: true) var dateId: Int = 0
     @Persisted var year: String = ""
     @Persisted var month: String = ""
     @Persisted var day: String = ""
@@ -22,7 +22,7 @@ class Company: Object {
     convenience init(joiningDate: Date, name: String, address: String, latitude: Double, longitude: Double) {
         self.init()
         
-        self.joiningDate = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: joiningDate))!
+        self.dateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: joiningDate))!
         let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(joiningDate)
         self.year = String(format: "%02d", yearMonthDay.year)
         self.month = String(format: "%02d", yearMonthDay.month)
