@@ -142,7 +142,7 @@ struct WorkScheduleModel {
         let realm = try! Realm()
         let today = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: dateId)!
         let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(today)
-        let company = realm.object(ofType: Company.self, forPrimaryKey: Int(dateId)!)
+        let company = realm.object(ofType: Company.self, forPrimaryKey: Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date))!)
         let schedules = company?.schedules.where {
             $0.year == String(yearMonthDay.year) &&
             $0.month == String(yearMonthDay.month) &&
@@ -163,6 +163,13 @@ struct WorkScheduleModel {
         if holidays.contains(SupportingMethods.shared.getWeekdayOfToday(today)) {
             self.morning = .morning(.holiday)
             self.afternoon = .afternoon(.holiday)
+            
+            let schedule = Schedule(date: today, morningType: WorkTimeType.holiday, afternoonType: WorkTimeType.holiday)
+            
+            // Realm DB
+            try! realm.write {
+                company?.schedules.append(schedule)
+            }
             
         } else {
             if let vacation = realm.object(ofType: Vacation.self, forPrimaryKey: Int(dateId)!) {

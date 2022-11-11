@@ -1579,6 +1579,14 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
             SupportingMethods.shared.makeAlert(on: self, withTitle: "수정 불가", andMessage: "이미 정해진 스케쥴이 있습니다. 스케쥴을 수정하세요.",
                                                okAction: UIAlertAction(title: "확인", style: .default, handler: nil))
             
+            self.selectedIndexOfYearMonthAndDay = nil
+            
+            self.morningVacationButtonView.isEnable = false
+            self.afternoonVacationButtonView.isEnable = false
+            
+            self.morningVacationButtonView.isSelected = false
+            self.afternoonVacationButtonView.isSelected = false
+            
         } else {
             self.selectedIndexOfYearMonthAndDay = (SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year,
                                                    SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month,
@@ -1610,9 +1618,9 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 self.morningVacationButtonView.isSelected = false
                 self.afternoonVacationButtonView.isSelected = false
             }
-            
-            collectionView.reloadData()
         }
+        
+        collectionView.reloadData()
     }
 }
 
