@@ -296,10 +296,8 @@ extension WorkScheduleModel {
         if case .morning(let morningWorkType) = self.morning, case .afternoon(let afternoonWorkType) = self.afternoon {
             
             let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
-            let schedule = companyModel.getScheduleOn(self.date)!
             
-            schedule.morning = morningWorkType.rawValue
-            schedule.afternoon = afternoonWorkType.rawValue
+            let schedule = Schedule(date: self.date, morningType: morningWorkType, afternoonType: afternoonWorkType)
             
             if case .overtime(_) = self.overtime {
                 let overtime = self.overtimeSecondsSincReferenceDate - self.finishingRegularWorkTimeSecondsSinceReferenceDate!
