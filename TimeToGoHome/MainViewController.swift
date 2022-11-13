@@ -2142,16 +2142,16 @@ extension MainViewController {
         if (now >= self.tomorrowTimeValue) {
             self.timer?.invalidate()
             
-            self.schedule = WorkScheduleModel.today
-            
-            self.determineToday()
-            
             if self.isEditingMode {
                 self.mainTimeCoverView.isHidden = true
                 self.isEditingMode = false
                 
                 SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "날이 바뀌어 스케쥴 변경이 중단되었습니다.")
             }
+            
+            self.schedule = WorkScheduleModel.today
+            
+            self.determineToday()
             
         } else {
             if startingWorkTimeSecondsSinceReferenceDate >= now {
@@ -2775,6 +2775,7 @@ extension MainViewController: MainCoverDelegate {
         
         self.determineTodayRegularScheduleTypeAfterInsertingRegularSchedule(self.tempSchedule!) {regularScheduleType, schedule in
             self.schedule = schedule
+            self.schedule.updateTodayIntoDB()
             
             if self.schedule.startingWorkTime == nil {
                 self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
@@ -2808,6 +2809,7 @@ extension MainViewController: MainCoverDelegate {
             
         } else {
             self.schedule.insertSchedule(schedule)
+            self.schedule.updateTodayIntoDB()
         }
         
         self.scheduleTableView.reloadData()

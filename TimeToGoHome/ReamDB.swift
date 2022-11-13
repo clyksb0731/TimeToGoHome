@@ -55,14 +55,13 @@ struct CompanyModel {
         return schedules?.first
     }
     
-    func setScheduleOn(_ date: Date, schedule: Schedule) {
+    func setSchedule(_ schedule: Schedule) {
         let realm = try! Realm()
         
-        let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
         let schedules = self.company?.schedules.where {
-            $0.year == String(format: "%02d", yearMonthDay.year) &&
-            $0.month == String(format: "%02d", yearMonthDay.month) &&
-            $0.day == String(format: "%02d", yearMonthDay.day)
+            $0.year == schedule.year &&
+            $0.month == schedule.month &&
+            $0.day == schedule.day
         }
         try! realm.write {
             schedules?.first?.year = schedule.year
@@ -77,8 +76,26 @@ struct CompanyModel {
     func addSchedule(_ schedule: Schedule) {
         let realm = try! Realm()
         
-        try! realm.write {
-            self.schedules?.append(schedule)
+        let schedules = self.company?.schedules.where {
+            $0.year == schedule.year &&
+            $0.month == schedule.month &&
+            $0.day == schedule.day
+        }
+        
+        if let existingSchedule = schedules?.first {
+            try! realm.write {
+                existingSchedule.year = schedule.year
+                existingSchedule.month = schedule.month
+                existingSchedule.day = schedule.day
+                existingSchedule.morning = schedule.morning
+                existingSchedule.afternoon = schedule.afternoon
+                existingSchedule.overtime = schedule.overtime
+            }
+            
+        } else {
+            try! realm.write {
+                self.schedules?.append(schedule)
+            }
         }
     }
     

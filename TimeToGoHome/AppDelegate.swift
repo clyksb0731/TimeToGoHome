@@ -48,12 +48,9 @@ extension AppDelegate {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         
         if !ReferenceValues.initialSetting.isEmpty {
-//            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-//            let mainVC = storyboard.instantiateInitialViewController() as! MainViewController
-//            self.window?.rootViewController = CustomizedNavigationController(rootViewController: mainVC)
-            
-            let dayOffVC = DayOffViewController()
-            self.window?.rootViewController = dayOffVC
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let mainVC = storyboard.instantiateInitialViewController() as! MainViewController
+            self.window?.rootViewController = CustomizedNavigationController(rootViewController: mainVC)
             
         } else {
             let initialVC = InitialViewController()
