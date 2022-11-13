@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RealmSwift
 
 enum WorkTimeType: String {
     case work = "work"
@@ -139,40 +138,31 @@ struct WorkScheduleModel {
         self.startingWorkTime = self.makeStartingWorkTimeDate()
         self.lunchTime = self.makeLunchTimeDate()
         
-        let realm = try! Realm()
-        let today = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: dateId)!
-        let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(today)
-        let company = realm.object(ofType: Company.self, forPrimaryKey: Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date))!)
-        let schedules = company?.schedules.where {
-            $0.year == String(yearMonthDay.year) &&
-            $0.month == String(yearMonthDay.month) &&
-            $0.day == String(yearMonthDay.day)
-        }
-        if let schedule = schedules?.first {
+        let date = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: dateId)!
+        
+        let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
+        if let schedule = companyModel.getScheduleOn(date) {
             self.morning = .morning(WorkTimeType(rawValue: schedule.morning)!)
             self.afternoon = .afternoon(WorkTimeType(rawValue: schedule.afternoon)!)
             
-            if let overtime = schedule.overtime {
-                self.overtime = .overtime(Date(timeIntervalSinceReferenceDate: overtime))
+            if let overtime = schedule.overtime, let finishingRegularWorkTimeSecondsSinceReferenceDate = self.finishingRegularWorkTimeSecondsSinceReferenceDate {
+                self.overtime = .overtime(Date(timeIntervalSinceReferenceDate: Double(finishingRegularWorkTimeSecondsSinceReferenceDate + overtime)))
             }
             
             return
         }
         
         let holidays = ReferenceValues.initialSetting[InitialSetting.holidays.rawValue] as! [Int]
-        if holidays.contains(SupportingMethods.shared.getWeekdayOfToday(today)) {
+        if holidays.contains(SupportingMethods.shared.getWeekdayOfDate(date)) {
             self.morning = .morning(.holiday)
             self.afternoon = .afternoon(.holiday)
             
-            let schedule = Schedule(date: today, morningType: WorkTimeType.holiday, afternoonType: WorkTimeType.holiday)
+            let schedule = Schedule(date: date, morningType: WorkTimeType.holiday, afternoonType: WorkTimeType.holiday)
             
-            // Realm DB
-            try! realm.write {
-                company?.schedules.append(schedule)
-            }
+            companyModel.addSchedule(schedule)
             
         } else {
-            if let vacation = realm.object(ofType: Vacation.self, forPrimaryKey: Int(dateId)!) {
+            if let vacation = VacationModel(date: date).vacation {
                 let vacationType = VacationType(rawValue: vacation.vacationType)!
                 
                 var morningWorkTimeType: WorkTimeType!
@@ -208,23 +198,17 @@ struct WorkScheduleModel {
                     afternoonWorkTimeType = WorkTimeType.vacation
                 }
                 
-                let schedule = Schedule(date: today, morningType: morningWorkTimeType, afternoonType: afternoonWorkTimeType)
+                let schedule = Schedule(date: date, morningType: morningWorkTimeType, afternoonType: afternoonWorkTimeType)
                 
-                // Realm DB
-                try! realm.write {
-                    company?.schedules.append(schedule)
-                }
+                companyModel.addSchedule(schedule)
                 
             } else {
                 self.morning = .morning(.work)
                 self.afternoon = .afternoon(.work)
                 
-                let schedule = Schedule(date: today, morningType: WorkTimeType.work, afternoonType: WorkTimeType.work)
+                let schedule = Schedule(date: date, morningType: WorkTimeType.work, afternoonType: WorkTimeType.work)
                 
-                // Realm DB
-                try! realm.write {
-                    company?.schedules.append(schedule)
-                }
+                companyModel.addSchedule(schedule)
             }
         }
     }
@@ -336,7 +320,7 @@ extension WorkScheduleModel {
         overtime != nil ? print("Today's overtime minute: \(overtime!)") : {}()
     }
     
-    mutating func refreshToday() {
+    mutating func refreshToday() { // FIXME: Refresh today for setting change.
         // Check DB if there is already today schedule.
         // &&
         // Check tody schedule condition for initial setting.

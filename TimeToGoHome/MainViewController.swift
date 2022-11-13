@@ -2146,6 +2146,13 @@ extension MainViewController {
             
             self.determineToday()
             
+            if self.isEditingMode {
+                self.mainTimeCoverView.isHidden = true
+                self.isEditingMode = false
+                
+                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "날이 바뀌어 스케쥴 변경이 중단되었습니다.")
+            }
+            
         } else {
             if startingWorkTimeSecondsSinceReferenceDate >= now {
                 self.startWorkingTimeButton.setTitle("출근전", for: .normal)

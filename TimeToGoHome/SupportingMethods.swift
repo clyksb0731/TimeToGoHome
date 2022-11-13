@@ -170,7 +170,7 @@ extension SupportingMethods {
     }
     
     // MARK: Alert view
-    func makeAlert(on: UIViewController, withTitle title: String, andMessage message: String, okAction: UIAlertAction, cancelAction: UIAlertAction? = nil, completion: (() -> ())? = nil) {
+    func makeAlert(on: UIViewController, withTitle title: String, andMessage message: String, okAction: UIAlertAction = UIAlertAction(title: "확인", style: .default), cancelAction: UIAlertAction? = nil, completion: (() -> ())? = nil) {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertVC.addAction(okAction)
         if let cancelAction = cancelAction {
@@ -199,7 +199,7 @@ extension SupportingMethods {
         return calendar.date(from: dateComponents)!
     }
     
-    func getWeekdayOfToday(_ date: Date) -> Int { // 1: sunday ~ 7: saturday
+    func getWeekdayOfDate(_ date: Date) -> Int { // 1: sunday ~ 7: saturday
         var calendar = Calendar.current
         calendar.timeZone = .current
         let dateComponents = calendar.dateComponents([.weekday], from: date)

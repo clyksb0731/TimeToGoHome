@@ -498,12 +498,7 @@ class DayOffViewController: UIViewController {
     
     var vacationNotification: NotificationToken?
     
-    var vacations: Results<Vacation> = {
-        let realm = try! Realm()
-        let results = realm.objects(Vacation.self)
-        
-        return results
-    }()
+    var vacations: Results<Vacation> = VacationModel.vacations
     
     var annualVacationType: AnnualVacationType = {
         if let annualVacationType = ReferenceValues.initialSetting[InitialSetting.annualVacationType.rawValue] as? String,
@@ -1122,8 +1117,7 @@ extension DayOffViewController {
     }
     
     func calculateVacationValue() -> Double {
-        let realm = try! Realm()
-        let vacations = realm.objects(Vacation.self)
+        let vacations = VacationModel.vacations
         
         let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
         
@@ -1168,17 +1162,13 @@ extension DayOffViewController {
     func completeInitialSettings() {
         SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
         
-        let realm = try! Realm()
-        
         let company = Company(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date,
                               name: ReferenceValues.initialSetting[InitialSetting.companyName.rawValue] as! String,
                               address: ReferenceValues.initialSetting[InitialSetting.companyAddress.rawValue] as! String,
                               latitude: ReferenceValues.initialSetting[InitialSetting.companyLatitude.rawValue] as! Double,
                               longitude: ReferenceValues.initialSetting[InitialSetting.companyLongitude.rawValue] as! Double)
         
-        try! realm.write {
-            realm.add(company, update: .all)
-        }
+        CompanyModel.addCompany(company)
     }
 }
 
@@ -1196,7 +1186,6 @@ extension DayOffViewController {
         if let buttonView = sender.superview as? VacationButtonView {
             buttonView.isSelected.toggle()
             
-            let realm = try! Realm()
             var vacation: Vacation!
             
             if buttonView.tag == 1 {
@@ -1240,9 +1229,7 @@ extension DayOffViewController {
                 }
             }
             
-            try! realm.write {
-                realm.add(vacation, update: .modified)
-            }
+            VacationModel.addVacation(vacation)
         }
     }
     
@@ -1403,7 +1390,7 @@ extension DayOffViewController {
                 }
             }
             
-            if let selectedIndexOfYearMonthAndDay = self.selectedIndexOfYearMonthAndDay, self.holidays.contains(SupportingMethods.shared.getWeekdayOfToday(SupportingMethods.shared.makeDateWithYear(selectedIndexOfYearMonthAndDay.year, month: selectedIndexOfYearMonthAndDay.month, andDay: selectedIndexOfYearMonthAndDay.day))) {
+            if let selectedIndexOfYearMonthAndDay = self.selectedIndexOfYearMonthAndDay, self.holidays.contains(SupportingMethods.shared.getWeekdayOfDate(SupportingMethods.shared.makeDateWithYear(selectedIndexOfYearMonthAndDay.year, month: selectedIndexOfYearMonthAndDay.month, andDay: selectedIndexOfYearMonthAndDay.day))) {
                 self.selectedIndexOfYearMonthAndDay = nil
                 
                 self.morningVacationButtonView.isEnable = false
@@ -1534,8 +1521,6 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
         let day = indexPath.item - (SupportingMethods.shared.getFirstWeekdayFor(self.targetYearMonthDate) - 2)
         
         if day >= 1 {
-            let dateId: Int = Int(String(format: "\(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year)%02d%02d", SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, day))!
-            
             let isToday: Bool = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year == self.todayDateComponents.year! &&
             SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month == self.todayDateComponents.month! &&
             day == self.todayDateComponents.day!
@@ -1549,18 +1534,17 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
             
             let dateOfDay = SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, andDay: day)
             
-            let isEnable = (dateOfDay >= self.vacationScheduleDateRange.startDate && dateOfDay <= self.vacationScheduleDateRange.endDate) && !(self.holidays.contains(SupportingMethods.shared.getWeekdayOfToday(dateOfDay)))
+            let isEnable = (dateOfDay >= self.vacationScheduleDateRange.startDate && dateOfDay <= self.vacationScheduleDateRange.endDate) && !(self.holidays.contains(SupportingMethods.shared.getWeekdayOfDate(dateOfDay)))
             
-            let realm = try! Realm()
-            let vaction: Vacation? = realm.object(ofType: Vacation.self, forPrimaryKey: dateId)
+            let vacation = VacationModel(date: dateOfDay).vacation
             
-            item.setItem(dateId,
+            item.setItem(dateOfDay,
                          day: day,
                          isToday: isToday,
                          isSelected: isSelected,
                          isEnable: isEnable,
-                         vacationType: vaction == nil ?
-                         VacationType.none : VacationType(rawValue: vaction!.vacationType))
+                         vacationType: vacation == nil ?
+                         VacationType.none : VacationType(rawValue: vacation!.vacationType))
             
         } else {
             item.setItem(nil)
@@ -1579,24 +1563,13 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
         let day = indexPath.item - (SupportingMethods.shared.getFirstWeekdayFor(self.targetYearMonthDate) - 2)
         let dateOfDay = SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, andDay: day)
         
-        guard (dateOfDay >= self.vacationScheduleDateRange.startDate && dateOfDay <= self.vacationScheduleDateRange.endDate) && !(self.holidays.contains(SupportingMethods.shared.getWeekdayOfToday(dateOfDay))) else {
+        guard (dateOfDay >= self.vacationScheduleDateRange.startDate && dateOfDay <= self.vacationScheduleDateRange.endDate) && !(self.holidays.contains(SupportingMethods.shared.getWeekdayOfDate(dateOfDay))) else {
             return
         }
         
         UIDevice.lightHaptic()
         
-        // Determine dateId
-        let dateId: Int = Int(String(format: "\(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year)%02d%02d", SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, day))!
-        
-        let realm = try! Realm()
-        let schedules = realm.object(ofType: Company.self, forPrimaryKey: Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date))!)?.schedules
-        let schedule = schedules?.where {
-            $0.year == String(format: "%02d", SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year) &&
-            $0.month == String(format: "%02d", SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month) &&
-            $0.day == String(format: "%02d", day)
-        }
-        
-        if let schedule = schedule, !schedule.isEmpty {
+        if let _ = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date).getScheduleOn(dateOfDay) {
             SupportingMethods.shared.makeAlert(on: self, withTitle: "수정 불가", andMessage: "이미 정해진 스케쥴이 있습니다. 스케쥴을 수정하세요.",
                                                okAction: UIAlertAction(title: "확인", style: .default, handler: nil))
             
@@ -1616,8 +1589,8 @@ extension DayOffViewController: UICollectionViewDelegate, UICollectionViewDataSo
             self.morningVacationButtonView.isEnable = true
             self.afternoonVacationButtonView.isEnable = true
             
-            if let vaction = realm.object(ofType: Vacation.self, forPrimaryKey: dateId) {
-                switch VacationType(rawValue: vaction.vacationType)! {
+            if let vacation = VacationModel(date: dateOfDay).vacation {
+                switch VacationType(rawValue: vacation.vacationType)! {
                 case .none:
                     self.morningVacationButtonView.isSelected = false
                     self.afternoonVacationButtonView.isSelected = false
