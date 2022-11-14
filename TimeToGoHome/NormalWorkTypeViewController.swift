@@ -1538,14 +1538,14 @@ extension NormalWorkTypeViewController {
         let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 23.25*2])!
         
         if self.ignoringLunchTimeButton.isSelected {
-            self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 12 + 18.6*CGFloat(8-workLeftCountAtMorning) // (210-12*2)/10
+            self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(8-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
             
         } else {
             if workLeftCountAtMorning + toEndOfLunchTimeCount <= 10 {
-                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 12 + 18.6*CGFloat(10-workLeftCountAtMorning) // (210-12*2)/10
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(10-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
                 
             } else {
-                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 12 + 18.6*CGFloat(8-workLeftCountAtMorning) // (210-12*2)/10
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(8-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
             }
         }
     }
@@ -1737,33 +1737,40 @@ extension NormalWorkTypeViewController {
     }
     
     func getAfternoonAttendaceTimeValue(_ from: CGFloat) -> Double? {
+        print("getAfternoonAttendaceTimeValue: \(from)")
         switch from {
         case 12:
             return 11.0
             
-        case 35.25:
+        case 30.6:
             return 11.5
             
-        case 58.5:
+        case 49.2:
             return 12.0
             
-        case 81.75:
+        case 67.8:
             return 12.5
             
-        case 105:
+        case 86.4:
             return 13.0
             
-        case 128.25:
+        case 105:
             return 13.5
             
-        case 151.5:
+        case 123.6:
             return 14.0
             
-        case 174.75:
+        case 142.2:
             return 14.5
             
-        case 198:
+        case 160.8:
             return 15.0
+            
+        case 179.4:
+            return 15.5
+            
+        case 198:
+            return 16.0
             
         default:
             return nil
@@ -1801,7 +1808,7 @@ extension NormalWorkTypeViewController {
             let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 12+23.25*8])!
             //let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 23.25*2])!
             
-            self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 12 + 18.6*CGFloat(8-workLeftCountAtMorning) // (210-12*2)/10
+            self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(8-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
             
         } else {
             self.ignoringLunchTimeMarkLabel.textColor = .useRGB(red: 221, green: 221, blue: 221)
@@ -1810,7 +1817,7 @@ extension NormalWorkTypeViewController {
             let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 23.25*2])!
             
             if workLeftCountAtMorning + toEndOfLunchTimeCount <= 10 {
-                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 12 + 18.6*CGFloat(10-workLeftCountAtMorning) // (210-12*2)/10
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(10-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
             }
         }
         
