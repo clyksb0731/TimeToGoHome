@@ -1737,7 +1737,6 @@ extension NormalWorkTypeViewController {
     }
     
     func getAfternoonAttendaceTimeValue(_ from: CGFloat) -> Double? {
-        print("getAfternoonAttendaceTimeValue: \(from)")
         switch from {
         case 12:
             return 11.0
