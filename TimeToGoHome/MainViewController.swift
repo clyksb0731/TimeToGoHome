@@ -1315,7 +1315,7 @@ extension MainViewController {
             }
             
         } else { // Not edit mode
-            if schedule.isFinishedScheduleToday {
+            if schedule.isTodayScheduleFinished {
                 self.scheduleButtonView.setScheduleButtonView(.workFinished)
                 
             } else {
@@ -2287,7 +2287,7 @@ extension MainViewController {
     }
     
     @objc func scheduleCellLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
-        guard !self.isEditingMode && !self.schedule.isFinishedScheduleToday else {
+        guard !self.isEditingMode && !self.schedule.isTodayScheduleFinished else {
             return
         }
         
