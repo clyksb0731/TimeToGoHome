@@ -120,6 +120,8 @@ struct WorkScheduleModel {
                 return true
                 
             } else {
+                SupportingMethods.shared.setAppSetting(with: nil, for: .isTodayScheduleFinished)
+                
                 return false
             }
             
