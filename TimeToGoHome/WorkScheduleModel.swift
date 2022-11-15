@@ -129,7 +129,7 @@ struct WorkScheduleModel {
         
     }() {
         didSet {
-            if self.isFinishedScheduleToday {
+            if self.isTodayScheduleFinished {
                 SupportingMethods.shared.setAppSetting(with: Date(), for: .isTodayScheduleFinished)
                 
             } else {
