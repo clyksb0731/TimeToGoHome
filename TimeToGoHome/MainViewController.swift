@@ -2237,6 +2237,18 @@ extension MainViewController {
         
         self.mainTimeCoverView.isHidden = false
         self.isEditingMode = true
+        
+//        if self.schedule.isTodayScheduleFinished {
+//            self.schedule.isTodayScheduleFinished = false
+//            
+//            self.editScheduleButton.setTitle("추가 | 제거", for: .normal)
+//            
+//        } else {
+//            self.tempSchedule = self.schedule
+//            
+//            self.mainTimeCoverView.isHidden = false
+//            self.isEditingMode = true
+//        }
     }
     
     @objc func cancelChangingScheduleButtonView(_ sender: UIButton) {
@@ -2620,13 +2632,6 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 
             } else {
                 if case .fullWork = self.todayRegularScheduleType {
-                    let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.finishingRegularWorkTimeSecondsSinceReferenceDate!)), overtime: nil, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
-                    
-                    self.present(mainCoverVC, animated: false) {
-                        self.isEditingMode = true
-                    }
-                    
-                    /*
                     if case .afternoonWork = self.determineRegularSchedule(self.schedule) {
                         let alertVC = UIAlertController(title: "알림", message: "출근시간을 오후로 변경한 후 추가해 주세요.", preferredStyle: .alert)
                         let action = UIAlertAction(title: "확인", style: .default)
@@ -2641,16 +2646,9 @@ extension MainViewController: ScheduleButtonViewDelegate {
                             self.isEditingMode = true
                         }
                     }
-                     */
                 }
                 
                 if case .morningWork = self.todayRegularScheduleType {
-                    let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.finishingRegularWorkTimeSecondsSinceReferenceDate!)), overtime: nil, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
-                    
-                    self.present(mainCoverVC, animated: false) {
-                        self.isEditingMode = true
-                    }
-                    /*
                     if case .afternoonWork = self.determineRegularSchedule(self.schedule) {
                         let alertVC = UIAlertController(title: "알림", message: "출근시간을 오전으로 변경한 후 추가해 주세요.", preferredStyle: .alert)
                         let action = UIAlertAction(title: "확인", style: .default)
@@ -2665,16 +2663,9 @@ extension MainViewController: ScheduleButtonViewDelegate {
                             self.isEditingMode = true
                         }
                     }
-                     */
                 }
                 
                 if case .afternoonWork = self.todayRegularScheduleType {
-                    let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.finishingRegularWorkTimeSecondsSinceReferenceDate!)), overtime: nil, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
-                    
-                    self.present(mainCoverVC, animated: false) {
-                        self.isEditingMode = true
-                    }
-                    /*
                     if case .afternoonWork = self.determineRegularSchedule(self.schedule) {
                         let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.finishingRegularWorkTimeSecondsSinceReferenceDate!)), overtime: nil, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
                         
@@ -2689,7 +2680,6 @@ extension MainViewController: ScheduleButtonViewDelegate {
                         
                         self.present(alertVC, animated: false)
                     }
-                     */
                 }
             }
             
@@ -2706,6 +2696,9 @@ extension MainViewController: ScheduleButtonViewDelegate {
                     
                 case .finishWork:
                     print("addOvertimeOrFinishWork finishWork")
+//                    self.schedule.isTodayScheduleFinished = true
+//                    self.editScheduleButton.setTitle("업무 재개", for: .normal)
+//                    self.startWorkingTimeButton.isEnabled = false
                 }
             }
             
@@ -2720,16 +2713,25 @@ extension MainViewController: ScheduleButtonViewDelegate {
                     
                 case .finishWork:
                     print("replaceOvertimeOrFinishWork finishWork")
+//                    self.schedule.isTodayScheduleFinished = true
+//                    self.editScheduleButton.setTitle("업무 재개", for: .normal)
+//                    self.startWorkingTimeButton.isEnabled = false
                 }
             }
             
         case .finishWorkWithOvertime(let date): // MARK: finishWorkWithOvertime
             if let date = date {
                 print("finishWorkWithOvertime at \(date)")
+//                self.schedule.isTodayScheduleFinished = true
+//                self.editScheduleButton.setTitle("업무 재개", for: .normal)
+//                self.startWorkingTimeButton.isEnabled = false
             }
             
         case .finishWork: // MARK: finishWork
             print("finishWork")
+//            self.schedule.isTodayScheduleFinished = true
+//            self.editScheduleButton.setTitle("업무 재개", for: .normal)
+//            self.startWorkingTimeButton.isEnabled = false
             
         case .workFinished, .noButton: // MARK: workFinished, noButton
             print("Nothing happen")
