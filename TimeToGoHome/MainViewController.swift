@@ -2287,6 +2287,10 @@ extension MainViewController {
     }
     
     @objc func scheduleCellLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
+        guard !self.isEditingMode && !self.schedule.isFinishedScheduleToday else {
+            return
+        }
+        
         if let scheduleCell = gesture.view {
             if gesture.state == .began {
                 UIDevice.heavyHaptic()
@@ -2430,17 +2434,9 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
                 cell.setCell(schedule: self.schedule, isEditingMode: true, tag:1)
                 cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
-                
-                if let gestures = cell.gestureRecognizers {
-                    for gesture in gestures {
-                        cell.removeGestureRecognizer(gesture)
-                    }
-                }
-                if !self.isEditingMode {
-                    let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
-                    longGesture.minimumPressDuration = 0.5
-                    cell.addGestureRecognizer(longGesture)
-                }
+                let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
+                longGesture.minimumPressDuration = 0.5
+                cell.addGestureRecognizer(longGesture)
                 
                 return cell
                 
@@ -2458,12 +2454,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                     cell.setCell(schedule: self.schedule, isEditingMode: false, tag: 1)
                     cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                     
-                    if let gestures = cell.gestureRecognizers {
-                        for gesture in gestures {
-                            cell.removeGestureRecognizer(gesture)
-                        }
-                    }
-                    
                     return cell
                     
                 } else if indexPath.row == 1 {
@@ -2475,12 +2465,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                         cell.setCell(schedule: self.schedule, isEditingMode: true, tag: 2)
                     }
                     cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
-                    
-                    if let gestures = cell.gestureRecognizers {
-                        for gesture in gestures {
-                            cell.removeGestureRecognizer(gesture)
-                        }
-                    }
                     
                     return cell
                     
@@ -2496,12 +2480,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
                     cell.setCell(schedule: self.schedule, isEditingMode: false, tag: 1)
                     cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
-                    
-                    if let gestures = cell.gestureRecognizers {
-                        for gesture in gestures {
-                            cell.removeGestureRecognizer(gesture)
-                        }
-                    }
                     let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
                     longGesture.minimumPressDuration = 0.5
                     cell.addGestureRecognizer(longGesture)
@@ -2512,12 +2490,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
                     cell.setCell(schedule: self.schedule, isEditingMode: false, tag: 2)
                     cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
-                    
-                    if let gestures = cell.gestureRecognizers {
-                        for gesture in gestures {
-                            cell.removeGestureRecognizer(gesture)
-                        }
-                    }
                     let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
                     longGesture.minimumPressDuration = 0.5
                     cell.addGestureRecognizer(longGesture)
@@ -2531,17 +2503,9 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
                 cell.setCell(schedule: self.schedule, isEditingMode: false, tag: 1)
                 cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
-                
-                if let gestures = cell.gestureRecognizers {
-                    for gesture in gestures {
-                        cell.removeGestureRecognizer(gesture)
-                    }
-                }
-                if !self.isEditingMode {
-                    let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
-                    longGesture.minimumPressDuration = 0.5
-                    cell.addGestureRecognizer(longGesture)
-                }
+                let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
+                longGesture.minimumPressDuration = 0.5
+                cell.addGestureRecognizer(longGesture)
                 
                 return cell
                 
@@ -2549,17 +2513,9 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
                 cell.setCell(schedule: self.schedule, isEditingMode: false, tag: 2)
                 cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
-                
-                if let gestures = cell.gestureRecognizers {
-                    for gesture in gestures {
-                        cell.removeGestureRecognizer(gesture)
-                    }
-                }
-                if !self.isEditingMode {
-                    let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
-                    longGesture.minimumPressDuration = 0.5
-                    cell.addGestureRecognizer(longGesture)
-                }
+                let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
+                longGesture.minimumPressDuration = 0.5
+                cell.addGestureRecognizer(longGesture)
                 
                 return cell
                 
@@ -2567,17 +2523,9 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleTypeCell") as! ScheduleTypeCell
                 cell.setCell(schedule: self.schedule, isEditingMode: self.isEditingMode, tag: 3)
                 cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
-                
-                if let gestures = cell.gestureRecognizers {
-                    for gesture in gestures {
-                        cell.removeGestureRecognizer(gesture)
-                    }
-                }
-                if !self.isEditingMode {
-                    let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
-                    longGesture.minimumPressDuration = 0.5
-                    cell.addGestureRecognizer(longGesture)
-                }
+                let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(scheduleCellLongPressGesture(_:)))
+                longGesture.minimumPressDuration = 0.5
+                cell.addGestureRecognizer(longGesture)
                 
                 return cell
             }

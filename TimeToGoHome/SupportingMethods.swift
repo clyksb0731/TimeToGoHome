@@ -13,7 +13,8 @@ import UIKit
 enum PListVariable: String {
     // 초기 설정
     case initialSetting
-    case todayStartingTimeDate
+    case timeDateForStartingTodaySchedule
+    case isTodayScheduleFinished
 }
 
 enum InitialSetting: String {

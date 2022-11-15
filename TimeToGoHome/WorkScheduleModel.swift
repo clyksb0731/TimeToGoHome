@@ -109,7 +109,34 @@ struct WorkScheduleModel {
     }
     private(set) var overtimeSecondsSincReferenceDate: Int = 0
     
-    var isFinishedScheduleToday: Bool = false
+    var isTodayScheduleFinished: Bool = {
+        if let dateForScheduleFinished = SupportingMethods.shared.useAppSetting(for: .isTodayScheduleFinished) as? Date {
+            let yearMonthDayOfScheduleFinished = SupportingMethods.shared.getYearMonthAndDayOf(dateForScheduleFinished)
+            let yearMonthDayOfToday = SupportingMethods.shared.getYearMonthAndDayOf(Date())
+            
+            if yearMonthDayOfScheduleFinished.year == yearMonthDayOfToday.year &&
+                yearMonthDayOfScheduleFinished.month == yearMonthDayOfToday.month &&
+                yearMonthDayOfScheduleFinished.day == yearMonthDayOfToday.day {
+                return true
+                
+            } else {
+                return false
+            }
+            
+        } else {
+            return false
+        }
+        
+    }() {
+        didSet {
+            if self.isFinishedScheduleToday {
+                SupportingMethods.shared.setAppSetting(with: Date(), for: .isTodayScheduleFinished)
+                
+            } else {
+                SupportingMethods.shared.setAppSetting(with: nil, for: .isTodayScheduleFinished)
+            }
+        }
+    }
     
     var isEditingMode: Bool = false
     
@@ -211,7 +238,9 @@ struct WorkScheduleModel {
 // MARK: - Extension for methods added
 extension WorkScheduleModel {
     mutating func updateStartingWorkTime(_ startingWorkTimeDate: Date?) {
-        SupportingMethods.shared.setAppSetting(with: startingWorkTimeDate, for: .todayStartingTimeDate)
+        if self.workType == .staggered {
+            SupportingMethods.shared.setAppSetting(with: startingWorkTimeDate, for: .timeDateForStartingTodaySchedule)
+        }
         
         self.refreshToday()
     }
@@ -236,21 +265,20 @@ extension WorkScheduleModel {
         
         switch workType {
         case .staggered:
-            if let startingWorkTimeDate = SupportingMethods.shared.useAppSetting(for: .todayStartingTimeDate) as? Date {
+            if let timeDateForStartingTodaySchedule = SupportingMethods.shared.useAppSetting(for: .timeDateForStartingTodaySchedule) as? Date {
                 
-                var calendar = Calendar.current
-                calendar.timeZone = TimeZone.current
-                let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
-                let savedStartingWorkTimeDateComponents = calendar.dateComponents([.year, .month, .day], from: startingWorkTimeDate)
+                let yearMonthDayOfToday = SupportingMethods.shared.getYearMonthAndDayOf(Date())
+                let yearMonthDayOfStartingTodaySchedule = SupportingMethods.shared.getYearMonthAndDayOf(timeDateForStartingTodaySchedule)
                 
-                if todayDateComponents.year == savedStartingWorkTimeDateComponents.year &&
-                    todayDateComponents.month == savedStartingWorkTimeDateComponents.month &&
-                    todayDateComponents.day == savedStartingWorkTimeDateComponents.day {
+                
+                if yearMonthDayOfToday.year == yearMonthDayOfStartingTodaySchedule.year &&
+                    yearMonthDayOfToday.month == yearMonthDayOfStartingTodaySchedule.month &&
+                    yearMonthDayOfToday.day == yearMonthDayOfStartingTodaySchedule.day {
                     
-                    return startingWorkTimeDate
+                    return timeDateForStartingTodaySchedule
                     
                 } else {
-                    SupportingMethods.shared.setAppSetting(with: nil, for: .todayStartingTimeDate)
+                    SupportingMethods.shared.setAppSetting(with: nil, for: .timeDateForStartingTodaySchedule)
                     
                     return nil
                 }
@@ -260,19 +288,50 @@ extension WorkScheduleModel {
             }
             
         case .normal:
-            guard let startingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValue.rawValue] as? Double else {
-                return nil
-            }
-            
-            let hour = (Int(startingWorkTimeValue * 10)) / 10
-            let minute = Int((Double((Int(startingWorkTimeValue * 10)) % 10) / 10.0) * 60)
-            
             var calendar = Calendar.current
             calendar.timeZone = TimeZone.current
             let dateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
-            let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
             
-            return calendar.date(from: todayDateComponents)
+            if case .morning(let workType) = self.morning, case .work = workType,
+                case .afternoon(let workType) = self.afternoon, case .work = workType {
+                guard let startingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValue.rawValue] as? Double else {
+                    return nil
+                }
+                
+                let hour = (Int(startingWorkTimeValue * 10)) / 10
+                let minute = Int((Double((Int(startingWorkTimeValue * 10)) % 10) / 10.0) * 60)
+                
+                let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
+                
+                return calendar.date(from: todayDateComponents)
+                
+            } else if case .morning(let workType) = self.morning, case .work = workType {
+                guard let startingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValue.rawValue] as? Double else {
+                    return nil
+                }
+                
+                let hour = (Int(startingWorkTimeValue * 10)) / 10
+                let minute = Int((Double((Int(startingWorkTimeValue * 10)) % 10) / 10.0) * 60)
+                
+                let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
+                
+                return calendar.date(from: todayDateComponents)
+                
+            } else if case .afternoon(let workType) = self.afternoon, case .work = workType {
+                guard let startingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.afternoonStartingworkTimeValue.rawValue] as? Double else {
+                    return nil
+                }
+                
+                let hour = (Int(startingWorkTimeValue * 10)) / 10
+                let minute = Int((Double((Int(startingWorkTimeValue * 10)) % 10) / 10.0) * 60)
+                
+                let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
+                
+                return calendar.date(from: todayDateComponents)
+                
+            } else {
+                return nil
+            }
         }
     }
     
