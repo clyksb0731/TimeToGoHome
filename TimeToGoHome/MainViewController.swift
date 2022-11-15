@@ -777,6 +777,9 @@ extension MainViewController {
         
         if case .normal = self.schedule.workType {
             self.startWorkingTimeButton.isEnabled = false
+            
+        } else {
+            self.startWorkingTimeButton.isEnabled = true
         }
         
         self.todayRegularScheduleType = self.determineRegularSchedule(self.schedule)
@@ -1274,7 +1277,7 @@ extension MainViewController {
     }
     
     func determineScheduleButtonState(for schedule: WorkScheduleModel) {
-        if self.isEditingMode {
+        if self.isEditingMode { // MARK: Editing Mode
             if schedule.count > 2 { // 3
                 self.scheduleButtonView.setScheduleButtonView(.noButton)
                 
@@ -1314,7 +1317,7 @@ extension MainViewController {
                 self.scheduleButtonView.setScheduleButtonView(.threeSchedules(nil))
             }
             
-        } else { // Not edit mode
+        } else { // MARK: Not Editing Mode
             if schedule.isTodayScheduleFinished {
                 self.scheduleButtonView.setScheduleButtonView(.workFinished)
                 
@@ -2233,22 +2236,29 @@ extension MainViewController {
     @objc func editScheduleButton(_ sender: UIButton) {
         UIDevice.softHaptic()
         
-        self.tempSchedule = self.schedule
+//        self.tempSchedule = self.schedule
+//
+//        self.mainTimeCoverView.isHidden = false
+//        self.isEditingMode = true
         
-        self.mainTimeCoverView.isHidden = false
-        self.isEditingMode = true
-        
-//        if self.schedule.isTodayScheduleFinished {
-//            self.schedule.isTodayScheduleFinished = false
-//            
-//            self.editScheduleButton.setTitle("추가 | 제거", for: .normal)
-//            
-//        } else {
-//            self.tempSchedule = self.schedule
-//            
-//            self.mainTimeCoverView.isHidden = false
-//            self.isEditingMode = true
-//        }
+        if self.schedule.isTodayScheduleFinished {
+            self.schedule.isTodayScheduleFinished = false
+
+            self.editScheduleButton.setTitle("추가 | 제거", for: .normal)
+            
+            if self.schedule.workType == .staggered {
+                self.startWorkingTimeButton.isEnabled = true
+                
+            } else {
+                self.startWorkingTimeButton.isEnabled = false
+            }
+
+        } else {
+            self.tempSchedule = self.schedule
+
+            self.mainTimeCoverView.isHidden = false
+            self.isEditingMode = true
+        }
     }
     
     @objc func cancelChangingScheduleButtonView(_ sender: UIButton) {
@@ -2729,9 +2739,9 @@ extension MainViewController: ScheduleButtonViewDelegate {
             
         case .finishWork: // MARK: finishWork
             print("finishWork")
-//            self.schedule.isTodayScheduleFinished = true
-//            self.editScheduleButton.setTitle("업무 재개", for: .normal)
-//            self.startWorkingTimeButton.isEnabled = false
+            self.schedule.isTodayScheduleFinished = true
+            self.editScheduleButton.setTitle("업무 재개", for: .normal)
+            self.startWorkingTimeButton.isEnabled = false
             
         case .workFinished, .noButton: // MARK: workFinished, noButton
             print("Nothing happen")

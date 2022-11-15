@@ -1891,7 +1891,7 @@ extension ScheduleButtonView {
     
     // finishWorkWithOvertime
     @objc func finishWorkWithOvertimeButton(_ sender: UIButton) {
-        self.delegate?.scheduleButtonView(self, of: .finishWorkWithOvertime(Date())) // FIXME: Temp date?
+        self.delegate?.scheduleButtonView(self, of: .finishWorkWithOvertime(Date()))
     }
     
     // finishWork
