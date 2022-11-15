@@ -1815,7 +1815,8 @@ extension ScheduleButtonView {
 
 // MARK: - Extension for selector methods
 extension ScheduleButtonView {
-    // threeSchedules
+    // MARK: Schedule buttons
+    // threeSchedules - work
     @objc func threeSchedulesWorkTimeButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
@@ -1867,24 +1868,26 @@ extension ScheduleButtonView {
         self.delegate?.scheduleButtonView(self, of: .addOvertime)
     }
     
-    // addOvertimeOrFinishWork
+    // addOvertimeOrFinishWork - overtime
     @objc func addOvertimeOrFinishWorkOvertimeButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
-        self.delegate?.scheduleButtonView(self, of: .addOvertimeOrFinishWork(.overtime(Date()))) // FIXME: Temp date?
+        self.delegate?.scheduleButtonView(self, of: .addOvertimeOrFinishWork(.overtime(Date())))
     }
     
+    // addOvertimeOrFinishWork - finishWork
     @objc func addOvertimeOrFinishWorkFinishWorkButton(_ sender: UIButton) {
         self.delegate?.scheduleButtonView(self, of: .addOvertimeOrFinishWork(.finishWork))
     }
     
-    // replaceOvertimeOrFinishWork
+    // replaceOvertimeOrFinishWork - overtime
     @objc func replaceOvertimeOrFinishWorkOvertimeButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
-        self.delegate?.scheduleButtonView(self, of: .replaceOvertimeOrFinishWork(.overtime(Date()))) // FIXME: Temp date?
+        self.delegate?.scheduleButtonView(self, of: .replaceOvertimeOrFinishWork(.overtime(Date())))
     }
     
+    // replaceOvertimeOrFinishWork - finishWork
     @objc func replaceOvertimeOrFinishWorkFinishWorkButton(_ sender: UIButton) {
         self.delegate?.scheduleButtonView(self, of: .replaceOvertimeOrFinishWork(.finishWork))
     }
@@ -1899,6 +1902,7 @@ extension ScheduleButtonView {
         self.delegate?.scheduleButtonView(self, of: .finishWork)
     }
     
+    // MARK: Timers
     // addOvertimeOrFinishWork timer
     @objc func addOvertimeOrFinishWorkTimer(_ timer: Timer) {
         if self.addOvertimeOrFinishWorkOvertimeLabel?.textColor == .yellow {

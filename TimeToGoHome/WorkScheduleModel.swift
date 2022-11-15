@@ -109,7 +109,7 @@ struct WorkScheduleModel {
     }
     private(set) var overtimeSecondsSincReferenceDate: Int = 0
     
-    var isTodayScheduleFinished: Bool = {
+    var dateOfFinishedSchedule: Date? = {
         if let dateForScheduleFinished = SupportingMethods.shared.useAppSetting(for: .isTodayScheduleFinished) as? Date {
             let yearMonthDayOfScheduleFinished = SupportingMethods.shared.getYearMonthAndDayOf(dateForScheduleFinished)
             let yearMonthDayOfToday = SupportingMethods.shared.getYearMonthAndDayOf(Date())
@@ -117,22 +117,22 @@ struct WorkScheduleModel {
             if yearMonthDayOfScheduleFinished.year == yearMonthDayOfToday.year &&
                 yearMonthDayOfScheduleFinished.month == yearMonthDayOfToday.month &&
                 yearMonthDayOfScheduleFinished.day == yearMonthDayOfToday.day {
-                return true
+                return dateForScheduleFinished
                 
             } else {
                 SupportingMethods.shared.setAppSetting(with: nil, for: .isTodayScheduleFinished)
                 
-                return false
+                return nil
             }
             
         } else {
-            return false
+            return nil
         }
         
     }() {
         didSet {
-            if self.isTodayScheduleFinished {
-                SupportingMethods.shared.setAppSetting(with: Date(), for: .isTodayScheduleFinished)
+            if let date = self.dateOfFinishedSchedule {
+                SupportingMethods.shared.setAppSetting(with: date, for: .isTodayScheduleFinished)
                 
             } else {
                 SupportingMethods.shared.setAppSetting(with: nil, for: .isTodayScheduleFinished)

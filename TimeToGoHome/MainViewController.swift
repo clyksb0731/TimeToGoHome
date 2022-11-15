@@ -1318,7 +1318,7 @@ extension MainViewController {
             }
             
         } else { // MARK: Not Editing Mode
-            if schedule.isTodayScheduleFinished {
+            if schedule.dateOfFinishedSchedule != nil {
                 self.scheduleButtonView.setScheduleButtonView(.workFinished)
                 
             } else {
@@ -2236,13 +2236,8 @@ extension MainViewController {
     @objc func editScheduleButton(_ sender: UIButton) {
         UIDevice.softHaptic()
         
-//        self.tempSchedule = self.schedule
-//
-//        self.mainTimeCoverView.isHidden = false
-//        self.isEditingMode = true
-        
-        if self.schedule.isTodayScheduleFinished {
-            self.schedule.isTodayScheduleFinished = false
+        if self.schedule.dateOfFinishedSchedule != nil {
+            self.schedule.dateOfFinishedSchedule = nil
 
             self.editScheduleButton.setTitle("추가 | 제거", for: .normal)
             
@@ -2309,7 +2304,7 @@ extension MainViewController {
     }
     
     @objc func scheduleCellLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
-        guard !self.isEditingMode && !self.schedule.isTodayScheduleFinished else {
+        guard !self.isEditingMode && self.schedule.dateOfFinishedSchedule == nil else {
             return
         }
         
@@ -2706,9 +2701,9 @@ extension MainViewController: ScheduleButtonViewDelegate {
                     
                 case .finishWork:
                     print("addOvertimeOrFinishWork finishWork")
-//                    self.schedule.isTodayScheduleFinished = true
-//                    self.editScheduleButton.setTitle("업무 재개", for: .normal)
-//                    self.startWorkingTimeButton.isEnabled = false
+                    self.schedule.dateOfFinishedSchedule = Date()
+                    self.editScheduleButton.setTitle("업무 재개", for: .normal)
+                    self.startWorkingTimeButton.isEnabled = false
                 }
             }
             
@@ -2723,23 +2718,30 @@ extension MainViewController: ScheduleButtonViewDelegate {
                     
                 case .finishWork:
                     print("replaceOvertimeOrFinishWork finishWork")
-//                    self.schedule.isTodayScheduleFinished = true
-//                    self.editScheduleButton.setTitle("업무 재개", for: .normal)
-//                    self.startWorkingTimeButton.isEnabled = false
+                    self.schedule.dateOfFinishedSchedule = Date()
+                    self.editScheduleButton.setTitle("업무 재개", for: .normal)
+                    self.startWorkingTimeButton.isEnabled = false
                 }
             }
             
         case .finishWorkWithOvertime(let date): // MARK: finishWorkWithOvertime
             if let date = date {
-                print("finishWorkWithOvertime at \(date)")
-//                self.schedule.isTodayScheduleFinished = true
-//                self.editScheduleButton.setTitle("업무 재개", for: .normal)
-//                self.startWorkingTimeButton.isEnabled = false
+                print("finishWorkWithOvertime at \(SupportingMethods.shared.makeDateFormatter("yyyyMMdd HH:mm:ss").string(from: date))")
+                self.schedule.dateOfFinishedSchedule = date
+                self.editScheduleButton.setTitle("업무 재개", for: .normal)
+                self.startWorkingTimeButton.isEnabled = false
+                
+                self.schedule.addSchedule(.overtime(date))
+                self.calculateTableViewHeight(for: self.schedule)
+                self.scheduleTableView.reloadData()
+                self.determineScheduleButtonState(for: self.schedule)
+                
+                self.schedule.updateTodayIntoDB()
             }
             
         case .finishWork: // MARK: finishWork
             print("finishWork")
-            self.schedule.isTodayScheduleFinished = true
+            self.schedule.dateOfFinishedSchedule = Date()
             self.editScheduleButton.setTitle("업무 재개", for: .normal)
             self.startWorkingTimeButton.isEnabled = false
             
@@ -2786,7 +2788,6 @@ extension MainViewController: MainCoverDelegate {
             self.isEditingMode = isEditingModeBeforPresenting
             
             self.schedule.addSchedule(schedule)
-            
             self.calculateTableViewHeight(for: self.schedule)
             
         } else {
@@ -2798,7 +2799,6 @@ extension MainViewController: MainCoverDelegate {
         }
         
         self.scheduleTableView.reloadData()
-        
         self.determineScheduleButtonState(for: self.schedule)
     }
     
