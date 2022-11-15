@@ -294,17 +294,27 @@ extension WorkScheduleModel {
     
     func updateTodayIntoDB() {
         if case .morning(let morningWorkType) = self.morning, case .afternoon(let afternoonWorkType) = self.afternoon {
-            
-            let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
-            
             let schedule = Schedule(date: self.date, morningType: morningWorkType, afternoonType: afternoonWorkType)
-            
             if case .overtime(_) = self.overtime {
                 let overtime = self.overtimeSecondsSincReferenceDate - self.finishingRegularWorkTimeSecondsSinceReferenceDate!
                 schedule.overtime = overtime
             }
+            CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date).setSchedule(schedule)
             
-            companyModel.setSchedule(schedule)
+            var vacation: Vacation!
+            if morningWorkType == .vacation && afternoonWorkType == .vacation {
+                vacation = Vacation(date: self.date, vacationType: .fullDay)
+                
+            } else if morningWorkType == .vacation {
+                vacation = Vacation(date: self.date, vacationType: .morning)
+                
+            } else if afternoonWorkType == .vacation {
+                vacation = Vacation(date: self.date, vacationType: .afternoon)
+                
+            } else {
+                vacation = Vacation(date: self.date, vacationType: .none)
+            }
+            VacationModel.addVacation(vacation)
             
             print("DB - update today")
             print("Today's morning: \(schedule.morning)")
