@@ -11,6 +11,7 @@ class MenuViewController: UIViewController {
     
     lazy var topView: UIView = {
         let view = UIView()
+        view.backgroundColor = .white
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
