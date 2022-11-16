@@ -13,14 +13,15 @@ import UIKit
 enum PListVariable: String {
     // 초기 설정
     case initialSetting
-    case timeDateForStartingTodaySchedule
-    case isTodayScheduleFinished
+    case timeDateForStartingTodayOfStaggeredSchedule
+    case dateForFinishedSchedule
 }
 
 enum InitialSetting: String {
     // 회사 정보
     case companyName // 현 회사이름
     case joiningDate // 현 입사날짜
+    case leavingDate // 퇴사날짜
     case companyAddress // 현 회사주소
     case companyLatitude // 현 회사위치 위도
     case companyLongitude // 현 회사위치 경도

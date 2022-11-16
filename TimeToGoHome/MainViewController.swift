@@ -815,15 +815,7 @@ extension MainViewController {
                 // No need to reset main time view values
             }
             
-            if self.timer == nil {
-                let timer = self.makeTimerForSchedule()
-                self.timer = timer
-                
-            } else {
-                self.timer?.invalidate()
-                let timer = self.makeTimerForSchedule()
-                self.timer = timer
-            }
+            self.activateTimer()
         }
     }
     
@@ -1501,23 +1493,30 @@ extension MainViewController {
                 }
                 
                 if case .afternoonWork = self.todayRegularScheduleType {
-                    if schedule.startingWorkTime != nil {
-                        let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
-                        let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
-                            self.timer?.invalidate()
-                            schedule.updateStartingWorkTime(nil)
+                    if self.schedule.workType == .staggered {
+                        if schedule.startingWorkTime != nil {
+                            let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
+                            let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
+                                self.timer?.invalidate()
+                                schedule.updateStartingWorkTime(nil)
+                                
+                                completion?(regularScheduleType, schedule)
+                            }
+                            let cancelAction = UIAlertAction(title: "취소", style: .cancel) { action in
+                                
+                                completion?(self.todayRegularScheduleType!, self.schedule)
+                            }
+                            alertVC.addAction(okAction)
+                            alertVC.addAction(cancelAction)
+                            self.present(alertVC, animated: false)
                             
+                        } else {
                             completion?(regularScheduleType, schedule)
                         }
-                        let cancelAction = UIAlertAction(title: "취소", style: .cancel) { action in
-                            
-                            completion?(self.todayRegularScheduleType!, self.schedule)
-                        }
-                        alertVC.addAction(okAction)
-                        alertVC.addAction(cancelAction)
-                        self.present(alertVC, animated: false)
                         
-                    } else {
+                    } else { // normal workType
+                        self.schedule.updateStartingWorkTime()
+                        
                         completion?(regularScheduleType, schedule)
                     }
                 }
@@ -1528,6 +1527,12 @@ extension MainViewController {
                 }
                 
                 if case .fullVacation = self.todayRegularScheduleType {
+                    if self.schedule.workType == .normal {
+                        self.schedule.updateStartingWorkTime()
+                        
+                        self.activateTimer()
+                    }
+                    
                     self.remainingTimeButtonView.isEnabled = true
                     self.progressTimeButtonView.isEnabled = true
                     self.progressRateButtonView.isEnabled = true
@@ -1556,6 +1561,12 @@ extension MainViewController {
                 }
                 
                 if case .fullHoliday = self.todayRegularScheduleType {
+                    if self.schedule.workType == .normal {
+                        self.schedule.updateStartingWorkTime()
+                        
+                        self.activateTimer()
+                    }
+                    
                     self.remainingTimeButtonView.isEnabled = true
                     self.progressTimeButtonView.isEnabled = true
                     self.progressRateButtonView.isEnabled = true
@@ -1585,28 +1596,41 @@ extension MainViewController {
                 
             case .afternoonWork: // MARK: .afternoonWork
                 if case .fullWork = self.todayRegularScheduleType {
-                    if schedule.startingWorkTime != nil {
-                        let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
-                        let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
-                            self.timer?.invalidate()
-                            schedule.updateStartingWorkTime(nil)
+                    if schedule.workType == .staggered {
+                        if schedule.startingWorkTime != nil {
+                            let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
+                            let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
+                                self.timer?.invalidate()
+                                schedule.updateStartingWorkTime(nil)
+                                
+                                completion?(regularScheduleType, schedule)
+                            }
+                            let cancelAction = UIAlertAction(title: "취소", style: .cancel) { action in
+                                
+                                completion?(self.todayRegularScheduleType!, self.schedule)
+                            }
+                            alertVC.addAction(okAction)
+                            alertVC.addAction(cancelAction)
+                            self.present(alertVC, animated: false)
                             
+                        } else {
                             completion?(regularScheduleType, schedule)
                         }
-                        let cancelAction = UIAlertAction(title: "취소", style: .cancel) { action in
-                            
-                            completion?(self.todayRegularScheduleType!, self.schedule)
-                        }
-                        alertVC.addAction(okAction)
-                        alertVC.addAction(cancelAction)
-                        self.present(alertVC, animated: false)
                         
-                    } else {
+                    } else { // normal workType
+                        schedule.updateStartingWorkTime()
+                        
                         completion?(regularScheduleType, schedule)
                     }
                 }
                 
                 if case .fullVacation = self.todayRegularScheduleType {
+                    if self.schedule.workType == .normal {
+                        self.schedule.updateStartingWorkTime()
+                        
+                        self.activateTimer()
+                    }
+                    
                     self.remainingTimeButtonView.isEnabled = true
                     self.progressTimeButtonView.isEnabled = true
                     self.progressRateButtonView.isEnabled = true
@@ -1635,6 +1659,12 @@ extension MainViewController {
                 }
                 
                 if case .fullHoliday = self.todayRegularScheduleType {
+                    if self.schedule.workType == .normal {
+                        self.schedule.updateStartingWorkTime()
+                        
+                        self.activateTimer()
+                    }
+                    
                     self.remainingTimeButtonView.isEnabled = true
                     self.progressTimeButtonView.isEnabled = true
                     self.progressRateButtonView.isEnabled = true
@@ -1724,7 +1754,6 @@ extension MainViewController {
     }
     
     func determineTodayRegularScheduleTypeAfterAddingRegularSchedule(_ schedule: WorkScheduleModel, completion:((RegularScheduleType) -> ())? = nil) {
-        
         guard let regularScheduleType = self.determineRegularSchedule(schedule) else {
             return
         }
@@ -1735,24 +1764,37 @@ extension MainViewController {
                 completion?(regularScheduleType)
                 
             } else if case .afternoonWork = self.todayRegularScheduleType {
-                if self.schedule.startingWorkTime != nil {
-                    let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
-                        self.timer?.invalidate()
-                        self.schedule.updateStartingWorkTime(nil)
+                if self.schedule.workType == .staggered {
+                    if self.schedule.startingWorkTime != nil {
+                        let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
+                        let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
+                            self.timer?.invalidate()
+                            self.schedule.updateStartingWorkTime(nil)
+                            
+                            completion?(regularScheduleType)
+                        }
+                        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+                        alertVC.addAction(okAction)
+                        alertVC.addAction(cancelAction)
+                        self.present(alertVC, animated: false)
                         
+                    } else {
                         completion?(regularScheduleType)
                     }
-                    let cancelAction = UIAlertAction(title: "취소", style: .cancel)
-                    alertVC.addAction(okAction)
-                    alertVC.addAction(cancelAction)
-                    self.present(alertVC, animated: false)
                     
-                } else {
+                } else { // normal workType
+                    self.schedule.updateStartingWorkTime()
+                    
                     completion?(regularScheduleType)
                 }
                 
             } else if case .fullVacation = self.todayRegularScheduleType {
+                if self.schedule.workType == .normal {
+                    self.schedule.updateStartingWorkTime()
+                    
+                    self.activateTimer()
+                }
+                
                 self.remainingTimeButtonView.isEnabled = true
                 self.progressTimeButtonView.isEnabled = true
                 self.progressRateButtonView.isEnabled = true
@@ -1780,6 +1822,12 @@ extension MainViewController {
                 completion?(regularScheduleType)
                 
             } else if case .fullHoliday = self.todayRegularScheduleType {
+                if self.schedule.workType == .normal {
+                    self.schedule.updateStartingWorkTime()
+                    
+                    self.activateTimer()
+                }
+                
                 self.remainingTimeButtonView.isEnabled = true
                 self.progressTimeButtonView.isEnabled = true
                 self.progressRateButtonView.isEnabled = true
@@ -1815,24 +1863,37 @@ extension MainViewController {
                 completion?(regularScheduleType)
                 
             } else if case .afternoonWork = self.todayRegularScheduleType {
-                if self.schedule.startingWorkTime != nil {
-                    let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
-                        self.timer?.invalidate()
-                        self.schedule.updateStartingWorkTime(nil)
+                if self.schedule.workType == .staggered {
+                    if self.schedule.startingWorkTime != nil {
+                        let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
+                        let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
+                            self.timer?.invalidate()
+                            self.schedule.updateStartingWorkTime(nil)
+                            
+                            completion?(regularScheduleType)
+                        }
+                        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+                        alertVC.addAction(okAction)
+                        alertVC.addAction(cancelAction)
+                        self.present(alertVC, animated: false)
                         
+                    } else {
                         completion?(regularScheduleType)
                     }
-                    let cancelAction = UIAlertAction(title: "취소", style: .cancel)
-                    alertVC.addAction(okAction)
-                    alertVC.addAction(cancelAction)
-                    self.present(alertVC, animated: false)
                     
-                } else {
+                } else { // normal workType
+                    self.schedule.updateStartingWorkTime()
+                    
                     completion?(regularScheduleType)
                 }
                 
             } else if case .fullVacation = self.todayRegularScheduleType {
+                if self.schedule.workType == .normal {
+                    self.schedule.updateStartingWorkTime()
+                    
+                    self.activateTimer()
+                }
+                
                 self.remainingTimeButtonView.isEnabled = true
                 self.progressTimeButtonView.isEnabled = true
                 self.progressRateButtonView.isEnabled = true
@@ -1860,6 +1921,12 @@ extension MainViewController {
                 completion?(regularScheduleType)
                 
             } else if case .fullHoliday = self.todayRegularScheduleType {
+                if self.schedule.workType == .normal {
+                    self.schedule.updateStartingWorkTime()
+                    
+                    self.activateTimer()
+                }
+                
                 self.remainingTimeButtonView.isEnabled = true
                 self.progressTimeButtonView.isEnabled = true
                 self.progressRateButtonView.isEnabled = true
@@ -1892,42 +1959,62 @@ extension MainViewController {
             
         case .afternoonWork: // MARK: .afternoonWork
             if case .fullWork = self.todayRegularScheduleType {
-                if self.schedule.startingWorkTime != nil {
-                    let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
-                        self.timer?.invalidate()
-                        self.schedule.updateStartingWorkTime(nil)
+                if self.schedule.workType == .staggered {
+                    if self.schedule.startingWorkTime != nil {
+                        let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
+                        let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
+                            self.timer?.invalidate()
+                            self.schedule.updateStartingWorkTime(nil)
+                            
+                            completion?(regularScheduleType)
+                        }
+                        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+                        alertVC.addAction(okAction)
+                        alertVC.addAction(cancelAction)
+                        self.present(alertVC, animated: false)
                         
+                    } else {
                         completion?(regularScheduleType)
                     }
-                    let cancelAction = UIAlertAction(title: "취소", style: .cancel)
-                    alertVC.addAction(okAction)
-                    alertVC.addAction(cancelAction)
-                    self.present(alertVC, animated: false)
                     
-                } else {
+                } else { // normal workType
+                    self.schedule.updateStartingWorkTime()
+                    
                     completion?(regularScheduleType)
                 }
                 
             } else if case .morningWork = self.todayRegularScheduleType {
-                if self.schedule.startingWorkTime != nil {
-                    let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
-                        self.timer?.invalidate()
-                        self.schedule.updateStartingWorkTime(nil)
+                if self.schedule.workType == .staggered {
+                    if self.schedule.startingWorkTime != nil {
+                        let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
+                        let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
+                            self.timer?.invalidate()
+                            self.schedule.updateStartingWorkTime(nil)
+                            
+                            completion?(regularScheduleType)
+                        }
+                        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+                        alertVC.addAction(okAction)
+                        alertVC.addAction(cancelAction)
+                        self.present(alertVC, animated: false)
                         
+                    } else {
                         completion?(regularScheduleType)
                     }
-                    let cancelAction = UIAlertAction(title: "취소", style: .cancel)
-                    alertVC.addAction(okAction)
-                    alertVC.addAction(cancelAction)
-                    self.present(alertVC, animated: false)
                     
-                } else {
+                } else { // noraml workType
+                    self.schedule.updateStartingWorkTime()
+                    
                     completion?(regularScheduleType)
                 }
                 
             } else if case .fullVacation = self.todayRegularScheduleType {
+                if self.schedule.workType == .normal {
+                    self.schedule.updateStartingWorkTime()
+                    
+                    self.activateTimer()
+                }
+                
                 self.remainingTimeButtonView.isEnabled = true
                 self.progressTimeButtonView.isEnabled = true
                 self.progressRateButtonView.isEnabled = true
@@ -1955,6 +2042,12 @@ extension MainViewController {
                 completion?(regularScheduleType)
                 
             } else if case .fullHoliday = self.todayRegularScheduleType {
+                if self.schedule.workType == .normal {
+                    self.schedule.updateStartingWorkTime()
+                    
+                    self.activateTimer()
+                }
+                
                 self.remainingTimeButtonView.isEnabled = true
                 self.progressTimeButtonView.isEnabled = true
                 self.progressRateButtonView.isEnabled = true
@@ -2123,6 +2216,18 @@ extension MainViewController {
         self.mainTimeViewProgressRateIntegerValueLabel.text = "0"
         self.mainTimeViewProgressRateFloatValueLabel.text = "0"
     }
+    
+    func activateTimer() {
+        if self.timer == nil {
+            let timer = self.makeTimerForSchedule()
+            self.timer = timer
+            
+        } else {
+            self.timer?.invalidate()
+            let timer = self.makeTimerForSchedule()
+            self.timer = timer
+        }
+    }
 }
 
 // MARK: - Extension for Selector methods
@@ -2146,10 +2251,15 @@ extension MainViewController {
             self.timer?.invalidate()
             
             if self.isEditingMode {
-                self.mainTimeCoverView.isHidden = true
-                self.isEditingMode = false
-                
-                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "날이 바뀌어 스케쥴 변경이 중단되었습니다.")
+                if self.mainTimeCoverView.isHidden {
+                    // FIXME: how to dismiss main cover vc
+                    
+                } else {
+                    self.mainTimeCoverView.isHidden = true
+                    self.isEditingMode = false
+                    
+                    SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "날이 바뀌어 스케쥴 변경이 중단되었습니다.")
+                }
             }
             
             self.schedule = WorkScheduleModel.today
@@ -2266,7 +2376,7 @@ extension MainViewController {
     }
     
     @objc func completeChangingScheduleButtonView(_ sender: UIButton) {
-        self.determineTodayRegularScheduleTypeAfterAddingRegularSchedule(self.schedule) {regularScheduleType in
+        self.determineTodayRegularScheduleTypeAfterAddingRegularSchedule(self.schedule) { regularScheduleType in
             if self.schedule.startingWorkTime == nil {
                 self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
                 self.resetMainTimeViewValues(regularScheduleType)
@@ -2807,14 +2917,6 @@ extension MainViewController: MainCoverDelegate {
         
         self.determineScheduleButtonState(for: self.schedule)
         
-        if self.timer == nil {
-            let timer = self.makeTimerForSchedule()
-            self.timer = timer
-            
-        } else {
-            self.timer?.invalidate()
-            let timer = self.makeTimerForSchedule()
-            self.timer = timer
-        }
+        self.activateTimer()
     }
 }

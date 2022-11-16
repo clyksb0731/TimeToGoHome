@@ -110,17 +110,17 @@ struct WorkScheduleModel {
     private(set) var overtimeSecondsSincReferenceDate: Int = 0
     
     var dateOfFinishedSchedule: Date? = {
-        if let dateForScheduleFinished = SupportingMethods.shared.useAppSetting(for: .isTodayScheduleFinished) as? Date {
-            let yearMonthDayOfScheduleFinished = SupportingMethods.shared.getYearMonthAndDayOf(dateForScheduleFinished)
+        if let dateOfFinishedSchedule = SupportingMethods.shared.useAppSetting(for: .dateForFinishedSchedule) as? Date {
+            let yearMonthDayOfScheduleFinished = SupportingMethods.shared.getYearMonthAndDayOf(dateOfFinishedSchedule)
             let yearMonthDayOfToday = SupportingMethods.shared.getYearMonthAndDayOf(Date())
             
             if yearMonthDayOfScheduleFinished.year == yearMonthDayOfToday.year &&
                 yearMonthDayOfScheduleFinished.month == yearMonthDayOfToday.month &&
                 yearMonthDayOfScheduleFinished.day == yearMonthDayOfToday.day {
-                return dateForScheduleFinished
+                return dateOfFinishedSchedule
                 
             } else {
-                SupportingMethods.shared.setAppSetting(with: nil, for: .isTodayScheduleFinished)
+                SupportingMethods.shared.setAppSetting(with: nil, for: .dateForFinishedSchedule)
                 
                 return nil
             }
@@ -132,10 +132,10 @@ struct WorkScheduleModel {
     }() {
         didSet {
             if let date = self.dateOfFinishedSchedule {
-                SupportingMethods.shared.setAppSetting(with: date, for: .isTodayScheduleFinished)
+                SupportingMethods.shared.setAppSetting(with: date, for: .dateForFinishedSchedule)
                 
             } else {
-                SupportingMethods.shared.setAppSetting(with: nil, for: .isTodayScheduleFinished)
+                SupportingMethods.shared.setAppSetting(with: nil, for: .dateForFinishedSchedule)
             }
         }
     }
@@ -239,9 +239,9 @@ struct WorkScheduleModel {
 
 // MARK: - Extension for methods added
 extension WorkScheduleModel {
-    mutating func updateStartingWorkTime(_ startingWorkTimeDate: Date?) {
+    mutating func updateStartingWorkTime(_ startingWorkTimeDate: Date? = nil) {
         if self.workType == .staggered {
-            SupportingMethods.shared.setAppSetting(with: startingWorkTimeDate, for: .timeDateForStartingTodaySchedule)
+            SupportingMethods.shared.setAppSetting(with: startingWorkTimeDate, for: .timeDateForStartingTodayOfStaggeredSchedule)
         }
         
         self.refreshToday()
@@ -267,7 +267,7 @@ extension WorkScheduleModel {
         
         switch workType {
         case .staggered:
-            if let timeDateForStartingTodaySchedule = SupportingMethods.shared.useAppSetting(for: .timeDateForStartingTodaySchedule) as? Date {
+            if let timeDateForStartingTodaySchedule = SupportingMethods.shared.useAppSetting(for: .timeDateForStartingTodayOfStaggeredSchedule) as? Date {
                 
                 let yearMonthDayOfToday = SupportingMethods.shared.getYearMonthAndDayOf(Date())
                 let yearMonthDayOfStartingTodaySchedule = SupportingMethods.shared.getYearMonthAndDayOf(timeDateForStartingTodaySchedule)
@@ -280,7 +280,7 @@ extension WorkScheduleModel {
                     return timeDateForStartingTodaySchedule
                     
                 } else {
-                    SupportingMethods.shared.setAppSetting(with: nil, for: .timeDateForStartingTodaySchedule)
+                    SupportingMethods.shared.setAppSetting(with: nil, for: .timeDateForStartingTodayOfStaggeredSchedule)
                     
                     return nil
                 }
