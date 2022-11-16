@@ -160,7 +160,6 @@ struct WorkScheduleModel {
         // &&
         // Check tody schedule condition for initial setting.
         self.workType = self.makeWorkType()
-        self.startingWorkTime = self.makeStartingWorkTimeDate()
         self.lunchTime = self.makeLunchTimeDate()
         
         let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
@@ -234,6 +233,8 @@ struct WorkScheduleModel {
                 companyModel.addSchedule(schedule)
             }
         }
+        
+        self.startingWorkTime = self.makeStartingWorkTimeDate()
     }
 }
 
@@ -389,10 +390,10 @@ extension WorkScheduleModel {
         // &&
         // Check tody schedule condition for initial setting.
         self.workType = self.makeWorkType()
-        self.startingWorkTime = self.makeStartingWorkTimeDate()
         self.lunchTime = self.makeLunchTimeDate()
         //self.morning = .morning(.work) // FIXME: Temp
         //self.afternoon = .afternoon(.work) // FIXME: Temp
+        self.startingWorkTime = self.makeStartingWorkTimeDate()
     }
     
     @discardableResult mutating func addSchedule(_ addingSchedule: ScheduleType?) -> Bool {
