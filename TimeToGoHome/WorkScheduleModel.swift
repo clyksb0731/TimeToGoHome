@@ -162,75 +162,81 @@ struct WorkScheduleModel {
         self.workType = self.makeWorkType()
         self.lunchTime = self.makeLunchTimeDate()
         
-        let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
-        if let schedule = companyModel.getScheduleOn(self.date) {
-            self.morning = .morning(WorkTimeType(rawValue: schedule.morning)!)
-            self.afternoon = .afternoon(WorkTimeType(rawValue: schedule.afternoon)!)
-            
-            if let overtime = schedule.overtime, let finishingRegularWorkTimeSecondsSinceReferenceDate = self.finishingRegularWorkTimeSecondsSinceReferenceDate {
-                self.overtime = .overtime(Date(timeIntervalSinceReferenceDate: Double(finishingRegularWorkTimeSecondsSinceReferenceDate + overtime)))
-            }
-            
-            return
-        }
-        
-        let holidays = ReferenceValues.initialSetting[InitialSetting.holidays.rawValue] as! [Int]
-        if holidays.contains(SupportingMethods.shared.getWeekdayOfDate(date)) {
+        if (ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date) != nil {
             self.morning = .morning(.holiday)
             self.afternoon = .afternoon(.holiday)
             
-            let schedule = Schedule(date: date, morningType: WorkTimeType.holiday, afternoonType: WorkTimeType.holiday)
-            
-            companyModel.addSchedule(schedule)
-            
         } else {
-            if let vacation = VacationModel(date: date).vacation {
-                let vacationType = VacationType(rawValue: vacation.vacationType)!
+            let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
+            if let schedule = companyModel.getScheduleOn(self.date) {
+                self.morning = .morning(WorkTimeType(rawValue: schedule.morning)!)
+                self.afternoon = .afternoon(WorkTimeType(rawValue: schedule.afternoon)!)
                 
-                var morningWorkTimeType: WorkTimeType!
-                var afternoonWorkTimeType: WorkTimeType!
-                
-                switch vacationType {
-                case .none:
-                    self.morning = .morning(.work)
-                    self.afternoon = .afternoon(.work)
-                    
-                    morningWorkTimeType = WorkTimeType.work
-                    afternoonWorkTimeType = WorkTimeType.work
-                    
-                case .morning:
-                    self.morning = .morning(.vacation)
-                    self.afternoon = .afternoon(.work)
-                    
-                    morningWorkTimeType = WorkTimeType.vacation
-                    afternoonWorkTimeType = WorkTimeType.work
-                    
-                case .afternoon:
-                    self.morning = .morning(.work)
-                    self.afternoon = .afternoon(.vacation)
-                    
-                    morningWorkTimeType = WorkTimeType.work
-                    afternoonWorkTimeType = WorkTimeType.vacation
-                    
-                case .fullDay:
-                    self.morning = .morning(.vacation)
-                    self.afternoon = .afternoon(.vacation)
-                    
-                    morningWorkTimeType = WorkTimeType.vacation
-                    afternoonWorkTimeType = WorkTimeType.vacation
+                if let overtime = schedule.overtime, let finishingRegularWorkTimeSecondsSinceReferenceDate = self.finishingRegularWorkTimeSecondsSinceReferenceDate {
+                    self.overtime = .overtime(Date(timeIntervalSinceReferenceDate: Double(finishingRegularWorkTimeSecondsSinceReferenceDate + overtime)))
                 }
                 
-                let schedule = Schedule(date: date, morningType: morningWorkTimeType, afternoonType: afternoonWorkTimeType)
+                return
+            }
+            
+            let holidays = ReferenceValues.initialSetting[InitialSetting.holidays.rawValue] as! [Int]
+            if holidays.contains(SupportingMethods.shared.getWeekdayOfDate(date)) {
+                self.morning = .morning(.holiday)
+                self.afternoon = .afternoon(.holiday)
+                
+                let schedule = Schedule(date: date, morningType: WorkTimeType.holiday, afternoonType: WorkTimeType.holiday)
                 
                 companyModel.addSchedule(schedule)
                 
             } else {
-                self.morning = .morning(.work)
-                self.afternoon = .afternoon(.work)
-                
-                let schedule = Schedule(date: date, morningType: WorkTimeType.work, afternoonType: WorkTimeType.work)
-                
-                companyModel.addSchedule(schedule)
+                if let vacation = VacationModel(date: date).vacation {
+                    let vacationType = VacationType(rawValue: vacation.vacationType)!
+                    
+                    var morningWorkTimeType: WorkTimeType!
+                    var afternoonWorkTimeType: WorkTimeType!
+                    
+                    switch vacationType {
+                    case .none:
+                        self.morning = .morning(.work)
+                        self.afternoon = .afternoon(.work)
+                        
+                        morningWorkTimeType = WorkTimeType.work
+                        afternoonWorkTimeType = WorkTimeType.work
+                        
+                    case .morning:
+                        self.morning = .morning(.vacation)
+                        self.afternoon = .afternoon(.work)
+                        
+                        morningWorkTimeType = WorkTimeType.vacation
+                        afternoonWorkTimeType = WorkTimeType.work
+                        
+                    case .afternoon:
+                        self.morning = .morning(.work)
+                        self.afternoon = .afternoon(.vacation)
+                        
+                        morningWorkTimeType = WorkTimeType.work
+                        afternoonWorkTimeType = WorkTimeType.vacation
+                        
+                    case .fullDay:
+                        self.morning = .morning(.vacation)
+                        self.afternoon = .afternoon(.vacation)
+                        
+                        morningWorkTimeType = WorkTimeType.vacation
+                        afternoonWorkTimeType = WorkTimeType.vacation
+                    }
+                    
+                    let schedule = Schedule(date: date, morningType: morningWorkTimeType, afternoonType: afternoonWorkTimeType)
+                    
+                    companyModel.addSchedule(schedule)
+                    
+                } else {
+                    self.morning = .morning(.work)
+                    self.afternoon = .afternoon(.work)
+                    
+                    let schedule = Schedule(date: date, morningType: WorkTimeType.work, afternoonType: WorkTimeType.work)
+                    
+                    companyModel.addSchedule(schedule)
+                }
             }
         }
         

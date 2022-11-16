@@ -27,7 +27,7 @@ class CompanyLocationAlertViewController: UIViewController {
     var alertView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
-        view.layer.cornerRadius = 5
+        view.layer.cornerRadius = 12
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -126,7 +126,7 @@ class CompanyLocationAlertViewController: UIViewController {
         button.setTitle("취소", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
         button.backgroundColor = UIColor.useRGB(red: 25, green: 161, blue: 244)
-        button.layer.cornerRadius = 2
+        button.layer.cornerRadius = 5
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -138,7 +138,7 @@ class CompanyLocationAlertViewController: UIViewController {
         button.setTitle("확인", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
         button.backgroundColor = UIColor.useRGB(red: 25, green: 161, blue: 244)
-        button.layer.cornerRadius = 2
+        button.layer.cornerRadius = 5
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button

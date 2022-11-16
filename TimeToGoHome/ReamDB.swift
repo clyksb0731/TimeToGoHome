@@ -48,9 +48,9 @@ struct CompanyModel {
     func getScheduleOn(_ date: Date) -> Schedule? {
         let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
         let schedules = self.company?.schedules.where {
-            $0.year == String(format: "%02d", yearMonthDay.year) &&
-            $0.month == String(format: "%02d", yearMonthDay.month) &&
-            $0.day == String(format: "%02d", yearMonthDay.day)
+            $0.year == yearMonthDay.year &&
+            $0.month == yearMonthDay.month &&
+            $0.day == yearMonthDay.day
         }
         return schedules?.first
     }
@@ -106,6 +106,27 @@ struct CompanyModel {
             realm.add(company, update: .all)
         }
     }
+    
+    static func checkDuplicateJoiningDate(_ date: Date) -> Bool {
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+        let joiningDateId = Int(dateFormatter.string(from: date))!
+        
+        let realm = try! Realm()
+        
+        let companies = realm.objects(Company.self)
+        for company in companies {
+            if let leftDate = company.leavingDate {
+                let joinedDateId = Int(String(format: "%02d%02d%02d", company.year, company.month, company.day))!
+                let leftDateId = Int(dateFormatter.string(from: leftDate))!
+                
+                if joiningDateId >= joinedDateId && joiningDateId <= leftDateId {
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
 }
 
 struct VacationModel {
@@ -151,9 +172,9 @@ struct VacationModel {
 class Company: Object {
     @Persisted(primaryKey: true) var dateId: Int = 0
     @Persisted var leavingDate: Date?
-    @Persisted var year: String = ""
-    @Persisted var month: String = ""
-    @Persisted var day: String = ""
+    @Persisted var year: Int = 0
+    @Persisted var month: Int = 0
+    @Persisted var day: Int = 0
     @Persisted var name: String = ""
     @Persisted var address: String = ""
     @Persisted var latitude: Double = 0
@@ -166,9 +187,9 @@ class Company: Object {
         self.dateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: joiningDate))!
         self.leavingDate = leavingDate
         let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(joiningDate)
-        self.year = String(format: "%02d", yearMonthDay.year)
-        self.month = String(format: "%02d", yearMonthDay.month)
-        self.day = String(format: "%02d", yearMonthDay.day)
+        self.year = yearMonthDay.year
+        self.month = yearMonthDay.month
+        self.day = yearMonthDay.day
         self.name = name
         self.address = address
         self.latitude = latitude
@@ -178,9 +199,9 @@ class Company: Object {
 
 class Schedule: EmbeddedObject {
     //@Persisted(primaryKey: true) var dateId: String = ""
-    @Persisted var year: String = ""
-    @Persisted var month: String = ""
-    @Persisted var day: String = ""
+    @Persisted var year: Int = 0
+    @Persisted var month: Int = 0
+    @Persisted var day: Int = 0
     @Persisted var morning: String = ""
     @Persisted var afternoon: String = ""
     @Persisted var overtime: Int?
@@ -190,9 +211,9 @@ class Schedule: EmbeddedObject {
         
         //self.dateId = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date)
         let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
-        self.year = String(format: "%02d", yearMonthDay.year)
-        self.month = String(format: "%02d", yearMonthDay.month)
-        self.day = String(format: "%02d", yearMonthDay.day)
+        self.year = yearMonthDay.year
+        self.month = yearMonthDay.month
+        self.day = yearMonthDay.day
         self.morning = morning.rawValue
         self.afternoon = afternoon.rawValue
         self.overtime = overtime
@@ -201,9 +222,9 @@ class Schedule: EmbeddedObject {
 
 class Vacation: Object {
     @Persisted(primaryKey: true) var dateId: Int = 0
-    @Persisted var year: String = ""
-    @Persisted var month: String = ""
-    @Persisted var day: String = ""
+    @Persisted var year: Int = 0
+    @Persisted var month: Int = 0
+    @Persisted var day: Int = 0
     @Persisted var vacationType: String = VacationType.none.rawValue
     
     convenience init(date: Date, vacationType: VacationType) {
@@ -211,9 +232,9 @@ class Vacation: Object {
         
         self.dateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date))!
         let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
-        self.year = String(format: "%02d", yearMonthDay.year)
-        self.month = String(format: "%02d", yearMonthDay.month)
-        self.day = String(format: "%02d", yearMonthDay.day)
+        self.year = yearMonthDay.year
+        self.month = yearMonthDay.month
+        self.day = yearMonthDay.day
         self.vacationType = vacationType.rawValue
     }
 }

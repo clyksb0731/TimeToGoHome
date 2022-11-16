@@ -350,6 +350,44 @@ class MainViewController: UIViewController {
         return buttonView
     }()
     
+    lazy var leavingDateCoverView: UIView = {
+        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let button = UIButton()
+        button.backgroundColor = .useRGB(red: 146, green: 243, blue: 205)
+        button.layer.cornerRadius = 15
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
+        button.setTitle("신규 회사 설정", for: .normal)
+        button.addTarget(self, action: #selector(setCompanyButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+
+        let view = UIView()
+        view.addSubview(blurEffectView)
+        view.addSubview(button)
+
+        NSLayoutConstraint.activate([
+            // blurEffectView
+            blurEffectView.topAnchor.constraint(equalTo: view.topAnchor),
+            blurEffectView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            blurEffectView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            blurEffectView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            // button
+            button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -31),
+            button.heightAnchor.constraint(equalToConstant: 70),
+            button.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+        ])
+        
+        view.isHidden = (ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date) == nil
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
     weak var timer: Timer?
     
     let workScheduleViewHeight = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.27
@@ -483,7 +521,8 @@ extension MainViewController {
             self.mainTimeView,
             self.scheduleTableView,
             self.changeScheduleDescriptionLabel,
-            self.scheduleButtonView
+            self.scheduleButtonView,
+            self.leavingDateCoverView
         ], to: self.view)
         
         SupportingMethods.shared.addSubviews([
@@ -761,10 +800,18 @@ extension MainViewController {
         
         // Schedule button view layout
         NSLayoutConstraint.activate([
-            self.scheduleButtonView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
+            self.scheduleButtonView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
             self.scheduleButtonView.heightAnchor.constraint(equalToConstant: 101),
-            self.scheduleButtonView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
-            self.scheduleButtonView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor)
+            self.scheduleButtonView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            self.scheduleButtonView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+        ])
+        
+        // leavingDateCoverView
+        NSLayoutConstraint.activate([
+            self.leavingDateCoverView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            self.leavingDateCoverView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            self.leavingDateCoverView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            self.leavingDateCoverView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
         ])
     }
 }
@@ -2485,23 +2532,9 @@ extension MainViewController {
         }
     }
     
-//    @objc func pageControl(_ sender: UIPageControl) {
-//        self.previousPointX = buttonsScrollView.contentOffset.x
-//
-//        print("Current Page: \(sender.currentPage)")
-//
-//        if sender.currentPage == 0 {
-//            self.buttonsScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
-//        }
-//
-//        if sender.currentPage == 1 {
-//            self.buttonsScrollView.setContentOffset(CGPoint(x: UIScreen.main.bounds.width, y: 0), animated: false)
-//        }
-//
-//        if sender.currentPage == 2 {
-//            self.buttonsScrollView.setContentOffset(CGPoint(x: UIScreen.main.bounds.width * 2, y: 0), animated: false)
-//        }
-//    }
+    @objc func setCompanyButton(_ sender: UIButton) {
+        
+    }
 }
 
 // MARK: - Extension for UITableViewDelegate, UITableViewDataSource

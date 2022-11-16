@@ -249,7 +249,9 @@ extension CompanyMapViewController {
                     self.setPointAnnotation(center: center, title: jibeonAddress)
                 }
 
-                self.present(alertVC, animated: false, completion: nil)
+                self.present(alertVC, animated: false) {
+                    SupportingMethods.shared.turnCoverView(.off, on: self.view)
+                }
                 
             } else if let jibeonAddress = companyMap.documents.first?.address?.addressName {
                 let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: jibeonAddress, road: "")) {
@@ -258,7 +260,9 @@ extension CompanyMapViewController {
                     self.setPointAnnotation(center: center, title: jibeonAddress)
                 }
                 
-                self.present(alertVC, animated: false, completion: nil)
+                self.present(alertVC, animated: false) {
+                    SupportingMethods.shared.turnCoverView(.off, on: self.view)
+                }
                 
             } else if let roadAddress = companyMap.documents.first?.roadAddress?.addressName {
                 let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: "", road: roadAddress)) {
@@ -267,17 +271,19 @@ extension CompanyMapViewController {
                     self.setPointAnnotation(center: center, title: roadAddress)
                 }
                 
-                self.present(alertVC, animated: false, completion: nil)
+                self.present(alertVC, animated: false) {
+                    SupportingMethods.shared.turnCoverView(.off, on: self.view)
+                }
                 
             } else {
                 let alertVC = UIAlertController(title: "오류", message: "선택한 위치의 주소를 알 수 없습니다.", preferredStyle: .alert)
                 let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
                 alertVC.addAction(okAction)
                 
-                self.present(alertVC, animated: true)
+                self.present(alertVC, animated: true) {
+                    SupportingMethods.shared.turnCoverView(.off, on: self.view)
+                }
             }
-            
-            SupportingMethods.shared.turnCoverView(.off, on: self.view)
             
         } failure: {
             SupportingMethods.shared.turnCoverView(.off, on: self.view)

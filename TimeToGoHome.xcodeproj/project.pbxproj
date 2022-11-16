@@ -13,6 +13,9 @@
 		CA226769274402D50035663D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA226767274402D50035663D /* Main.storyboard */; };
 		CA22676B274402D60035663D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA22676A274402D60035663D /* Assets.xcassets */; };
 		CA22676E274402D60035663D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA22676C274402D60035663D /* LaunchScreen.storyboard */; };
+		CA47B0F72924BA9A00D3D8F7 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47B0F62924BA9A00D3D8F7 /* MenuViewController.swift */; };
+		CA47B0F92924BAE700D3D8F7 /* MenuSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47B0F82924BAE700D3D8F7 /* MenuSettingCell.swift */; };
+		CA47B0FB2924BB0600D3D8F7 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47B0FA2924BB0600D3D8F7 /* SettingViewController.swift */; };
 		CA5327092907BAB0003D66A9 /* CustomizedNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5327082907BAB0003D66A9 /* CustomizedNavigationController.swift */; };
 		CA6D12FB2910215300835CB6 /* CustomizedTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6D12FA2910215300835CB6 /* CustomizedTabBarController.swift */; };
 		CA79A8E627D85550000F58E2 /* TemplateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA79A8E527D85550000F58E2 /* TemplateCell.swift */; };
@@ -55,6 +58,9 @@
 		CA22676A274402D60035663D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA22676D274402D60035663D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CA22676F274402D60035663D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CA47B0F62924BA9A00D3D8F7 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
+		CA47B0F82924BAE700D3D8F7 /* MenuSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuSettingCell.swift; sourceTree = "<group>"; };
+		CA47B0FA2924BB0600D3D8F7 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		CA5327082907BAB0003D66A9 /* CustomizedNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizedNavigationController.swift; sourceTree = "<group>"; };
 		CA6D12FA2910215300835CB6 /* CustomizedTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizedTabBarController.swift; sourceTree = "<group>"; };
 		CA79A8E527D85550000F58E2 /* TemplateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateCell.swift; sourceTree = "<group>"; };
@@ -143,6 +149,9 @@
 				CAFD580127DB2D0E0027811C /* SchedulingCell.swift */,
 				CA12806B27D1A64800CAFCE8 /* WorkScheduleModel.swift */,
 				CA1592B027DF90E20021501D /* MainCoverViewController.swift */,
+				CA47B0F62924BA9A00D3D8F7 /* MenuViewController.swift */,
+				CA47B0FA2924BB0600D3D8F7 /* SettingViewController.swift */,
+				CA47B0F82924BAE700D3D8F7 /* MenuSettingCell.swift */,
 				CAB7CF282750B0FA005C9232 /* LocationManager.swift */,
 				CAB7CF2A2750B146005C9232 /* SupportingMethods.swift */,
 				CAB7CF2C2750B280005C9232 /* ReferenceValues.swift */,
@@ -242,13 +251,16 @@
 				CAB7CF292750B0FA005C9232 /* LocationManager.swift in Sources */,
 				CAB7CF482750CDCE005C9232 /* DayButtonView.swift in Sources */,
 				CA6D12FB2910215300835CB6 /* CustomizedTabBarController.swift in Sources */,
+				CA47B0FB2924BB0600D3D8F7 /* SettingViewController.swift in Sources */,
 				CAFD580227DB2D0E0027811C /* SchedulingCell.swift in Sources */,
 				CAA3B24B2801755D00FFF892 /* CalendarDayCell.swift in Sources */,
+				CA47B0F72924BA9A00D3D8F7 /* MenuViewController.swift in Sources */,
 				CAA3B24F28018ED600FFF892 /* VacationButtonView.swift in Sources */,
 				CAECA69127ED982C005D7859 /* ScheduleButtonView.swift in Sources */,
 				CAB7CF2F2750B2FE005C9232 /* TemplateViewController.swift in Sources */,
 				CAB7CF2B2750B146005C9232 /* SupportingMethods.swift in Sources */,
 				CAA3B24D2801758200FFF892 /* CalendarHeaderView.swift in Sources */,
+				CA47B0F92924BAE700D3D8F7 /* MenuSettingCell.swift in Sources */,
 				CAB7CF312750B5B9005C9232 /* InitialViewController.swift in Sources */,
 				CAB7CF3D2750C7F3005C9232 /* CompanyLocationAlertViewController.swift in Sources */,
 				CA1592B127DF90E20021501D /* MainCoverViewController.swift in Sources */,

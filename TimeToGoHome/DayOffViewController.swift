@@ -1492,6 +1492,7 @@ extension DayOffViewController {
         ReferenceValues.initialSetting.updateValue(self.annualVacationType.rawValue, forKey: InitialSetting.annualVacationType.rawValue)
         ReferenceValues.initialSetting.updateValue(self.numberOfTotalVacations, forKey: InitialSetting.numberOfTotalVacations.rawValue)
         ReferenceValues.initialSetting.updateValue(Array(self.holidays), forKey: InitialSetting.holidays.rawValue)
+        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.leavingDate.rawValue)
         
         self.completeInitialSettings()
         
