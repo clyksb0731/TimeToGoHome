@@ -8,22 +8,143 @@
 import UIKit
 
 class MenuViewController: UIViewController {
+    
+    lazy var topView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var dismissButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "dismissButtonImage"), for: .normal)
+        button.addTarget(self, action: #selector(dismiss(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var menuMarkLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 34, weight: .bold)
+        label.textAlignment = .left
+        label.textColor = .black
+        label.text = "메뉴"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var menuTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.bounces = false
+        tableView.separatorStyle = .none
+        tableView.register(MenuSettingCell.self, forCellReuseIdentifier: "MenuSettingCell")
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return tableView
+    }()
+    
+    let menuArray: [(menuStyle: MenuSettingCellType, menuText: String)] = [
+        (menuStyle: .label(SupportingMethods.shared.makeDateFormatter("yyyy.M.d").string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)), menuText: "입사일"),
+        (menuStyle: .openVC, menuText: "경력 사항"),
+        (menuStyle: .button, menuText: "퇴사")
+    ]
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        self.initializeObjects()
+        self.setDelegates()
+        self.setGestures()
+        self.setNotificationCenters()
+        self.setSubviews()
+        self.setLayouts()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.setViewFoundation()
     }
-    */
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .default
+    }
+    
+    deinit {
+            print("----------------------------------- MenuViewController disposed -----------------------------------")
+    }
+}
 
+// MARK: - Extension for essential methods
+extension MenuViewController: EssentialViewMethods {
+    func setViewFoundation() {
+        // Backgroud color
+        self.view.backgroundColor = .white
+        
+        // Navigation bar appearance
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithTransparentBackground()
+        navigationBarAppearance.backgroundColor = .white
+        navigationBarAppearance.titleTextAttributes = [
+            .foregroundColor : UIColor.black,
+            .font : UIFont.systemFont(ofSize: 22, weight: .bold)
+        ]
+        
+        self.navigationItem.scrollEdgeAppearance = navigationBarAppearance
+        self.navigationItem.standardAppearance = navigationBarAppearance
+        self.navigationItem.compactAppearance = navigationBarAppearance
+        
+        self.navigationController?.setNavigationBarHidden(true, animated: true);
+        self.navigationController?.navigationBar.isTranslucent = true
+    }
+    
+    func initializeObjects() {
+        
+    }
+    
+    func setDelegates() {
+        
+    }
+    
+    func setGestures() {
+        
+    }
+    
+    func setNotificationCenters() {
+        
+    }
+    
+    func setSubviews() {
+        
+    }
+    
+    func setLayouts() {
+        
+    }
+}
+
+// MARK: - Extension for Selector methods
+extension MenuViewController {
+    @objc func dismiss(_ sender: UIButton) {
+        self.dismiss(animated: true)
+    }
+}
+
+// MARK: - Extension for UITableViewDelegate, UITableViewDataSource
+extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.menuArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MenuSettingCell", for: indexPath) as! MenuSettingCell
+        cell.setCell(self.menuArray[indexPath.row].menuStyle, menuText: self.menuArray[indexPath.row].menuText)
+        
+        return cell
+    }
 }

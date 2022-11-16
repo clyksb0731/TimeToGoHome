@@ -377,8 +377,8 @@ protocol EssentialViewMethods {
     func setLayouts()
 }
 
-// MARK: - Cell Protocol
-protocol EssentialCellMethods {
+// MARK: - Cell & Header Protocol
+protocol EssentialCellHeaderMethods {
     func setViewFoundation()
     func initializeObjects()
     func setSubviews()
