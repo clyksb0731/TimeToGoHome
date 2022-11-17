@@ -36,6 +36,7 @@ class MenuSettingCell: UITableViewCell {
     
     lazy var switchButton: UISwitch = {
         let switchButton = UISwitch()
+        switchButton.isHidden = true
         switchButton.translatesAutoresizingMaskIntoConstraints = false
         
         return switchButton
@@ -45,6 +46,7 @@ class MenuSettingCell: UITableViewCell {
         let label = UILabel()
         label.textColor = .black
         label.font = .systemFont(ofSize: 17, weight: .bold)
+        label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -96,11 +98,53 @@ extension MenuSettingCell: EssentialCellHeaderMethods {
     }
     
     func setSubviews() {
-        
+        SupportingMethods.shared.addSubviews([
+            self.menuTextLabel,
+            self.openVCImageView,
+            self.switchButton,
+            self.sideLabel,
+            self.bottomLineView
+        ], to: self)
     }
     
     func setLayouts() {
+        let safeArea = self.safeAreaLayoutGuide
         
+        // menuTextLabel
+        NSLayoutConstraint.activate([
+            self.menuTextLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 11),
+            self.menuTextLabel.heightAnchor.constraint(equalToConstant: 22),
+            self.menuTextLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -11),
+            self.menuTextLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16)
+        ])
+        
+        // openVCImageView
+        NSLayoutConstraint.activate([
+            self.openVCImageView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
+            self.openVCImageView.heightAnchor.constraint(equalToConstant: 44),
+            self.openVCImageView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+            self.openVCImageView.widthAnchor.constraint(equalToConstant: 44)
+        ])
+        
+        // switchButton
+        NSLayoutConstraint.activate([
+            self.switchButton.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
+            self.switchButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16)
+        ])
+        
+        // sideLabel
+        NSLayoutConstraint.activate([
+            self.sideLabel.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
+            self.sideLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -31)
+        ])
+        
+        // bottomLineView
+        NSLayoutConstraint.activate([
+            self.bottomLineView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+            self.bottomLineView.heightAnchor.constraint(equalToConstant: 0.5),
+            self.bottomLineView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            self.bottomLineView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+        ])
     }
 }
 

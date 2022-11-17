@@ -2280,7 +2280,10 @@ extension MainViewController {
 // MARK: - Extension for Selector methods
 extension MainViewController {
     @objc func menuBarButtonItem(_ sender: UIBarButtonItem) {
+        let menuNaviVC = CustomizedNavigationController(rootViewController: MenuViewController())
+        menuNaviVC.modalPresentationStyle = .fullScreen
         
+        self.present(menuNaviVC, animated: true, completion: nil)
     }
     
     @objc func settingBarButtonItem(_ sender: UIBarButtonItem) {

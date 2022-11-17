@@ -52,7 +52,7 @@ class MenuSettingHeaderView: UITableViewHeaderFooterView {
 // MARK: - Extension for essential methods
 extension MenuSettingHeaderView: EssentialCellHeaderMethods {
     func setViewFoundation() {
-        self.backgroundColor = .useRGB(red: 242, green: 242, blue: 247)
+        self.layer.backgroundColor = UIColor.useRGB(red: 242, green: 242, blue: 247).cgColor
     }
     
     func initializeObjects() {
