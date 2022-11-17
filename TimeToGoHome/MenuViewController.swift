@@ -37,26 +37,53 @@ class MenuViewController: UIViewController {
         return label
     }()
     
+    lazy var topViewBottomLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 60, green: 60, blue: 67, alpha: 0.29)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
     lazy var menuTableView: UITableView = {
         let tableView = UITableView()
+        tableView.backgroundColor = .white
         tableView.bounces = false
         tableView.separatorStyle = .none
         tableView.register(MenuSettingCell.self, forCellReuseIdentifier: "MenuSettingCell")
         tableView.register(MenuSettingHeaderView.self, forHeaderFooterViewReuseIdentifier: "MenuSettingHeaderView")
         tableView.delegate = self
         tableView.dataSource = self
+        if #available(iOS 15.0, *) {
+            tableView.sectionHeaderTopPadding = 0
+        }
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         return tableView
     }()
     
     let menuArray: [(header: String, items:[(menuStyle: MenuSettingCellType, menuText: String)])] = [
+        (header: "근무",
+         items: [
+            (menuStyle: .openVC, menuText: "근무 내역"),
+            (menuStyle: .openVC, menuText: "근무 통계")
+         ]
+        ),
+        
+        (header: "휴가",
+         items: [
+            (menuStyle: .openVC, menuText: "휴가 사용 현황"),
+            (menuStyle: .openVC, menuText: "휴가 일정")
+         ]
+        ),
+        
         (header: "경력관리",
          items: [
             (menuStyle: .label(SupportingMethods.shared.makeDateFormatter("yyyy.M.d").string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)), menuText: "입사일"),
             (menuStyle: .openVC, menuText: "경력 사항"),
             (menuStyle: .button, menuText: "퇴직 처리")
-         ])
+         ]
+        )
     ]
 
     override func viewDidLoad() {
@@ -132,7 +159,8 @@ extension MenuViewController: EssentialViewMethods {
         
         SupportingMethods.shared.addSubviews([
             self.dismissButton,
-            self.menuMarkLabel
+            self.menuMarkLabel,
+            self.topViewBottomLineView
         ], to: self.topView)
     }
     
@@ -159,6 +187,14 @@ extension MenuViewController: EssentialViewMethods {
         NSLayoutConstraint.activate([
             self.menuMarkLabel.bottomAnchor.constraint(equalTo: self.topView.bottomAnchor, constant: -8),
             self.menuMarkLabel.leadingAnchor.constraint(equalTo: self.topView.leadingAnchor, constant: 16)
+        ])
+        
+        // topViewBottomLineView
+        NSLayoutConstraint.activate([
+            self.topViewBottomLineView.bottomAnchor.constraint(equalTo: self.topView.bottomAnchor),
+            self.topViewBottomLineView.heightAnchor.constraint(equalToConstant: 0.5),
+            self.topViewBottomLineView.leadingAnchor.constraint(equalTo: self.topView.leadingAnchor),
+            self.topViewBottomLineView.trailingAnchor.constraint(equalTo: self.topView.trailingAnchor)
         ])
         
         // menuTableView
@@ -189,6 +225,14 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         headerView.setHeaderView(categoryText: self.menuArray[section].header)
         
         return headerView
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

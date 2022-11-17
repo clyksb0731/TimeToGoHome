@@ -9,14 +9,6 @@ import UIKit
 
 class MenuSettingHeaderView: UITableViewHeaderFooterView {
     
-    lazy var topLineView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .useRGB(red: 60, green: 60, blue: 67, alpha: 0.29)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
-    }()
-    
     lazy var categoryLabel: UILabel = {
         let label = UILabel()
         label.textColor = .useRGB(red: 60, green: 60, blue: 60, alpha: 0.6)
@@ -61,7 +53,6 @@ extension MenuSettingHeaderView: EssentialCellHeaderMethods {
     
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
-            self.topLineView,
             self.categoryLabel,
             self.bottomLineView
         ], to: self)
@@ -69,14 +60,6 @@ extension MenuSettingHeaderView: EssentialCellHeaderMethods {
     
     func setLayouts() {
         let safeArea = self.safeAreaLayoutGuide
-        
-        // topLineView
-        NSLayoutConstraint.activate([
-            self.topLineView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-            self.topLineView.heightAnchor.constraint(equalToConstant: 0.5),
-            self.topLineView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.topLineView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
-        ])
         
         // categoryLabel
         NSLayoutConstraint.activate([
