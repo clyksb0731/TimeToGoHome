@@ -237,7 +237,7 @@ class MainViewController: UIViewController {
         button.titleLabel?.font = .systemFont(ofSize: 12)
         button.setTitleColor(.white, for: .normal)
         button.setTitleColor(.useRGB(red: 172, green: 172, blue: 172), for: .disabled)
-        button.setTitle("추가 | 제거", for: .normal)
+        button.setTitle(self.schedule.dateOfFinishedSchedule == nil ? "추가 | 제거" : "업무 재개", for: .normal)
         button.addTarget(self, action: #selector(editScheduleButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
