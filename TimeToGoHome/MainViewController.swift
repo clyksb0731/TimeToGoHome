@@ -424,19 +424,22 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // essential
         self.initializeViews()
         self.setTargets()
         self.setGestures()
         self.setNotificationCenters()
         self.setSubviews()
         self.setLayouts()
+        
+        // added
+        self.determineToday()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         self.setViewFoundation()
-        self.determineToday()
     }
     
     override func viewDidAppear(_ animated: Bool) {
