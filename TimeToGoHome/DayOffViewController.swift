@@ -1051,10 +1051,16 @@ extension DayOffViewController {
         let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
         
         if self.annualVacationType == .fiscalYear {
+            let yearMonthDayOfJoiningDate = SupportingMethods.shared.getYearMonthAndDayOf(ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
+            let joiningDateFromYearMonthDay = SupportingMethods.shared.makeDateWithYear(yearMonthDayOfJoiningDate.year, month: yearMonthDayOfJoiningDate.month, andDay: yearMonthDayOfJoiningDate.day)
+            
             let firstDayOfYearDateComponents = DateComponents(year: todayDateComponents.year!, month: 1, day: 1)
             let lastDayOfYearDateComponents = DateComponents(year: todayDateComponents.year!, month: 12, day: 31)
             
-            return (calendar.date(from: firstDayOfYearDateComponents)!, calendar.date(from: lastDayOfYearDateComponents)!)
+            let startDate = joiningDateFromYearMonthDay >= calendar.date(from: firstDayOfYearDateComponents)! ? joiningDateFromYearMonthDay : calendar.date(from: firstDayOfYearDateComponents)!
+            let endDate = calendar.date(from: lastDayOfYearDateComponents)!
+            
+            return (startDate, endDate)
             
         } else { // joiningDay
             var firstDayOfVacationDate = ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date
