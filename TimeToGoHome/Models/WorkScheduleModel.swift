@@ -161,6 +161,7 @@ struct WorkScheduleModel {
         // Check tody schedule condition for initial setting.
         self.workType = self.makeWorkType()
         self.lunchTime = self.makeLunchTimeDate()
+        self.startingWorkTime = self.makeStartingWorkTimeDate()
         
         if (ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date) != nil {
             self.morning = .morning(.holiday)
@@ -236,10 +237,10 @@ struct WorkScheduleModel {
                         companyModel.addSchedule(schedule)
                     }
                 }
+                
+                self.startingWorkTime = self.makeStartingWorkTimeDate()
             }
         }
-        
-        self.startingWorkTime = self.makeStartingWorkTimeDate()
     }
 }
 
@@ -298,42 +299,48 @@ extension WorkScheduleModel {
             calendar.timeZone = TimeZone.current
             let dateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
             
-            if case .morning(let workType) = self.morning, case .work = workType,
-                case .afternoon(let workType) = self.afternoon, case .work = workType {
-                guard let startingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValue.rawValue] as? Double else {
+            let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
+            if let schedule = companyModel.getScheduleOn(self.date) {
+                if schedule.morning == WorkTimeType.work.rawValue,
+                   schedule.afternoon == WorkTimeType.work.rawValue {
+                    guard let startingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValue.rawValue] as? Double else {
+                        return nil
+                    }
+                    
+                    let hour = (Int(startingWorkTimeValue * 10)) / 10
+                    let minute = Int((Double((Int(startingWorkTimeValue * 10)) % 10) / 10.0) * 60)
+                    
+                    let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
+                    
+                    return calendar.date(from: todayDateComponents)
+                    
+                } else if schedule.morning == WorkTimeType.work.rawValue {
+                    guard let startingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValue.rawValue] as? Double else {
+                        return nil
+                    }
+                    
+                    let hour = (Int(startingWorkTimeValue * 10)) / 10
+                    let minute = Int((Double((Int(startingWorkTimeValue * 10)) % 10) / 10.0) * 60)
+                    
+                    let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
+                    
+                    return calendar.date(from: todayDateComponents)
+                    
+                } else if schedule.afternoon == WorkTimeType.work.rawValue {
+                    guard let startingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.afternoonStartingworkTimeValue.rawValue] as? Double else {
+                        return nil
+                    }
+                    
+                    let hour = (Int(startingWorkTimeValue * 10)) / 10
+                    let minute = Int((Double((Int(startingWorkTimeValue * 10)) % 10) / 10.0) * 60)
+                    
+                    let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
+                    
+                    return calendar.date(from: todayDateComponents)
+                    
+                } else {
                     return nil
                 }
-                
-                let hour = (Int(startingWorkTimeValue * 10)) / 10
-                let minute = Int((Double((Int(startingWorkTimeValue * 10)) % 10) / 10.0) * 60)
-                
-                let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
-                
-                return calendar.date(from: todayDateComponents)
-                
-            } else if case .morning(let workType) = self.morning, case .work = workType {
-                guard let startingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValue.rawValue] as? Double else {
-                    return nil
-                }
-                
-                let hour = (Int(startingWorkTimeValue * 10)) / 10
-                let minute = Int((Double((Int(startingWorkTimeValue * 10)) % 10) / 10.0) * 60)
-                
-                let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
-                
-                return calendar.date(from: todayDateComponents)
-                
-            } else if case .afternoon(let workType) = self.afternoon, case .work = workType {
-                guard let startingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.afternoonStartingworkTimeValue.rawValue] as? Double else {
-                    return nil
-                }
-                
-                let hour = (Int(startingWorkTimeValue * 10)) / 10
-                let minute = Int((Double((Int(startingWorkTimeValue * 10)) % 10) / 10.0) * 60)
-                
-                let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
-                
-                return calendar.date(from: todayDateComponents)
                 
             } else {
                 return nil

@@ -493,9 +493,6 @@ extension MainViewController {
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "settingBarButton"), style: .plain, target: self, action: #selector(settingBarButtonItem(_:)))
         self.navigationItem.rightBarButtonItem?.tintColor = .black
-        
-        // Table view height
-        self.calculateTableViewHeight(for: self.schedule)
     }
     
     // Initialize views
@@ -852,6 +849,8 @@ extension MainViewController {
             self.startWorkingTimeButton.isHidden = true
         }
         
+        self.calculateTableViewHeight(for: self.schedule)
+        self.scheduleTableView.reloadData()
         self.determineScheduleButtonState(for: self.schedule)
         
         if self.schedule.startingWorkTime == nil {
@@ -2400,16 +2399,18 @@ extension MainViewController {
         UIDevice.softHaptic()
         
         if self.schedule.dateOfFinishedSchedule != nil {
-            self.schedule.dateOfFinishedSchedule = nil
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "업무 재개", andMessage: "업무를 이미 종료했습니다. 업무를 다시 재개하겠습니까?", okAction: UIAlertAction(title: "확인", style: .default, handler: { _ in
+                self.schedule.dateOfFinishedSchedule = nil
 
-            self.editScheduleButton.setTitle("추가 | 제거", for: .normal)
-            
-            if self.schedule.workType == .staggered {
-                self.startWorkingTimeButton.isEnabled = true
+                self.editScheduleButton.setTitle("추가 | 제거", for: .normal)
                 
-            } else {
-                self.startWorkingTimeButton.isEnabled = false
-            }
+                if self.schedule.workType == .staggered {
+                    self.startWorkingTimeButton.isEnabled = true
+                    
+                } else {
+                    self.startWorkingTimeButton.isEnabled = false
+                }
+            }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)
 
         } else {
             self.tempSchedule = self.schedule
@@ -2876,16 +2877,19 @@ extension MainViewController: ScheduleButtonViewDelegate {
         case .finishWorkWithOvertime(let date): // MARK: finishWorkWithOvertime
             if let date = date {
                 print("finishWorkWithOvertime at \(SupportingMethods.shared.makeDateFormatter("yyyyMMdd HH:mm:ss").string(from: date))")
-                self.schedule.dateOfFinishedSchedule = date
-                self.editScheduleButton.setTitle("업무 재개", for: .normal)
-                self.startWorkingTimeButton.isEnabled = false
                 
-                self.schedule.addSchedule(.overtime(date))
-                self.calculateTableViewHeight(for: self.schedule)
-                self.scheduleTableView.reloadData()
-                self.determineScheduleButtonState(for: self.schedule)
-                
-                self.schedule.updateTodayIntoDB()
+                SupportingMethods.shared.makeAlert(on: self, withTitle: "업무 종료", andMessage: "\(SupportingMethods.shared.makeDateFormatter("H시 m분").string(from: date))에 업무를 종료합니다.", okAction: UIAlertAction(title: "확인", style: .default, handler: { _ in
+                    self.schedule.dateOfFinishedSchedule = date
+                    self.editScheduleButton.setTitle("업무 재개", for: .normal)
+                    self.startWorkingTimeButton.isEnabled = false
+                    
+                    self.schedule.addSchedule(.overtime(date))
+                    self.calculateTableViewHeight(for: self.schedule)
+                    self.scheduleTableView.reloadData()
+                    self.determineScheduleButtonState(for: self.schedule)
+                    
+                    self.schedule.updateTodayIntoDB()
+                }), cancelAction: UIAlertAction(title: "취소", style: .cancel, handler: nil), completion: nil)
             }
             
         case .finishWork: // MARK: finishWork
