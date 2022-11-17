@@ -74,7 +74,7 @@ class MainCoverViewController: UIViewController {
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 21)
+        label.font = .systemFont(ofSize: 21, weight: .bold)
         label.textAlignment = .center
         label.textColor = .black
         switch self.mainCoverType {
