@@ -114,11 +114,6 @@ extension SupportingMethods {
         }
     }
     
-    // MARK: Get current time seconds
-    class func getCurrentTimeSeconds() -> Int {
-        return Int(CFAbsoluteTimeGetCurrent())
-    }
-    
     // MARK: Cover view
     func turnCoverView(_ state: CoverViewState, on: UIView?) {
         guard let on = on else {
@@ -288,6 +283,47 @@ extension SupportingMethods {
         let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
         
         return calendar.date(from: todayDateComponents)
+    }
+    
+    class func getCurrentTimeSeconds() -> Int {
+        return Int(CFAbsoluteTimeGetCurrent())
+        
+        // FIXME: For test
+        //return self.makeTempTimeSeconds(hour: 17, minute: 4, second: 0)
+    }
+    
+    class func getYearMonthAndDayOf(_ date: Date) -> (year: Int, month: Int, day: Int) {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
+        
+        return (dateComponents.year!, dateComponents.month!, dateComponents.day!)
+    }
+    
+    // Make temp time seconds for test
+    class func makeTempTimeSeconds(year: Int = getYearMonthAndDayOf(Date()).year,
+                                   month: Int = getYearMonthAndDayOf(Date()).month,
+                                   day: Int = getYearMonthAndDayOf(Date()).day,
+                                   hour: Int, minute: Int, second: Int) -> Int {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        
+        let timeComponents = DateComponents(year: year, month: month, day: day, hour: hour, minute: minute, second: second)
+        
+        return Int(calendar.date(from: timeComponents)!.timeIntervalSinceReferenceDate)
+    }
+    
+    // Make temp time date for test
+    class func makeTempTimeDate(year: Int = getYearMonthAndDayOf(Date()).year,
+                                month: Int = getYearMonthAndDayOf(Date()).month,
+                                day: Int = getYearMonthAndDayOf(Date()).day,
+                                hour: Int, minute: Int, second: Int) -> Date {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        
+        let timeComponents = DateComponents(year: year, month: month, day: day, hour: hour, minute: minute, second: second)
+        
+        return calendar.date(from: timeComponents)!
     }
     
     // MARK: About constraint

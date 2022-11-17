@@ -2399,7 +2399,7 @@ extension MainViewController {
         UIDevice.softHaptic()
         
         if self.schedule.dateOfFinishedSchedule != nil {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "업무 재개", andMessage: "업무를 이미 종료했습니다. 업무를 다시 재개하겠습니까?", okAction: UIAlertAction(title: "확인", style: .default, handler: { _ in
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "업무 재개", andMessage: "업무를 이미 종료했습니다.\n업무를 다시 재개하겠습니까?", okAction: UIAlertAction(title: "업무 재개", style: .default, handler: { _ in
                 self.schedule.dateOfFinishedSchedule = nil
 
                 self.editScheduleButton.setTitle("추가 | 제거", for: .normal)
@@ -2876,14 +2876,14 @@ extension MainViewController: ScheduleButtonViewDelegate {
             
         case .finishWorkWithOvertime(let date): // MARK: finishWorkWithOvertime
             if let date = date {
-                print("finishWorkWithOvertime at \(SupportingMethods.shared.makeDateFormatter("yyyyMMdd HH:mm:ss").string(from: date))")
+                print("finishWorkWithOvertime at \(SupportingMethods.shared.makeDateFormatter("yyyy.MM.dd HH:mm:ss").string(from: date))")
                 
-                SupportingMethods.shared.makeAlert(on: self, withTitle: "업무 종료", andMessage: "\(SupportingMethods.shared.makeDateFormatter("H시 m분").string(from: date))에 업무를 종료합니다.", okAction: UIAlertAction(title: "확인", style: .default, handler: { _ in
+                SupportingMethods.shared.makeAlert(on: self, withTitle: "업무 종료", andMessage: "\(SupportingMethods.shared.makeDateFormatter("H시 m분").string(from: date))에 업무를 종료합니다.", okAction: UIAlertAction(title: "업무 종료", style: .destructive, handler: { _ in
                     self.schedule.dateOfFinishedSchedule = date
                     self.editScheduleButton.setTitle("업무 재개", for: .normal)
                     self.startWorkingTimeButton.isEnabled = false
                     
-                    self.schedule.addSchedule(.overtime(date))
+                    self.schedule.insertSchedule(.overtime(date))
                     self.calculateTableViewHeight(for: self.schedule)
                     self.scheduleTableView.reloadData()
                     self.determineScheduleButtonState(for: self.schedule)
