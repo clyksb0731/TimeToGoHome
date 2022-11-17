@@ -1,22 +1,15 @@
 //
-//  MenuSettingCell.swift
+//  SettingCell.swift
 //  TimeToGoHome
 //
-//  Created by Yongseok Choi on 2022/11/16.
+//  Created by Yongseok Choi on 2022/11/17.
 //
 
 import UIKit
 
-enum MenuSettingCellType {
-    case openVC
-    case `switch`(Bool)
-    case label(String)
-    case button
-}
-
-class MenuSettingCell: UITableViewCell {
+class SettingCell: UITableViewCell {
     
-    lazy var menuTextLabel: UILabel = {
+    lazy var itemTitleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
         label.font = .systemFont(ofSize: 17, weight: .regular)
@@ -87,7 +80,7 @@ class MenuSettingCell: UITableViewCell {
 }
 
 // MARK: - Extension for essential methods
-extension MenuSettingCell: EssentialCellHeaderMethods {
+extension SettingCell: EssentialCellHeaderMethods {
     func setViewFoundation() {
         self.selectionStyle = .none
         self.contentView.isUserInteractionEnabled = true
@@ -99,7 +92,7 @@ extension MenuSettingCell: EssentialCellHeaderMethods {
     
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
-            self.menuTextLabel,
+            self.itemTitleLabel,
             self.openVCImageView,
             self.switchButton,
             self.sideLabel,
@@ -110,12 +103,12 @@ extension MenuSettingCell: EssentialCellHeaderMethods {
     func setLayouts() {
         let safeArea = self.safeAreaLayoutGuide
         
-        // menuTextLabel
+        // itemTitleLabel
         NSLayoutConstraint.activate([
-            self.menuTextLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 11),
-            self.menuTextLabel.heightAnchor.constraint(equalToConstant: 22),
-            self.menuTextLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -11),
-            self.menuTextLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16)
+            self.itemTitleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 11),
+            self.itemTitleLabel.heightAnchor.constraint(equalToConstant: 22),
+            self.itemTitleLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -11),
+            self.itemTitleLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16)
         ])
         
         // openVCImageView
@@ -149,9 +142,9 @@ extension MenuSettingCell: EssentialCellHeaderMethods {
 }
 
 // MARK: Extension for methods added
-extension MenuSettingCell {
-    func setCell(_ style: MenuSettingCellType, menuText text: String) {
-        self.menuTextLabel.text = text
+extension SettingCell {
+    func setCell(_ style: MenuSettingCellType, itemText text: String) {
+        self.itemTitleLabel.text = text
         
         switch style {
         case .openVC:

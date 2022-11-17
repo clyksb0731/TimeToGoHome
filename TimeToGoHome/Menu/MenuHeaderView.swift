@@ -1,5 +1,5 @@
 //
-//  MenuSettingHeaderView.swift
+//  MenuHeaderView.swift
 //  TimeToGoHome
 //
 //  Created by Yongseok Choi on 2022/11/16.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MenuSettingHeaderView: UITableViewHeaderFooterView {
+class MenuHeaderView: UITableViewHeaderFooterView {
     
     lazy var categoryLabel: UILabel = {
         let label = UILabel()
@@ -42,7 +42,7 @@ class MenuSettingHeaderView: UITableViewHeaderFooterView {
 }
 
 // MARK: - Extension for essential methods
-extension MenuSettingHeaderView: EssentialCellHeaderMethods {
+extension MenuHeaderView: EssentialCellHeaderMethods {
     func setViewFoundation() {
         self.layer.backgroundColor = UIColor.useRGB(red: 242, green: 242, blue: 247).cgColor
     }
@@ -80,7 +80,7 @@ extension MenuSettingHeaderView: EssentialCellHeaderMethods {
 }
 
 // MARK: - Extension for methods added
-extension MenuSettingHeaderView {
+extension MenuHeaderView {
     func setHeaderView(categoryText text: String) {
         self.categoryLabel.text = text
     }

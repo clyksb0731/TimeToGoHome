@@ -50,8 +50,8 @@ class MenuViewController: UIViewController {
         tableView.backgroundColor = .white
         tableView.bounces = false
         tableView.separatorStyle = .none
-        tableView.register(MenuSettingCell.self, forCellReuseIdentifier: "MenuSettingCell")
-        tableView.register(MenuSettingHeaderView.self, forHeaderFooterViewReuseIdentifier: "MenuSettingHeaderView")
+        tableView.register(MenuCell.self, forCellReuseIdentifier: "MenuCell")
+        tableView.register(MenuHeaderView.self, forHeaderFooterViewReuseIdentifier: "MenuHeaderView")
         tableView.delegate = self
         tableView.dataSource = self
         if #available(iOS 15.0, *) {
@@ -221,7 +221,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "MenuSettingHeaderView") as! MenuSettingHeaderView
+        let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "MenuHeaderView") as! MenuHeaderView
         headerView.setHeaderView(categoryText: self.menuArray[section].header)
         
         return headerView
@@ -240,9 +240,9 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "MenuSettingCell", for: indexPath) as! MenuSettingCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MenuCell", for: indexPath) as! MenuCell
         cell.setCell(self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
-                     menuText: self.menuArray[indexPath.section].items[indexPath.row].menuText)
+                     itemText: self.menuArray[indexPath.section].items[indexPath.row].menuText)
         
         return cell
     }
