@@ -246,4 +246,23 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 2 && indexPath.row == 2 {
+            let menuCoverVC = MenuCoverViewController(.lastDateAtWork, delegate: self)
+            
+            self.present(menuCoverVC, animated: false)
+        }
+    }
+}
+
+// MARK: - Extension for MenuCoverDelegate
+extension MenuViewController: MenuCoverDelegate {
+    func menuCoverDidDetermineLastDate(_ date: Date) {
+        print("menuCoverDidDetermineLastDate: \(date)")
+        SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(SupportingMethods.shared.makeDateFormatter("yyyy년 M월 d일").string(from: date))부로 퇴직 처리합니다.", okAction: UIAlertAction(title: "확인", style: .default, handler: { _ in
+            // FIXME: code here
+            
+        }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)
+    }
 }
