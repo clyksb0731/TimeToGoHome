@@ -117,9 +117,6 @@ extension CompanyDetailedAddressViewController {
         
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         
-        //self.navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor.useRGB(red: 0, green: 0, blue: 0),
-                                                                        .font:UIFont.systemFont(ofSize: 18, weight: .medium)]
         self.navigationItem.title = "상세 위치"
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "backButtonItemImage"), style: .plain, target: self, action: #selector(leftBarButtonItem(_:)))
         self.navigationItem.leftBarButtonItem?.tintColor = .black

@@ -471,7 +471,7 @@ extension MainViewController {
         // Backgroud color
         self.view.backgroundColor = .white
         
-        // Navigation bar appearance
+        // Navigation item appearance
         let navigationBarAppearance = UINavigationBarAppearance()
         navigationBarAppearance.configureWithTransparentBackground()
         navigationBarAppearance.backgroundColor = .white
@@ -485,7 +485,6 @@ extension MainViewController {
         self.navigationItem.compactAppearance = navigationBarAppearance
         
         self.navigationController?.setNavigationBarHidden(false, animated: true);
-        self.navigationController?.navigationBar.isTranslucent = true
         
         self.navigationItem.title = "오늘의 일정"
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "menuBarButton"), style: .plain, target: self, action: #selector(menuBarButtonItem(_:)))

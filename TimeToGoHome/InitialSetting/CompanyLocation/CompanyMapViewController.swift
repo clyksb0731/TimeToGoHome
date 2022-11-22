@@ -109,18 +109,6 @@ extension CompanyMapViewController {
     func setViewFoundation() {
         self.view.backgroundColor = .white
         
-        let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.configureWithTransparentBackground()
-        navigationBarAppearance.backgroundColor = .white
-        navigationBarAppearance.titleTextAttributes = [
-            .foregroundColor : UIColor.black,
-            .font : UIFont.systemFont(ofSize: 17, weight: .semibold)
-        ]
-        
-        self.navigationItem.scrollEdgeAppearance = navigationBarAppearance
-        self.navigationItem.standardAppearance = navigationBarAppearance
-        self.navigationItem.compactAppearance = navigationBarAppearance
-        
         self.navigationController?.setNavigationBarHidden(false, animated: true);
         
         self.navigationItem.title = "지도에서 지정"

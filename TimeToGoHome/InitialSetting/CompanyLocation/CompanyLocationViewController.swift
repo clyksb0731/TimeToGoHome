@@ -163,6 +163,18 @@ extension CompanyLocationViewController {
     func setViewFoundation() {
         self.view.backgroundColor = .white
         
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithDefaultBackground()
+        navigationBarAppearance.backgroundColor = .white
+        navigationBarAppearance.titleTextAttributes = [
+            .foregroundColor : UIColor.black,
+            .font : UIFont.systemFont(ofSize: 17, weight: .semibold)
+        ]
+        
+        self.navigationController?.navigationBar.scrollEdgeAppearance = navigationBarAppearance
+        self.navigationController?.navigationBar.standardAppearance = navigationBarAppearance
+        self.navigationController?.navigationBar.compactAppearance = navigationBarAppearance
+        
         self.navigationController?.setNavigationBarHidden(true, animated: true);
         
         // To hide navigation bar border line.

@@ -120,19 +120,18 @@ extension MenuViewController: EssentialViewMethods {
         
         // Navigation bar appearance
         let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.configureWithTransparentBackground()
+        navigationBarAppearance.configureWithDefaultBackground()
         navigationBarAppearance.backgroundColor = .white
         navigationBarAppearance.titleTextAttributes = [
             .foregroundColor : UIColor.black,
-            .font : UIFont.systemFont(ofSize: 22, weight: .bold)
+            .font : UIFont.systemFont(ofSize: 17, weight: .semibold)
         ]
         
-        self.navigationItem.scrollEdgeAppearance = navigationBarAppearance
-        self.navigationItem.standardAppearance = navigationBarAppearance
-        self.navigationItem.compactAppearance = navigationBarAppearance
+        self.navigationController?.navigationBar.scrollEdgeAppearance = navigationBarAppearance
+        self.navigationController?.navigationBar.standardAppearance = navigationBarAppearance
+        self.navigationController?.navigationBar.compactAppearance = navigationBarAppearance
         
         self.navigationController?.setNavigationBarHidden(true, animated: true);
-        self.navigationController?.navigationBar.isTranslucent = true
     }
     
     func initializeObjects() {
@@ -248,6 +247,12 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 0 && indexPath.row == 0 {
+            let workRecordVC = WorkRecordViewController()
+            
+            self.navigationController?.pushViewController(workRecordVC, animated: true)
+        }
+        
         if indexPath.section == 2 && indexPath.row == 2 {
             let menuCoverVC = MenuCoverViewController(.lastDateAtWork, delegate: self)
             
