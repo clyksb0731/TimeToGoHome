@@ -198,7 +198,7 @@ class Company: Object {
 }
 
 class Schedule: EmbeddedObject {
-    //@Persisted(primaryKey: true) var dateId: String = ""
+    @Persisted var dateId: Int = 0
     @Persisted var year: Int = 0
     @Persisted var month: Int = 0
     @Persisted var day: Int = 0
@@ -209,7 +209,7 @@ class Schedule: EmbeddedObject {
     convenience init(date: Date, morningType morning: WorkTimeType, afternoonType afternoon: WorkTimeType, overtime: Int? = nil) {
         self.init()
         
-        //self.dateId = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date)
+        self.dateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date))!
         let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
         self.year = yearMonthDay.year
         self.month = yearMonthDay.month
