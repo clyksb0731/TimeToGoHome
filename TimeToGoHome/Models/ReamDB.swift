@@ -46,22 +46,30 @@ struct CompanyModel {
     }
     
     func getScheduleOn(_ date: Date) -> Schedule? {
-        let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
+        let dateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date))!
+        
         let schedules = self.company?.schedules.where {
-            $0.year == yearMonthDay.year &&
-            $0.month == yearMonthDay.month &&
-            $0.day == yearMonthDay.day
+            $0.dateId == dateId
         }
+        
         return schedules?.first
+    }
+    
+    func getSchedulesAfter(_ date: Date) -> Results<Schedule>? {
+        let dateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date))!
+        
+        let schedules = self.schedules?.where {
+            $0.dateId > dateId
+        }
+        
+        return schedules
     }
     
     func setSchedule(_ schedule: Schedule) {
         let realm = try! Realm()
         
         let schedules = self.company?.schedules.where {
-            $0.year == schedule.year &&
-            $0.month == schedule.month &&
-            $0.day == schedule.day
+            $0.dateId == schedule.dateId
         }
         try! realm.write {
             schedules?.first?.year = schedule.year
@@ -77,9 +85,7 @@ struct CompanyModel {
         let realm = try! Realm()
         
         let schedules = self.company?.schedules.where {
-            $0.year == schedule.year &&
-            $0.month == schedule.month &&
-            $0.day == schedule.day
+            $0.dateId == schedule.dateId
         }
         
         if let existingSchedule = schedules?.first {
@@ -95,6 +101,28 @@ struct CompanyModel {
         } else {
             try! realm.write {
                 self.schedules?.append(schedule)
+            }
+        }
+    }
+    
+    func removeSchedules(_ schedules: Results<Schedule>) {
+        let realm = try! Realm()
+        
+        for schedule in schedules {
+            if let index = self.schedules?.firstIndex(where: { $0.dateId == schedule.dateId }) {
+                try! realm.write {
+                    self.schedules?.remove(at: index)
+                }
+            }
+        }
+    }
+    
+    func removeSchedule(_ schedule: Schedule) {
+        let realm = try! Realm()
+        
+        if let index = self.schedules?.firstIndex(where: { $0.dateId == schedule.dateId }) {
+            try! realm.write {
+                self.schedules?.remove(at: index)
             }
         }
     }
