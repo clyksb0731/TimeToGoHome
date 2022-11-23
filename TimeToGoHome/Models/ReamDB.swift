@@ -33,16 +33,24 @@ struct CompanyModel {
         }
     }
     
-    var schedules: List<Schedule>? {
-        return self.company?.schedules
-    }
-    
     static var companies: Results<Company> {
         get {
             let realm = try! Realm()
             
             return realm.objects(Company.self)
         }
+    }
+    
+    func setLeavingDate(_ date: Date) {
+        let realm = try! Realm()
+        
+        try! realm.write {
+            self.company?.leavingDate = date
+        }
+    }
+    
+    var schedules: List<Schedule>? {
+        return self.company?.schedules
     }
     
     func getScheduleOn(_ date: Date) -> Schedule? {
