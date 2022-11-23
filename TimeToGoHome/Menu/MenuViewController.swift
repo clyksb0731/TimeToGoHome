@@ -62,6 +62,10 @@ class MenuViewController: UIViewController {
         return tableView
     }()
     
+    var leavingDate: Date? = {
+        return ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date
+    }()
+    
     let menuArray: [(header: String, items:[(menuStyle: MenuSettingCellType, menuText: String)])] = [
         (header: "근무",
          items: [
@@ -239,14 +243,38 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let todayDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: Date()))!
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "MenuCell", for: indexPath) as! MenuCell
-        cell.setCell(self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
-                     itemText: self.menuArray[indexPath.section].items[indexPath.row].menuText)
+        
+        if let leavingDate = self.leavingDate {
+            let leavingDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: leavingDate))!
+            cell.setCell(self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
+                         itemText: self.menuArray[indexPath.section].items[indexPath.row].menuText,
+                         isEnable: todayDateId <= leavingDateId)
+            
+        } else {
+            cell.setCell(self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
+                         itemText: self.menuArray[indexPath.section].items[indexPath.row].menuText,
+                         isEnable: true)
+        }
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 2 && indexPath.row == 1 {
+            // career management
+        }
+        
+        let todayDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: Date()))!
+        if let leavingDate = self.leavingDate {
+            let leavingDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: leavingDate))!
+            if todayDateId > leavingDateId {
+                return
+            }
+        }
+        
         if indexPath.section == 0 && indexPath.row == 0 {
             let workRecordVC = WorkRecordViewController()
             
@@ -264,10 +292,29 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
 // MARK: - Extension for MenuCoverDelegate
 extension MenuViewController: MenuCoverDelegate {
     func menuCoverDidDetermineLastDate(_ date: Date) {
-        print("menuCoverDidDetermineLastDate: \(date)")
-        SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(SupportingMethods.shared.makeDateFormatter("yyyy년 M월 d일").string(from: date))부로 퇴직 처리합니다.", okAction: UIAlertAction(title: "확인", style: .default, handler: { _ in
-            // FIXME: code here
+        let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
+        
+        let targetDate = SupportingMethods.shared.makeDateFormatter("yyyy년 M월 d일").string(from: date)
+        
+        if let schedules = companyModel.getSchedulesAfter(date), !schedules.isEmpty {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(targetDate) 이후에 기록된 일정이 있습니다. 퇴직 처리 시 해당 일정이 삭제됩니다. 퇴직 처리할까요?", okAction: UIAlertAction(title: "퇴직 처리", style: .default, handler: { _ in
+                companyModel.removeSchedules(schedules)
+                
+                ReferenceValues.initialSetting.updateValue(date, forKey: InitialSetting.leavingDate.rawValue)
+                SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+                
+                // FIXME: Go to menu? Main? How to handle today schedule after this?
+                
+            }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)
             
-        }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)
+        } else {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(targetDate)부로 퇴직 처리할까요?", okAction: UIAlertAction(title: "퇴직 처리", style: .default, handler: { _ in
+                ReferenceValues.initialSetting.updateValue(date, forKey: InitialSetting.leavingDate.rawValue)
+                SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+                
+                // FIXME: Go to menu? Main? How to handle today schedule after this?
+                
+            }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)
+        }
     }
 }

@@ -150,7 +150,10 @@ extension MenuCell: EssentialCellHeaderMethods {
 
 // MARK: Extension for methods added
 extension MenuCell {
-    func setCell(_ style: MenuSettingCellType, itemText text: String) {
+    func setCell(_ style: MenuSettingCellType, itemText text: String, isEnable: Bool = true) {
+        self.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
+        self.openVCImageView.alpha = isEnable ? 1.0 : 0.5
+        
         self.itemTextLabel.text = text
         
         switch style {
