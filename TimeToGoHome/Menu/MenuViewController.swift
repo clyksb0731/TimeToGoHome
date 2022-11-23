@@ -300,6 +300,7 @@ extension MenuViewController: MenuCoverDelegate {
             SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(targetDate) 이후에 기록된 일정이 있습니다. 퇴직 처리 시 해당 일정이 삭제됩니다. 퇴직 처리할까요?", okAction: UIAlertAction(title: "퇴직 처리", style: .default, handler: { _ in
                 companyModel.removeSchedules(schedules)
                 
+                self.leavingDate = date
                 ReferenceValues.initialSetting.updateValue(date, forKey: InitialSetting.leavingDate.rawValue)
                 SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
                 
@@ -309,6 +310,7 @@ extension MenuViewController: MenuCoverDelegate {
             
         } else {
             SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(targetDate)부로 퇴직 처리할까요?", okAction: UIAlertAction(title: "퇴직 처리", style: .default, handler: { _ in
+                self.leavingDate = date
                 ReferenceValues.initialSetting.updateValue(date, forKey: InitialSetting.leavingDate.rawValue)
                 SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
                 
