@@ -239,7 +239,7 @@ extension MenuCoverViewController: EssentialViewMethods {
         switch self.menuCoverType {
         case .lastDateAtWork:
             self.datePicker.minimumDate = ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as? Date
-            self.datePicker.maximumDate = Date()
+            //self.datePicker.maximumDate = Date()
             
         case .addNormalSchedule(let normalButtonType):
             switch normalButtonType {

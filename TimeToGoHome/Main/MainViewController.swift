@@ -14,6 +14,14 @@ class MainViewController: UIViewController {
         case progressRate
     }
     
+    enum RegularScheduleType {
+        case fullWork
+        case morningWork
+        case afternoonWork
+        case fullVacation
+        case fullHoliday
+    }
+    
     lazy var mainTimeView: UIView = {
         let view = UIView()
         view.backgroundColor = .black
@@ -398,9 +406,11 @@ class MainViewController: UIViewController {
     
     var mainTimeViewButtonType: MainTimeViewButtonType = .remainingTime
     
-    var schedule: WorkScheduleModel = WorkScheduleModel.today
+    var schedule: WorkScheduleModel = .today
     var tempSchedule: WorkScheduleModel?
+    
     var todayRegularScheduleType: RegularScheduleType?
+    
     var todayTimeValue: Int = 0
     var tomorrowTimeValue: Int = 0
     
@@ -411,10 +421,7 @@ class MainViewController: UIViewController {
                 
                 self.determineCompleteChangingScheduleButtonState(for: self.schedule)
                 
-                self.calculateTableViewHeight(for: self.schedule)
-                self.scheduleTableView.reloadData()
-                
-                self.determineScheduleButtonState(for: self.schedule)
+                self.determineTableAndButtonTypeOfSchedule()
                 
                 self.changeScheduleDescriptionLabel.isHidden = self.isEditingMode
             }
@@ -431,15 +438,14 @@ class MainViewController: UIViewController {
         self.setNotificationCenters()
         self.setSubviews()
         self.setLayouts()
-        
-        // added
-        self.determineToday()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         self.setViewFoundation()
+        
+        self.determineToday()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -821,6 +827,17 @@ extension MainViewController {
         self.todayTimeValue = self.determineTodayTimeValue()
         self.tomorrowTimeValue = self.todayTimeValue + 86400
         
+        let todayDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: Date()))!
+        if let leavingDate = ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date,
+            let leavingDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: leavingDate)),
+           todayDateId > leavingDateId {
+            self.leavingDateCoverView.isHidden = false
+            
+            self.schedule.refreshToday()
+            
+            self.timer?.invalidate()
+        }
+        
         if case .normal = self.schedule.workType {
             self.startWorkingTimeButton.isEnabled = false
             
@@ -829,7 +846,6 @@ extension MainViewController {
         }
         
         self.todayRegularScheduleType = self.determineRegularSchedule(self.schedule)
-        self.resetMainTimeViewValues(self.todayRegularScheduleType)
         switch self.todayRegularScheduleType! {
         case .fullWork, .morningWork, .afternoonWork:
             self.remainingTimeButtonView.isEnabled = true
@@ -848,16 +864,16 @@ extension MainViewController {
             self.startWorkingTimeButton.isHidden = true
         }
         
-        self.calculateTableViewHeight(for: self.schedule)
-        self.scheduleTableView.reloadData()
-        self.determineScheduleButtonState(for: self.schedule)
+        self.determineTableAndButtonTypeOfSchedule()
         
         if self.schedule.startingWorkTime == nil {
             self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
+            self.resetMainTimeViewValues(self.todayRegularScheduleType)
 
         } else {
             if self.schedule.startingWorkTimeSecondsSinceReferenceDate! >= SupportingMethods.getCurrentTimeSeconds() {
                 self.startWorkingTimeButton.setTitle("출근전", for: .normal)
+                self.resetMainTimeViewValues(self.todayRegularScheduleType)
                 
             } else {
                 // No need to reset main time view values
@@ -867,8 +883,11 @@ extension MainViewController {
         }
     }
     
-    func makeTimerForSchedule() -> Timer {
-        return Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
+    func determineTableAndButtonTypeOfSchedule() {
+        self.calculateTableViewHeight(for: self.schedule)
+        self.scheduleTableView.reloadData()
+        
+        self.determineScheduleButtonState(for: self.schedule)
     }
     
     func determineTodayTimeValue() -> Int {
@@ -1453,14 +1472,6 @@ extension MainViewController {
                 self.startWorkingTimeButton.setTitle(dateFormatter.string(from: startingWorkingTime), for: .normal)
             }
         }
-    }
-    
-    enum RegularScheduleType {
-        case fullWork
-        case morningWork
-        case afternoonWork
-        case fullVacation
-        case fullHoliday
     }
     
     func determineRegularSchedule(_ schedule: WorkScheduleModel) -> RegularScheduleType? {
@@ -2276,6 +2287,10 @@ extension MainViewController {
             self.timer = timer
         }
     }
+    
+    func makeTimerForSchedule() -> Timer {
+        return Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
+    }
 }
 
 // MARK: - Extension for Selector methods
@@ -2313,7 +2328,7 @@ extension MainViewController {
                 }
             }
             
-            self.schedule = WorkScheduleModel.today
+            self.schedule = .today
             
             self.determineToday()
             
@@ -2460,10 +2475,7 @@ extension MainViewController {
         
         self.determineCompleteChangingScheduleButtonState(for: self.schedule)
         
-        self.calculateTableViewHeight(for: self.schedule)
-        self.scheduleTableView.reloadData()
-        
-        self.determineScheduleButtonState(for: self.schedule)
+        self.determineTableAndButtonTypeOfSchedule()
     }
     
     @objc func scheduleCellLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
@@ -2727,10 +2739,7 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 
                 self.determineCompleteChangingScheduleButtonState(for: self.schedule)
                 
-                self.calculateTableViewHeight(for: self.schedule)
-                self.scheduleTableView.reloadData()
-                
-                self.determineScheduleButtonState(for: self.schedule)
+                self.determineTableAndButtonTypeOfSchedule()
             }
             
         case .twoScheduleForVacation(let workType): // MARK: twoScheduleForVacation
@@ -2747,10 +2756,7 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 
                 self.determineCompleteChangingScheduleButtonState(for: self.schedule)
                 
-                self.calculateTableViewHeight(for: self.schedule)
-                self.scheduleTableView.reloadData()
-                
-                self.determineScheduleButtonState(for: self.schedule)
+                self.determineTableAndButtonTypeOfSchedule()
             }
             
         case .twoScheduleForHoliday(let workType): // MARK: twoScheduleForHoliday
@@ -2767,10 +2773,7 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 
                 self.determineCompleteChangingScheduleButtonState(for: self.schedule)
                 
-                self.calculateTableViewHeight(for: self.schedule)
-                self.scheduleTableView.reloadData()
-                
-                self.determineScheduleButtonState(for: self.schedule)
+                self.determineTableAndButtonTypeOfSchedule()
             }
             
         case .addOvertime: // MARK: addOvertime
@@ -2883,9 +2886,8 @@ extension MainViewController: ScheduleButtonViewDelegate {
                     self.startWorkingTimeButton.isEnabled = false
                     
                     self.schedule.insertSchedule(.overtime(date))
-                    self.calculateTableViewHeight(for: self.schedule)
-                    self.scheduleTableView.reloadData()
-                    self.determineScheduleButtonState(for: self.schedule)
+                    
+                    self.determineTableAndButtonTypeOfSchedule()
                     
                     self.schedule.updateTodayIntoDB()
                 }), cancelAction: UIAlertAction(title: "취소", style: .cancel, handler: nil), completion: nil)
@@ -2928,7 +2930,6 @@ extension MainViewController: MainCoverDelegate {
             }
             
             self.scheduleTableView.reloadData()
-            
             self.determineScheduleButtonState(for: self.schedule)
             
             self.todayRegularScheduleType = regularScheduleType
@@ -2940,7 +2941,6 @@ extension MainViewController: MainCoverDelegate {
             self.isEditingMode = isEditingModeBeforPresenting
             
             self.schedule.addSchedule(schedule)
-            self.calculateTableViewHeight(for: self.schedule)
             
         } else {
             self.schedule.insertSchedule(schedule)
@@ -2950,8 +2950,7 @@ extension MainViewController: MainCoverDelegate {
             self.schedule.updateTodayIntoDB()
         }
         
-        self.scheduleTableView.reloadData()
-        self.determineScheduleButtonState(for: self.schedule)
+        self.determineTableAndButtonTypeOfSchedule()
     }
     
     func mianCoverDidDetermineStartingWorkTime(_ startingWorkTime: Date) {
