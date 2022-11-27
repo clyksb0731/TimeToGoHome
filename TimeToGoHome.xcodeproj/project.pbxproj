@@ -13,6 +13,8 @@
 		CA226769274402D50035663D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA226767274402D50035663D /* Main.storyboard */; };
 		CA22676B274402D60035663D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA22676A274402D60035663D /* Assets.xcassets */; };
 		CA22676E274402D60035663D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA22676C274402D60035663D /* LaunchScreen.storyboard */; };
+		CA4589E829334983003CA0EB /* CareerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4589E729334983003CA0EB /* CareerViewController.swift */; };
+		CA4589EA29334AE0003CA0EB /* CareerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4589E929334AE0003CA0EB /* CareerCell.swift */; };
 		CA47B0F72924BA9A00D3D8F7 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47B0F62924BA9A00D3D8F7 /* MenuViewController.swift */; };
 		CA47B0F92924BAE700D3D8F7 /* MenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47B0F82924BAE700D3D8F7 /* MenuCell.swift */; };
 		CA47B0FB2924BB0600D3D8F7 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47B0FA2924BB0600D3D8F7 /* SettingViewController.swift */; };
@@ -62,6 +64,8 @@
 		CA22676A274402D60035663D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA22676D274402D60035663D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CA22676F274402D60035663D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CA4589E729334983003CA0EB /* CareerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerViewController.swift; sourceTree = "<group>"; };
+		CA4589E929334AE0003CA0EB /* CareerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerCell.swift; sourceTree = "<group>"; };
 		CA47B0F62924BA9A00D3D8F7 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		CA47B0F82924BAE700D3D8F7 /* MenuCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuCell.swift; sourceTree = "<group>"; };
 		CA47B0FA2924BB0600D3D8F7 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
@@ -214,6 +218,8 @@
 				CA47B0FC2924C0F400D3D8F7 /* MenuHeaderView.swift */,
 				CABD62922928F96F004F3C4F /* MenuCoverViewController.swift */,
 				CA612DEB292D13BD00547AC2 /* WorkRecordViewController.swift */,
+				CA4589E729334983003CA0EB /* CareerViewController.swift */,
+				CA4589E929334AE0003CA0EB /* CareerCell.swift */,
 			);
 			path = Menu;
 			sourceTree = "<group>";
@@ -334,6 +340,7 @@
 				CAB7CF332750B5C7005C9232 /* MainViewController.swift in Sources */,
 				CAB7CF292750B0FA005C9232 /* LocationManager.swift in Sources */,
 				CAB7CF482750CDCE005C9232 /* DayButtonView.swift in Sources */,
+				CA4589E829334983003CA0EB /* CareerViewController.swift in Sources */,
 				CA6D12FB2910215300835CB6 /* CustomizedTabBarController.swift in Sources */,
 				CA47B0FB2924BB0600D3D8F7 /* SettingViewController.swift in Sources */,
 				CAFD580227DB2D0E0027811C /* SchedulingCell.swift in Sources */,
@@ -358,6 +365,7 @@
 				CAB7CF392750C5C9005C9232 /* CompanyMapViewController.swift in Sources */,
 				CA612DEC292D13BD00547AC2 /* WorkRecordViewController.swift in Sources */,
 				CAB9AD6C29267647006AB951 /* SettingCell.swift in Sources */,
+				CA4589EA29334AE0003CA0EB /* CareerCell.swift in Sources */,
 				CAB7CF422750CBFD005C9232 /* CompanyLocationModel.swift in Sources */,
 				CA226762274402D50035663D /* AppDelegate.swift in Sources */,
 				CAB6C93927FA9A9E00B67F1A /* StaggeredWorkTypeViewController.swift in Sources */,

@@ -1004,7 +1004,7 @@ class StaggeredWorkTypeViewController: UIViewController {
     lazy var nextButtonView: UIView = {
         let view = UIView()
         view.layer.useSketchShadow(color: .black, alpha: 1, x: 0, y: 1, blur: 4, spread: 0)
-        view.backgroundColor = .buttons.initialBottom
+        view.backgroundColor = .buttons.initialActiveBottom
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view

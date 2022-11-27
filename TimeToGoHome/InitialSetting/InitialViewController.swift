@@ -256,7 +256,7 @@ class InitialViewController: UIViewController {
     
     var nextButtonView: UIView = {
         let view = UIView()
-        view.backgroundColor = .buttons.initialBottom
+        view.backgroundColor = .buttons.initialInactiveBottom
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -739,7 +739,7 @@ extension InitialViewController {
         self.companyNameEraserButton.isHidden = textField.text == "" || text == ""
         //self.nextButton.isSelected = textField.text != "" && text != ""
         self.nextButtonView.backgroundColor = textField.text != "" && text != "" ?
-            UIColor.useRGB(red: 146, green: 243, blue: 205) : UIColor.useRGB(red: 238, green: 238, blue: 238)
+            .buttons.initialActiveBottom : .buttons.initialInactiveBottom
         self.nextButtonImageView.image = textField.text != "" && text != "" ?
             UIImage(named: "nextSelectedImage") : UIImage(named: "nextNormalImage")
         self.nextButton.isEnabled = textField.text != "" && text != ""
@@ -750,7 +750,7 @@ extension InitialViewController {
         self.companyNameEraserButton.isHidden = true
         
         //self.nextButton.isSelected = false
-        self.nextButtonView.backgroundColor = UIColor.useRGB(red: 238, green: 238, blue: 238)
+        self.nextButtonView.backgroundColor = .buttons.initialInactiveBottom
         self.nextButtonImageView.image = UIImage(named: "nextNormalImage")
         self.nextButton.isEnabled = false
     }
@@ -836,7 +836,7 @@ extension InitialViewController {
             SupportingMethods.shared.makeAlert(on: self, withTitle: "오류", andMessage: "중복된 기간의 회사가 있습니다. 경력 사항으로 이동할까요?", okAction: UIAlertAction(title: "이동", style: .default, handler: { action in
                 presentingVC?.dismiss(animated: true) {
                     let menuNaviVC = CustomizedNavigationController()
-                    menuNaviVC.viewControllers = [UIViewController(), UIViewController()] // FIXME: Need to be replaced
+                    menuNaviVC.viewControllers = [MenuViewController(), CareerViewController()]
                     presentingVC?.present(menuNaviVC, animated: true)
                 }
             }), cancelAction: UIAlertAction(title: "취소", style: .cancel))

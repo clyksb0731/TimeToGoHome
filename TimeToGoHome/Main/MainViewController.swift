@@ -369,7 +369,7 @@ class MainViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 22, weight: .bold)
         button.setTitle("신규 회사 설정", for: .normal)
-        button.addTarget(self, action: #selector(setCompanyButton(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(initializeNewCompanyButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
 
         let view = UIView()
@@ -2550,8 +2550,11 @@ extension MainViewController {
         }
     }
     
-    @objc func setCompanyButton(_ sender: UIButton) {
+    @objc func initializeNewCompanyButton(_ sender: UIButton) {
+        let initialVC = InitialViewController()
+        initialVC.modalPresentationStyle = .fullScreen
         
+        self.present(initialVC, animated: true)
     }
 }
 
