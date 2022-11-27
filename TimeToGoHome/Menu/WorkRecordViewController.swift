@@ -25,6 +25,8 @@ class WorkRecordViewController: UIViewController {
         
         return tableView
     }()
+    
+    var workRecords: [WorkRecord] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,6 +43,8 @@ class WorkRecordViewController: UIViewController {
         super.viewWillAppear(animated)
         
         self.setViewFoundation()
+        
+        self.moveBottomOfWorkRecords()
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -103,7 +107,18 @@ extension WorkRecordViewController: EssentialViewMethods {
 
 // MARK: - Extension for methods added
 extension WorkRecordViewController {
-    
+    func moveBottomOfWorkRecords() {
+        guard self.workRecords.count > 1,
+                self.workRecords[self.workRecords.count - 1].schedules.count > 1 else {
+            return
+        }
+        
+        let bottomIndexPath = IndexPath(row: self.workRecords[self.workRecords.count - 1].schedules.count - 1, section: self.workRecords.count - 1)
+        
+        DispatchQueue.main.async {
+            self.workRecordTableView.scrollToRow(at: bottomIndexPath, at: .bottom, animated: false)
+        }
+    }
 }
 
 // MARK: - Extension for selector methods
@@ -120,17 +135,12 @@ extension WorkRecordViewController {
 // MARK: - Extension for UITableViewDelegate, UITableViewDataSource
 extension WorkRecordViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return self.workRecords.count
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "WorkRecordHeaderView") as! WorkRecordHeaderView
-        if section == 0 {
-            headerView.setHeaderView(yearMonth: "2019년 2월")
-        }
-        if section == 1 {
-            headerView.setHeaderView(yearMonth: "2019년 3월")
-        }
+        headerView.setHeaderView(yearMonth: self.workRecords[section].yearMonth)
         
         return headerView
     }
@@ -144,20 +154,16 @@ extension WorkRecordViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return self.workRecords[section].schedules.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "WorkRecordCell", for: indexPath) as! WorkRecordCell
-        if indexPath.row == 0 {
-            cell.setCell(dateId: 20190202, day: 2, morning: .work, afternoon: .work, overtime: 3000)
-        }
-        if indexPath.row == 1 {
-            cell.setCell(dateId: 20190202, day: 3, morning: .vacation, afternoon: .work, overtime: 3700)
-        }
-        if indexPath.row == 2 {
-            cell.setCell(dateId: 20190202, day: 25, morning: .holiday, afternoon: .work, overtime: 7300)
-        }
+        cell.setCell(dateId: self.workRecords[indexPath.section].schedules[indexPath.row].dateId,
+                     day: self.workRecords[indexPath.section].schedules[indexPath.row].day,
+                     morning: self.workRecords[indexPath.section].schedules[indexPath.row].morning,
+                     afternoon: self.workRecords[indexPath.section].schedules[indexPath.row].afternoon,
+                     overtime: self.workRecords[indexPath.section].schedules[indexPath.row].overtime)
         
         return cell
     }

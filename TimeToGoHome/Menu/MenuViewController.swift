@@ -210,6 +210,47 @@ extension MenuViewController: EssentialViewMethods {
     }
 }
 
+// MARK: - Extension for methods added
+extension MenuViewController {
+    func convertToWorkRecordsFromSchedules() -> [WorkRecord] {
+        if let schedules = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date).schedules {
+            var workRecords: [WorkRecord] = []
+            var workRecord = WorkRecord(yearMonth: "", schedules: [])
+            
+            for schedule in schedules {
+                let yearMonth = "\(schedule.year)년 \(schedule.month)월"
+                if workRecord.yearMonth != yearMonth {
+                    if workRecord.yearMonth != "" {
+                        workRecords.append(workRecord)
+                    }
+                    
+                    workRecord = WorkRecord(yearMonth: yearMonth, schedules: [])
+                }
+                
+                let morning = WorkTimeType(rawValue: schedule.morning)!
+                let afternoon = WorkTimeType(rawValue: schedule.afternoon)!
+                if morning != .holiday && afternoon != .holiday {
+                    let dailySchedule = DailySchedule(dateId: schedule.dateId,
+                                                      day: schedule.day,
+                                                      morning: morning,
+                                                      afternoon: afternoon,
+                                                      overtime: schedule.overtime)
+                    workRecord.schedules.append(dailySchedule)
+                }
+            }
+            
+            if workRecord.yearMonth != "" {
+                workRecords.append(workRecord)
+            }
+            
+            return workRecords
+            
+        } else {
+            return []
+        }
+    }
+}
+
 // MARK: - Extension for Selector methods
 extension MenuViewController {
     @objc func dismiss(_ sender: UIButton) {
@@ -279,6 +320,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         
         if indexPath.section == 0 && indexPath.row == 0 {
             let workRecordVC = WorkRecordViewController()
+            workRecordVC.workRecords = self.convertToWorkRecordsFromSchedules()
             
             self.navigationController?.pushViewController(workRecordVC, animated: true)
         }

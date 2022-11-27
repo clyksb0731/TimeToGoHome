@@ -873,7 +873,7 @@ extension MainViewController {
         } else {
             if self.schedule.startingWorkTimeSecondsSinceReferenceDate! >= SupportingMethods.getCurrentTimeSeconds() {
                 self.startWorkingTimeButton.setTitle("출근전", for: .normal)
-                self.resetMainTimeViewValues(self.todayRegularScheduleType)
+                self.resetMainTimeViewValues(self.todayRegularScheduleType) // FIXME: Need to check at willAppear
                 
             } else {
                 // No need to reset main time view values

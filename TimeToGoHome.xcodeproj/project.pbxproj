@@ -17,6 +17,7 @@
 		CA4589EA29334AE0003CA0EB /* CareerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4589E929334AE0003CA0EB /* CareerCell.swift */; };
 		CA4589EC29338A46003CA0EB /* WorkRecordCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4589EB29338A46003CA0EB /* WorkRecordCell.swift */; };
 		CA4589EE29338A67003CA0EB /* WorkRecordHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4589ED29338A67003CA0EB /* WorkRecordHeaderView.swift */; };
+		CA4589F02933B396003CA0EB /* WorkRecordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4589EF2933B396003CA0EB /* WorkRecordModel.swift */; };
 		CA47B0F72924BA9A00D3D8F7 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47B0F62924BA9A00D3D8F7 /* MenuViewController.swift */; };
 		CA47B0F92924BAE700D3D8F7 /* MenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47B0F82924BAE700D3D8F7 /* MenuCell.swift */; };
 		CA47B0FB2924BB0600D3D8F7 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47B0FA2924BB0600D3D8F7 /* SettingViewController.swift */; };
@@ -70,6 +71,7 @@
 		CA4589E929334AE0003CA0EB /* CareerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerCell.swift; sourceTree = "<group>"; };
 		CA4589EB29338A46003CA0EB /* WorkRecordCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkRecordCell.swift; sourceTree = "<group>"; };
 		CA4589ED29338A67003CA0EB /* WorkRecordHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkRecordHeaderView.swift; sourceTree = "<group>"; };
+		CA4589EF2933B396003CA0EB /* WorkRecordModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkRecordModel.swift; sourceTree = "<group>"; };
 		CA47B0F62924BA9A00D3D8F7 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		CA47B0F82924BAE700D3D8F7 /* MenuCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuCell.swift; sourceTree = "<group>"; };
 		CA47B0FA2924BB0600D3D8F7 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
@@ -244,6 +246,7 @@
 			isa = PBXGroup;
 			children = (
 				CA12806B27D1A64800CAFCE8 /* WorkScheduleModel.swift */,
+				CA4589EF2933B396003CA0EB /* WorkRecordModel.swift */,
 				CAB7CF412750CBFD005C9232 /* CompanyLocationModel.swift */,
 				CAFEF7CE2839117200DE5BA9 /* ReamDB.swift */,
 			);
@@ -358,6 +361,7 @@
 				CAB7CF2F2750B2FE005C9232 /* TemplateViewController.swift in Sources */,
 				CA47B0FD2924C0F400D3D8F7 /* MenuHeaderView.swift in Sources */,
 				CAB7CF2B2750B146005C9232 /* SupportingMethods.swift in Sources */,
+				CA4589F02933B396003CA0EB /* WorkRecordModel.swift in Sources */,
 				CAA3B24D2801758200FFF892 /* CalendarHeaderView.swift in Sources */,
 				CA47B0F92924BAE700D3D8F7 /* MenuCell.swift in Sources */,
 				CAB7CF312750B5B9005C9232 /* InitialViewController.swift in Sources */,
