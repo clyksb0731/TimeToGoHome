@@ -364,10 +364,10 @@ class MainViewController: UIViewController {
         blurEffectView.translatesAutoresizingMaskIntoConstraints = false
         
         let button = UIButton()
-        button.backgroundColor = .useRGB(red: 146, green: 243, blue: 205)
+        button.backgroundColor = .buttons.initializeNewCompany
         button.layer.cornerRadius = 15
         button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
+        button.titleLabel?.font = .systemFont(ofSize: 22, weight: .bold)
         button.setTitle("신규 회사 설정", for: .normal)
         button.addTarget(self, action: #selector(setCompanyButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false

@@ -256,7 +256,7 @@ class InitialViewController: UIViewController {
     
     var nextButtonView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.useRGB(red: 238, green: 238, blue: 238)
+        view.backgroundColor = .buttons.initialBottom
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view

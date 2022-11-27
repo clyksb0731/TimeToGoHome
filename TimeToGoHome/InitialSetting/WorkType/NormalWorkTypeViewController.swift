@@ -689,7 +689,7 @@ class NormalWorkTypeViewController: UIViewController {
     lazy var nextButtonView: UIView = {
         let view = UIView()
         view.layer.useSketchShadow(color: .black, alpha: 1, x: 0, y: 1, blur: 4, spread: 0)
-        view.backgroundColor = UIColor.useRGB(red: 146, green: 243, blue: 205)
+        view.backgroundColor = .buttons.initialBottom
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view

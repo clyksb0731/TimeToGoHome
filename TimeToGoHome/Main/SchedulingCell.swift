@@ -18,7 +18,7 @@ class SchedulingCell: UITableViewCell {
     
     lazy var scheduleView: UIView = {
         let view = UIView()
-        view.backgroundColor = .useRGB(red: 235, green: 235, blue: 235)
+        view.backgroundColor = .schedule.scheduling
         view.layer.cornerRadius = 16
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -138,7 +138,7 @@ extension SchedulingCell {
         self.dashLayer?.removeFromSuperlayer()
         
         let dashLayer = CAShapeLayer()
-        dashLayer.strokeColor = UIColor.useRGB(red: 189, green: 189, blue: 189).cgColor
+        dashLayer.strokeColor = UIColor.schedule.schedulingDash.cgColor
         dashLayer.lineWidth = 2
         dashLayer.lineDashPattern = [2,2]
         dashLayer.fillColor = nil

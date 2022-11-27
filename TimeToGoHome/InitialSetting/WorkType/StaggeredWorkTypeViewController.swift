@@ -75,7 +75,7 @@ class StaggeredWorkTypeViewController: UIViewController {
         button.titleLabel?.textAlignment = .center
         button.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
         button.layer.cornerRadius = 5
-        button.backgroundColor = UIColor.useRGB(red: 78, green: 216, blue: 220)
+        button.backgroundColor = .buttons.workType
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -89,7 +89,7 @@ class StaggeredWorkTypeViewController: UIViewController {
         button.titleLabel?.textAlignment = .center
         button.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
         button.layer.cornerRadius = 5
-        button.backgroundColor = UIColor.useRGB(red: 78, green: 216, blue: 220)
+        button.backgroundColor = .buttons.workType
         button.alpha = 0.5
         button.addTarget(self, action: #selector(workTypeButtons(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -1004,7 +1004,7 @@ class StaggeredWorkTypeViewController: UIViewController {
     lazy var nextButtonView: UIView = {
         let view = UIView()
         view.layer.useSketchShadow(color: .black, alpha: 1, x: 0, y: 1, blur: 4, spread: 0)
-        view.backgroundColor = UIColor.useRGB(red: 146, green: 243, blue: 205)
+        view.backgroundColor = .buttons.initialBottom
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view

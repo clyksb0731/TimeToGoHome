@@ -265,7 +265,7 @@ extension ScheduleButtonView {
         
         let workTimeButtonView: UIView = {
             let view = UIView()
-            view.backgroundColor = UIColor.useRGB(red: 125, green: 243, blue: 110)
+            view.backgroundColor = .schedule.work
             view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
             view.layer.cornerRadius = 15
             view.translatesAutoresizingMaskIntoConstraints = false
@@ -305,7 +305,7 @@ extension ScheduleButtonView {
         
         let vacationTimeButtonView: UIView = {
             let view = UIView()
-            view.backgroundColor = UIColor.useRGB(red: 120, green: 223, blue: 238)
+            view.backgroundColor = .schedule.vacation
             view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
             view.layer.cornerRadius = 15
             view.translatesAutoresizingMaskIntoConstraints = false
@@ -345,7 +345,7 @@ extension ScheduleButtonView {
         
         let holidayButtonView: UIView = {
             let view = UIView()
-            view.backgroundColor = UIColor.useRGB(red: 252, green: 247, blue: 143)
+            view.backgroundColor = .schedule.holiday
             view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
             view.layer.cornerRadius = 15
             view.translatesAutoresizingMaskIntoConstraints = false
@@ -587,7 +587,7 @@ extension ScheduleButtonView {
         
         let workTimeButtonView: UIView = {
             let view = UIView()
-            view.backgroundColor = UIColor.useRGB(red: 125, green: 243, blue: 110)
+            view.backgroundColor = .schedule.work
             view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
             view.layer.cornerRadius = 15
             view.translatesAutoresizingMaskIntoConstraints = false
@@ -627,7 +627,7 @@ extension ScheduleButtonView {
         
         let vacationTimeButtonView: UIView = {
             let view = UIView()
-            view.backgroundColor = UIColor.useRGB(red: 120, green: 223, blue: 238)
+            view.backgroundColor = .schedule.vacation
             view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
             view.layer.cornerRadius = 15
             view.translatesAutoresizingMaskIntoConstraints = false
@@ -830,7 +830,7 @@ extension ScheduleButtonView {
         
         let workTimeButtonView: UIView = {
             let view = UIView()
-            view.backgroundColor = UIColor.useRGB(red: 125, green: 243, blue: 110)
+            view.backgroundColor = .schedule.work
             view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
             view.layer.cornerRadius = 15
             view.translatesAutoresizingMaskIntoConstraints = false
@@ -870,7 +870,7 @@ extension ScheduleButtonView {
         
         let holidayButtonView: UIView = {
             let view = UIView()
-            view.backgroundColor = UIColor.useRGB(red: 252, green: 247, blue: 143)
+            view.backgroundColor = .schedule.holiday
             view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
             view.layer.cornerRadius = 15
             view.translatesAutoresizingMaskIntoConstraints = false
@@ -1037,7 +1037,7 @@ extension ScheduleButtonView {
         
         let overtimeButtonView: UIView = {
             let view = UIView()
-            view.backgroundColor = UIColor.useRGB(red: 239, green: 119, blue: 119)
+            view.backgroundColor = .schedule.overtime
             view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
             view.layer.cornerRadius = 15
             view.translatesAutoresizingMaskIntoConstraints = false
@@ -1134,7 +1134,7 @@ extension ScheduleButtonView {
         
         let overtimeButtonView: UIView = {
             let view = UIView()
-            view.backgroundColor = UIColor.useRGB(red: 239, green: 119, blue: 119)
+            view.backgroundColor = .schedule.overtime
             view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
             view.layer.cornerRadius = 15
             view.translatesAutoresizingMaskIntoConstraints = false
@@ -1187,7 +1187,7 @@ extension ScheduleButtonView {
         
         let finishWorkButton: UIButton = {
             let button = UIButton()
-            button.backgroundColor = .black
+            button.backgroundColor = .schedule.finishWork
             button.layer.cornerRadius = 15
             button.setTitleColor(.white, for: .normal)
             button.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
@@ -1276,7 +1276,7 @@ extension ScheduleButtonView {
         
         let overtimeButtonView: UIView = {
             let view = UIView()
-            view.backgroundColor = UIColor.useRGB(red: 239, green: 119, blue: 119)
+            view.backgroundColor = .schedule.overtime
             view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
             view.layer.cornerRadius = 15
             view.translatesAutoresizingMaskIntoConstraints = false
@@ -1329,7 +1329,7 @@ extension ScheduleButtonView {
         
         let finishWorkButton: UIButton = {
             let button = UIButton()
-            button.backgroundColor = .black
+            button.backgroundColor = .schedule.finishWork
             button.layer.cornerRadius = 15
             button.setTitleColor(.white, for: .normal)
             button.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
@@ -1418,7 +1418,7 @@ extension ScheduleButtonView {
         
         let finishWorkButton: UIButton = {
             let button = UIButton()
-            button.backgroundColor = .black
+            button.backgroundColor = .schedule.finishWork
             button.layer.cornerRadius = 15
             button.setTitleColor(.white, for: .normal)
             button.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
@@ -1458,7 +1458,7 @@ extension ScheduleButtonView {
         
         let finishWorkButton: UIButton = {
             let button = UIButton()
-            button.backgroundColor = .black
+            button.backgroundColor = .schedule.finishWork
             button.layer.cornerRadius = 15
             button.setTitleColor(.white, for: .normal)
             button.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)

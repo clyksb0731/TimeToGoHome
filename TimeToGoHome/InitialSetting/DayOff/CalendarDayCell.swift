@@ -24,11 +24,11 @@ class CalendarDayCell: UICollectionViewCell {
     
     lazy private var morningVacationShapeView: UIView = {
         let halfView = UIView()
-        halfView.backgroundColor = .useRGB(red: 110, green: 217, blue: 228)
+        halfView.backgroundColor = .dayOff.calendarDay
         halfView.translatesAutoresizingMaskIntoConstraints = false
         
         let view = UIView()
-        view.layer.borderColor = UIColor.useRGB(red: 110, green: 217, blue: 228).cgColor
+        view.layer.borderColor = UIColor.dayOff.calendarDay.cgColor
         view.layer.borderWidth = 2
         view.layer.cornerRadius = 14
         view.clipsToBounds = true
@@ -49,11 +49,11 @@ class CalendarDayCell: UICollectionViewCell {
     
     lazy private var afternoonVacationShapeView: UIView = {
         let halfView = UIView()
-        halfView.backgroundColor = .useRGB(red: 110, green: 217, blue: 228)
+        halfView.backgroundColor = .dayOff.calendarDay
         halfView.translatesAutoresizingMaskIntoConstraints = false
         
         let view = UIView()
-        view.layer.borderColor = UIColor.useRGB(red: 110, green: 217, blue: 228).cgColor
+        view.layer.borderColor = UIColor.dayOff.calendarDay.cgColor
         view.layer.borderWidth = 2
         view.layer.cornerRadius = 14
         view.clipsToBounds = true
@@ -74,7 +74,7 @@ class CalendarDayCell: UICollectionViewCell {
     
     lazy private var fullDayVacationShapeView: UIView = {
         let view = UIView()
-        view.backgroundColor = .useRGB(red: 110, green: 217, blue: 228)
+        view.backgroundColor = .dayOff.calendarDay
         view.layer.cornerRadius = 14
         view.clipsToBounds = true
         view.isHidden = true
@@ -107,7 +107,7 @@ class CalendarDayCell: UICollectionViewCell {
     
     lazy private var bottomLineView: UIView = {
         let view = UIView()
-        view.backgroundColor = .useRGB(red: 234, green: 234, blue: 234)
+        view.backgroundColor = .dayOff.selectedDayBottomLine
         view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false
         

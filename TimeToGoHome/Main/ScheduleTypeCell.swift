@@ -184,21 +184,21 @@ extension ScheduleTypeCell {
             
             switch workType {
             case .holiday:
-                self.scheduleView.backgroundColor = .useRGB(red: 252, green: 247, blue: 143)
+                self.scheduleView.backgroundColor = .schedule.holiday
                 self.timeTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
                 self.removeScheduleButton.setImage(UIImage(named: "removeScheduleButtonGrayImage"), for: .normal)
                 self.scheduleTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
                 self.scheduleTypeLabel.text = "휴일"
                 
             case .work:
-                self.scheduleView.backgroundColor = .useRGB(red: 125, green: 243, blue: 110)
+                self.scheduleView.backgroundColor = .schedule.work
                 self.timeTypeLabel.textColor = .white
                 self.removeScheduleButton.setImage(UIImage(named: "removeScheduleButtonWhiteImage"), for: .normal)
                 self.scheduleTypeLabel.textColor = .white
                 self.scheduleTypeLabel.text = "근무"
                 
             case .vacation:
-                self.scheduleView.backgroundColor = .useRGB(red: 120, green: 223, blue: 238)
+                self.scheduleView.backgroundColor = .schedule.vacation
                 self.timeTypeLabel.textColor = .white
                 self.removeScheduleButton.setImage(UIImage(named: "removeScheduleButtonWhiteImage"), for: .normal)
                 self.scheduleTypeLabel.textColor = .white
@@ -212,21 +212,21 @@ extension ScheduleTypeCell {
             
             switch workType {
             case .holiday:
-                self.scheduleView.backgroundColor = .useRGB(red: 252, green: 247, blue: 143)
+                self.scheduleView.backgroundColor = .schedule.holiday
                 self.timeTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
                 self.removeScheduleButton.setImage(UIImage(named: "removeScheduleButtonGrayImage"), for: .normal)
                 self.scheduleTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
                 self.scheduleTypeLabel.text = "휴일"
                 
             case .work:
-                self.scheduleView.backgroundColor = .useRGB(red: 125, green: 243, blue: 110)
+                self.scheduleView.backgroundColor = .schedule.work
                 self.timeTypeLabel.textColor = .white
                 self.removeScheduleButton.setImage(UIImage(named: "removeScheduleButtonWhiteImage"), for: .normal)
                 self.scheduleTypeLabel.textColor = .white
                 self.scheduleTypeLabel.text = "근무"
                 
             case .vacation:
-                self.scheduleView.backgroundColor = .useRGB(red: 120, green: 223, blue: 238)
+                self.scheduleView.backgroundColor = .schedule.vacation
                 self.timeTypeLabel.textColor = .white
                 self.removeScheduleButton.setImage(UIImage(named: "removeScheduleButtonWhiteImage"), for: .normal)
                 self.scheduleTypeLabel.textColor = .white
@@ -238,7 +238,7 @@ extension ScheduleTypeCell {
             self.timeTypeLabelTopAnchor.constant = 10
             self.timeTypeLabel.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(Int(overtime.timeIntervalSinceReferenceDate)-schedule.finishingRegularWorkTimeSecondsSinceReferenceDate!))"
             
-            self.scheduleView.backgroundColor = .useRGB(red: 239, green: 119, blue: 119)
+            self.scheduleView.backgroundColor = .schedule.overtime
             self.timeTypeLabel.textColor = .white
             self.removeScheduleButton.setImage(UIImage(named: "removeScheduleButtonWhiteImage"), for: .normal)
             self.scheduleTypeLabel.textColor = .white

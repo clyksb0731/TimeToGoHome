@@ -102,7 +102,7 @@ class MainCoverViewController: UIViewController {
     
     lazy var workButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = .useRGB(red: 125, green: 243, blue: 110)
+        button.backgroundColor = .schedule.work
         button.setTitleColor(.white, for: .normal)
         button.setTitle("근무", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 24, weight: .semibold)
@@ -115,7 +115,7 @@ class MainCoverViewController: UIViewController {
     
     lazy var vacationButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = .useRGB(red: 120, green: 223, blue: 238)
+        button.backgroundColor = .schedule.vacation
         button.setTitleColor(.white, for: .normal)
         button.setTitleColor(.useRGB(red: 200, green: 200, blue: 200), for: .disabled)
         button.setTitle("휴가", for: .normal)
@@ -129,7 +129,7 @@ class MainCoverViewController: UIViewController {
     
     lazy var holidayButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = .useRGB(red: 252, green: 247, blue: 143)
+        button.backgroundColor = .schedule.holiday
         button.setTitleColor(.useRGB(red: 130, green: 130, blue: 130), for: .normal)
         button.setTitleColor(.useRGB(red: 200, green: 200, blue: 200), for: .disabled)
         button.setTitle("휴일", for: .normal)
