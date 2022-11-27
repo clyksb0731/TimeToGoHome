@@ -251,7 +251,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
             let leavingDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: leavingDate))!
             cell.setCell(self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
                          itemText: self.menuArray[indexPath.section].items[indexPath.row].menuText,
-                         isEnable: todayDateId <= leavingDateId)
+                         isEnable: todayDateId <= leavingDateId || (indexPath.section == 2 && indexPath.row == 1))
             
         } else {
             cell.setCell(self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
@@ -264,7 +264,9 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 2 && indexPath.row == 1 {
-            // career management
+            let careerVC = CareerViewController()
+            
+            self.navigationController?.pushViewController(careerVC, animated: true)
         }
         
         let todayDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: Date()))!

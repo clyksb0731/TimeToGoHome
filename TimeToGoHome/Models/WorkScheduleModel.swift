@@ -154,7 +154,10 @@ struct WorkScheduleModel {
         
         self.scheduling()
     }
-    
+}
+
+// MARK: - Extension for methods added
+extension WorkScheduleModel {
     private mutating func scheduling() {
         // Check DB if there is already today schedule.
         // &&
@@ -245,10 +248,7 @@ struct WorkScheduleModel {
             }
         }
     }
-}
-
-// MARK: - Extension for methods added
-extension WorkScheduleModel {
+    
     mutating func refreshToday() { // FIXME: Refresh today for setting change.
         // Check DB if there is already today schedule.
         // &&

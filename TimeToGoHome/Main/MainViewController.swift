@@ -2554,7 +2554,9 @@ extension MainViewController {
         let initialVC = InitialViewController()
         initialVC.modalPresentationStyle = .fullScreen
         
-        self.present(initialVC, animated: true)
+        self.present(initialVC, animated: true) {
+            ReferenceValues.initialSetting = [:]
+        }
     }
 }
 

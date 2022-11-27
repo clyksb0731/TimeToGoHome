@@ -8,6 +8,23 @@
 import UIKit
 
 class WorkRecordViewController: UIViewController {
+    
+    lazy var workRecordTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.backgroundColor = .white
+        tableView.bounces = false
+        tableView.separatorStyle = .none
+        tableView.register(WorkRecordCell.self, forCellReuseIdentifier: "WorkRecordCell")
+        tableView.register(WorkRecordHeaderView.self, forHeaderFooterViewReuseIdentifier: "WorkRecordHeaderView")
+        tableView.delegate = self
+        tableView.dataSource = self
+        if #available(iOS 15.0, *) {
+            tableView.sectionHeaderTopPadding = 0
+        }
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return tableView
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,11 +83,21 @@ extension WorkRecordViewController: EssentialViewMethods {
     }
     
     func setSubviews() {
-        
+        SupportingMethods.shared.addSubviews([
+            self.workRecordTableView
+        ], to: self.view)
     }
     
     func setLayouts() {
+        let safeArea = self.view.safeAreaLayoutGuide
         
+        // workRecordTableView
+        NSLayoutConstraint.activate([
+            self.workRecordTableView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            self.workRecordTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            self.workRecordTableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            self.workRecordTableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+        ])
     }
 }
 
@@ -86,6 +113,56 @@ extension WorkRecordViewController {
     }
     
     @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
+        
+    }
+}
+
+// MARK: - Extension for UITableViewDelegate, UITableViewDataSource
+extension WorkRecordViewController: UITableViewDelegate, UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "WorkRecordHeaderView") as! WorkRecordHeaderView
+        if section == 0 {
+            headerView.setHeaderView(yearMonth: "2019년 2월")
+        }
+        if section == 1 {
+            headerView.setHeaderView(yearMonth: "2019년 3월")
+        }
+        
+        return headerView
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 3
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "WorkRecordCell", for: indexPath) as! WorkRecordCell
+        if indexPath.row == 0 {
+            cell.setCell(dateId: 20190202, day: 2, morning: .work, afternoon: .work, overtime: 3000)
+        }
+        if indexPath.row == 1 {
+            cell.setCell(dateId: 20190202, day: 3, morning: .vacation, afternoon: .work, overtime: 3700)
+        }
+        if indexPath.row == 2 {
+            cell.setCell(dateId: 20190202, day: 25, morning: .holiday, afternoon: .work, overtime: 7300)
+        }
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
     }
 }

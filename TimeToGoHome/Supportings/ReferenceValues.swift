@@ -62,8 +62,12 @@ extension UIColor {
     }
     
     struct buttons {
-        static var initialBottom: UIColor {
+        static var initialActiveBottom: UIColor {
             return .useRGB(red: 146, green: 243, blue: 205)
+        }
+        
+        static var initialInactiveBottom: UIColor {
+            return .useRGB(red: 238, green: 238, blue: 238)
         }
         
         static var workType: UIColor {

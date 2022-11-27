@@ -241,36 +241,70 @@ extension SupportingMethods {
     
     func determineAdditionalHourAndMinuteUsingMinute(_ minutes: Int) -> String {
         let hours = minutes / 60
-        let minuteLeft = minutes % 60
+        let minutesLeft = minutes % 60
         
         if hours > 0 {
-            if minuteLeft == 0 {
+            if minutesLeft == 0 {
                 return "+ \(hours)시간"
                 
             } else {
-                return "+ \(hours)시간 \(minuteLeft)분"
+                return "+ \(hours)시간 \(minutesLeft)분"
             }
             
         } else {
-            return "+ \(minuteLeft)분"
+            return "+ \(minutesLeft)분"
         }
     }
     
     func determineAdditionalHourAndMinuteUsingSecond(_ seconds: Int) -> String {
         let hours = seconds / 3600
-        let minuteLeft = (seconds % 3600) / 60
+        let minutesLeft = (seconds % 3600) / 60
         
         if hours > 0 {
-            if minuteLeft == 0 {
+            if minutesLeft == 0 {
                 return "+ \(hours)시간"
                 
             } else {
-                return "+ \(hours)시간 \(minuteLeft)분"
+                return "+ \(hours)시간 \(minutesLeft)분"
             }
             
         } else {
-            return "+ \(minuteLeft)분"
+            return "+ \(minutesLeft)분"
         }
+    }
+    
+    func makeHourAndMinuteAttributedStringUsingSecond(_ seconds: Int, withValueAttributes valueAttributes: [NSAttributedString.Key : Any], andWithMarkAttributes markAttributes: [NSAttributedString.Key : Any]) -> NSAttributedString {
+        let hours = seconds / 3600
+        let minutesLeft = (seconds % 3600) / 60
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .right
+        
+        let attributedText = NSMutableAttributedString()
+        
+        let hoursValue = NSAttributedString(string: "\(hours)", attributes: valueAttributes)
+        let hoursMark = NSAttributedString(string: " 시간", attributes: markAttributes)
+        let minutesValue = NSAttributedString(string: " \(minutesLeft)", attributes: valueAttributes)
+        let minutesMark = NSAttributedString(string: " 분", attributes: markAttributes)
+        
+        if hours > 0 {
+            if minutesLeft == 0 {
+                attributedText.append(hoursValue)
+                attributedText.append(hoursMark)
+                
+            } else {
+                attributedText.append(hoursValue)
+                attributedText.append(hoursMark)
+                attributedText.append(minutesValue)
+                attributedText.append(minutesMark)
+            }
+            
+        } else {
+            attributedText.append(minutesValue)
+            attributedText.append(minutesMark)
+        }
+        
+        return attributedText
     }
     
     func makeTimeDateWithValue(_ value: Double) -> Date? {
