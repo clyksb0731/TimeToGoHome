@@ -53,6 +53,7 @@ class MenuCoverViewController: UIViewController {
         return view
     }()
     
+    // MARK: Date picker
     lazy var popUpPanelView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -104,7 +105,29 @@ class MenuCoverViewController: UIViewController {
         return datePicker
     }()
     
-    // Case 1 - normal schedule type
+    lazy var confirmButton: UIButton = {
+        let button = UIButton()
+        button.titleLabel?.font = .systemFont(ofSize: 21, weight: .semibold)
+        button.setTitle("확인", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.addTarget(self, action: #selector(confirmButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var declineButton: UIButton = {
+        let button = UIButton()
+        button.titleLabel?.font = .systemFont(ofSize: 21, weight: .semibold)
+        button.setTitle("취소", for: .normal)
+        button.setTitleColor(.blue, for: .normal)
+        button.addTarget(self, action: #selector(declineButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    // MARK: Schedule buttons
     lazy var normalScheduleListView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -162,27 +185,334 @@ class MenuCoverViewController: UIViewController {
         return button
     }()
     
-    lazy var confirmButton: UIButton = {
+    // MARK: Career management
+    lazy var careerBaseView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 15
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var companyNameMarkLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 16, weight: .bold)
+        label.text = "회사 이름"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var companyNameTextField: UITextField = {
+        let textField = UITextField()
+        textField.textAlignment = .left
+        textField.font = .systemFont(ofSize: 16, weight: .regular)
+        textField.textColor = .black
+        textField.placeholder = "회사 이름을 입력하세요."
+        textField.clearButtonMode = .always
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        
+        return textField
+    }()
+    
+    lazy var companyNameBottomLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 151, green: 151, blue: 151)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var joiningDateMarkLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        label.text = "입사 일자"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var joiningDateView: UIView = {
+        let view = UIView()
+        view.isHidden = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var joiningYearLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 21, weight: .semibold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var joiningYearLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 151, green: 151, blue: 151)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var joiningMonthLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 21, weight: .semibold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var joiningMonthLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 151, green: 151, blue: 151)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var joiningDayLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 21, weight: .semibold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var joiningDayLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 151, green: 151, blue: 151)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var joiningDateButton: UIButton = {
         let button = UIButton()
-        button.titleLabel?.font = .systemFont(ofSize: 21, weight: .semibold)
-        button.setTitle("확인", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.addTarget(self, action: #selector(confirmButton(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(joiningDateButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
     
-    lazy var declineButton: UIButton = {
+    lazy var selectJoiningDateView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var selectJoiningDateMarkLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 21, weight: .semibold)
+        label.text = "날짜를 선택해 주세요."
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var selectJoiningDateMarkLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 151, green: 151, blue: 151)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var selectJoiningDateButton: UIButton = {
         let button = UIButton()
-        button.titleLabel?.font = .systemFont(ofSize: 21, weight: .semibold)
-        button.setTitle("취소", for: .normal)
-        button.setTitleColor(.blue, for: .normal)
-        button.addTarget(self, action: #selector(declineButton(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(selectJoiningDateButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
+    
+    lazy var leavingDateMarkLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        label.text = "퇴사 일자"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var leavingDateView: UIView = {
+        let view = UIView()
+        view.isHidden = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var leavingYearLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 21, weight: .semibold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var leavingYearLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 151, green: 151, blue: 151)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var leavingMonthLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 21, weight: .semibold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var leavingMonthLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 151, green: 151, blue: 151)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var leavingDayLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 21, weight: .semibold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var leavingDayLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 151, green: 151, blue: 151)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var leavingDateButton: UIButton = {
+        let button = UIButton()
+        button.addTarget(self, action: #selector(leavingDateButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var selectLeavingDateView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var selectLeavingDateMarkLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 21, weight: .semibold)
+        label.text = "날짜를 선택해 주세요."
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var selectLeavingDateMarkLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 151, green: 151, blue: 151)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var selectLeavingDateButton: UIButton = {
+        let button = UIButton()
+        button.addTarget(self, action: #selector(selectLeavingDateButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var addCareerButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "checkmark.circle"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.addTarget(self, action: #selector(addCareerButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var cancelCareerButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "x.circle"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.addTarget(self, action: #selector(cancelCareerButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    var joiningDate: Date? = nil {
+        didSet {
+            if let date = self.joiningDate {
+                let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
+                
+                self.joiningYearLabel.text = "\(yearMonthDay.year)"
+                self.joiningMonthLabel.text = "\(yearMonthDay.month)"
+                self.joiningDayLabel.text = "\(yearMonthDay.day)"
+                
+                self.selectJoiningDateView.isHidden = true
+                self.joiningDateView.isHidden = false
+                
+            } else {
+                self.selectJoiningDateView.isHidden = false
+                self.joiningDateView.isHidden = true
+            }
+        }
+    }
+    
+    var leavingDate: Date? = nil {
+        didSet {
+            if let date = self.leavingDate {
+                let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
+                
+                self.leavingYearLabel.text = "\(yearMonthDay.year)"
+                self.leavingMonthLabel.text = "\(yearMonthDay.month)"
+                self.leavingDayLabel.text = "\(yearMonthDay.day)"
+                
+                self.selectLeavingDateView.isHidden = true
+                self.leavingDateView.isHidden = false
+                
+            } else {
+                self.selectLeavingDateView.isHidden = false
+                self.leavingDateView.isHidden = true
+            }
+        }
+    }
     
     let menuCoverType: MenuCoverType
     private var delegate: MenuCoverDelegate?
@@ -366,11 +696,57 @@ extension MenuCoverViewController: EssentialViewMethods {
             
         case .careerManagement:
             SupportingMethods.shared.addSubviews([
-                // careerManagement
+                self.careerBaseView,
                 self.popUpPanelView
             ], to: self.baseView)
             
-            // + careerManagement
+            // careerBaseView
+            SupportingMethods.shared.addSubviews([
+                self.companyNameMarkLabel,
+                self.companyNameTextField,
+                self.companyNameBottomLineView,
+                self.joiningDateMarkLabel,
+                self.joiningDateView,
+                self.selectJoiningDateView,
+                self.leavingDateMarkLabel,
+                self.leavingDateView,
+                self.selectLeavingDateView,
+                self.addCareerButton,
+                self.cancelCareerButton
+            ], to: self.careerBaseView)
+            
+            SupportingMethods.shared.addSubviews([
+                self.joiningYearLabel,
+                self.joiningYearLineView,
+                self.joiningMonthLabel,
+                self.joiningMonthLineView,
+                self.joiningDayLabel,
+                self.joiningDayLineView,
+                self.joiningDateButton
+            ], to: self.joiningDateView)
+            
+            SupportingMethods.shared.addSubviews([
+                self.selectJoiningDateMarkLabel,
+                self.selectJoiningDateMarkLineView,
+                self.selectJoiningDateButton
+            ], to: self.selectJoiningDateView)
+            
+            SupportingMethods.shared.addSubviews([
+                self.leavingYearLabel,
+                self.leavingYearLineView,
+                self.leavingMonthLabel,
+                self.leavingMonthLineView,
+                self.leavingDayLabel,
+                self.leavingDayLineView,
+                self.leavingDateButton
+            ], to: self.leavingDateView)
+            
+            SupportingMethods.shared.addSubviews([
+                self.selectLeavingDateMarkLabel,
+                self.selectLeavingDateMarkLineView,
+                self.selectLeavingDateButton
+            ], to: self.selectLeavingDateView)
+            
             // popUpPanelView
             SupportingMethods.shared.addSubviews([
                 self.titleLabel,
@@ -527,9 +903,249 @@ extension MenuCoverViewController: EssentialViewMethods {
             ])
             
         case .careerManagement:
-            //
+            // careerBaseView
             NSLayoutConstraint.activate([
-                
+                self.careerBaseView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
+                self.careerBaseView.heightAnchor.constraint(equalToConstant: 311),
+                self.careerBaseView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 32),
+                self.careerBaseView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -32)
+            ])
+            
+            // companyNameMarkLabel
+            NSLayoutConstraint.activate([
+                self.companyNameMarkLabel.topAnchor.constraint(equalTo: self.careerBaseView.topAnchor, constant: 21),
+                self.companyNameMarkLabel.heightAnchor.constraint(equalToConstant: 21),
+                self.companyNameMarkLabel.leadingAnchor.constraint(equalTo: self.careerBaseView.leadingAnchor, constant: 21)
+            ])
+            
+            // companyNameTextField
+            NSLayoutConstraint.activate([
+                self.companyNameTextField.bottomAnchor.constraint(equalTo: self.companyNameBottomLineView.topAnchor),
+                self.companyNameTextField.heightAnchor.constraint(equalToConstant: 21),
+                self.companyNameTextField.leadingAnchor.constraint(equalTo: self.companyNameBottomLineView.leadingAnchor, constant: 7),
+                self.companyNameTextField.trailingAnchor.constraint(equalTo: self.companyNameBottomLineView.trailingAnchor, constant: -5)
+            ])
+            
+            // companyNameBottomLineView
+            NSLayoutConstraint.activate([
+                self.companyNameBottomLineView.topAnchor.constraint(equalTo: self.companyNameMarkLabel.bottomAnchor, constant: 32),
+                self.companyNameBottomLineView.heightAnchor.constraint(equalToConstant: 2),
+                self.companyNameBottomLineView.leadingAnchor.constraint(equalTo: self.careerBaseView.leadingAnchor, constant: 20),
+                self.companyNameBottomLineView.trailingAnchor.constraint(equalTo: self.careerBaseView.trailingAnchor, constant: -23)
+            ])
+            
+            // joiningDateMarkLabel
+            NSLayoutConstraint.activate([
+                self.joiningDateMarkLabel.topAnchor.constraint(equalTo: self.companyNameBottomLineView.bottomAnchor, constant: 24),
+                self.joiningDateMarkLabel.heightAnchor.constraint(equalToConstant: 22),
+                self.joiningDateMarkLabel.leadingAnchor.constraint(equalTo: self.careerBaseView.leadingAnchor, constant: 21)
+            ])
+            
+            // joiningDateView
+            NSLayoutConstraint.activate([
+                self.joiningDateView.topAnchor.constraint(equalTo: self.joiningDateMarkLabel.bottomAnchor, constant: 13),
+                self.joiningDateView.heightAnchor.constraint(equalToConstant: 28),
+                self.joiningDateView.leadingAnchor.constraint(equalTo: self.careerBaseView.leadingAnchor, constant: 22),
+                self.joiningDateView.widthAnchor.constraint(equalToConstant: 150)
+            ])
+            
+            // joiningYearLabel
+            NSLayoutConstraint.activate([
+                self.joiningYearLabel.topAnchor.constraint(equalTo: self.joiningDateView.topAnchor),
+                self.joiningYearLabel.heightAnchor.constraint(equalToConstant: 25),
+                self.joiningYearLabel.leadingAnchor.constraint(equalTo: self.joiningDateView.leadingAnchor)
+            ])
+            
+            // joiningYearLineView
+            NSLayoutConstraint.activate([
+                self.joiningYearLineView.bottomAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor),
+                self.joiningYearLineView.heightAnchor.constraint(equalToConstant: 1),
+                self.joiningYearLineView.leadingAnchor.constraint(equalTo: self.joiningYearLabel.leadingAnchor),
+                self.joiningYearLineView.trailingAnchor.constraint(equalTo: self.joiningYearLabel.trailingAnchor)
+            ])
+            
+            // joiningMonthLabel
+            NSLayoutConstraint.activate([
+                self.joiningMonthLabel.topAnchor.constraint(equalTo: self.joiningDateView.topAnchor),
+                self.joiningMonthLabel.heightAnchor.constraint(equalToConstant: 25),
+                self.joiningMonthLabel.leadingAnchor.constraint(equalTo: self.joiningYearLabel.trailingAnchor, constant: 12.5)
+            ])
+            
+            // joiningMonthLineView
+            NSLayoutConstraint.activate([
+                self.joiningMonthLineView.bottomAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor),
+                self.joiningMonthLineView.heightAnchor.constraint(equalToConstant: 1),
+                self.joiningMonthLineView.leadingAnchor.constraint(equalTo: self.joiningMonthLabel.leadingAnchor),
+                self.joiningMonthLineView.trailingAnchor.constraint(equalTo: self.joiningMonthLabel.trailingAnchor)
+            ])
+            
+            // joiningDayLabel
+            NSLayoutConstraint.activate([
+                self.joiningDayLabel.topAnchor.constraint(equalTo: self.joiningDateView.topAnchor),
+                self.joiningDayLabel.heightAnchor.constraint(equalToConstant: 25),
+                self.joiningDayLabel.leadingAnchor.constraint(equalTo: self.joiningMonthLabel.trailingAnchor, constant: 12.5)
+            ])
+            
+            // joiningDayLineView
+            NSLayoutConstraint.activate([
+                self.joiningDayLineView.bottomAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor),
+                self.joiningDayLineView.heightAnchor.constraint(equalToConstant: 1),
+                self.joiningDayLineView.leadingAnchor.constraint(equalTo: self.joiningDayLabel.leadingAnchor),
+                self.joiningDayLineView.trailingAnchor.constraint(equalTo: self.joiningDayLabel.trailingAnchor)
+            ])
+            
+            // joiningDateButton
+            NSLayoutConstraint.activate([
+                self.joiningDateButton.topAnchor.constraint(equalTo: self.joiningDateView.topAnchor),
+                self.joiningDateButton.bottomAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor),
+                self.joiningDateButton.leadingAnchor.constraint(equalTo: self.joiningDateView.leadingAnchor),
+                self.joiningDateButton.trailingAnchor.constraint(equalTo: self.joiningDateView.trailingAnchor)
+            ])
+            
+            // selectJoiningDateView
+            NSLayoutConstraint.activate([
+                self.selectJoiningDateView.topAnchor.constraint(equalTo: self.joiningDateMarkLabel.bottomAnchor, constant: 13),
+                self.selectJoiningDateView.heightAnchor.constraint(equalToConstant: 28),
+                self.selectJoiningDateView.leadingAnchor.constraint(equalTo: self.careerBaseView.leadingAnchor, constant: 22),
+                self.selectJoiningDateView.widthAnchor.constraint(equalToConstant: 150) // FIXME: Need to confirm
+            ])
+            
+            // selectJoiningDateMarkLabel
+            NSLayoutConstraint.activate([
+                self.selectJoiningDateMarkLabel.topAnchor.constraint(equalTo: self.selectJoiningDateView.topAnchor),
+                self.selectJoiningDateMarkLabel.heightAnchor.constraint(equalToConstant: 25),
+                self.selectJoiningDateMarkLabel.leadingAnchor.constraint(equalTo: self.selectJoiningDateView.leadingAnchor)
+            ])
+            
+            // selectJoiningDateMarkLineView
+            NSLayoutConstraint.activate([
+                self.selectJoiningDateMarkLineView.bottomAnchor.constraint(equalTo: self.selectJoiningDateView.bottomAnchor),
+                self.selectJoiningDateMarkLineView.heightAnchor.constraint(equalToConstant: 1),
+                self.selectJoiningDateMarkLineView.leadingAnchor.constraint(equalTo: selectJoiningDateMarkLabel.leadingAnchor),
+                self.selectJoiningDateMarkLineView.trailingAnchor.constraint(equalTo: self.selectJoiningDateMarkLabel.trailingAnchor)
+            ])
+            
+            // selectJoiningDateButton
+            NSLayoutConstraint.activate([
+                self.selectJoiningDateButton.topAnchor.constraint(equalTo: self.selectJoiningDateView.topAnchor),
+                self.selectJoiningDateButton.bottomAnchor.constraint(equalTo: self.selectJoiningDateView.bottomAnchor),
+                self.selectJoiningDateButton.leadingAnchor.constraint(equalTo: self.selectJoiningDateView.leadingAnchor),
+                self.selectJoiningDateButton.trailingAnchor.constraint(equalTo: self.selectJoiningDateView.trailingAnchor)
+            ])
+            
+            // leavingDateMarkLabel
+            NSLayoutConstraint.activate([
+                self.leavingDateMarkLabel.topAnchor.constraint(equalTo: self.joiningDateView.bottomAnchor, constant: 13),
+                self.leavingDateMarkLabel.heightAnchor.constraint(equalToConstant: 22),
+                self.leavingDateMarkLabel.leadingAnchor.constraint(equalTo: self.careerBaseView.leadingAnchor, constant: 21)
+            ])
+            
+            // leavingDateView
+            NSLayoutConstraint.activate([
+                self.leavingDateView.topAnchor.constraint(equalTo: self.leavingDateMarkLabel.bottomAnchor, constant: 13),
+                self.leavingDateView.heightAnchor.constraint(equalToConstant: 28),
+                self.leavingDateView.leadingAnchor.constraint(equalTo: self.careerBaseView.leadingAnchor, constant: 22),
+                self.leavingDateView.widthAnchor.constraint(equalToConstant: 150)
+            ])
+            
+            // leavingYearLabel
+            NSLayoutConstraint.activate([
+                self.leavingYearLabel.topAnchor.constraint(equalTo: self.leavingDateView.topAnchor),
+                self.leavingYearLabel.heightAnchor.constraint(equalToConstant: 25),
+                self.leavingYearLabel.leadingAnchor.constraint(equalTo: self.leavingDateView.leadingAnchor)
+            ])
+            
+            // leavingYearLineView
+            NSLayoutConstraint.activate([
+                self.leavingYearLineView.bottomAnchor.constraint(equalTo: self.leavingDateView.bottomAnchor),
+                self.leavingYearLineView.heightAnchor.constraint(equalToConstant: 1),
+                self.leavingYearLineView.leadingAnchor.constraint(equalTo: self.leavingYearLabel.leadingAnchor),
+                self.leavingYearLineView.trailingAnchor.constraint(equalTo: self.leavingYearLabel.trailingAnchor)
+            ])
+            
+            // leavingMonthLabel
+            NSLayoutConstraint.activate([
+                self.leavingMonthLabel.topAnchor.constraint(equalTo: self.leavingDateView.topAnchor),
+                self.leavingMonthLabel.heightAnchor.constraint(equalToConstant: 25),
+                self.leavingMonthLabel.leadingAnchor.constraint(equalTo: self.leavingYearLabel.trailingAnchor, constant: 12.5)
+            ])
+            
+            // leavingMonthLineView
+            NSLayoutConstraint.activate([
+                self.leavingMonthLineView.bottomAnchor.constraint(equalTo: self.leavingDateView.bottomAnchor),
+                self.leavingMonthLineView.heightAnchor.constraint(equalToConstant: 1),
+                self.leavingMonthLineView.leadingAnchor.constraint(equalTo: self.leavingMonthLabel.leadingAnchor),
+                self.leavingMonthLineView.trailingAnchor.constraint(equalTo: self.leavingMonthLabel.trailingAnchor)
+            ])
+            
+            // leavingDayLabel
+            NSLayoutConstraint.activate([
+                self.leavingDayLabel.topAnchor.constraint(equalTo: self.leavingDateView.topAnchor),
+                self.leavingDayLabel.heightAnchor.constraint(equalToConstant: 25),
+                self.leavingDayLabel.leadingAnchor.constraint(equalTo: self.leavingMonthLabel.trailingAnchor, constant: 12.5)
+            ])
+            
+            // leavingDayLineView
+            NSLayoutConstraint.activate([
+                self.leavingDayLineView.bottomAnchor.constraint(equalTo: self.leavingDateView.bottomAnchor),
+                self.leavingDayLineView.heightAnchor.constraint(equalToConstant: 1),
+                self.leavingDayLineView.leadingAnchor.constraint(equalTo: self.leavingDayLabel.leadingAnchor),
+                self.leavingDayLineView.trailingAnchor.constraint(equalTo: self.leavingDayLabel.trailingAnchor)
+            ])
+            
+            // leavingDateButton
+            NSLayoutConstraint.activate([
+                self.leavingDateButton.topAnchor.constraint(equalTo: self.leavingDateView.topAnchor),
+                self.leavingDateButton.bottomAnchor.constraint(equalTo: self.leavingDateView.bottomAnchor),
+                self.leavingDateButton.leadingAnchor.constraint(equalTo: self.leavingDateView.leadingAnchor),
+                self.leavingDateButton.trailingAnchor.constraint(equalTo: self.leavingDateView.trailingAnchor)
+            ])
+            
+            // selectLeavingDateView
+            NSLayoutConstraint.activate([
+                self.selectLeavingDateView.topAnchor.constraint(equalTo: self.leavingDateMarkLabel.bottomAnchor, constant: 13),
+                self.selectLeavingDateView.heightAnchor.constraint(equalToConstant: 28),
+                self.selectLeavingDateView.leadingAnchor.constraint(equalTo: self.careerBaseView.leadingAnchor, constant: 22),
+                self.selectLeavingDateView.widthAnchor.constraint(equalToConstant: 150) // FIXME: Need to confirm
+            ])
+            
+            // selectLeavingDateMarkLabel
+            NSLayoutConstraint.activate([
+                self.selectLeavingDateMarkLabel.topAnchor.constraint(equalTo: self.selectLeavingDateView.topAnchor),
+                self.selectLeavingDateMarkLabel.heightAnchor.constraint(equalToConstant: 25),
+                self.selectLeavingDateMarkLabel.leadingAnchor.constraint(equalTo: self.selectLeavingDateView.leadingAnchor)
+            ])
+            
+            // selectLeavingDateMarkLineView
+            NSLayoutConstraint.activate([
+                self.selectLeavingDateMarkLineView.bottomAnchor.constraint(equalTo: self.selectLeavingDateView.bottomAnchor),
+                self.selectLeavingDateMarkLineView.heightAnchor.constraint(equalToConstant: 1),
+                self.selectLeavingDateMarkLineView.leadingAnchor.constraint(equalTo: selectLeavingDateMarkLabel.leadingAnchor),
+                self.selectLeavingDateMarkLineView.trailingAnchor.constraint(equalTo: self.selectLeavingDateMarkLabel.trailingAnchor)
+            ])
+            
+            // selectLeavingDateButton
+            NSLayoutConstraint.activate([
+                self.selectLeavingDateButton.topAnchor.constraint(equalTo: self.selectLeavingDateView.topAnchor),
+                self.selectLeavingDateButton.bottomAnchor.constraint(equalTo: self.selectLeavingDateView.bottomAnchor),
+                self.selectLeavingDateButton.leadingAnchor.constraint(equalTo: self.selectLeavingDateView.leadingAnchor),
+                self.selectLeavingDateButton.trailingAnchor.constraint(equalTo: self.selectLeavingDateView.trailingAnchor)
+            ])
+            
+            // addCareerButton
+            NSLayoutConstraint.activate([
+                self.addCareerButton.bottomAnchor.constraint(equalTo: self.careerBaseView.bottomAnchor, constant: -10),
+                self.addCareerButton.heightAnchor.constraint(equalToConstant: 28),
+                self.addCareerButton.trailingAnchor.constraint(equalTo: self.careerBaseView.centerXAnchor, constant: -60),
+                self.addCareerButton.widthAnchor.constraint(equalToConstant: 28)
+            ])
+            
+            // cancelCareerButton
+            NSLayoutConstraint.activate([
+                self.cancelCareerButton.bottomAnchor.constraint(equalTo: self.careerBaseView.bottomAnchor, constant: -10),
+                self.cancelCareerButton.heightAnchor.constraint(equalToConstant: 28),
+                self.cancelCareerButton.leadingAnchor.constraint(equalTo: self.careerBaseView.centerXAnchor, constant: 60),
+                self.cancelCareerButton.widthAnchor.constraint(equalToConstant: 28)
             ])
             
             // popUpPanelView
@@ -724,5 +1340,39 @@ extension MenuCoverViewController {
                 }
             }
         }
+    }
+    
+    @objc func selectJoiningDateButton(_ sender: UIButton) {
+        // hide career base view
+        // show date picker for joining date
+    }
+    
+    @objc func joiningDateButton(_ sender: UIButton) {
+        // hide career base view
+        // show date picker for joining date
+    }
+    
+    @objc func selectLeavingDateButton(_ sender: UIButton) {
+        // hide career base view
+        // show date picker for leaving date
+    }
+    
+    @objc func leavingDateButton(_ sender: UIButton) {
+        // hide career base view
+        // show date picker for leaving date
+    }
+    
+    @objc func addCareerButton(_ sender: UIButton) {
+        guard let companyName = self.companyNameTextField.text,
+                let joiningDate = self.joiningDate,
+                let leavingDate = self.leavingDate else {
+            return
+        }
+        
+        self.delegate?.menuCoverDidDetermineCompany(companyName, joiningDate: joiningDate, leavingDate: leavingDate)
+    }
+    
+    @objc func cancelCareerButton(_ sender: UIButton) {
+        self.dismiss(animated: false)
     }
 }
