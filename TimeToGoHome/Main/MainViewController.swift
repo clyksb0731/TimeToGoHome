@@ -398,9 +398,11 @@ class MainViewController: UIViewController {
     
     weak var timer: Timer?
     
+    /*
     let workScheduleViewHeight = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.27
     let overWorkScheduleViewHeight = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.17
     let changeScheduleDescriptionLabelHeight = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.024
+     */
     
     var scheduleTableViewHeightAnchor: NSLayoutConstraint!
     
@@ -789,7 +791,7 @@ extension MainViewController {
         ])
         
         // Schedule table view layout
-        self.scheduleTableViewHeightAnchor = self.scheduleTableView.heightAnchor.constraint(equalToConstant: 2 * self.workScheduleViewHeight + self.overWorkScheduleViewHeight)
+        self.scheduleTableViewHeightAnchor = self.scheduleTableView.heightAnchor.constraint(equalToConstant: 2 * ReferenceValues.size.schedule.normalScheduleHeight + ReferenceValues.size.schedule.overtimeScheduleHeight)
         NSLayoutConstraint.activate([
             self.scheduleTableView.topAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: 10),
             self.scheduleTableViewHeightAnchor,
@@ -799,7 +801,7 @@ extension MainViewController {
         
         // Change schedule description label layout
         NSLayoutConstraint.activate([
-            self.changeScheduleDescriptionLabel.topAnchor.constraint(equalTo: self.scheduleTableView.bottomAnchor, constant: self.changeScheduleDescriptionLabelHeight),
+            self.changeScheduleDescriptionLabel.topAnchor.constraint(equalTo: self.scheduleTableView.bottomAnchor, constant: ReferenceValues.size.schedule.changeScheduleDescriptionLabelHeight),
             self.changeScheduleDescriptionLabel.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor)
         ])
         
@@ -901,11 +903,11 @@ extension MainViewController {
     
     func calculateTableViewHeight(for schedule: WorkScheduleModel) {
         if schedule.count == 0 {
-            self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight
+            self.scheduleTableViewHeightAnchor.constant = ReferenceValues.size.schedule.normalScheduleHeight
         }
         
         if schedule.count == 1 {
-            self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2
+            self.scheduleTableViewHeightAnchor.constant = ReferenceValues.size.schedule.normalScheduleHeight * 2
         }
         
         if schedule.count == 2 {
@@ -913,23 +915,23 @@ extension MainViewController {
                 if case .afternoon(let workType) = schedule.afternoon {
                     switch workType {
                     case .holiday:
-                        self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2
+                        self.scheduleTableViewHeightAnchor.constant = ReferenceValues.size.schedule.normalScheduleHeight * 2
                         
                     case .vacation:
-                        self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2
+                        self.scheduleTableViewHeightAnchor.constant = ReferenceValues.size.schedule.normalScheduleHeight * 2
                         
                     case .work:
-                        self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2 + self.overWorkScheduleViewHeight
+                        self.scheduleTableViewHeightAnchor.constant = ReferenceValues.size.schedule.normalScheduleHeight * 2 + ReferenceValues.size.schedule.overtimeScheduleHeight
                     }
                 }
                 
             } else {
-                self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2
+                self.scheduleTableViewHeightAnchor.constant = ReferenceValues.size.schedule.normalScheduleHeight * 2
             }
         }
         
         if schedule.count == 3 {
-            self.scheduleTableViewHeightAnchor.constant = self.workScheduleViewHeight * 2 + self.overWorkScheduleViewHeight
+            self.scheduleTableViewHeightAnchor.constant = ReferenceValues.size.schedule.normalScheduleHeight * 2 + ReferenceValues.size.schedule.overtimeScheduleHeight
         }
     }
     
@@ -2601,13 +2603,13 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.row == 0 {
-            return self.workScheduleViewHeight
+            return ReferenceValues.size.schedule.normalScheduleHeight
             
         } else if indexPath.row == 1 {
-            return self.workScheduleViewHeight
+            return ReferenceValues.size.schedule.normalScheduleHeight
             
         } else { // 2
-            return self.overWorkScheduleViewHeight
+            return ReferenceValues.size.schedule.overtimeScheduleHeight
         }
     }
     
@@ -2625,7 +2627,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 
             } else { // row 1
                 let cell = tableView.dequeueReusableCell(withIdentifier: "SchedulingCell") as! SchedulingCell
-                cell.setCell(scheduleTypeText: "오후 일정", width: UIScreen.main.bounds.width - 10, height: self.workScheduleViewHeight)
+                cell.setCell(scheduleTypeText: "오후 일정", width: UIScreen.main.bounds.width - 10, height: ReferenceValues.size.schedule.normalScheduleHeight)
                 
                 return cell
             }
@@ -2653,7 +2655,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                     
                 } else { // row 2
                     let cell = tableView.dequeueReusableCell(withIdentifier: "SchedulingCell") as! SchedulingCell
-                    cell.setCell(scheduleTypeText: "추가 일정", width: UIScreen.main.bounds.width - 10, height: self.overWorkScheduleViewHeight)
+                    cell.setCell(scheduleTypeText: "추가 일정", width: UIScreen.main.bounds.width - 10, height: ReferenceValues.size.schedule.overtimeScheduleHeight)
                     
                     return cell
                 }
@@ -2715,7 +2717,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             
         } else { // row 0
             let cell = tableView.dequeueReusableCell(withIdentifier: "SchedulingCell") as! SchedulingCell
-            cell.setCell(scheduleTypeText: "오전 일정", width: UIScreen.main.bounds.width - 10, height: self.workScheduleViewHeight)
+            cell.setCell(scheduleTypeText: "오전 일정", width: UIScreen.main.bounds.width - 10, height: ReferenceValues.size.schedule.normalScheduleHeight)
             
             return cell
         }

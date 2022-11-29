@@ -20,6 +20,26 @@ struct ReferenceValues {
     }()
 }
 
+// MARK: - Extension of referenceValues for size
+extension ReferenceValues {
+    struct size {
+        struct schedule {
+            static let normalScheduleHeight: CGFloat = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.27
+            static let overtimeScheduleHeight: CGFloat = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.17
+            
+            static let changeScheduleDescriptionLabelHeight = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.024
+        }
+        
+        struct record {
+            static let normalScheduleHeight: CGFloat = 130
+            static let overtimeScheduleHeight: CGFloat = 70
+            static let schedulingHeight: CGFloat = 60
+            static let changeScheduleDescriptionLabelHeight: CGFloat = 16
+        }
+    }
+}
+
+// MARK: - Extension of UIColor for view color
 extension UIColor {
     struct schedule {
         static var work: UIColor {
@@ -48,6 +68,32 @@ extension UIColor {
         
         static var finishWork: UIColor {
             return .black
+        }
+    }
+    
+    struct record {
+        static var work: UIColor {
+            return .useRGB(red: 125, green: 243, blue: 110)
+        }
+        
+        static var overtime: UIColor {
+            return .useRGB(red: 239, green: 119, blue: 119)
+        }
+        
+        static var vacation: UIColor {
+            return .useRGB(red: 120, green: 223, blue: 238)
+        }
+        
+        static var holiday: UIColor {
+            return .useRGB(red: 252, green: 247, blue: 143)
+        }
+        
+        static var scheduling: UIColor {
+            return .useRGB(red: 216, green: 216, blue: 216)
+        }
+        
+        static var schedulingDash: UIColor {
+            return .useRGB(red: 109, green: 114, blue: 120)
         }
     }
     
