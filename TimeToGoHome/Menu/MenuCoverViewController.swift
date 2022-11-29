@@ -16,7 +16,7 @@ enum MenuCoverType {
     case lastDateAtWork
     case addNormalSchedule(NormalButtonType)
     case insertNormalSchedule(ScheduleType, NormalButtonType)
-    case overtime(regularWork: MenuCoverRegularWorkType, overtime: Int)
+    case overtime(regularWork: MenuCoverRegularWorkType, overtime: Int?)
     case annualPaidHolidays
     case careerManagement
     case calendarOfWorkRecord
@@ -1202,7 +1202,7 @@ extension MenuCoverViewController: EssentialViewMethods {
 extension MenuCoverViewController {
     func initializeCountDownDuration() {
         if case .overtime(_, let overtime) = menuCoverType {
-            self.datePicker.countDownDuration = TimeInterval(overtime)
+            self.datePicker.countDownDuration = TimeInterval(overtime ?? 60)
         }
     }
 }

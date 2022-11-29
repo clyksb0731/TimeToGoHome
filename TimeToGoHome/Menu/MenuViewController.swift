@@ -305,9 +305,14 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 2 && indexPath.row == 1 {
-            let careerVC = CareerViewController()
+//            let careerVC = CareerViewController()
+//
+//            self.navigationController?.pushViewController(careerVC, animated: true)
             
-            self.navigationController?.pushViewController(careerVC, animated: true)
+            // FIXME: for test
+            let dayWorkRecordVC = DayWorkRecordViewController(workScheduleRecord: WorkScheduleRecordModel(dateId: 20221130, morning: .work, afternoon: .work, overtime: 3600))
+            
+            self.navigationController?.pushViewController(dayWorkRecordVC, animated: true)
         }
         
         let todayDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: Date()))!

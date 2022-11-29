@@ -22,6 +22,10 @@
 		CA47B0F92924BAE700D3D8F7 /* MenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47B0F82924BAE700D3D8F7 /* MenuCell.swift */; };
 		CA47B0FB2924BB0600D3D8F7 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47B0FA2924BB0600D3D8F7 /* SettingViewController.swift */; };
 		CA47B0FD2924C0F400D3D8F7 /* MenuHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA47B0FC2924C0F400D3D8F7 /* MenuHeaderView.swift */; };
+		CA4EC6902936463A0079CFBE /* WorkScheduleRecordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4EC68F2936463A0079CFBE /* WorkScheduleRecordModel.swift */; };
+		CA4EC692293646E50079CFBE /* DayWorkRecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4EC691293646E50079CFBE /* DayWorkRecordViewController.swift */; };
+		CA4EC6942936470D0079CFBE /* RecordScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4EC6932936470D0079CFBE /* RecordScheduleCell.swift */; };
+		CA4EC696293647290079CFBE /* RecordSchedulingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4EC695293647290079CFBE /* RecordSchedulingCell.swift */; };
 		CA5327092907BAB0003D66A9 /* CustomizedNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5327082907BAB0003D66A9 /* CustomizedNavigationController.swift */; };
 		CA612DEC292D13BD00547AC2 /* WorkRecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA612DEB292D13BD00547AC2 /* WorkRecordViewController.swift */; };
 		CA6D12FB2910215300835CB6 /* CustomizedTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6D12FA2910215300835CB6 /* CustomizedTabBarController.swift */; };
@@ -76,6 +80,10 @@
 		CA47B0F82924BAE700D3D8F7 /* MenuCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuCell.swift; sourceTree = "<group>"; };
 		CA47B0FA2924BB0600D3D8F7 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		CA47B0FC2924C0F400D3D8F7 /* MenuHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuHeaderView.swift; sourceTree = "<group>"; };
+		CA4EC68F2936463A0079CFBE /* WorkScheduleRecordModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkScheduleRecordModel.swift; sourceTree = "<group>"; };
+		CA4EC691293646E50079CFBE /* DayWorkRecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayWorkRecordViewController.swift; sourceTree = "<group>"; };
+		CA4EC6932936470D0079CFBE /* RecordScheduleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordScheduleCell.swift; sourceTree = "<group>"; };
+		CA4EC695293647290079CFBE /* RecordSchedulingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordSchedulingCell.swift; sourceTree = "<group>"; };
 		CA5327082907BAB0003D66A9 /* CustomizedNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizedNavigationController.swift; sourceTree = "<group>"; };
 		CA612DEB292D13BD00547AC2 /* WorkRecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkRecordViewController.swift; sourceTree = "<group>"; };
 		CA6D12FA2910215300835CB6 /* CustomizedTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizedTabBarController.swift; sourceTree = "<group>"; };
@@ -226,6 +234,9 @@
 				CA612DEB292D13BD00547AC2 /* WorkRecordViewController.swift */,
 				CA4589EB29338A46003CA0EB /* WorkRecordCell.swift */,
 				CA4589ED29338A67003CA0EB /* WorkRecordHeaderView.swift */,
+				CA4EC691293646E50079CFBE /* DayWorkRecordViewController.swift */,
+				CA4EC6932936470D0079CFBE /* RecordScheduleCell.swift */,
+				CA4EC695293647290079CFBE /* RecordSchedulingCell.swift */,
 				CA4589E729334983003CA0EB /* CareerViewController.swift */,
 				CA4589E929334AE0003CA0EB /* CareerCell.swift */,
 			);
@@ -249,6 +260,7 @@
 				CA4589EF2933B396003CA0EB /* WorkRecordModel.swift */,
 				CAB7CF412750CBFD005C9232 /* CompanyLocationModel.swift */,
 				CAFEF7CE2839117200DE5BA9 /* ReamDB.swift */,
+				CA4EC68F2936463A0079CFBE /* WorkScheduleRecordModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -353,8 +365,10 @@
 				CA6D12FB2910215300835CB6 /* CustomizedTabBarController.swift in Sources */,
 				CA47B0FB2924BB0600D3D8F7 /* SettingViewController.swift in Sources */,
 				CAFD580227DB2D0E0027811C /* SchedulingCell.swift in Sources */,
+				CA4EC6902936463A0079CFBE /* WorkScheduleRecordModel.swift in Sources */,
 				CAA3B24B2801755D00FFF892 /* CalendarDayCell.swift in Sources */,
 				CA4589EE29338A67003CA0EB /* WorkRecordHeaderView.swift in Sources */,
+				CA4EC6942936470D0079CFBE /* RecordScheduleCell.swift in Sources */,
 				CA47B0F72924BA9A00D3D8F7 /* MenuViewController.swift in Sources */,
 				CAA3B24F28018ED600FFF892 /* VacationButtonView.swift in Sources */,
 				CAECA69127ED982C005D7859 /* ScheduleButtonView.swift in Sources */,
@@ -373,10 +387,12 @@
 				CAB7CF352750C084005C9232 /* CompanyLocationViewController.swift in Sources */,
 				CAB9AD6E2926765F006AB951 /* SettingHeaderView.swift in Sources */,
 				CAB6C93B27FA9AAC00B67F1A /* NormalWorkTypeViewController.swift in Sources */,
+				CA4EC696293647290079CFBE /* RecordSchedulingCell.swift in Sources */,
 				CAB7CF392750C5C9005C9232 /* CompanyMapViewController.swift in Sources */,
 				CA4589EC29338A46003CA0EB /* WorkRecordCell.swift in Sources */,
 				CA612DEC292D13BD00547AC2 /* WorkRecordViewController.swift in Sources */,
 				CAB9AD6C29267647006AB951 /* SettingCell.swift in Sources */,
+				CA4EC692293646E50079CFBE /* DayWorkRecordViewController.swift in Sources */,
 				CA4589EA29334AE0003CA0EB /* CareerCell.swift in Sources */,
 				CAB7CF422750CBFD005C9232 /* CompanyLocationModel.swift in Sources */,
 				CA226762274402D50035663D /* AppDelegate.swift in Sources */,

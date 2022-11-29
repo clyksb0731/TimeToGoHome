@@ -114,6 +114,18 @@ extension SupportingMethods {
         }
     }
     
+    // MARK: Make Dash layer
+    func makeDashLayer(dashColor: UIColor, width: CGFloat, height: CGFloat, cornerRadius: CGFloat) -> CAShapeLayer {
+        let dashLayer = CAShapeLayer()
+        dashLayer.strokeColor = dashColor.cgColor
+        dashLayer.lineWidth = 2
+        dashLayer.lineDashPattern = [2,2]
+        dashLayer.fillColor = nil
+        dashLayer.path = UIBezierPath(roundedRect: CGRect(x: 0, y: 0, width: width, height: height), cornerRadius: cornerRadius).cgPath
+        
+        return dashLayer
+    }
+    
     // MARK: Cover view
     func turnCoverView(_ state: CoverViewState, on: UIView?) {
         guard let on = on else {
