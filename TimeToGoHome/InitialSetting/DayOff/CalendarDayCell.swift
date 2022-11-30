@@ -24,11 +24,11 @@ class CalendarDayCell: UICollectionViewCell {
     
     lazy private var morningVacationShapeView: UIView = {
         let halfView = UIView()
-        halfView.backgroundColor = .dayOff.calendarDay
+        halfView.backgroundColor = .calendar.vacation
         halfView.translatesAutoresizingMaskIntoConstraints = false
         
         let view = UIView()
-        view.layer.borderColor = UIColor.dayOff.calendarDay.cgColor
+        view.layer.borderColor = UIColor.calendar.vacation.cgColor
         view.layer.borderWidth = 2
         view.layer.cornerRadius = 14
         view.clipsToBounds = true
@@ -49,11 +49,11 @@ class CalendarDayCell: UICollectionViewCell {
     
     lazy private var afternoonVacationShapeView: UIView = {
         let halfView = UIView()
-        halfView.backgroundColor = .dayOff.calendarDay
+        halfView.backgroundColor = .calendar.vacation
         halfView.translatesAutoresizingMaskIntoConstraints = false
         
         let view = UIView()
-        view.layer.borderColor = UIColor.dayOff.calendarDay.cgColor
+        view.layer.borderColor = UIColor.calendar.vacation.cgColor
         view.layer.borderWidth = 2
         view.layer.cornerRadius = 14
         view.clipsToBounds = true
@@ -74,7 +74,7 @@ class CalendarDayCell: UICollectionViewCell {
     
     lazy private var fullDayVacationShapeView: UIView = {
         let view = UIView()
-        view.backgroundColor = .dayOff.calendarDay
+        view.backgroundColor = .calendar.vacation
         view.layer.cornerRadius = 14
         view.clipsToBounds = true
         view.isHidden = true
@@ -97,7 +97,7 @@ class CalendarDayCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 10)
         label.textAlignment = .center
-        label.textColor = .useRGB(red: 171, green: 171, blue: 171)
+        label.textColor = .calendar.todayMark
         label.text = "오늘"
         label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -107,7 +107,7 @@ class CalendarDayCell: UICollectionViewCell {
     
     lazy private var bottomLineView: UIView = {
         let view = UIView()
-        view.backgroundColor = .dayOff.selectedDayBottomLine
+        view.backgroundColor = .calendar.selectedDayBottomLine
         view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false
         

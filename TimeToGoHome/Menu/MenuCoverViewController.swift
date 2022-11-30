@@ -17,9 +17,9 @@ enum MenuCoverType {
     case addNormalSchedule(NormalButtonType)
     case insertNormalSchedule(ScheduleType, NormalButtonType)
     case overtime(regularWork: MenuCoverRegularWorkType, overtime: Int?)
-    case annualPaidHolidays
+    case annualPaidHolidays(numberOfPaidHolidays: Int)
     case careerManagement
-    case calendarOfWorkRecord
+    case calendarOfScheduleRecord(company: Company)
 }
 
 protocol MenuCoverDelegate {
@@ -183,6 +183,16 @@ class MenuCoverViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
+    }()
+    
+    // MARK: Annual paid holidays
+    lazy var annualPaidHolidaysBaseView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 10
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
     }()
     
     // MARK: Career management
@@ -514,6 +524,89 @@ class MenuCoverViewController: UIViewController {
         }
     }
     
+    // MARK: Calendar of schedule record
+    lazy var calendarBaseView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var yearMonthButtonView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var previousMonthButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "previousMonthNormalButton"), for: .normal)
+        button.setImage(UIImage(named: "previousMonthDisableButton"), for: .disabled)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.addTarget(self, action: #selector(perviousMonthButton(_:)), for: .touchUpInside)
+        button.isEnabled = SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate ?? Date()).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate ?? Date()).month) != SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange.startDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange.startDate).month)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var yearMonthLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .black
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.7
+        label.font = .systemFont(ofSize: 18, weight: .semibold)
+        label.text = "\(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate ?? Date()).year)년 \(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate ?? Date()).month)월"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var nextMonthButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "nextMonthNormalButton"), for: .normal)
+        button.setImage(UIImage(named: "nextMonthDisableButton"), for: .disabled)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.addTarget(self, action: #selector(nextMonthButton(_:)), for: .touchUpInside)
+        button.isEnabled = SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate ?? Date()).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate ?? Date()).month) != SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange.endDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange.endDate).month)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var calendarCollectionView: UICollectionView = {
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.itemSize = CGSize(width: 45, height: 45)
+        flowLayout.minimumLineSpacing = 0
+        flowLayout.minimumInteritemSpacing = 0
+        flowLayout.headerReferenceSize = CGSize(width: 315, height: 21)
+        flowLayout.footerReferenceSize = .zero
+        
+        //let collectionView = UICollectionView()
+        //collectionView.collectionViewLayout = flowLayout
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+        collectionView.backgroundColor = .white
+        collectionView.register(CalendarDayOfScheduleRecordCell.self, forCellWithReuseIdentifier: "CalendarDayOfScheduleRecordCell")
+        collectionView.register(CalendarHeaderOfScheduleRecordView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "CalendarHeaderOfScheduleRecordView")
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return collectionView
+    }()
+    
+    var targetYearMonthDate: Date?
+    
+    lazy var careerDateRange: (startDate: Date, endDate: Date) = {
+        return (Date(), Date()) // FIXME: temp code
+//        if case .calendarOfScheduleRecord(let company) = self.menuCoverType {
+//            return (startDate: SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(company.dateId))!, endDate: company.leavingDate ?? Date())
+//        }
+    }()
+    
     let menuCoverType: MenuCoverType
     private var delegate: MenuCoverDelegate?
     
@@ -571,7 +664,7 @@ extension MenuCoverViewController: EssentialViewMethods {
             self.datePicker.minimumDate = ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as? Date
             //self.datePicker.maximumDate = Date()
             
-        case .addNormalSchedule(let normalButtonType):
+        case .addNormalSchedule(let normalButtonType): // MARK: addNormalSchedule
             switch normalButtonType {
             case .allButton:
                 print("All buttons are available")
@@ -594,7 +687,7 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.holidayButton.isEnabled = true
             }
             
-        case .insertNormalSchedule(_, let normalButtonType):
+        case .insertNormalSchedule(_, let normalButtonType): // MARK: insertNormalSchedule
             switch normalButtonType {
             case .allButton:
                 print("All buttons are available")
@@ -617,16 +710,16 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.holidayButton.isEnabled = true
             }
             
-        case .overtime:
+        case .overtime: // MARK: overtime
             print("")
             
-        case .annualPaidHolidays:
+        case .annualPaidHolidays: // MARK: annualPaidHolidays
             print("")
             
-        case .careerManagement:
+        case .careerManagement: // MARK: careerManagement
             print("")
             
-        case .calendarOfWorkRecord:
+        case .calendarOfScheduleRecord: // MARK: calendarOfScheduleRecord
             print("")
         }
     }
@@ -649,7 +742,7 @@ extension MenuCoverViewController: EssentialViewMethods {
         ], to: self.view)
         
         switch self.menuCoverType {
-        case .lastDateAtWork:
+        case .lastDateAtWork: // MARK: lastDateAtWork
             SupportingMethods.shared.addSubviews([
                 self.popUpPanelView
             ], to: self.baseView)
@@ -661,7 +754,7 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.declineButton
             ], to: self.popUpPanelView)
             
-        case .addNormalSchedule, .insertNormalSchedule:
+        case .addNormalSchedule, .insertNormalSchedule: // MARK: addNormalSchedule, addNormalSchedule
             SupportingMethods.shared.addSubviews([
                 self.popUpPanelView
             ], to: self.baseView)
@@ -677,7 +770,7 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.closeNormalScheduleButton
             ], to: self.normalScheduleListView)
             
-        case .overtime:
+        case .overtime: // MARK: overtime
             SupportingMethods.shared.addSubviews([
                 self.popUpPanelView
             ], to: self.baseView)
@@ -689,12 +782,12 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.declineButton
             ], to: self.popUpPanelView)
             
-        case .annualPaidHolidays:
+        case .annualPaidHolidays: // MARK: annualPaidHolidays
             SupportingMethods.shared.addSubviews([
                 
             ], to: self.baseView)
             
-        case .careerManagement:
+        case .careerManagement: // MARK: careerManagement
             SupportingMethods.shared.addSubviews([
                 self.careerBaseView,
                 self.popUpPanelView
@@ -755,7 +848,7 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.declineButton
             ], to: self.popUpPanelView)
             
-        case .calendarOfWorkRecord:
+        case .calendarOfScheduleRecord: // MARK: calendarOfScheduleRecord
             SupportingMethods.shared.addSubviews([
                 
             ], to: self.baseView)
@@ -773,7 +866,7 @@ extension MenuCoverViewController: EssentialViewMethods {
         ])
         
         switch self.menuCoverType {
-        case .lastDateAtWork:
+        case .lastDateAtWork: // MARK: lastDateAtWork
             // popUpPanelView
             NSLayoutConstraint.activate([
                 self.popUpPanelView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
@@ -814,7 +907,7 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.declineButton.widthAnchor.constraint(equalToConstant: 97)
             ])
             
-        case .addNormalSchedule, .insertNormalSchedule:
+        case .addNormalSchedule, .insertNormalSchedule: // MARK: addNormalSchedule, insertNormalSchedule
             // normalScheduleListView
             NSLayoutConstraint.activate([
                 self.normalScheduleListView.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 16),
@@ -855,7 +948,7 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.holidayButton.trailingAnchor.constraint(equalTo: self.normalScheduleListView.trailingAnchor)
             ])
             
-        case .overtime:
+        case .overtime: // MARK: overtime
             // popUpPanelView
             NSLayoutConstraint.activate([
                 self.popUpPanelView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
@@ -896,13 +989,13 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.declineButton.widthAnchor.constraint(equalToConstant: 97)
             ])
             
-        case .annualPaidHolidays:
+        case .annualPaidHolidays: // MARK: annualPaidHolidays
             //
             NSLayoutConstraint.activate([
                 
             ])
             
-        case .careerManagement:
+        case .careerManagement: // MARK: careerManagement
             // careerBaseView
             NSLayoutConstraint.activate([
                 self.careerBaseView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
@@ -1188,7 +1281,7 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.declineButton.widthAnchor.constraint(equalToConstant: 97)
             ])
             
-        case .calendarOfWorkRecord:
+        case .calendarOfScheduleRecord: // MARK: calendarOfScheduleRecord
             //
             NSLayoutConstraint.activate([
                 
@@ -1209,6 +1302,33 @@ extension MenuCoverViewController {
 
 // MARK: - Extension for selector methods
 extension MenuCoverViewController {
+    // MARK: datePicker
+    @objc func datePicker(_ datePicker: UIDatePicker) {
+        if case .lastDateAtWork = self.menuCoverType {
+            // FIXME: check realm
+        }
+        
+        if case .careerManagement = self.menuCoverType {
+            // FIXME: calculate joiningDate and leavingDate
+        }
+        
+        if case .overtime(let regularWork, _) = self.menuCoverType {
+            print("datePicker.countDownDuration: \(datePicker.countDownDuration)")
+            if regularWork == .fullWork {
+                if datePicker.countDownDuration > 16 * 3600 {
+                    print("overTime > 16 * 3600")
+                }
+            }
+            
+            if regularWork == .halfWork {
+                if datePicker.countDownDuration > 20 * 3600 {
+                    print("overTime > 20 * 3600")
+                }
+            }
+        }
+    }
+    
+    // MARK: add, insert schedule
     @objc func workButton(_ sender: UIButton) {
         let tempSelf = self
         self.dismiss(animated: false) {
@@ -1317,31 +1437,7 @@ extension MenuCoverViewController {
         }
     }
     
-    @objc func datePicker(_ datePicker: UIDatePicker) {
-        if case .lastDateAtWork = self.menuCoverType {
-            // FIXME: check realm
-        }
-        
-        if case .careerManagement = self.menuCoverType {
-            // FIXME: calculate joiningDate and leavingDate
-        }
-        
-        if case .overtime(let regularWork, _) = self.menuCoverType {
-            print("datePicker.countDownDuration: \(datePicker.countDownDuration)")
-            if regularWork == .fullWork {
-                if datePicker.countDownDuration > 16 * 3600 {
-                    print("overTime > 16 * 3600")
-                }
-            }
-            
-            if regularWork == .halfWork {
-                if datePicker.countDownDuration > 20 * 3600 {
-                    print("overTime > 20 * 3600")
-                }
-            }
-        }
-    }
-    
+    // MARK: career management
     @objc func selectJoiningDateButton(_ sender: UIButton) {
         // hide career base view
         // show date picker for joining date
@@ -1375,4 +1471,26 @@ extension MenuCoverViewController {
     @objc func cancelCareerButton(_ sender: UIButton) {
         self.dismiss(animated: false)
     }
+    
+    // MARK: calendar of schedule record
+    @objc func perviousMonthButton(_ sender: UIButton) {
+        
+    }
+    
+    @objc func nextMonthButton(_ sender: UIButton) {
+        
+    }
+}
+
+// MARK: - Extension for UICollectionViewDelegate, UICollectionViewDataSource
+extension MenuCoverViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 0 // FIXME: temp code
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        return UICollectionViewCell() // FIXME: temp code
+    }
+    
+    
 }

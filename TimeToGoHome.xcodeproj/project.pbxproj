@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		CA12806C27D1A64800CAFCE8 /* WorkScheduleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA12806B27D1A64800CAFCE8 /* WorkScheduleModel.swift */; };
+		CA14AE42293798E4001497DF /* CalendarDayOfScheduleRecordCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA14AE41293798E4001497DF /* CalendarDayOfScheduleRecordCell.swift */; };
+		CA14AE442937A321001497DF /* CalendarHeaderOfScheduleRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA14AE432937A321001497DF /* CalendarHeaderOfScheduleRecordView.swift */; };
 		CA1592B127DF90E20021501D /* MainCoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1592B027DF90E20021501D /* MainCoverViewController.swift */; };
 		CA226762274402D50035663D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA226761274402D50035663D /* AppDelegate.swift */; };
 		CA226769274402D50035663D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA226767274402D50035663D /* Main.storyboard */; };
@@ -64,6 +66,8 @@
 
 /* Begin PBXFileReference section */
 		CA12806B27D1A64800CAFCE8 /* WorkScheduleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkScheduleModel.swift; sourceTree = "<group>"; };
+		CA14AE41293798E4001497DF /* CalendarDayOfScheduleRecordCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayOfScheduleRecordCell.swift; sourceTree = "<group>"; };
+		CA14AE432937A321001497DF /* CalendarHeaderOfScheduleRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderOfScheduleRecordView.swift; sourceTree = "<group>"; };
 		CA1592B027DF90E20021501D /* MainCoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoverViewController.swift; sourceTree = "<group>"; };
 		CA22675E274402D50035663D /* TimeToGoHome.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeToGoHome.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA226761274402D50035663D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -231,6 +235,8 @@
 				CA47B0F82924BAE700D3D8F7 /* MenuCell.swift */,
 				CA47B0FC2924C0F400D3D8F7 /* MenuHeaderView.swift */,
 				CABD62922928F96F004F3C4F /* MenuCoverViewController.swift */,
+				CA14AE432937A321001497DF /* CalendarHeaderOfScheduleRecordView.swift */,
+				CA14AE41293798E4001497DF /* CalendarDayOfScheduleRecordCell.swift */,
 				CA612DEB292D13BD00547AC2 /* WorkRecordViewController.swift */,
 				CA4589EB29338A46003CA0EB /* WorkRecordCell.swift */,
 				CA4589ED29338A67003CA0EB /* WorkRecordHeaderView.swift */,
@@ -359,6 +365,7 @@
 			files = (
 				CAB7CF372750C50F005C9232 /* CompanyAddressCell.swift in Sources */,
 				CAB7CF332750B5C7005C9232 /* MainViewController.swift in Sources */,
+				CA14AE42293798E4001497DF /* CalendarDayOfScheduleRecordCell.swift in Sources */,
 				CAB7CF292750B0FA005C9232 /* LocationManager.swift in Sources */,
 				CAB7CF482750CDCE005C9232 /* DayButtonView.swift in Sources */,
 				CA4589E829334983003CA0EB /* CareerViewController.swift in Sources */,
@@ -371,6 +378,7 @@
 				CA4EC6942936470D0079CFBE /* RecordScheduleCell.swift in Sources */,
 				CA47B0F72924BA9A00D3D8F7 /* MenuViewController.swift in Sources */,
 				CAA3B24F28018ED600FFF892 /* VacationButtonView.swift in Sources */,
+				CA14AE442937A321001497DF /* CalendarHeaderOfScheduleRecordView.swift in Sources */,
 				CAECA69127ED982C005D7859 /* ScheduleButtonView.swift in Sources */,
 				CAB7CF2F2750B2FE005C9232 /* TemplateViewController.swift in Sources */,
 				CA47B0FD2924C0F400D3D8F7 /* MenuHeaderView.swift in Sources */,

@@ -97,9 +97,13 @@ extension UIColor {
         }
     }
     
-    struct dayOff {
-        static var calendarDay: UIColor {
+    struct calendar {
+        static var vacation: UIColor {
             return .useRGB(red: 110, green: 217, blue: 228)
+        }
+        
+        static var todayMark: UIColor {
+            return .useRGB(red: 171, green: 171, blue: 171)
         }
         
         static var selectedDayBottomLine: UIColor {
