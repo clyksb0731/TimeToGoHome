@@ -17,7 +17,7 @@ enum MenuCoverType {
     case addNormalSchedule(NormalButtonType)
     case insertNormalSchedule(ScheduleType, NormalButtonType)
     case overtime(regularWork: MenuCoverRegularWorkType, overtime: Int?)
-    case annualPaidHolidays(numberOfPaidHolidays: Int)
+    case annualPaidHolidays(numberOfAnnualPaidHolidays: Int)
     case careerManagement
     case calendarOfScheduleRecord(company: Company)
 }
@@ -186,14 +186,71 @@ class MenuCoverViewController: UIViewController {
     }()
     
     // MARK: Annual paid holidays
-    lazy var annualPaidHolidaysBaseView: UIView = {
+    var annualPaidHolidaysView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
-        view.layer.cornerRadius = 10
+        view.layer.cornerRadius = 20 // FIXME: Need to check cornerRadius
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
+    
+    lazy var annualPaidHolidaysMarkLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 21, weight: .bold)
+        label.text = "연차 개수"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var annualPaidHolidaysPickerView: UIPickerView = {
+        let pickerView = UIPickerView()
+        pickerView.delegate = self
+        pickerView.dataSource = self
+        pickerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return pickerView
+    }()
+    
+    lazy var dayMarkLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.textColor = .black
+        label.textAlignment = .center
+        label.text = "일"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var cancelApplyingAnnualPaidHolidaysButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "x.circle", withConfiguration: UIImage.SymbolConfiguration(scale: .large)), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.tintColor = .useRGB(red: 61, green: 61, blue: 61, alpha: 0.5)
+        button.addTarget(self, action: #selector(cancelApplyingAnnualPaidHolidaysButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var applyAnnualPaidHolidaysButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "checkmark.circle", withConfiguration: UIImage.SymbolConfiguration(scale: .large)), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.tintColor = .useRGB(red: 61, green: 61, blue: 61, alpha: 0.5)
+        button.addTarget(self, action: #selector(applyAnnualPaidHolidaysButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    var annualPaidHolidays: [Int] = Array(1...25)
+    
+    var numberOfAnnualPaidHolidays: Int?
     
     // MARK: Career management
     lazy var careerBaseView: UIView = {
@@ -466,21 +523,23 @@ class MenuCoverViewController: UIViewController {
         return button
     }()
     
-    lazy var addCareerButton: UIButton = {
+    lazy var cancelCareerButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "checkmark.circle"), for: .normal)
+        button.setImage(UIImage(systemName: "x.circle", withConfiguration: UIImage.SymbolConfiguration(scale: .large)), for: .normal)
+        button.tintColor = .useRGB(red: 61, green: 61, blue: 61, alpha: 0.5)
         button.imageView?.contentMode = .scaleAspectFit
-        button.addTarget(self, action: #selector(addCareerButton(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(cancelCareerButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
     
-    lazy var cancelCareerButton: UIButton = {
+    lazy var addCareerButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "x.circle"), for: .normal)
+        button.setImage(UIImage(systemName: "checkmark.circle", withConfiguration: UIImage.SymbolConfiguration(scale: .large)), for: .normal)
+        button.tintColor = .useRGB(red: 61, green: 61, blue: 61, alpha: 0.5)
         button.imageView?.contentMode = .scaleAspectFit
-        button.addTarget(self, action: #selector(cancelCareerButton(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(addCareerButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -546,7 +605,7 @@ class MenuCoverViewController: UIViewController {
         button.setImage(UIImage(named: "previousMonthDisableButton"), for: .disabled)
         button.imageView?.contentMode = .scaleAspectFit
         button.addTarget(self, action: #selector(perviousMonthButton(_:)), for: .touchUpInside)
-        button.isEnabled = SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate ?? Date()).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate ?? Date()).month) != SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange.startDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange.startDate).month)
+        button.isEnabled = SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate ?? Date()).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate ?? Date()).month) != SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange!.startDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange!.startDate).month)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -571,7 +630,7 @@ class MenuCoverViewController: UIViewController {
         button.setImage(UIImage(named: "nextMonthDisableButton"), for: .disabled)
         button.imageView?.contentMode = .scaleAspectFit
         button.addTarget(self, action: #selector(nextMonthButton(_:)), for: .touchUpInside)
-        button.isEnabled = SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate ?? Date()).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate ?? Date()).month) != SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange.endDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange.endDate).month)
+        button.isEnabled = SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate ?? Date()).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate ?? Date()).month) != SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange!.endDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange!.endDate).month)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -599,24 +658,20 @@ class MenuCoverViewController: UIViewController {
     }()
     
     var targetYearMonthDate: Date?
-    
-    lazy var careerDateRange: (startDate: Date, endDate: Date) = {
-        return (Date(), Date()) // FIXME: temp code
-//        if case .calendarOfScheduleRecord(let company) = self.menuCoverType {
-//            return (startDate: SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(company.dateId))!, endDate: company.leavingDate ?? Date())
-//        }
-    }()
+    var careerDateRange: (startDate: Date, endDate: Date)?
     
     let menuCoverType: MenuCoverType
     private var delegate: MenuCoverDelegate?
     
     init(_ menuCoverType: MenuCoverType, delegate: MenuCoverDelegate?) {
-        self.menuCoverType = menuCoverType
         self.delegate = delegate
+        self.menuCoverType = menuCoverType
         
         super.init(nibName: nil, bundle: nil)
         
         self.modalPresentationStyle = .overCurrentContext
+        
+        self.initializeValueRelatedToMenuCoverType(self.menuCoverType)
     }
     
     required init?(coder: NSCoder) {
@@ -633,6 +688,12 @@ class MenuCoverViewController: UIViewController {
         self.setNotificationCenters()
         self.setSubviews()
         self.setLayouts()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.initializeAnnualPaidHolidaysOnPickerView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -784,8 +845,19 @@ extension MenuCoverViewController: EssentialViewMethods {
             
         case .annualPaidHolidays: // MARK: annualPaidHolidays
             SupportingMethods.shared.addSubviews([
-                
+                self.annualPaidHolidaysView
             ], to: self.baseView)
+            
+            SupportingMethods.shared.addSubviews([
+                self.annualPaidHolidaysMarkLabel,
+                self.annualPaidHolidaysPickerView,
+                self.cancelApplyingAnnualPaidHolidaysButton,
+                self.applyAnnualPaidHolidaysButton,
+            ], to: self.annualPaidHolidaysView)
+            
+            SupportingMethods.shared.addSubviews([
+                self.dayMarkLabel
+            ], to: self.annualPaidHolidaysPickerView)
             
         case .careerManagement: // MARK: careerManagement
             SupportingMethods.shared.addSubviews([
@@ -804,8 +876,8 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.leavingDateMarkLabel,
                 self.leavingDateView,
                 self.selectLeavingDateView,
-                self.addCareerButton,
-                self.cancelCareerButton
+                self.cancelCareerButton,
+                self.addCareerButton
             ], to: self.careerBaseView)
             
             SupportingMethods.shared.addSubviews([
@@ -853,7 +925,6 @@ extension MenuCoverViewController: EssentialViewMethods {
                 
             ], to: self.baseView)
         }
-        
     }
     
     func setLayouts() {
@@ -990,9 +1061,48 @@ extension MenuCoverViewController: EssentialViewMethods {
             ])
             
         case .annualPaidHolidays: // MARK: annualPaidHolidays
-            //
+            // annualPaidHolidaysView
             NSLayoutConstraint.activate([
-                
+                self.annualPaidHolidaysView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
+                self.annualPaidHolidaysView.heightAnchor.constraint(equalToConstant: 250),
+                self.annualPaidHolidaysView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 32),
+                self.annualPaidHolidaysView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -32)
+            ])
+            
+            // annualPaidHolidaysMarkLabel
+            NSLayoutConstraint.activate([
+                self.annualPaidHolidaysMarkLabel.topAnchor.constraint(equalTo: self.annualPaidHolidaysView.topAnchor, constant: 15),
+                self.annualPaidHolidaysMarkLabel.leadingAnchor.constraint(equalTo: self.annualPaidHolidaysView.leadingAnchor, constant: 25)
+            ])
+            
+            // annualPaidHolidaysPickerView
+            NSLayoutConstraint.activate([
+                self.annualPaidHolidaysPickerView.topAnchor.constraint(equalTo: self.annualPaidHolidaysMarkLabel.bottomAnchor),
+                self.annualPaidHolidaysPickerView.bottomAnchor.constraint(equalTo: self.applyAnnualPaidHolidaysButton.topAnchor),
+                self.annualPaidHolidaysPickerView.leadingAnchor.constraint(equalTo: self.annualPaidHolidaysView.leadingAnchor),
+                self.annualPaidHolidaysPickerView.trailingAnchor.constraint(equalTo: self.annualPaidHolidaysView.trailingAnchor)
+            ])
+            
+            // dayMarkLabel
+            NSLayoutConstraint.activate([
+                self.dayMarkLabel.centerYAnchor.constraint(equalTo: self.annualPaidHolidaysPickerView.centerYAnchor),
+                self.dayMarkLabel.leadingAnchor.constraint(equalTo: self.annualPaidHolidaysPickerView.centerXAnchor, constant: 20)
+            ])
+            
+            // cancelApplyingAnnualPaidHolidaysButton
+            NSLayoutConstraint.activate([
+                self.cancelApplyingAnnualPaidHolidaysButton.bottomAnchor.constraint(equalTo: self.annualPaidHolidaysView.bottomAnchor, constant: -10),
+                self.cancelApplyingAnnualPaidHolidaysButton.heightAnchor.constraint(equalToConstant: 28),
+                self.cancelApplyingAnnualPaidHolidaysButton.trailingAnchor.constraint(equalTo: self.annualPaidHolidaysView.centerXAnchor, constant: -60),
+                self.cancelApplyingAnnualPaidHolidaysButton.widthAnchor.constraint(equalToConstant: 28)
+            ])
+            
+            // applyAnnualPaidHolidaysButton
+            NSLayoutConstraint.activate([
+                self.applyAnnualPaidHolidaysButton.bottomAnchor.constraint(equalTo: self.annualPaidHolidaysView.bottomAnchor, constant: -10),
+                self.applyAnnualPaidHolidaysButton.heightAnchor.constraint(equalToConstant: 28),
+                self.applyAnnualPaidHolidaysButton.leadingAnchor.constraint(equalTo: self.annualPaidHolidaysView.centerXAnchor, constant: 60),
+                self.applyAnnualPaidHolidaysButton.widthAnchor.constraint(equalToConstant: 28)
             ])
             
         case .careerManagement: // MARK: careerManagement
@@ -1225,20 +1335,20 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.selectLeavingDateButton.trailingAnchor.constraint(equalTo: self.selectLeavingDateView.trailingAnchor)
             ])
             
-            // addCareerButton
-            NSLayoutConstraint.activate([
-                self.addCareerButton.bottomAnchor.constraint(equalTo: self.careerBaseView.bottomAnchor, constant: -10),
-                self.addCareerButton.heightAnchor.constraint(equalToConstant: 28),
-                self.addCareerButton.trailingAnchor.constraint(equalTo: self.careerBaseView.centerXAnchor, constant: -60),
-                self.addCareerButton.widthAnchor.constraint(equalToConstant: 28)
-            ])
-            
             // cancelCareerButton
             NSLayoutConstraint.activate([
                 self.cancelCareerButton.bottomAnchor.constraint(equalTo: self.careerBaseView.bottomAnchor, constant: -10),
                 self.cancelCareerButton.heightAnchor.constraint(equalToConstant: 28),
-                self.cancelCareerButton.leadingAnchor.constraint(equalTo: self.careerBaseView.centerXAnchor, constant: 60),
+                self.cancelCareerButton.trailingAnchor.constraint(equalTo: self.careerBaseView.centerXAnchor, constant: -60),
                 self.cancelCareerButton.widthAnchor.constraint(equalToConstant: 28)
+            ])
+            
+            // addCareerButton
+            NSLayoutConstraint.activate([
+                self.addCareerButton.bottomAnchor.constraint(equalTo: self.careerBaseView.bottomAnchor, constant: -10),
+                self.addCareerButton.heightAnchor.constraint(equalToConstant: 28),
+                self.addCareerButton.leadingAnchor.constraint(equalTo: self.careerBaseView.centerXAnchor, constant: 60),
+                self.addCareerButton.widthAnchor.constraint(equalToConstant: 28)
             ])
             
             // popUpPanelView
@@ -1293,9 +1403,29 @@ extension MenuCoverViewController: EssentialViewMethods {
 
 // MARK: - Extension for methods added
 extension MenuCoverViewController {
+    func initializeValueRelatedToMenuCoverType(_ menuCoverType: MenuCoverType) {
+        if case .annualPaidHolidays(let numberOfAnnualPaidHolidays) = menuCoverType {
+            self.numberOfAnnualPaidHolidays = numberOfAnnualPaidHolidays
+        }
+        
+        if case .calendarOfScheduleRecord(let company) = menuCoverType {
+            let startDateOfCareer = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(company.dateId))!
+            
+            self.careerDateRange = (startDate: startDateOfCareer, endDate: company.leavingDate ?? Date()) // MARK: to Today??
+            
+            self.targetYearMonthDate = company.leavingDate ?? Date()
+        }
+    }
+    
     func initializeCountDownDuration() {
         if case .overtime(_, let overtime) = menuCoverType {
             self.datePicker.countDownDuration = TimeInterval(overtime ?? 60)
+        }
+    }
+    
+    func initializeAnnualPaidHolidaysOnPickerView() {
+        if case .annualPaidHolidays = menuCoverType {
+            self.annualPaidHolidaysPickerView.selectRow(self.annualPaidHolidays.firstIndex(of: self.numberOfAnnualPaidHolidays!)!, inComponent: 0, animated: false)
         }
     }
 }
@@ -1437,6 +1567,15 @@ extension MenuCoverViewController {
         }
     }
     
+    // MARK: annual paid holidays
+    @objc func applyAnnualPaidHolidaysButton(_ sender: UIButton) {
+       
+    }
+    
+    @objc func cancelApplyingAnnualPaidHolidaysButton(_ sender: UIButton) {
+        
+    }
+    
     // MARK: career management
     @objc func selectJoiningDateButton(_ sender: UIButton) {
         // hide career base view
@@ -1491,6 +1630,25 @@ extension MenuCoverViewController: UICollectionViewDelegate, UICollectionViewDat
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         return UICollectionViewCell() // FIXME: temp code
     }
+}
+
+// MARK: - Extension for UIPickerViewDelegate, UIPickerViewDataSource
+extension MenuCoverViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
     
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return self.annualPaidHolidays.count
+    }
     
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return String(self.annualPaidHolidays[row])
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        print("Number of annual paid holidays: \(self.annualPaidHolidays[row])")
+        
+        self.numberOfAnnualPaidHolidays = self.annualPaidHolidays[row]
+    }
 }

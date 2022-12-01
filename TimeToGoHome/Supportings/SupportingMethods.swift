@@ -36,9 +36,9 @@ enum InitialSetting: String {
     case isIgnoredLunchTimeForHalfVacation // 반차 시 점심시간 무시 여부
     
     // 휴무 정보
-    case holidays // 정기 휴무 요일
-    case annualVacationType // 휴가기준 (회계연도/입사날짜)
-    case numberOfTotalVacations // 연차 개수
+    case regularHolidays // 정기 휴무 요일
+    case annualPaidHolidayType // 휴가기준 (회계연도/입사날짜)
+    case annualPaidHolidays // 연차 개수
 }
 
 enum CoverViewState {

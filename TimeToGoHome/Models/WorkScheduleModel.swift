@@ -184,7 +184,7 @@ extension WorkScheduleModel {
                 }
                 
             } else {
-                let holidays = ReferenceValues.initialSetting[InitialSetting.holidays.rawValue] as! [Int]
+                let holidays = ReferenceValues.initialSetting[InitialSetting.regularHolidays.rawValue] as! [Int]
                 if holidays.contains(SupportingMethods.shared.getWeekdayOfDate(self.date)) {
                     self.morning = .morning(.holiday)
                     self.afternoon = .afternoon(.holiday)

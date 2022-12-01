@@ -277,8 +277,8 @@ extension AppDelegate {
 //        }(), for: .joiningDate)
 //        SupportingMethods.shared.setAppSetting(with: true, for: .isIgnoredLunchTimeForHalfVacation)
 //        //SupportingMethods.shared.setAppSetting(with: "fiscalYear", for: .vacationType)
-//        SupportingMethods.shared.setAppSetting(with: "joiningDay", for: .annualVacationType)
-//        SupportingMethods.shared.setAppSetting(with: [1,7], for: .holidays)
+//        SupportingMethods.shared.setAppSetting(with: "joiningDay", for: .annualPaidHolidayType)
+//        SupportingMethods.shared.setAppSetting(with: [1,7], for: .regularHolidays)
 //        SupportingMethods.shared.setAppSetting(with: 15, for: .numberOfTotalVacations)
     }
 }

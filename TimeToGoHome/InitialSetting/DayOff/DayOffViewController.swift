@@ -185,7 +185,7 @@ class DayOffViewController: UIViewController {
             .foregroundColor:UIColor.black,
             .paragraphStyle:paragraphStyle
         ])
-        let totalOfVacationsText = NSAttributedString(string: " \(self.numberOfTotalVacations)일", attributes: [
+        let totalOfVacationsText = NSAttributedString(string: " \(self.numberOfAnnualPaidHolidays)일", attributes: [
             .font:UIFont.systemFont(ofSize: 16, weight: .bold),
             .foregroundColor:UIColor.black,
             .paragraphStyle:paragraphStyle
@@ -416,7 +416,7 @@ class DayOffViewController: UIViewController {
         return button
     }()
     
-    lazy var numberOfTotalVacationsLabel: UILabel = {
+    lazy var numberOfAnnualPaidHolidaysLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
         label.textColor = .black
@@ -476,16 +476,16 @@ class DayOffViewController: UIViewController {
 //    var contentViewHeightAnchor: NSLayoutConstraint!
     var selectedIndexOfYearMonthAndDay: (year: Int, month: Int, day: Int)?
     
-    var numberOfTotalVacations: Int = {
-        if let numberOfTotalVacations = ReferenceValues.initialSetting[InitialSetting.numberOfTotalVacations.rawValue] as? Int {
-            return numberOfTotalVacations
+    var numberOfAnnualPaidHolidays: Int = {
+        if let numberOfAnnualPaidHolidays = ReferenceValues.initialSetting[InitialSetting.annualPaidHolidays.rawValue] as? Int {
+            return numberOfAnnualPaidHolidays
             
         } else {
             return 15
         }
     }()
     
-    var tempNumberOfTotalVacations: Int!
+    var tempNumberOfAnnualPaidHolidays: Int!
     
     lazy var numberOfVacationsHold: Double = {
         return self.calculateVacationValue()
@@ -501,7 +501,7 @@ class DayOffViewController: UIViewController {
     var vacations: Results<Vacation> = VacationModel.vacations
     
     var annualVacationType: AnnualVacationType = {
-        if let annualVacationType = ReferenceValues.initialSetting[InitialSetting.annualVacationType.rawValue] as? String,
+        if let annualVacationType = ReferenceValues.initialSetting[InitialSetting.annualPaidHolidayType.rawValue] as? String,
             let annualVacationType = AnnualVacationType(rawValue: annualVacationType) {
             return annualVacationType
             
@@ -512,7 +512,7 @@ class DayOffViewController: UIViewController {
     lazy var tempAnnualVacationType: AnnualVacationType = self.annualVacationType
     
     var holidays: Set<Int> = {
-        if let holidays = ReferenceValues.initialSetting[InitialSetting.holidays.rawValue] as? [Int] {
+        if let holidays = ReferenceValues.initialSetting[InitialSetting.regularHolidays.rawValue] as? [Int] {
             return Set(holidays)
             
         } else {
@@ -701,7 +701,7 @@ extension DayOffViewController {
         
         SupportingMethods.shared.addSubviews([
             self.minusButton,
-            self.numberOfTotalVacationsLabel,
+            self.numberOfAnnualPaidHolidaysLabel,
             self.plusButton
         ], to: self.settingNumberOfTotalVacationView)
     }
@@ -1009,12 +1009,12 @@ extension DayOffViewController {
             self.minusButton.widthAnchor.constraint(equalToConstant: 36)
         ])
         
-        // numberOfTotalVacationsLabel layout
+        // numberOfAnnualPaidHolidaysLabel layout
         NSLayoutConstraint.activate([
-            self.numberOfTotalVacationsLabel.topAnchor.constraint(equalTo: self.settingNumberOfTotalVacationView.topAnchor),
-            self.numberOfTotalVacationsLabel.bottomAnchor.constraint(equalTo: self.settingNumberOfTotalVacationView.bottomAnchor),
-            self.numberOfTotalVacationsLabel.leadingAnchor.constraint(equalTo: self.minusButton.trailingAnchor),
-            self.numberOfTotalVacationsLabel.trailingAnchor.constraint(equalTo: self.plusButton.leadingAnchor)
+            self.numberOfAnnualPaidHolidaysLabel.topAnchor.constraint(equalTo: self.settingNumberOfTotalVacationView.topAnchor),
+            self.numberOfAnnualPaidHolidaysLabel.bottomAnchor.constraint(equalTo: self.settingNumberOfTotalVacationView.bottomAnchor),
+            self.numberOfAnnualPaidHolidaysLabel.leadingAnchor.constraint(equalTo: self.minusButton.trailingAnchor),
+            self.numberOfAnnualPaidHolidaysLabel.trailingAnchor.constraint(equalTo: self.plusButton.leadingAnchor)
         ])
         
         // plusButton layout
@@ -1154,7 +1154,7 @@ extension DayOffViewController {
             .foregroundColor:UIColor.black,
             .paragraphStyle:paragraphStyle
         ])
-        let totalOfVacationsText = NSAttributedString(string: " \(self.numberOfTotalVacations)일", attributes: [
+        let totalOfVacationsText = NSAttributedString(string: " \(self.numberOfAnnualPaidHolidays)일", attributes: [
             .font:UIFont.systemFont(ofSize: 16, weight: .bold),
             .foregroundColor:UIColor.black,
             .paragraphStyle:paragraphStyle
@@ -1307,8 +1307,8 @@ extension DayOffViewController {
     @objc func numberOfVacationButton(_ sender: UIButton) {
         UIDevice.softHaptic()
         
-        self.tempNumberOfTotalVacations = self.numberOfTotalVacations
-        self.numberOfTotalVacationsLabel.text = "\(self.numberOfTotalVacations)"
+        self.tempNumberOfAnnualPaidHolidays = self.numberOfAnnualPaidHolidays
+        self.numberOfAnnualPaidHolidaysLabel.text = "\(self.numberOfAnnualPaidHolidays)"
         
         self.tempAnnualVacationType = self.annualVacationType
         
@@ -1431,19 +1431,19 @@ extension DayOffViewController {
     @objc func minusButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
-        self.numberOfTotalVacations -= 1
+        self.numberOfAnnualPaidHolidays -= 1
         
-        self.minusButton.isEnabled = Double(self.numberOfTotalVacations - 1) >= self.numberOfVacationsHold
-        self.numberOfTotalVacationsLabel.text = "\(self.numberOfTotalVacations)"
+        self.minusButton.isEnabled = Double(self.numberOfAnnualPaidHolidays - 1) >= self.numberOfVacationsHold
+        self.numberOfAnnualPaidHolidaysLabel.text = "\(self.numberOfAnnualPaidHolidays)"
     }
     
     @objc func plusButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
-        self.numberOfTotalVacations += 1
+        self.numberOfAnnualPaidHolidays += 1
         
-        self.minusButton.isEnabled = Double(self.numberOfTotalVacations - 1) >= self.numberOfVacationsHold
-        self.numberOfTotalVacationsLabel.text = "\(self.numberOfTotalVacations)"
+        self.minusButton.isEnabled = Double(self.numberOfAnnualPaidHolidays - 1) >= self.numberOfVacationsHold
+        self.numberOfAnnualPaidHolidaysLabel.text = "\(self.numberOfAnnualPaidHolidays)"
     }
     
     @objc func confirmButton(_ sender: UIButton) {
@@ -1489,15 +1489,15 @@ extension DayOffViewController {
     
     @objc func declineButton(_ sender: UIButton) {
         self.annualVacationType = self.tempAnnualVacationType
-        self.numberOfTotalVacations = self.tempNumberOfTotalVacations
+        self.numberOfAnnualPaidHolidays = self.tempNumberOfAnnualPaidHolidays
         
         self.coverView.isHidden = true
     }
     
     @objc func startButton(_ sender: UIButton) {
-        ReferenceValues.initialSetting.updateValue(self.annualVacationType.rawValue, forKey: InitialSetting.annualVacationType.rawValue)
-        ReferenceValues.initialSetting.updateValue(self.numberOfTotalVacations, forKey: InitialSetting.numberOfTotalVacations.rawValue)
-        ReferenceValues.initialSetting.updateValue(Array(self.holidays), forKey: InitialSetting.holidays.rawValue)
+        ReferenceValues.initialSetting.updateValue(self.annualVacationType.rawValue, forKey: InitialSetting.annualPaidHolidayType.rawValue)
+        ReferenceValues.initialSetting.updateValue(self.numberOfAnnualPaidHolidays, forKey: InitialSetting.annualPaidHolidays.rawValue)
+        ReferenceValues.initialSetting.updateValue(Array(self.holidays), forKey: InitialSetting.regularHolidays.rawValue)
         
         self.completeInitialSettings()
         
