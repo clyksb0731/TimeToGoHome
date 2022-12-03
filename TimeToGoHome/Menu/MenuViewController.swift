@@ -316,24 +316,9 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.section == 2 && indexPath.row == 1 {
-//            let careerVC = CareerViewController()
-//
-//            self.navigationController?.pushViewController(careerVC, animated: true)
-            
-            // FIXME: for test
-//            let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
-//            companyModel.setLeavingDate(nil)
-//            
-//            ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.leavingDate.rawValue)
-//            SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
-//            
-//            self.leavingDate = nil
-//            self.menuTableView.reloadData()
-            
-            // FIXME: for test
-            let dayWorkRecordVC = DayWorkRecordViewController(workScheduleRecord: WorkScheduleRecordModel(dateId: 20221130, morning: .work, afternoon: .work, overtime: 3600))
-            
-            self.navigationController?.pushViewController(dayWorkRecordVC, animated: true)
+            let careerVC = CareerViewController()
+
+            self.navigationController?.pushViewController(careerVC, animated: true)
         }
         
         let todayDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: Date()))!
@@ -345,8 +330,8 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         if indexPath.section == 0 && indexPath.row == 0 {
-            let workRecordVC = WorkRecordViewController()
-            workRecordVC.workRecords = self.convertToWorkRecordsFromSchedules()
+            let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
+            let workRecordVC = WorkRecordViewController(companyModel: companyModel, workRecords: self.convertToWorkRecordsFromSchedules())
             
             self.navigationController?.pushViewController(workRecordVC, animated: true)
         }

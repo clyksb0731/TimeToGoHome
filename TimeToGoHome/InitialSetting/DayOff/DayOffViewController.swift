@@ -777,7 +777,7 @@ extension DayOffViewController {
         // yearMonthButtonView layout
         NSLayoutConstraint.activate([
             self.yearMonthButtonView.centerYAnchor.constraint(equalTo: self.vacationSettingButtonView.centerYAnchor),
-            self.yearMonthLabel.heightAnchor.constraint(equalToConstant: 21),
+            self.yearMonthButtonView.heightAnchor.constraint(equalToConstant: 21),
             self.yearMonthButtonView.trailingAnchor.constraint(equalTo: self.vacationSettingButtonView.trailingAnchor),
             self.yearMonthButtonView.widthAnchor.constraint(equalToConstant: 150)
         ])
@@ -794,8 +794,8 @@ extension DayOffViewController {
         NSLayoutConstraint.activate([
             self.yearMonthLabel.topAnchor.constraint(equalTo: self.yearMonthButtonView.topAnchor),
             self.yearMonthLabel.bottomAnchor.constraint(equalTo: self.yearMonthButtonView.bottomAnchor),
-            self.yearMonthLabel.leadingAnchor.constraint(equalTo: self.yearMonthButtonView.leadingAnchor),
-            self.yearMonthLabel.trailingAnchor.constraint(equalTo: self.yearMonthButtonView.trailingAnchor)
+            self.yearMonthLabel.leadingAnchor.constraint(equalTo: self.previousMonthButton.trailingAnchor),
+            self.yearMonthLabel.trailingAnchor.constraint(equalTo: self.nextMonthButton.leadingAnchor)
         ])
         
         // nextMonthButton layout

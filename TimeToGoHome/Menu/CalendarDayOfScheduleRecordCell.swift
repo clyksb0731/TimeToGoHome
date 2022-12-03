@@ -176,7 +176,8 @@ extension CalendarDayOfScheduleRecordCell: EssentialCellHeaderMethods {
 // MARK: - Extension for methods added
 extension CalendarDayOfScheduleRecordCell {
     func setItem(_ date: Date?,
-                 recordSchedule: WorkScheduleRecordModel? = nil,
+                 recordedSchedule: WorkScheduleRecordModel? = nil,
+                 isToday: Bool = false,
                  isSelected: Bool = false,
                  isEnable: Bool = false) {
         if let date = date {
@@ -184,13 +185,12 @@ extension CalendarDayOfScheduleRecordCell {
             self.baseView.isHidden = false
             
             let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
-            let todayYearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(Date())
             
             self.dayLabel.text = String(yearMonthDay.day)
             self.dayLabel.textColor = isEnable ? .black : .useRGB(red: 185, green: 185, blue: 185)
             
-            if let recordSchedule = recordSchedule {
-                if let morning = recordSchedule.morning {
+            if let recordedSchedule = recordedSchedule {
+                if let morning = recordedSchedule.morning {
                     switch morning {
                     case .work:
                         self.morningPointView.backgroundColor = .record.work
@@ -206,7 +206,7 @@ extension CalendarDayOfScheduleRecordCell {
                     self.morningPointView.backgroundColor = .clear
                 }
                 
-                if let afternoon = recordSchedule.afternoon {
+                if let afternoon = recordedSchedule.afternoon {
                     switch afternoon {
                     case .work:
                         self.morningPointView.backgroundColor = .record.work
@@ -222,7 +222,7 @@ extension CalendarDayOfScheduleRecordCell {
                     self.afternoonPointView.backgroundColor = .clear
                 }
                 
-                self.overtimePointView.backgroundColor = recordSchedule.overtime != nil ? .record.overtime : .clear
+                self.overtimePointView.backgroundColor = recordedSchedule.overtime != nil ? .record.overtime : .clear
                 
             } else {
                 self.morningPointView.backgroundColor = .clear
@@ -230,9 +230,7 @@ extension CalendarDayOfScheduleRecordCell {
                 self.overtimePointView.backgroundColor = .clear
             }
             
-            self.todayMarkLabel.isHidden = !(yearMonthDay.year == todayYearMonthDay.year &&
-                                             yearMonthDay.month == todayYearMonthDay.month &&
-                                             yearMonthDay.day == todayYearMonthDay.day)
+            self.todayMarkLabel.isHidden = !isToday
             
             self.bottomLineView.isHidden = !isSelected
             

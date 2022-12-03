@@ -80,7 +80,7 @@ class DayWorkRecordViewController: UIViewController {
         return label
     }()
     
-    var workScheduleRecord: WorkScheduleRecordModel
+    var recordedSchedule: WorkScheduleRecordModel
     
     var recordScheduleTableViewHeightAncor: NSLayoutConstraint!
     
@@ -90,10 +90,10 @@ class DayWorkRecordViewController: UIViewController {
         }
     }
     
-    init(workScheduleRecord: WorkScheduleRecordModel) {
-        self.workScheduleRecord = workScheduleRecord
+    init(recordedSchedule: WorkScheduleRecordModel) {
+        self.recordedSchedule = recordedSchedule
         
-        self.isEditingMode = workScheduleRecord.morning == nil
+        self.isEditingMode = recordedSchedule.morning == nil
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -132,7 +132,7 @@ extension DayWorkRecordViewController: EssentialViewMethods {
         
         self.navigationController?.setNavigationBarHidden(false, animated: true);
         
-        let recordScheduleDate: Date! = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.workScheduleRecord.dateId))
+        let recordScheduleDate: Date! = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.recordedSchedule.dateId))
         self.navigationItem.title = SupportingMethods.shared.makeDateFormatter("yyyy년 M월 d일").string(from: recordScheduleDate)
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "backButtonItemImage"), style: .plain, target: self, action: #selector(leftBarButtonItem(_:)))
         self.navigationItem.leftBarButtonItem?.tintColor = .black
@@ -241,10 +241,10 @@ extension DayWorkRecordViewController {
     }
     
     func calculateTableViewHeight() -> CGFloat {
-        if self.workScheduleRecord.count == 1 {
+        if self.recordedSchedule.count == 1 {
             return ReferenceValues.size.record.normalScheduleHeight + ReferenceValues.size.record.schedulingHeight
             
-        } else if self.workScheduleRecord.count == 2 {
+        } else if self.recordedSchedule.count == 2 {
             if self.isEditingMode {
                 return ReferenceValues.size.record.normalScheduleHeight * 2 + ReferenceValues.size.record.schedulingHeight
                 
@@ -252,7 +252,7 @@ extension DayWorkRecordViewController {
                 return ReferenceValues.size.record.normalScheduleHeight * 2
             }
             
-        } else if self.workScheduleRecord.count == 3 {
+        } else if self.recordedSchedule.count == 3 {
             return ReferenceValues.size.record.normalScheduleHeight * 2 + ReferenceValues.size.record.overtimeScheduleHeight
             
         } else { // 0
@@ -274,8 +274,8 @@ extension DayWorkRecordViewController {
     @objc func addScheduleButton(_ sender: UIButton) {
         print("addRecordScheduleButton")
         
-        if self.workScheduleRecord.count == 1 {
-            switch self.workScheduleRecord.morning! {
+        if self.recordedSchedule.count == 1 {
+            switch self.recordedSchedule.morning! {
             case .work:
                 let menuCoverVC = MenuCoverViewController(.addNormalSchedule(.allButton), delegate: self)
                 
@@ -292,8 +292,8 @@ extension DayWorkRecordViewController {
                 self.present(menuCoverVC, animated: false)
             }
             
-        } else if self.workScheduleRecord.count == 2 {
-            let menuCoverVC = MenuCoverViewController(.overtime(regularWork: self.workScheduleRecord.regularWorkType!, overtime: self.workScheduleRecord.overtime), delegate: self)
+        } else if self.recordedSchedule.count == 2 {
+            let menuCoverVC = MenuCoverViewController(.overtime(regularWork: self.recordedSchedule.regularWorkType!, overtime: self.recordedSchedule.overtime), delegate: self)
             
             self.present(menuCoverVC, animated: false)
             
@@ -310,15 +310,15 @@ extension DayWorkRecordViewController {
         print("removeRecordScheduleButton")
         
         if sender.tag == 1 {
-            self.workScheduleRecord.morning = nil
+            self.recordedSchedule.morning = nil
         }
         
         if sender.tag == 2 {
-            self.workScheduleRecord.afternoon = nil
+            self.recordedSchedule.afternoon = nil
         }
         
         if sender.tag == 3 {
-            self.workScheduleRecord.overtime = nil
+            self.recordedSchedule.overtime = nil
         }
         
         self.determineTableView()
@@ -328,10 +328,10 @@ extension DayWorkRecordViewController {
 // MARK: - Extension for UITableViewDelegate, UITableViewDataSource
 extension DayWorkRecordViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if self.workScheduleRecord.count == 1 {
+        if self.recordedSchedule.count == 1 {
             return 2
             
-        } else if self.workScheduleRecord.count == 2 {
+        } else if self.recordedSchedule.count == 2 {
             if self.isEditingMode {
                 return 3
                 
@@ -339,7 +339,7 @@ extension DayWorkRecordViewController: UITableViewDelegate, UITableViewDataSourc
                 return 2
             }
             
-        } else if self.workScheduleRecord.count == 3 {
+        } else if self.recordedSchedule.count == 3 {
             return 3
             
         } else { // count == 0
@@ -348,7 +348,7 @@ extension DayWorkRecordViewController: UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if self.workScheduleRecord.count == 1 {
+        if self.recordedSchedule.count == 1 {
             if indexPath.row == 0 {
                 return ReferenceValues.size.record.normalScheduleHeight
                 
@@ -356,7 +356,7 @@ extension DayWorkRecordViewController: UITableViewDelegate, UITableViewDataSourc
                 return ReferenceValues.size.record.schedulingHeight
             }
             
-        } else if self.workScheduleRecord.count == 2 {
+        } else if self.recordedSchedule.count == 2 {
             if self.isEditingMode {
                 if indexPath.row == 0 {
                     return ReferenceValues.size.record.normalScheduleHeight
@@ -377,7 +377,7 @@ extension DayWorkRecordViewController: UITableViewDelegate, UITableViewDataSourc
                 }
             }
             
-        } else if self.workScheduleRecord.count == 3 {
+        } else if self.recordedSchedule.count == 3 {
             if indexPath.row == 0 {
                 return ReferenceValues.size.record.normalScheduleHeight
                 
@@ -394,10 +394,10 @@ extension DayWorkRecordViewController: UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if self.workScheduleRecord.count == 1 {
+        if self.recordedSchedule.count == 1 {
             if indexPath.row == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RecordScheduleCell", for: indexPath) as! RecordScheduleCell
-                cell.setCell(recordSchedule: self.workScheduleRecord, isEditingMode: true, tag: 1)
+                cell.setCell(recordSchedule: self.recordedSchedule, isEditingMode: true, tag: 1)
                 cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                 
                 return cell
@@ -409,17 +409,17 @@ extension DayWorkRecordViewController: UITableViewDelegate, UITableViewDataSourc
                 return cell
             }
             
-        } else if self.workScheduleRecord.count == 2 {
+        } else if self.recordedSchedule.count == 2 {
             if self.isEditingMode {
                 if indexPath.row == 0 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "RecordScheduleCell", for: indexPath) as! RecordScheduleCell
-                    cell.setCell(recordSchedule: self.workScheduleRecord, isEditingMode: false, tag: 1)
+                    cell.setCell(recordSchedule: self.recordedSchedule, isEditingMode: false, tag: 1)
                     
                     return cell
                     
                 } else if indexPath.row == 1 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "RecordScheduleCell", for: indexPath) as! RecordScheduleCell
-                    cell.setCell(recordSchedule: self.workScheduleRecord, isEditingMode: true, tag: 2)
+                    cell.setCell(recordSchedule: self.recordedSchedule, isEditingMode: true, tag: 2)
                     cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                     
                     return cell
@@ -434,34 +434,34 @@ extension DayWorkRecordViewController: UITableViewDelegate, UITableViewDataSourc
             } else {
                 if indexPath.row == 0 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "RecordScheduleCell", for: indexPath) as! RecordScheduleCell
-                    cell.setCell(recordSchedule: self.workScheduleRecord, isEditingMode: false, tag: 1)
+                    cell.setCell(recordSchedule: self.recordedSchedule, isEditingMode: false, tag: 1)
                     
                     return cell
                     
                 } else { // row == 1
                     let cell = tableView.dequeueReusableCell(withIdentifier: "RecordScheduleCell", for: indexPath) as! RecordScheduleCell
-                    cell.setCell(recordSchedule: self.workScheduleRecord, isEditingMode: false, tag: 2)
+                    cell.setCell(recordSchedule: self.recordedSchedule, isEditingMode: false, tag: 2)
                     
                     return cell
                 }
             }
             
-        } else if self.workScheduleRecord.count == 3 {
+        } else if self.recordedSchedule.count == 3 {
             if indexPath.row == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RecordScheduleCell", for: indexPath) as! RecordScheduleCell
-                cell.setCell(recordSchedule: self.workScheduleRecord, isEditingMode: false, tag: 1)
+                cell.setCell(recordSchedule: self.recordedSchedule, isEditingMode: false, tag: 1)
                 
                 return cell
                 
             } else if indexPath.row == 1 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RecordScheduleCell", for: indexPath) as! RecordScheduleCell
-                cell.setCell(recordSchedule: self.workScheduleRecord, isEditingMode: false, tag: 2)
+                cell.setCell(recordSchedule: self.recordedSchedule, isEditingMode: false, tag: 2)
                 
                 return cell
                 
             } else { // row == 2
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RecordScheduleCell", for: indexPath) as! RecordScheduleCell
-                cell.setCell(recordSchedule: self.workScheduleRecord, isEditingMode: self.isEditingMode, tag: 3)
+                cell.setCell(recordSchedule: self.recordedSchedule, isEditingMode: self.isEditingMode, tag: 3)
                 cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
                 
                 return cell

@@ -107,7 +107,7 @@ extension UIColor {
         }
         
         static var selectedDayBottomLine: UIColor {
-            return .useRGB(red: 234, green: 234, blue: 234)
+            return .useRGB(red: 121, green: 121, blue: 121) //.useRGB(red: 234, green: 234, blue: 234)
         }
     }
     
