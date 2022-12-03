@@ -89,7 +89,7 @@ class MenuCell: UITableViewCell {
 // MARK: - Extension for essential methods
 extension MenuCell: EssentialCellHeaderMethods {
     func setViewFoundation() {
-        self.selectionStyle = .none
+        //self.selectionStyle = .none
         self.contentView.isUserInteractionEnabled = true
     }
     
@@ -115,7 +115,8 @@ extension MenuCell: EssentialCellHeaderMethods {
             self.itemTextLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 11),
             self.itemTextLabel.heightAnchor.constraint(equalToConstant: 22),
             self.itemTextLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -11),
-            self.itemTextLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16)
+            self.itemTextLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
+            self.itemTextLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -46)
         ])
         
         // openVCImageView
@@ -154,7 +155,10 @@ extension MenuCell {
         self.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
         self.openVCImageView.alpha = isEnable ? 1.0 : 0.5
         
+        self.itemTextLabel.font = .systemFont(ofSize: 17, weight: .regular)
         self.itemTextLabel.text = text
+        
+        self.selectionStyle = .default
         
         switch style {
         case .openVC:
@@ -176,10 +180,14 @@ extension MenuCell {
             
             self.sideLabel.text = text
             
+            self.selectionStyle = .none
+            
         case .button:
             self.openVCImageView.isHidden = true
             self.switchButton.isHidden = true
             self.sideLabel.isHidden = true
+            
+            self.itemTextLabel.font = .systemFont(ofSize: 17, weight: .bold)
         }
     }
 }

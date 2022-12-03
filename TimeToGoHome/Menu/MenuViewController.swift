@@ -284,14 +284,19 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let todayDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: Date()))!
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "MenuCell", for: indexPath) as! MenuCell
         
         if let leavingDate = self.leavingDate {
-            let leavingDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: leavingDate))!
-            cell.setCell(self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
-                         itemText: self.menuArray[indexPath.section].items[indexPath.row].menuText,
+            let infoDateFormatter = SupportingMethods.shared.makeDateFormatter("yyyy.M.d")
+            let orderingDateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+            let leavingDateId = Int(orderingDateFormatter.string(from: leavingDate))!
+            let todayDateId = Int(orderingDateFormatter.string(from: Date()))!
+            
+            cell.setCell((indexPath.section == 2 && indexPath.row == 2) &&
+                         (todayDateId > leavingDateId) ? .label(infoDateFormatter.string(from: leavingDate)) : self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
+                         itemText: indexPath.section == 2 && indexPath.row == 2 ?
+                         todayDateId <= leavingDateId ? "퇴사일 변경 (예정일: \(infoDateFormatter.string(from: leavingDate)))" : "퇴직일"
+                         : self.menuArray[indexPath.section].items[indexPath.row].menuText,
                          isEnable: todayDateId <= leavingDateId || (indexPath.section == 2 && indexPath.row == 1))
             
         } else {
@@ -304,10 +309,22 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
         if indexPath.section == 2 && indexPath.row == 1 {
 //            let careerVC = CareerViewController()
 //
 //            self.navigationController?.pushViewController(careerVC, animated: true)
+            
+            // FIXME: for test
+//            let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
+//            companyModel.setLeavingDate(nil)
+//            
+//            ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.leavingDate.rawValue)
+//            SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+//            
+//            self.leavingDate = nil
+//            self.menuTableView.reloadData()
             
             // FIXME: for test
             let dayWorkRecordVC = DayWorkRecordViewController(workScheduleRecord: WorkScheduleRecordModel(dateId: 20221130, morning: .work, afternoon: .work, overtime: 3600))
@@ -354,6 +371,8 @@ extension MenuViewController: MenuCoverDelegate {
                 ReferenceValues.initialSetting.updateValue(date, forKey: InitialSetting.leavingDate.rawValue)
                 SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
                 
+                self.menuTableView.reloadData()
+                
                 // FIXME: Go to menu? Main? How to handle today schedule after this?
                 
             }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)
@@ -365,6 +384,8 @@ extension MenuViewController: MenuCoverDelegate {
                 self.leavingDate = date
                 ReferenceValues.initialSetting.updateValue(date, forKey: InitialSetting.leavingDate.rawValue)
                 SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+                
+                self.menuTableView.reloadData()
                 
                 // FIXME: Go to menu? Main? How to handle today schedule after this?
                 

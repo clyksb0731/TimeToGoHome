@@ -257,9 +257,10 @@ extension WorkScheduleModel {
         self.determineLunchTimeDate()
         self.determineStartingWorkTimeDate()
         
-        let todayDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: self.date))!
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+        let todayDateId = Int(dateFormatter.string(from: self.date))!
         if let leavingDate = ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date,
-            let leavingDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: leavingDate)),
+            let leavingDateId = Int(dateFormatter.string(from: leavingDate)),
             todayDateId > leavingDateId {
             self.morning = .morning(.holiday)
             self.afternoon = .afternoon(.holiday)

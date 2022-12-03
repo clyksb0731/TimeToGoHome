@@ -390,7 +390,15 @@ class MainViewController: UIViewController {
             button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
         
-        view.isHidden = (ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date) == nil
+        view.isHidden = true
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+        if let leavingDate = ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date {
+            let todayDateId = Int(dateFormatter.string(from: Date()))!
+            let leavingDateId = Int(dateFormatter.string(from: leavingDate))!
+            
+            view.isHidden = todayDateId <= leavingDateId
+        }
+        
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -829,9 +837,10 @@ extension MainViewController {
         self.todayTimeValue = self.determineTodayTimeValue()
         self.tomorrowTimeValue = self.todayTimeValue + 86400
         
-        let todayDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: Date()))!
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+        let todayDateId = Int(dateFormatter.string(from: Date()))!
         if let leavingDate = ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date,
-            let leavingDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: leavingDate)),
+            let leavingDateId = Int(dateFormatter.string(from: leavingDate)),
            todayDateId > leavingDateId {
             self.leavingDateCoverView.isHidden = false
             

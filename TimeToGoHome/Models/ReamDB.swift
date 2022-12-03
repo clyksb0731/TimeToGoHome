@@ -41,7 +41,7 @@ struct CompanyModel {
         }
     }
     
-    func setLeavingDate(_ date: Date) {
+    func setLeavingDate(_ date: Date?) {
         let realm = try! Realm()
         
         try! realm.write {
