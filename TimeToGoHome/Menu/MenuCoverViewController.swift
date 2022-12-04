@@ -276,7 +276,7 @@ class MenuCoverViewController: UIViewController {
     
     lazy var separatorLineView: UIView = {
         let view = UIView()
-        view.backgroundColor = .useRGB(red: 151, green: 151, blue: 151)
+        view.backgroundColor = .useRGB(red: 221, green: 221, blue: 221)
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -1291,8 +1291,8 @@ extension MenuCoverViewController: EssentialViewMethods {
             NSLayoutConstraint.activate([
                 self.separatorLineView.bottomAnchor.constraint(equalTo: self.annualPaidHolidaysTypeMarkLabel.topAnchor, constant: -35),
                 self.separatorLineView.heightAnchor.constraint(equalToConstant: 1.5),
-                self.separatorLineView.leadingAnchor.constraint(equalTo: self.annualPaidHolidaysView.leadingAnchor, constant: 32),
-                self.separatorLineView.trailingAnchor.constraint(equalTo: self.annualPaidHolidaysView.trailingAnchor, constant: -32)
+                self.separatorLineView.leadingAnchor.constraint(equalTo: self.annualPaidHolidaysView.leadingAnchor, constant: 48),
+                self.separatorLineView.trailingAnchor.constraint(equalTo: self.annualPaidHolidaysView.trailingAnchor, constant: -48)
             ])
             
             // annualPaidHolidaysTypeMarkLabel

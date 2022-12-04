@@ -135,6 +135,54 @@ struct CompanyModel {
         }
     }
     
+    func convertToWorkRecordsFromSchedules() -> [WorkRecord] {
+        if let schedules = self.schedules {
+            var workRecords: [WorkRecord] = []
+            var workRecord = WorkRecord(yearMonth: "", schedules: [])
+            let todayDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: Date()))
+            
+            for schedule in schedules {
+                let morning = WorkTimeType(rawValue: schedule.morning)!
+                let afternoon = WorkTimeType(rawValue: schedule.afternoon)!
+                
+                if schedule.dateId == todayDateId || (morning == .holiday && afternoon == .holiday) {
+                    continue
+                }
+                
+                let yearMonth = String(format: "%02d%02d", schedule.year, schedule.month)
+                if workRecord.yearMonth != yearMonth {
+                    if workRecord.yearMonth != "" {
+                        workRecord.schedules = workRecord.schedules.sorted {
+                            $0.dateId < $1.dateId
+                        }
+                        workRecords.append(workRecord)
+                    }
+                    
+                    workRecord = WorkRecord(yearMonth: yearMonth, schedules: [])
+                }
+                
+                let dailySchedule = DailySchedule(dateId: schedule.dateId,
+                                                  day: schedule.day,
+                                                  morning: morning,
+                                                  afternoon: afternoon,
+                                                  overtime: schedule.overtime)
+                workRecord.schedules.append(dailySchedule)
+            }
+            
+            if workRecord.yearMonth != "" {
+                workRecord.schedules = workRecord.schedules.sorted {
+                    $0.dateId < $1.dateId
+                }
+                workRecords.append(workRecord)
+            }
+            
+            return workRecords.sorted { Int($0.yearMonth)! > Int($1.yearMonth)! }
+            
+        } else {
+            return []
+        }
+    }
+    
     static func addCompany(_ company: Company) {
         let realm = try! Realm()
         

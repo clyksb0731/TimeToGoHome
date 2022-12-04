@@ -82,6 +82,8 @@ extension WorkRecordHeaderView: EssentialCellHeaderMethods {
 // MARK: - Extension for methods added
 extension WorkRecordHeaderView {
     func setHeaderView(yearMonth: String) {
+        let date = SupportingMethods.shared.makeDateFormatter("yyyyMM").date(from: yearMonth)!
+        let yearMonth = SupportingMethods.shared.makeDateFormatter("yyyy년 M월").string(from: date)
         self.yearMonthLabel.text = yearMonth
     }
 }

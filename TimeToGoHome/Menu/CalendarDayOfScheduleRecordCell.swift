@@ -200,36 +200,42 @@ extension CalendarDayOfScheduleRecordCell {
                 self.todayMarkLabel.isHidden = true
                 
                 if let recordedSchedule = recordedSchedule {
-                    if let morning = recordedSchedule.morning {
-                        switch morning {
-                        case .work:
-                            self.morningPointView.backgroundColor = .record.work
-                            
-                        case .vacation:
-                            self.morningPointView.backgroundColor = .record.vacation
-                            
-                        case .holiday:
-                            self.morningPointView.backgroundColor = .record.holiday
-                        }
-                        
-                    } else {
+                    if recordedSchedule.morning == .holiday && recordedSchedule.afternoon == .holiday {
                         self.morningPointView.backgroundColor = .clear
-                    }
-                    
-                    if let afternoon = recordedSchedule.afternoon {
-                        switch afternoon {
-                        case .work:
-                            self.afternoonPointView.backgroundColor = .record.work
-                            
-                        case .vacation:
-                            self.afternoonPointView.backgroundColor = .record.vacation
-                            
-                        case .holiday:
-                            self.afternoonPointView.backgroundColor = .record.holiday
-                        }
+                        self.afternoonPointView.backgroundColor = .clear
                         
                     } else {
-                        self.afternoonPointView.backgroundColor = .clear
+                        if let morning = recordedSchedule.morning {
+                            switch morning {
+                            case .work:
+                                self.morningPointView.backgroundColor = .record.work
+                                
+                            case .vacation:
+                                self.morningPointView.backgroundColor = .record.vacation
+                                
+                            case .holiday:
+                                self.morningPointView.backgroundColor = .record.holiday
+                            }
+                            
+                        } else {
+                            self.morningPointView.backgroundColor = .clear
+                        }
+                        
+                        if let afternoon = recordedSchedule.afternoon {
+                            switch afternoon {
+                            case .work:
+                                self.afternoonPointView.backgroundColor = .record.work
+                                
+                            case .vacation:
+                                self.afternoonPointView.backgroundColor = .record.vacation
+                                
+                            case .holiday:
+                                self.afternoonPointView.backgroundColor = .record.holiday
+                            }
+                            
+                        } else {
+                            self.afternoonPointView.backgroundColor = .clear
+                        }
                     }
                     
                     self.overtimePointView.backgroundColor = recordedSchedule.overtime != nil ? .record.overtime : .clear

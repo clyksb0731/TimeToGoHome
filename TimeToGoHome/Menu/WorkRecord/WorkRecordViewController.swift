@@ -121,6 +121,9 @@ extension WorkRecordViewController: EssentialViewMethods {
 // MARK: - Extension for methods added
 extension WorkRecordViewController {
     func moveBottomOfWorkRecords() {
+        self.workRecords = self.companyModel.convertToWorkRecordsFromSchedules()
+        self.workRecordTableView.reloadData()
+        
         guard self.workRecords.count > 1,
                 self.workRecords[self.workRecords.count - 1].schedules.count > 1 else {
             return
