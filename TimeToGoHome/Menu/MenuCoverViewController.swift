@@ -15,7 +15,7 @@ enum MenuCoverRegularWorkType {
 enum MenuCoverType {
     case lastDateAtWork
     case addNormalSchedule(NormalButtonType)
-    case insertNormalSchedule(ScheduleType, NormalButtonType)
+    case insertNormalSchedule(RecordScheduleType, NormalButtonType)
     case overtime(regularWork: MenuCoverRegularWorkType, overtime: Int?)
     case annualPaidHolidays(numberOfAnnualPaidHolidays: Int)
     case careerManagement
@@ -25,7 +25,7 @@ enum MenuCoverType {
 protocol MenuCoverDelegate {
     func menuCoverDidDetermineLastDate(_ date: Date)
     func menuCoverDidDetermineAddNormalSchedule(_ workTimeType: WorkTimeType)
-    func menuCoverDidDetermineInsertNormalSchedule(_ scheduleType: ScheduleType)
+    func menuCoverDidDetermineInsertNormalSchedule(_ scheduleType: RecordScheduleType)
     func menuCoverDidDetermineOvertimeSeconds(_ overtimeSeconds: Int)
     func menuCoverDidDetermineAnnualPaidHolidays(_ holidays: Int)
     func menuCoverDidDetermineCompany(_ company:String, joiningDate: Date, leavingDate: Date)
@@ -36,7 +36,7 @@ protocol MenuCoverDelegate {
 extension MenuCoverDelegate {
     func menuCoverDidDetermineLastDate(_ date: Date) {}
     func menuCoverDidDetermineAddNormalSchedule(_ workTimeType: WorkTimeType) {}
-    func menuCoverDidDetermineInsertNormalSchedule(_ scheduleType: ScheduleType) {}
+    func menuCoverDidDetermineInsertNormalSchedule(_ scheduleType: RecordScheduleType) {}
     func menuCoverDidDetermineOvertimeSeconds(_ overtimeSeconds: Int) {}
     func menuCoverDidDetermineAnnualPaidHolidays(_ holidays: Int) {}
     func menuCoverDidDetermineCompany(_ company:String, joiningDate: Date, leavingDate: Date) {}
@@ -91,9 +91,6 @@ class MenuCoverViewController: UIViewController {
         if case .lastDateAtWork = self.menuCoverType {
             datePicker.datePickerMode = .date
         }
-        if case .overtime(_, let overtime) = self.menuCoverType {
-            datePicker.datePickerMode = .countDownTimer
-        }
         if case .careerManagement = self.menuCoverType {
             datePicker.datePickerMode = .date
         }
@@ -126,6 +123,56 @@ class MenuCoverViewController: UIViewController {
         
         return button
     }()
+    
+    // MARK: Overtime picker view
+    lazy var overtimePicker: UIPickerView = {
+        let pickerView = UIPickerView()
+        pickerView.tag = 1
+        pickerView.delegate = self
+        pickerView.dataSource = self
+        pickerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return pickerView
+    }()
+    
+    lazy var overtimePickerHourView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var overtimePickerHourMarkLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.textColor = .black
+        label.textAlignment = .center
+        label.text = "시간"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var overtimePickerMinuteView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var overtimePickerMinuteMarkLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.textColor = .black
+        label.textAlignment = .center
+        label.text = "분"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    var overtimeHours: [Int] = Array(0...20)
+    var overtimeMinutes: [Int] = Array(0...59)
     
     // MARK: Schedule buttons
     lazy var normalScheduleListView: UIView = {
@@ -208,6 +255,7 @@ class MenuCoverViewController: UIViewController {
     
     lazy var annualPaidHolidaysPickerView: UIPickerView = {
         let pickerView = UIPickerView()
+        pickerView.tag = 2
         pickerView.delegate = self
         pickerView.dataSource = self
         pickerView.translatesAutoresizingMaskIntoConstraints = false
@@ -698,13 +746,8 @@ class MenuCoverViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        self.initializeOvertimePicker()
         self.initializeAnnualPaidHolidaysOnPickerView()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        self.initializeCountDownDuration()
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -845,10 +888,17 @@ extension MenuCoverViewController: EssentialViewMethods {
             
             SupportingMethods.shared.addSubviews([
                 self.titleLabel,
-                self.datePicker,
+                self.overtimePicker,
                 self.declineButton,
                 self.confirmButton
             ], to: self.popUpPanelView)
+            
+            SupportingMethods.shared.addSubviews([
+                self.overtimePickerHourView,
+                self.overtimePickerHourMarkLabel,
+                self.overtimePickerMinuteView,
+                self.overtimePickerMinuteMarkLabel
+            ], to: self.overtimePicker)
             
         case .annualPaidHolidays: // MARK: annualPaidHolidays
             SupportingMethods.shared.addSubviews([
@@ -1070,17 +1120,45 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.titleLabel.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor)
             ])
             
-            // datePicker
+            // overtimePicker
             NSLayoutConstraint.activate([
-                self.datePicker.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 10),
-                self.datePicker.heightAnchor.constraint(equalToConstant: 195),
-                self.datePicker.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor, constant: 5),
-                self.datePicker.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor, constant: -5)
+                self.overtimePicker.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor),
+                self.overtimePicker.bottomAnchor.constraint(equalTo: self.declineButton.topAnchor),
+                self.overtimePicker.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor),
+                self.overtimePicker.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor)
+            ])
+            
+            // overtimePickerHourView
+            NSLayoutConstraint.activate([
+                self.overtimePickerHourView.centerYAnchor.constraint(equalTo: self.overtimePicker.centerYAnchor),
+                self.overtimePickerHourView.heightAnchor.constraint(equalToConstant: 24),
+                self.overtimePickerHourView.leadingAnchor.constraint(equalTo: self.overtimePicker.leadingAnchor),
+                self.overtimePickerHourView.trailingAnchor.constraint(equalTo: self.overtimePicker.centerXAnchor)
+            ])
+            
+            // overtimePickerHourMarkLabel
+            NSLayoutConstraint.activate([
+                self.overtimePickerHourMarkLabel.centerYAnchor.constraint(equalTo: self.overtimePickerHourView.centerYAnchor),
+                self.overtimePickerHourMarkLabel.leadingAnchor.constraint(equalTo: self.overtimePickerHourView.centerXAnchor, constant: 20)
+            ])
+            
+            // overtimePickerMinuteView
+            NSLayoutConstraint.activate([
+                self.overtimePickerMinuteView.centerYAnchor.constraint(equalTo: self.overtimePicker.centerYAnchor),
+                self.overtimePickerMinuteView.heightAnchor.constraint(equalToConstant: 24),
+                self.overtimePickerMinuteView.leadingAnchor.constraint(equalTo: self.overtimePicker.centerXAnchor),
+                self.overtimePickerMinuteView.trailingAnchor.constraint(equalTo: self.overtimePicker.trailingAnchor)
+            ])
+            
+            // overtimePickerMinuteMarkLabel
+            NSLayoutConstraint.activate([
+                self.overtimePickerMinuteMarkLabel.centerYAnchor.constraint(equalTo: self.overtimePickerMinuteView.centerYAnchor),
+                self.overtimePickerMinuteMarkLabel.leadingAnchor.constraint(equalTo: self.overtimePickerMinuteView.centerXAnchor, constant: 20)
             ])
             
             // declineButton
             NSLayoutConstraint.activate([
-                self.declineButton.topAnchor.constraint(equalTo: self.datePicker.bottomAnchor, constant: 10),
+                self.declineButton.bottomAnchor.constraint(equalTo: self.popUpPanelView.bottomAnchor, constant: -6),
                 self.declineButton.heightAnchor.constraint(equalToConstant: 35),
                 self.declineButton.trailingAnchor.constraint(equalTo: self.popUpPanelView.centerXAnchor, constant: -5),
                 self.declineButton.widthAnchor.constraint(equalToConstant: 97)
@@ -1088,7 +1166,7 @@ extension MenuCoverViewController: EssentialViewMethods {
             
             // confirmButton
             NSLayoutConstraint.activate([
-                self.confirmButton.topAnchor.constraint(equalTo: self.datePicker.bottomAnchor, constant: 10),
+                self.confirmButton.bottomAnchor.constraint(equalTo: self.popUpPanelView.bottomAnchor, constant: -6),
                 self.confirmButton.heightAnchor.constraint(equalToConstant: 35),
                 self.confirmButton.leadingAnchor.constraint(equalTo: self.popUpPanelView.centerXAnchor, constant: 5),
                 self.confirmButton.widthAnchor.constraint(equalToConstant: 97)
@@ -1481,6 +1559,16 @@ extension MenuCoverViewController: EssentialViewMethods {
 // MARK: - Extension for methods added
 extension MenuCoverViewController {
     func initializeValueRelatedToMenuCoverType(_ menuCoverType: MenuCoverType) {
+        if case .overtime(let regularWork, _) = menuCoverType {
+            switch regularWork {
+            case .fullWork:
+                self.overtimeHours = Array(0...16)
+                
+            case .halfWork:
+                self.overtimeHours = Array(0...20)
+            }
+        }
+        
         if case .annualPaidHolidays(let numberOfAnnualPaidHolidays) = menuCoverType {
             self.numberOfAnnualPaidHolidays = numberOfAnnualPaidHolidays
         }
@@ -1498,9 +1586,19 @@ extension MenuCoverViewController {
         }
     }
     
-    func initializeCountDownDuration() {
+    func initializeOvertimePicker() {
         if case .overtime(_, let overtime) = menuCoverType {
-            self.datePicker.countDownDuration = TimeInterval(overtime ?? 60)
+            if let overtime = overtime {
+                let hours = overtime / 3600
+                let minutes = (overtime % 3600) / 60
+                
+                self.overtimePicker.selectRow(hours, inComponent: 0, animated: false)
+                self.overtimePicker.selectRow(minutes, inComponent: 1, animated: false)
+                
+            } else {
+                self.overtimePicker.selectRow(0, inComponent: 0, animated: false)
+                self.overtimePicker.selectRow(0, inComponent: 1, animated: false)
+            }
         }
     }
     
@@ -1508,6 +1606,18 @@ extension MenuCoverViewController {
         if case .annualPaidHolidays = menuCoverType {
             self.annualPaidHolidaysPickerView.selectRow(self.annualPaidHolidays.firstIndex(of: self.numberOfAnnualPaidHolidays!)!, inComponent: 0, animated: false)
         }
+    }
+    
+    func calculateSecondsWithOvertimePickerView() -> Int {
+        let selectedHour = self.overtimeHours[self.overtimePicker.selectedRow(inComponent: 0)]
+        let selectedMinute = self.overtimeMinutes[self.overtimePicker.selectedRow(inComponent: 1)]
+        
+        var overtimeSeconds = selectedMinute * 60
+        overtimeSeconds += selectedHour * 3600
+        
+        overtimeSeconds = overtimeSeconds > selectedHour * 3600 ? selectedHour * 3600 : overtimeSeconds
+        
+        return overtimeSeconds
     }
 }
 
@@ -1521,21 +1631,6 @@ extension MenuCoverViewController {
     @objc func datePicker(_ datePicker: UIDatePicker) {
         if case .lastDateAtWork = self.menuCoverType {
             // FIXME: check realm
-        }
-        
-        if case .overtime(let regularWork, _) = self.menuCoverType {
-            print("datePicker.countDownDuration: \(datePicker.countDownDuration)")
-            if regularWork == .fullWork {
-                if datePicker.countDownDuration > 16 * 3600 {
-                    print("overTime > 16 * 3600")
-                }
-            }
-            
-            if regularWork == .halfWork {
-                if datePicker.countDownDuration > 20 * 3600 {
-                    print("overTime > 20 * 3600")
-                }
-            }
         }
         
         if case .careerManagement = self.menuCoverType {
@@ -1571,8 +1666,14 @@ extension MenuCoverViewController {
         }
         
         if case .overtime = self.menuCoverType {
+            guard self.calculateSecondsWithOvertimePickerView() >= 60 else {
+                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "추가 근무 시간은 최소 1분입니다.")
+                
+                return
+            }
+            
             self.dismiss(animated: false) {
-                tempSelf.delegate?.menuCoverDidDetermineOvertimeSeconds(Int(self.datePicker.countDownDuration))
+                tempSelf.delegate?.menuCoverDidDetermineOvertimeSeconds(self.calculateSecondsWithOvertimePickerView())
             }
         }
         
@@ -1835,7 +1936,7 @@ extension MenuCoverViewController: UICollectionViewDelegate, UICollectionViewDat
                 }
             }()
             
-            let dayWorkRecordVC = DayWorkRecordViewController(recordedSchedule: recordedSchedule)
+            let dayWorkRecordVC = DayWorkRecordViewController(recordedSchedule: recordedSchedule, companyModel: self.companyModel)
             
             let presentingVC = self.presentingViewController as? CustomizedNavigationController
             self.dismiss(animated: false) {
@@ -1848,20 +1949,53 @@ extension MenuCoverViewController: UICollectionViewDelegate, UICollectionViewDat
 // MARK: - Extension for UIPickerViewDelegate, UIPickerViewDataSource
 extension MenuCoverViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
+        if pickerView.tag == 1 {
+            return 2
+            
+        } else { // tag == 2
+            return 1
+        }
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return self.annualPaidHolidays.count
+        if pickerView.tag == 1 {
+            if component == 0 { // hour
+                return self.overtimeHours.count
+                
+            } else { // component == 1, minute
+                return self.overtimeMinutes.count
+            }
+            
+        } else { // tag == 2
+            return self.annualPaidHolidays.count
+        }
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return String(self.annualPaidHolidays[row])
+        if pickerView.tag == 1 {
+            if component == 0 { // hour
+                return String(self.overtimeHours[row])
+                
+            } else { // component == 1, minute
+                return String(self.overtimeMinutes[row])
+            }
+            
+        } else { // tag == 2
+            return String(self.annualPaidHolidays[row])
+        }
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        print("Number of annual paid holidays: \(self.annualPaidHolidays[row])")
-        
-        self.numberOfAnnualPaidHolidays = self.annualPaidHolidays[row]
+        if pickerView.tag == 1 {
+            print("\(self.overtimeHours[pickerView.selectedRow(inComponent: 0)])시간  \(self.overtimeMinutes[pickerView.selectedRow(inComponent: 1)])분")
+            if self.overtimeHours[pickerView.selectedRow(inComponent: 0)] == self.overtimeHours.last {
+                self.overtimePicker.selectRow(0, inComponent: 1, animated: true)
+            }
+            
+        } else { // tag == 2
+            print("Number of annual paid holidays: \(self.annualPaidHolidays[row])")
+            
+            self.numberOfAnnualPaidHolidays = self.annualPaidHolidays[row]
+        }
     }
 }

@@ -47,16 +47,11 @@ struct WorkScheduleRecordModel {
         }
     }
     
-//    mutating func addShedule(_ schedule: RecordScheduleType) {
-//        switch schedule {
-//        case .morning(let morning):
-//            self.morning = morning
-//            
-//        case .afternoon(let afternoon):
-//            self.afternoon = afternoon
-//            
-//        case .overtime(let overtime):
-//            self.overtime = overtime
-//        }
-//    }
+    func updateDB(companyMode: CompanyModel) {
+        if let date = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.dateId)), let morning = self.morning, let afternoon = self.afternoon {
+            let schedule = Schedule(date: date, morningType: morning, afternoonType: afternoon, overtime: self.overtime)
+            
+            companyMode.addSchedule(schedule)
+        }
+    }
 }

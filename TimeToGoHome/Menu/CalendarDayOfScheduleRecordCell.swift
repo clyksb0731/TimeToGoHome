@@ -189,48 +189,57 @@ extension CalendarDayOfScheduleRecordCell {
             self.dayLabel.text = String(yearMonthDay.day)
             self.dayLabel.textColor = isEnable ? .black : .useRGB(red: 185, green: 185, blue: 185)
             
-            if let recordedSchedule = recordedSchedule {
-                if let morning = recordedSchedule.morning {
-                    switch morning {
-                    case .work:
-                        self.morningPointView.backgroundColor = .record.work
-                        
-                    case .vacation:
-                        self.morningPointView.backgroundColor = .record.vacation
-                        
-                    case .holiday:
-                        self.morningPointView.backgroundColor = .record.holiday
-                    }
-                    
-                } else {
-                    self.morningPointView.backgroundColor = .clear
-                }
+            if isToday {
+                self.todayMarkLabel.isHidden = false
                 
-                if let afternoon = recordedSchedule.afternoon {
-                    switch afternoon {
-                    case .work:
-                        self.morningPointView.backgroundColor = .record.work
-                        
-                    case .vacation:
-                        self.morningPointView.backgroundColor = .record.vacation
-                        
-                    case .holiday:
-                        self.morningPointView.backgroundColor = .record.holiday
-                    }
-                    
-                } else {
-                    self.afternoonPointView.backgroundColor = .clear
-                }
-                
-                self.overtimePointView.backgroundColor = recordedSchedule.overtime != nil ? .record.overtime : .clear
-                
-            } else {
                 self.morningPointView.backgroundColor = .clear
                 self.afternoonPointView.backgroundColor = .clear
                 self.overtimePointView.backgroundColor = .clear
+                
+            } else {
+                self.todayMarkLabel.isHidden = true
+                
+                if let recordedSchedule = recordedSchedule {
+                    if let morning = recordedSchedule.morning {
+                        switch morning {
+                        case .work:
+                            self.morningPointView.backgroundColor = .record.work
+                            
+                        case .vacation:
+                            self.morningPointView.backgroundColor = .record.vacation
+                            
+                        case .holiday:
+                            self.morningPointView.backgroundColor = .record.holiday
+                        }
+                        
+                    } else {
+                        self.morningPointView.backgroundColor = .clear
+                    }
+                    
+                    if let afternoon = recordedSchedule.afternoon {
+                        switch afternoon {
+                        case .work:
+                            self.afternoonPointView.backgroundColor = .record.work
+                            
+                        case .vacation:
+                            self.afternoonPointView.backgroundColor = .record.vacation
+                            
+                        case .holiday:
+                            self.afternoonPointView.backgroundColor = .record.holiday
+                        }
+                        
+                    } else {
+                        self.afternoonPointView.backgroundColor = .clear
+                    }
+                    
+                    self.overtimePointView.backgroundColor = recordedSchedule.overtime != nil ? .record.overtime : .clear
+                    
+                } else {
+                    self.morningPointView.backgroundColor = .clear
+                    self.afternoonPointView.backgroundColor = .clear
+                    self.overtimePointView.backgroundColor = .clear
+                }
             }
-            
-            self.todayMarkLabel.isHidden = !isToday
             
             self.bottomLineView.isHidden = !isSelected
             

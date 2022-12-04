@@ -48,7 +48,7 @@ class DayWorkRecordViewController: UIViewController {
     lazy var tableBaseView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
-        view.isHidden = self.isEditingMode
+        view.isHidden = self.recordedSchedule.count == 0
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -80,18 +80,30 @@ class DayWorkRecordViewController: UIViewController {
         return label
     }()
     
-    var recordedSchedule: WorkScheduleRecordModel
+    var recordedSchedule: WorkScheduleRecordModel {
+        didSet {
+            self.navigationItem.rightBarButtonItem?.isEnabled = self.recordedSchedule.count >= 2
+        }
+    }
+    
+    var companyModel: CompanyModel
     
     var recordScheduleTableViewHeightAncor: NSLayoutConstraint!
     
     var isEditingMode: Bool {
         didSet {
+            self.navigationItem.rightBarButtonItem?.title = self.isEditingMode ? "완료" : "추가/제거"
             self.determineTableView()
+            
+            if !self.isEditingMode {
+                self.recordedSchedule.updateDB(companyMode: self.companyModel)
+            }
         }
     }
     
-    init(recordedSchedule: WorkScheduleRecordModel) {
+    init(recordedSchedule: WorkScheduleRecordModel, companyModel: CompanyModel) {
         self.recordedSchedule = recordedSchedule
+        self.companyModel = companyModel
         
         self.isEditingMode = recordedSchedule.morning == nil
         
@@ -138,6 +150,7 @@ extension DayWorkRecordViewController: EssentialViewMethods {
         self.navigationItem.leftBarButtonItem?.tintColor = .black
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: self.isEditingMode ? "완료" : "추가/제거", style: .plain, target: self, action: #selector(rightBarButtonItem(_:)))
         self.navigationItem.rightBarButtonItem?.tintColor = .black
+        self.navigationItem.rightBarButtonItem?.isEnabled = self.recordedSchedule.count >= 2
     }
     
     func initializeObjects() {
@@ -238,6 +251,8 @@ extension DayWorkRecordViewController {
     func determineTableView() {
         self.recordScheduleTableViewHeightAncor.constant = self.calculateTableViewHeight()
         self.recordScheduleTableView.reloadData()
+        
+        self.tableBaseView.isHidden = self.recordedSchedule.count == 0
     }
     
     func calculateTableViewHeight() -> CGFloat {
@@ -246,7 +261,16 @@ extension DayWorkRecordViewController {
             
         } else if self.recordedSchedule.count == 2 {
             if self.isEditingMode {
-                return ReferenceValues.size.record.normalScheduleHeight * 2 + ReferenceValues.size.record.schedulingHeight
+                switch self.recordedSchedule.afternoon! {
+                case .holiday:
+                    return ReferenceValues.size.record.normalScheduleHeight * 2
+                    
+                case .vacation:
+                    return ReferenceValues.size.record.normalScheduleHeight * 2
+                    
+                case .work:
+                    return ReferenceValues.size.record.normalScheduleHeight * 2 + ReferenceValues.size.record.schedulingHeight
+                }
                 
             } else {
                 return ReferenceValues.size.record.normalScheduleHeight * 2
@@ -268,7 +292,7 @@ extension DayWorkRecordViewController {
     }
     
     @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
-        
+        self.isEditingMode.toggle()
     }
     
     @objc func addScheduleButton(_ sender: UIButton) {
@@ -306,6 +330,75 @@ extension DayWorkRecordViewController {
         self.determineTableView()
     }
     
+    @objc func insertScheduleAtLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
+        guard !self.isEditingMode else { return }
+        
+        if let scheduleCell = gesture.view {
+            if gesture.state == .began {
+                UIDevice.heavyHaptic()
+                
+                if scheduleCell.tag == 1 {
+                    print("Long Pressed for morning")
+                    if self.recordedSchedule.overtime == nil {
+                        var buttonType: NormalButtonType = .allButton
+                        switch self.recordedSchedule.afternoon! {
+                        case .work:
+                            buttonType = .allButton
+                            
+                        case .vacation:
+                            buttonType = .vacation
+                            
+                        case .holiday:
+                            buttonType = .holiday
+                        }
+                        let menuCoverVC = MenuCoverViewController(.insertNormalSchedule(.morning(self.recordedSchedule.morning!), buttonType), delegate: self)
+                        
+                        self.present(menuCoverVC, animated: false)
+                        
+                    } else {
+                        let alertVC = UIAlertController(title: "변경 불가", message: "추가근무 제거 후 변경해 주세요.", preferredStyle: .alert)
+                        let action = UIAlertAction(title: "확인", style: .default)
+                        alertVC.addAction(action)
+                        self.present(alertVC, animated: true)
+                    }
+                    
+                } else if scheduleCell.tag == 2 {
+                    print("Long Pressed for afternoon")
+                    if self.recordedSchedule.overtime == nil {
+                        var buttonType: NormalButtonType = .allButton
+                        switch self.recordedSchedule.afternoon! {
+                        case .work:
+                            buttonType = .allButton
+                            
+                        case .vacation:
+                            buttonType = .vacation
+                            
+                        case .holiday:
+                            buttonType = .holiday
+                        }
+                        let menuCoverVC = MenuCoverViewController(.insertNormalSchedule(.afternoon(self.recordedSchedule.afternoon!), buttonType), delegate: self)
+                        
+                        self.present(menuCoverVC, animated: false)
+                        
+                    } else {
+                        let alertVC = UIAlertController(title: "변경 불가", message: "추가근무 제거 후 변경해 주세요.", preferredStyle: .alert)
+                        let action = UIAlertAction(title: "확인", style: .default)
+                        alertVC.addAction(action)
+                        self.present(alertVC, animated: true)
+                    }
+                    
+                } else { // tag 3, overtime
+                    print("Long Pressed for overtime")
+                    let regularWorkType = self.recordedSchedule.regularWorkType!
+                    
+                    let menuCoverVC = MenuCoverViewController(.overtime(regularWork: regularWorkType, overtime: self.recordedSchedule.overtime!), delegate: self)
+                    
+                    self.present(menuCoverVC, animated: false)
+                }
+            }
+        }
+    }
+    
     @objc func removeScheduleButton(_ sender: UIButton) {
         print("removeRecordScheduleButton")
         
@@ -333,7 +426,16 @@ extension DayWorkRecordViewController: UITableViewDelegate, UITableViewDataSourc
             
         } else if self.recordedSchedule.count == 2 {
             if self.isEditingMode {
-                return 3
+                switch self.recordedSchedule.afternoon! {
+                case .holiday:
+                    return 2
+                    
+                case .vacation:
+                    return 2
+                    
+                case .work:
+                    return 3
+                }
                 
             } else {
                 return 2
@@ -435,12 +537,18 @@ extension DayWorkRecordViewController: UITableViewDelegate, UITableViewDataSourc
                 if indexPath.row == 0 {
                     let cell = tableView.dequeueReusableCell(withIdentifier: "RecordScheduleCell", for: indexPath) as! RecordScheduleCell
                     cell.setCell(recordSchedule: self.recordedSchedule, isEditingMode: false, tag: 1)
+                    let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(insertScheduleAtLongPressGesture(_:)))
+                    longGesture.minimumPressDuration = 0.5
+                    cell.addGestureRecognizer(longGesture)
                     
                     return cell
                     
                 } else { // row == 1
                     let cell = tableView.dequeueReusableCell(withIdentifier: "RecordScheduleCell", for: indexPath) as! RecordScheduleCell
                     cell.setCell(recordSchedule: self.recordedSchedule, isEditingMode: false, tag: 2)
+                    let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(insertScheduleAtLongPressGesture(_:)))
+                    longGesture.minimumPressDuration = 0.5
+                    cell.addGestureRecognizer(longGesture)
                     
                     return cell
                 }
@@ -450,12 +558,18 @@ extension DayWorkRecordViewController: UITableViewDelegate, UITableViewDataSourc
             if indexPath.row == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RecordScheduleCell", for: indexPath) as! RecordScheduleCell
                 cell.setCell(recordSchedule: self.recordedSchedule, isEditingMode: false, tag: 1)
+                let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(insertScheduleAtLongPressGesture(_:)))
+                longGesture.minimumPressDuration = 0.5
+                cell.addGestureRecognizer(longGesture)
                 
                 return cell
                 
             } else if indexPath.row == 1 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RecordScheduleCell", for: indexPath) as! RecordScheduleCell
                 cell.setCell(recordSchedule: self.recordedSchedule, isEditingMode: false, tag: 2)
+                let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(insertScheduleAtLongPressGesture(_:)))
+                longGesture.minimumPressDuration = 0.5
+                cell.addGestureRecognizer(longGesture)
                 
                 return cell
                 
@@ -463,6 +577,9 @@ extension DayWorkRecordViewController: UITableViewDelegate, UITableViewDataSourc
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RecordScheduleCell", for: indexPath) as! RecordScheduleCell
                 cell.setCell(recordSchedule: self.recordedSchedule, isEditingMode: self.isEditingMode, tag: 3)
                 cell.addTarget(self, action: #selector(removeScheduleButton(_:)), for: .touchUpInside)
+                let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(insertScheduleAtLongPressGesture(_:)))
+                longGesture.minimumPressDuration = 0.5
+                cell.addGestureRecognizer(longGesture)
                 
                 return cell
             }
@@ -479,14 +596,36 @@ extension DayWorkRecordViewController: UITableViewDelegate, UITableViewDataSourc
 // MARK: - Extension for MenuCoverDelegate
 extension DayWorkRecordViewController: MenuCoverDelegate {
     func menuCoverDidDetermineAddNormalSchedule(_ workTimeType: WorkTimeType) {
+        if self.recordedSchedule.count == 0 {
+            self.recordedSchedule.morning = workTimeType
+            
+        } else { // count == 1
+            self.recordedSchedule.afternoon = workTimeType
+        }
         
+        self.determineTableView()
     }
     
-    func menuCoverDidDetermineInsertNormalSchedule(_ scheduleType: ScheduleType) {
+    func menuCoverDidDetermineInsertNormalSchedule(_ scheduleType: RecordScheduleType) {
+        switch scheduleType {
+        case .morning(let workTimeType):
+            self.recordedSchedule.morning = workTimeType
+            
+        case .afternoon(let workTimeType):
+            self.recordedSchedule.afternoon = workTimeType
+            
+        default:
+            break
+        }
         
+        self.determineTableView()
+        
+        self.recordedSchedule.updateDB(companyMode: self.companyModel)
     }
     
     func menuCoverDidDetermineOvertimeSeconds(_ overtimeSeconds: Int) {
+        self.recordedSchedule.overtime = overtimeSeconds
         
+        self.determineTableView()
     }
 }
