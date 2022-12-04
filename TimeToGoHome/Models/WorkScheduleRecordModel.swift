@@ -52,6 +52,21 @@ struct WorkScheduleRecordModel {
             let schedule = Schedule(date: date, morningType: morning, afternoonType: afternoon, overtime: self.overtime)
             
             companyMode.addSchedule(schedule)
+            
+            var vacation: Vacation!
+            if morning == .vacation && afternoon == .vacation {
+                vacation = Vacation(date: date, vacationType: .fullDay)
+                
+            } else if morning == .vacation {
+                vacation = Vacation(date: date, vacationType: .morning)
+                
+            } else if afternoon == .vacation {
+                vacation = Vacation(date: date, vacationType: .afternoon)
+                
+            } else {
+                vacation = Vacation(date: date, vacationType: .none)
+            }
+            VacationModel.addVacation(vacation)
         }
     }
 }

@@ -8,7 +8,7 @@
 import UIKit
 import RealmSwift
 
-enum AnnualVacationType: String {
+enum AnnualPaidHolidaysType: String {
     case fiscalYear
     case joiningDay
 }
@@ -500,16 +500,16 @@ class DayOffViewController: UIViewController {
     
     var vacations: Results<Vacation> = VacationModel.vacations
     
-    var annualVacationType: AnnualVacationType = {
+    var annualVacationType: AnnualPaidHolidaysType = {
         if let annualVacationType = ReferenceValues.initialSetting[InitialSetting.annualPaidHolidayType.rawValue] as? String,
-            let annualVacationType = AnnualVacationType(rawValue: annualVacationType) {
+            let annualVacationType = AnnualPaidHolidaysType(rawValue: annualVacationType) {
             return annualVacationType
             
         } else {
             return .fiscalYear
         }
     }()
-    lazy var tempAnnualVacationType: AnnualVacationType = self.annualVacationType
+    lazy var tempAnnualVacationType: AnnualPaidHolidaysType = self.annualVacationType
     
     var holidays: Set<Int> = {
         if let holidays = ReferenceValues.initialSetting[InitialSetting.regularHolidays.rawValue] as? [Int] {

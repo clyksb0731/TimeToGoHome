@@ -244,7 +244,7 @@ class MenuCoverViewController: UIViewController {
     
     lazy var annualPaidHolidaysMarkLabel: UILabel = {
         let label = UILabel()
-        label.textAlignment = .center
+        label.textAlignment = .left
         label.textColor = .black
         label.font = .systemFont(ofSize: 21, weight: .bold)
         label.text = "연차 개수"
@@ -274,11 +274,86 @@ class MenuCoverViewController: UIViewController {
         return label
     }()
     
+    lazy var separatorLineView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 151, green: 151, blue: 151)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var annualPaidHolidaysTypeMarkLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .left
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 21, weight: .bold)
+        label.text = "휴가 기준"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var settingVacationButtonsView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var fiscalYearButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "settingVacationNormalButton"), for: .normal)
+        button.setImage(UIImage(named: "settingVacationSelectedButton"), for: .selected)
+        button.addTarget(self, action: #selector(fiscalYearButton(_:)), for: .touchUpInside)
+        button.isSelected = self.annualPaidHolidaysType == .fiscalYear
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var fiscalYearMarkLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .black
+        label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        label.text = "회계연도"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var joiningDayButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "settingVacationNormalButton"), for: .normal)
+        button.setImage(UIImage(named: "settingVacationSelectedButton"), for: .selected)
+        button.addTarget(self, action: #selector(joiningDayButton(_:)), for: .touchUpInside)
+        button.isSelected = self.annualPaidHolidaysType == .joiningDay
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var joiningDayMarkLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .black
+        label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        label.text = "입사날짜"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    var annualPaidHolidaysType: AnnualPaidHolidaysType = {
+        return VacationModel.annualPaidHolidaysType
+    }()
+    var tempAnnualPaidHolidaysType: AnnualPaidHolidaysType!
+    
     lazy var cancelApplyingAnnualPaidHolidaysButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "x.circle", withConfiguration: UIImage.SymbolConfiguration(scale: .large)), for: .normal)
-        button.imageView?.contentMode = .scaleAspectFit
-        button.tintColor = .useRGB(red: 61, green: 61, blue: 61, alpha: 0.5)
+        button.titleLabel?.font = .systemFont(ofSize: 21, weight: .semibold)
+        button.setTitle("취소", for: .normal)
+        button.setTitleColor(.blue, for: .normal)
         button.addTarget(self, action: #selector(cancelApplyingAnnualPaidHolidaysButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
@@ -287,9 +362,9 @@ class MenuCoverViewController: UIViewController {
     
     lazy var applyAnnualPaidHolidaysButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "checkmark.circle", withConfiguration: UIImage.SymbolConfiguration(scale: .large)), for: .normal)
-        button.imageView?.contentMode = .scaleAspectFit
-        button.tintColor = .useRGB(red: 61, green: 61, blue: 61, alpha: 0.5)
+        button.titleLabel?.font = .systemFont(ofSize: 21, weight: .semibold)
+        button.setTitle("확인", for: .normal)
+        button.setTitleColor(.black, for: .normal)
         button.addTarget(self, action: #selector(applyAnnualPaidHolidaysButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
@@ -908,9 +983,19 @@ extension MenuCoverViewController: EssentialViewMethods {
             SupportingMethods.shared.addSubviews([
                 self.annualPaidHolidaysMarkLabel,
                 self.annualPaidHolidaysPickerView,
+                self.separatorLineView,
+                self.annualPaidHolidaysTypeMarkLabel,
+                self.settingVacationButtonsView,
                 self.cancelApplyingAnnualPaidHolidaysButton,
                 self.applyAnnualPaidHolidaysButton,
             ], to: self.annualPaidHolidaysView)
+            
+            SupportingMethods.shared.addSubviews([
+                self.fiscalYearButton,
+                self.fiscalYearMarkLabel,
+                self.joiningDayButton,
+                self.joiningDayMarkLabel
+            ], to: self.settingVacationButtonsView)
             
             SupportingMethods.shared.addSubviews([
                 self.dayMarkLabel
@@ -1176,7 +1261,7 @@ extension MenuCoverViewController: EssentialViewMethods {
             // annualPaidHolidaysView
             NSLayoutConstraint.activate([
                 self.annualPaidHolidaysView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
-                self.annualPaidHolidaysView.heightAnchor.constraint(equalToConstant: 250),
+                self.annualPaidHolidaysView.heightAnchor.constraint(equalToConstant: 430),
                 self.annualPaidHolidaysView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 32),
                 self.annualPaidHolidaysView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -32)
             ])
@@ -1184,13 +1269,14 @@ extension MenuCoverViewController: EssentialViewMethods {
             // annualPaidHolidaysMarkLabel
             NSLayoutConstraint.activate([
                 self.annualPaidHolidaysMarkLabel.topAnchor.constraint(equalTo: self.annualPaidHolidaysView.topAnchor, constant: 15),
+                self.annualPaidHolidaysMarkLabel.heightAnchor.constraint(equalToConstant: 22),
                 self.annualPaidHolidaysMarkLabel.leadingAnchor.constraint(equalTo: self.annualPaidHolidaysView.leadingAnchor, constant: 25)
             ])
             
             // annualPaidHolidaysPickerView
             NSLayoutConstraint.activate([
                 self.annualPaidHolidaysPickerView.topAnchor.constraint(equalTo: self.annualPaidHolidaysMarkLabel.bottomAnchor),
-                self.annualPaidHolidaysPickerView.bottomAnchor.constraint(equalTo: self.applyAnnualPaidHolidaysButton.topAnchor),
+                self.annualPaidHolidaysPickerView.bottomAnchor.constraint(equalTo: self.separatorLineView.topAnchor, constant: -5),
                 self.annualPaidHolidaysPickerView.leadingAnchor.constraint(equalTo: self.annualPaidHolidaysView.leadingAnchor),
                 self.annualPaidHolidaysPickerView.trailingAnchor.constraint(equalTo: self.annualPaidHolidaysView.trailingAnchor)
             ])
@@ -1201,20 +1287,75 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.dayMarkLabel.leadingAnchor.constraint(equalTo: self.annualPaidHolidaysPickerView.centerXAnchor, constant: 20)
             ])
             
+            // separatorLineView
+            NSLayoutConstraint.activate([
+                self.separatorLineView.bottomAnchor.constraint(equalTo: self.annualPaidHolidaysTypeMarkLabel.topAnchor, constant: -35),
+                self.separatorLineView.heightAnchor.constraint(equalToConstant: 1.5),
+                self.separatorLineView.leadingAnchor.constraint(equalTo: self.annualPaidHolidaysView.leadingAnchor, constant: 32),
+                self.separatorLineView.trailingAnchor.constraint(equalTo: self.annualPaidHolidaysView.trailingAnchor, constant: -32)
+            ])
+            
+            // annualPaidHolidaysTypeMarkLabel
+            NSLayoutConstraint.activate([
+                self.annualPaidHolidaysTypeMarkLabel.bottomAnchor.constraint(equalTo: self.settingVacationButtonsView.topAnchor, constant: -31),
+                self.annualPaidHolidaysTypeMarkLabel.heightAnchor.constraint(equalToConstant: 22),
+                self.annualPaidHolidaysTypeMarkLabel.leadingAnchor.constraint(equalTo: self.annualPaidHolidaysView.leadingAnchor, constant: 25)
+            ])
+            
+            // settingVacationButtonsView
+            NSLayoutConstraint.activate([
+                self.settingVacationButtonsView.bottomAnchor.constraint(equalTo: self.applyAnnualPaidHolidaysButton.topAnchor, constant: -45),
+                self.settingVacationButtonsView.heightAnchor.constraint(equalToConstant: 28),
+                self.settingVacationButtonsView.centerXAnchor.constraint(equalTo: self.annualPaidHolidaysView.centerXAnchor),
+                self.settingVacationButtonsView.widthAnchor.constraint(equalToConstant: 229)
+            ])
+            
+            // fiscalYearButton
+            NSLayoutConstraint.activate([
+                self.fiscalYearButton.centerYAnchor.constraint(equalTo: self.settingVacationButtonsView.centerYAnchor),
+                self.fiscalYearButton.heightAnchor.constraint(equalToConstant: 28),
+                self.fiscalYearButton.leadingAnchor.constraint(equalTo: self.settingVacationButtonsView.leadingAnchor),
+                self.fiscalYearButton.widthAnchor.constraint(equalToConstant: 28)
+            ])
+            
+            // fiscalYearMarkLabel
+            NSLayoutConstraint.activate([
+                self.fiscalYearMarkLabel.topAnchor.constraint(equalTo: self.settingVacationButtonsView.topAnchor),
+                self.fiscalYearMarkLabel.bottomAnchor.constraint(equalTo: self.settingVacationButtonsView.bottomAnchor),
+                self.fiscalYearMarkLabel.leadingAnchor.constraint(equalTo: self.fiscalYearButton.trailingAnchor, constant: 5),
+                self.fiscalYearMarkLabel.widthAnchor.constraint(equalToConstant: 70)
+            ])
+            
+            // joiningDayButton
+            NSLayoutConstraint.activate([
+                self.joiningDayButton.centerYAnchor.constraint(equalTo: self.settingVacationButtonsView.centerYAnchor),
+                self.joiningDayButton.heightAnchor.constraint(equalToConstant: 28),
+                self.joiningDayButton.trailingAnchor.constraint(equalTo: self.joiningDayMarkLabel.leadingAnchor, constant: -5),
+                self.joiningDayButton.widthAnchor.constraint(equalToConstant: 28)
+            ])
+            
+            // joiningDayMarkLabel
+            NSLayoutConstraint.activate([
+                self.joiningDayMarkLabel.topAnchor.constraint(equalTo: self.settingVacationButtonsView.topAnchor),
+                self.joiningDayMarkLabel.bottomAnchor.constraint(equalTo: self.settingVacationButtonsView.bottomAnchor),
+                self.joiningDayMarkLabel.trailingAnchor.constraint(equalTo: self.settingVacationButtonsView.trailingAnchor),
+                self.joiningDayMarkLabel.widthAnchor.constraint(equalToConstant: 70)
+            ])
+            
             // cancelApplyingAnnualPaidHolidaysButton
             NSLayoutConstraint.activate([
                 self.cancelApplyingAnnualPaidHolidaysButton.bottomAnchor.constraint(equalTo: self.annualPaidHolidaysView.bottomAnchor, constant: -10),
-                self.cancelApplyingAnnualPaidHolidaysButton.heightAnchor.constraint(equalToConstant: 28),
-                self.cancelApplyingAnnualPaidHolidaysButton.trailingAnchor.constraint(equalTo: self.annualPaidHolidaysView.centerXAnchor, constant: -60),
-                self.cancelApplyingAnnualPaidHolidaysButton.widthAnchor.constraint(equalToConstant: 28)
+                self.cancelApplyingAnnualPaidHolidaysButton.heightAnchor.constraint(equalToConstant: 35),
+                self.cancelApplyingAnnualPaidHolidaysButton.trailingAnchor.constraint(equalTo: self.annualPaidHolidaysView.centerXAnchor, constant: -5),
+                self.cancelApplyingAnnualPaidHolidaysButton.widthAnchor.constraint(equalToConstant: 97)
             ])
             
             // applyAnnualPaidHolidaysButton
             NSLayoutConstraint.activate([
                 self.applyAnnualPaidHolidaysButton.bottomAnchor.constraint(equalTo: self.annualPaidHolidaysView.bottomAnchor, constant: -10),
-                self.applyAnnualPaidHolidaysButton.heightAnchor.constraint(equalToConstant: 28),
-                self.applyAnnualPaidHolidaysButton.leadingAnchor.constraint(equalTo: self.annualPaidHolidaysView.centerXAnchor, constant: 60),
-                self.applyAnnualPaidHolidaysButton.widthAnchor.constraint(equalToConstant: 28)
+                self.applyAnnualPaidHolidaysButton.heightAnchor.constraint(equalToConstant: 35),
+                self.applyAnnualPaidHolidaysButton.leadingAnchor.constraint(equalTo: self.annualPaidHolidaysView.centerXAnchor, constant: 5),
+                self.applyAnnualPaidHolidaysButton.widthAnchor.constraint(equalToConstant: 97)
             ])
             
         case .careerManagement: // MARK: careerManagement
@@ -1571,6 +1712,8 @@ extension MenuCoverViewController {
         
         if case .annualPaidHolidays(let numberOfAnnualPaidHolidays) = menuCoverType {
             self.numberOfAnnualPaidHolidays = numberOfAnnualPaidHolidays
+            
+            self.tempAnnualPaidHolidaysType = self.annualPaidHolidaysType
         }
         
         if case .calendarOfScheduleRecord(let companyModel) = menuCoverType {
@@ -1758,12 +1901,39 @@ extension MenuCoverViewController {
     }
     
     // MARK: annual paid holidays
-    @objc func applyAnnualPaidHolidaysButton(_ sender: UIButton) {
-       
+    @objc func fiscalYearButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
+        self.annualPaidHolidaysType = .fiscalYear
+        
+        self.fiscalYearButton.isSelected = true
+        self.joiningDayButton.isSelected = false
+    }
+    
+    @objc func joiningDayButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
+        self.annualPaidHolidaysType = .joiningDay
+        
+        self.fiscalYearButton.isSelected = false
+        self.joiningDayButton.isSelected = true
     }
     
     @objc func cancelApplyingAnnualPaidHolidaysButton(_ sender: UIButton) {
+        self.dismiss(animated: false)
+    }
+    
+    @objc func applyAnnualPaidHolidaysButton(_ sender: UIButton) {
+        if self.annualPaidHolidaysType != self.tempAnnualPaidHolidaysType {
+            VacationModel.annualPaidHolidaysType = self.annualPaidHolidaysType
+        }
         
+        let tempSelf = self
+        self.dismiss(animated: false) {
+            UIDevice.lightHaptic()
+            
+            tempSelf.delegate?.menuCoverDidDetermineAnnualPaidHolidays(self.annualPaidHolidays[self.annualPaidHolidaysPickerView.selectedRow(inComponent: 0)])
+        }
     }
     
     // MARK: career management

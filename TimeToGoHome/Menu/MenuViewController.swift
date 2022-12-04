@@ -336,6 +336,20 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
             self.navigationController?.pushViewController(workRecordVC, animated: true)
         }
         
+        if indexPath.section == 0 && indexPath.row == 1 {
+            // WorkStatisticsViewController
+        }
+        
+        if indexPath.section == 1 && indexPath.row == 0 {
+            let numberOfPaidHolidaysVC = NumberOfPaidHolidaysViewController()
+            
+            self.navigationController?.pushViewController(numberOfPaidHolidaysVC, animated: true)
+        }
+        
+        if indexPath.section == 1 && indexPath.row == 1 {
+            // VacationUsageViewController
+        }
+        
         if indexPath.section == 2 && indexPath.row == 2 {
             let menuCoverVC = MenuCoverViewController(.lastDateAtWork, delegate: self)
             
