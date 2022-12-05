@@ -93,6 +93,8 @@ class DayWorkRecordViewController: UIViewController {
     var isEditingMode: Bool {
         didSet {
             self.navigationItem.rightBarButtonItem?.title = self.isEditingMode ? "완료" : "추가/제거"
+            self.changeScheduleDescriptionLabel.isHidden = self.isEditingMode
+            
             self.determineTableView()
             
             if !self.isEditingMode {
@@ -317,7 +319,7 @@ extension DayWorkRecordViewController {
             }
             
         } else if self.recordedSchedule.count == 2 {
-            let menuCoverVC = MenuCoverViewController(.overtime(regularWork: self.recordedSchedule.regularWorkType!, overtime: self.recordedSchedule.overtime), delegate: self)
+            let menuCoverVC = MenuCoverViewController(.overtime(self.recordedSchedule.overtime), delegate: self)
             
             self.present(menuCoverVC, animated: false)
             
@@ -389,9 +391,7 @@ extension DayWorkRecordViewController {
                     
                 } else { // tag 3, overtime
                     print("Long Pressed for overtime")
-                    let regularWorkType = self.recordedSchedule.regularWorkType!
-                    
-                    let menuCoverVC = MenuCoverViewController(.overtime(regularWork: regularWorkType, overtime: self.recordedSchedule.overtime!), delegate: self)
+                    let menuCoverVC = MenuCoverViewController(.overtime(self.recordedSchedule.overtime), delegate: self)
                     
                     self.present(menuCoverVC, animated: false)
                 }
@@ -627,5 +627,9 @@ extension DayWorkRecordViewController: MenuCoverDelegate {
         self.recordedSchedule.overtime = overtimeSeconds
         
         self.determineTableView()
+        
+        if !self.isEditingMode {
+            self.recordedSchedule.updateDB(companyModel: self.companyModel)
+        }
     }
 }

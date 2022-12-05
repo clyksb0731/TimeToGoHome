@@ -35,18 +35,6 @@ struct WorkScheduleRecordModel {
         }
     }
     
-    var regularWorkType: MenuCoverRegularWorkType? {
-        if self.morning == .work && self.afternoon == .work {
-            return .fullWork
-            
-        } else if self.afternoon == .work {
-            return .halfWork
-            
-        } else {
-            return nil
-        }
-    }
-    
     func updateDB(companyModel: CompanyModel) {
         if let date = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.dateId)), let morning = self.morning, let afternoon = self.afternoon {
             let schedule = Schedule(date: date, morningType: morning, afternoonType: afternoon, overtime: self.overtime)

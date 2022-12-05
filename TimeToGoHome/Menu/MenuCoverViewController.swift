@@ -7,16 +7,11 @@
 
 import UIKit
 
-enum MenuCoverRegularWorkType {
-    case fullWork
-    case halfWork
-}
-
 enum MenuCoverType {
     case lastDateAtWork
     case addNormalSchedule(NormalButtonType)
     case insertNormalSchedule(RecordScheduleType, NormalButtonType)
-    case overtime(regularWork: MenuCoverRegularWorkType, overtime: Int?)
+    case overtime(Int?)
     case annualPaidHolidays(numberOfAnnualPaidHolidays: Int)
     case careerManagement
     case calendarOfScheduleRecord(companyModel: CompanyModel)
@@ -171,7 +166,7 @@ class MenuCoverViewController: UIViewController {
         return label
     }()
     
-    var overtimeHours: [Int] = Array(0...20)
+    var overtimeHours: [Int] = Array(0...16)
     var overtimeMinutes: [Int] = Array(0...59)
     
     // MARK: Schedule buttons
@@ -1700,16 +1695,6 @@ extension MenuCoverViewController: EssentialViewMethods {
 // MARK: - Extension for methods added
 extension MenuCoverViewController {
     func initializeValueRelatedToMenuCoverType(_ menuCoverType: MenuCoverType) {
-        if case .overtime(let regularWork, _) = menuCoverType {
-            switch regularWork {
-            case .fullWork:
-                self.overtimeHours = Array(0...16)
-                
-            case .halfWork:
-                self.overtimeHours = Array(0...20)
-            }
-        }
-        
         if case .annualPaidHolidays(let numberOfAnnualPaidHolidays) = menuCoverType {
             self.numberOfAnnualPaidHolidays = numberOfAnnualPaidHolidays
             
@@ -1730,13 +1715,16 @@ extension MenuCoverViewController {
     }
     
     func initializeOvertimePicker() {
-        if case .overtime(_, let overtime) = menuCoverType {
+        if case .overtime(let overtime) = menuCoverType {
             if let overtime = overtime {
                 let hours = overtime / 3600
                 let minutes = (overtime % 3600) / 60
                 
-                self.overtimePicker.selectRow(hours, inComponent: 0, animated: false)
-                self.overtimePicker.selectRow(minutes, inComponent: 1, animated: false)
+                let rowHours = hours >= self.overtimeHours.last! ? self.overtimeHours.last! : hours
+                let rowMinutes = hours >= self.overtimeHours.last! ? 0 : minutes
+                
+                self.overtimePicker.selectRow(rowHours, inComponent: 0, animated: false)
+                self.overtimePicker.selectRow(rowMinutes, inComponent: 1, animated: false)
                 
             } else {
                 self.overtimePicker.selectRow(0, inComponent: 0, animated: false)
@@ -1758,7 +1746,8 @@ extension MenuCoverViewController {
         var overtimeSeconds = selectedMinute * 60
         overtimeSeconds += selectedHour * 3600
         
-        overtimeSeconds = overtimeSeconds > selectedHour * 3600 ? selectedHour * 3600 : overtimeSeconds
+        overtimeSeconds = overtimeSeconds > self.overtimeHours.last! * 3600 ?
+        self.overtimeHours.last! * 3600 : overtimeSeconds
         
         return overtimeSeconds
     }
