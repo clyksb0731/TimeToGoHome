@@ -26,12 +26,13 @@ class WorkRecordViewController: UIViewController {
         return tableView
     }()
     
-    var workRecords: [WorkRecord]
+    var workRecords: [WorkRecord] = []
     
     var companyModel: CompanyModel
     
-    init(companyModel: CompanyModel, workRecords: [WorkRecord] = []) {
-        self.workRecords = workRecords
+    var isThisVcSeen: Bool = false
+    
+    init(companyModel: CompanyModel) {
         self.companyModel = companyModel
         
         super.init(nibName: nil, bundle: nil)
@@ -44,6 +45,7 @@ class WorkRecordViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.setViewFoundation()
         self.initializeObjects()
         self.setDelegates()
         self.setGestures()
@@ -55,9 +57,7 @@ class WorkRecordViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.setViewFoundation()
-        
-        self.moveBottomOfWorkRecords()
+        self.determineTableViewWithRecordedSchedules()
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -120,11 +120,11 @@ extension WorkRecordViewController: EssentialViewMethods {
 
 // MARK: - Extension for methods added
 extension WorkRecordViewController {
-    func moveBottomOfWorkRecords() {
-        self.workRecords = self.companyModel.convertToWorkRecordsFromSchedules()
+    func determineTableViewWithRecordedSchedules() {
+        self.workRecords = self.companyModel.convertSchedulesToWorkRecords()
         self.workRecordTableView.reloadData()
         
-        guard self.workRecords.count > 1,
+        guard !self.isThisVcSeen, self.workRecords.count > 1,
                 self.workRecords[self.workRecords.count - 1].schedules.count > 1 else {
             return
         }
@@ -134,6 +134,8 @@ extension WorkRecordViewController {
         DispatchQueue.main.async {
             self.workRecordTableView.scrollToRow(at: bottomIndexPath, at: .bottom, animated: false)
         }
+        
+        self.isThisVcSeen = true
     }
 }
 
@@ -187,6 +189,30 @@ extension WorkRecordViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let dailySchedule = self.workRecords[indexPath.section].schedules[indexPath.row]
         
+        let recordedSchedule = WorkScheduleRecordModel(dateId: dailySchedule.dateId, morning: dailySchedule.morning, afternoon: dailySchedule.afternoon, overtime: dailySchedule.overtime)
+        
+        let dayWorkRecordVC = DayWorkRecordViewController(recordedSchedule: recordedSchedule, companyModel: self.companyModel)
+        
+        self.navigationController?.pushViewController(dayWorkRecordVC, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let action = UIContextualAction(style: .destructive, title: "삭제") { action, view, completionHandler in
+            let dateId = self.workRecords[indexPath.section].schedules[indexPath.row].dateId
+            self.companyModel.removeScheduleAtDateId(dateId)
+            
+            self.determineTableViewWithRecordedSchedules()
+            
+            completionHandler(true)
+        }
+        //action.backgroundColor = .blue
+        //action.image = UIImage(named: "")
+        
+        let swipeActions = UISwipeActionsConfiguration(actions: [action])
+        //swipeActions.performsFirstActionWithFullSwipe = false
+        
+        return swipeActions
     }
 }

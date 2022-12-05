@@ -212,47 +212,7 @@ extension MenuViewController: EssentialViewMethods {
 
 // MARK: - Extension for methods added
 extension MenuViewController {
-//    func convertToWorkRecordsFromSchedules() -> [WorkRecord] {
-//        if let schedules = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date).schedules {
-//            var workRecords: [WorkRecord] = []
-//            var workRecord = WorkRecord(yearMonth: "", schedules: [])
-//            let todayDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: Date()))
-//
-//            for schedule in schedules {
-//                let morning = WorkTimeType(rawValue: schedule.morning)!
-//                let afternoon = WorkTimeType(rawValue: schedule.afternoon)!
-//
-//                if schedule.dateId == todayDateId || (morning == .holiday && afternoon == .holiday) {
-//                    continue
-//                }
-//
-//                let yearMonth = String(format: "%02d%02d", schedule.year, schedule.month)
-//                if workRecord.yearMonth != yearMonth {
-//                    if workRecord.yearMonth != "" {
-//                        workRecords.append(workRecord)
-//                    }
-//
-//                    workRecord = WorkRecord(yearMonth: yearMonth, schedules: [])
-//                }
-//
-//                let dailySchedule = DailySchedule(dateId: schedule.dateId,
-//                                                  day: schedule.day,
-//                                                  morning: morning,
-//                                                  afternoon: afternoon,
-//                                                  overtime: schedule.overtime)
-//                workRecord.schedules.append(dailySchedule)
-//            }
-//
-//            if workRecord.yearMonth != "" {
-//                workRecords.append(workRecord)
-//            }
-//
-//            return workRecords.sorted { Int($0.yearMonth)! > Int($1.yearMonth)! }
-//
-//        } else {
-//            return []
-//        }
-//    }
+    
 }
 
 // MARK: - Extension for Selector methods
@@ -331,7 +291,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         
         if indexPath.section == 0 && indexPath.row == 0 {
             let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
-            let workRecordVC = WorkRecordViewController(companyModel: companyModel, workRecords: companyModel.convertToWorkRecordsFromSchedules())
+            let workRecordVC = WorkRecordViewController(companyModel: companyModel)
             
             self.navigationController?.pushViewController(workRecordVC, animated: true)
         }

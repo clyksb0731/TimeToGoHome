@@ -135,8 +135,18 @@ struct CompanyModel {
         }
     }
     
-    func convertToWorkRecordsFromSchedules() -> [WorkRecord] {
-        if let schedules = self.schedules {
+    func removeScheduleAtDateId(_ dateId: Int) {
+        let realm = try! Realm()
+        
+        if let index = self.schedules?.firstIndex(where: { $0.dateId == dateId }) {
+            try! realm.write {
+                self.schedules?.remove(at: index)
+            }
+        }
+    }
+    
+    func convertSchedulesToWorkRecords() -> [WorkRecord] {
+        if let schedules = self.schedules?.sorted(by: { $0.dateId < $1.dateId }) {
             var workRecords: [WorkRecord] = []
             var workRecord = WorkRecord(yearMonth: "", schedules: [])
             let todayDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: Date()))
@@ -176,7 +186,7 @@ struct CompanyModel {
                 workRecords.append(workRecord)
             }
             
-            return workRecords.sorted { Int($0.yearMonth)! > Int($1.yearMonth)! }
+            return workRecords
             
         } else {
             return []

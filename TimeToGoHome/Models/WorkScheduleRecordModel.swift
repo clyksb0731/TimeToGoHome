@@ -47,11 +47,11 @@ struct WorkScheduleRecordModel {
         }
     }
     
-    func updateDB(companyMode: CompanyModel) {
+    func updateDB(companyModel: CompanyModel) {
         if let date = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.dateId)), let morning = self.morning, let afternoon = self.afternoon {
             let schedule = Schedule(date: date, morningType: morning, afternoonType: afternoon, overtime: self.overtime)
             
-            companyMode.addSchedule(schedule)
+            companyModel.addSchedule(schedule)
             
             var vacation: Vacation!
             if morning == .vacation && afternoon == .vacation {

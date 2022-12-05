@@ -96,7 +96,7 @@ class DayWorkRecordViewController: UIViewController {
             self.determineTableView()
             
             if !self.isEditingMode {
-                self.recordedSchedule.updateDB(companyMode: self.companyModel)
+                self.recordedSchedule.updateDB(companyModel: self.companyModel)
             }
         }
     }
@@ -620,7 +620,7 @@ extension DayWorkRecordViewController: MenuCoverDelegate {
         
         self.determineTableView()
         
-        self.recordedSchedule.updateDB(companyMode: self.companyModel)
+        self.recordedSchedule.updateDB(companyModel: self.companyModel)
     }
     
     func menuCoverDidDetermineOvertimeSeconds(_ overtimeSeconds: Int) {
