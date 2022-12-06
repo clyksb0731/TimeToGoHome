@@ -277,6 +277,8 @@ class InitialViewController: UIViewController {
         return button
     }()
     
+    var tempInitialSetting: [String:Any]?
+    
     var joiningDate: Date = Date()
     
     var initialContentHeight: CGFloat!
@@ -834,6 +836,10 @@ extension InitialViewController {
         guard !CompanyModel.checkDuplicateJoiningDate(self.joiningDate) else {
             let presentingVC = self.presentingViewController
             SupportingMethods.shared.makeAlert(on: self, withTitle: "오류", andMessage: "중복된 기간의 회사가 있습니다. 경력 사항으로 이동할까요?", okAction: UIAlertAction(title: "이동", style: .default, handler: { action in
+                if let tempInitialSetting = self.self.tempInitialSetting {
+                    ReferenceValues.initialSetting = tempInitialSetting
+                }
+                
                 presentingVC?.dismiss(animated: true) {
                     let menuNaviVC = CustomizedNavigationController()
                     menuNaviVC.viewControllers = [MenuViewController(), CareerViewController()]

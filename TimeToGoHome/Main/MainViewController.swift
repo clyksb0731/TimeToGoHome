@@ -2563,10 +2563,13 @@ extension MainViewController {
     
     @objc func initializeNewCompanyButton(_ sender: UIButton) {
         let initialVC = InitialViewController()
+        initialVC.tempInitialSetting = ReferenceValues.initialSetting
         initialVC.modalPresentationStyle = .fullScreen
         
         self.present(initialVC, animated: true) {
             ReferenceValues.initialSetting = [:]
+            
+            VacationModel.removeAllVacations()
         }
     }
 }
