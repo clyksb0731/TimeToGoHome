@@ -303,7 +303,7 @@ struct VacationModel {
         return Double(fullDayVacations.count) * 1 + Double(halfDayVacations.count) * 0.5
     }
     
-    private static func determineVacationScheduleDateRange() -> (startDate: Date, endDate: Date) {
+    static func determineVacationScheduleDateRange() -> (startDate: Date, endDate: Date) {
         var calendar = Calendar.current
         calendar.timeZone = .current
         let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
@@ -409,6 +409,7 @@ struct VacationModel {
     }
 }
 
+// MARK: - Realm Scheme
 class Company: Object {
     @Persisted(primaryKey: true) var dateId: Int = 0
     @Persisted var leavingDate: Date?

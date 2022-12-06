@@ -80,11 +80,19 @@ class DayWorkRecordViewController: UIViewController {
         return label
     }()
     
+    var numberOfAnnualPaidHolidays: Double {
+        return Double(ReferenceValues.initialSetting[InitialSetting.annualPaidHolidays.rawValue] as! Int)
+    }
+    var numberOfVacationsHold: Double {
+        return VacationModel.numberOfVacationsHold
+    }
+    
     var recordedSchedule: WorkScheduleRecordModel {
         didSet {
             self.navigationItem.rightBarButtonItem?.isEnabled = self.recordedSchedule.count >= 2
         }
     }
+    var tempRecordedSchedule: WorkScheduleRecordModel?
     
     var companyModel: CompanyModel
     
@@ -92,14 +100,15 @@ class DayWorkRecordViewController: UIViewController {
     
     var isEditingMode: Bool {
         didSet {
+            self.navigationItem.leftBarButtonItem = self.isEditingMode ?
+            UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelEditingRecordedSchedule(_:))) :
+            UIBarButtonItem(image: UIImage(named: "backButtonItemImage"), style: .plain, target: self, action: #selector(leftBarButtonItem(_:)))
+            
             self.navigationItem.rightBarButtonItem?.title = self.isEditingMode ? "완료" : "추가/제거"
+            
             self.changeScheduleDescriptionLabel.isHidden = self.isEditingMode
             
             self.determineTableView()
-            
-            if !self.isEditingMode {
-                self.recordedSchedule.updateDB(companyModel: self.companyModel)
-            }
         }
     }
     
@@ -293,8 +302,102 @@ extension DayWorkRecordViewController {
         self.navigationController?.popViewController(animated: true)
     }
     
+    // MARK: Complete changing recorded schedule
     @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
+        if !self.isEditingMode { // After '추가/제거'
+            self.tempRecordedSchedule = self.recordedSchedule
+            
+        } else { // After '완료'
+            let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+            let vacationRange = VacationModel.determineVacationScheduleDateRange()
+            
+            let startDateIdOfVacation = Int(dateFormatter.string(from: vacationRange.startDate))!
+            let endDateIdOfVacation = Int(dateFormatter.string(from: vacationRange.endDate))!
+            let thisRecordScheduleDateId = self.recordedSchedule.dateId
+            
+            if thisRecordScheduleDateId >= startDateIdOfVacation && thisRecordScheduleDateId <= endDateIdOfVacation {
+                // Calculate annualPaidHolidays and vacation hold before changing schedule.
+                if self.recordedSchedule.morning == .vacation, self.recordedSchedule.afternoon == .vacation {
+                    
+                    if self.tempRecordedSchedule?.morning  != .vacation, self.tempRecordedSchedule?.afternoon != .vacation {
+                        if self.numberOfVacationsHold + 1.0 > self.numberOfAnnualPaidHolidays {
+                            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+                            
+                            return
+                        }
+                    }
+                    
+                    if self.tempRecordedSchedule?.morning == .vacation {
+                        if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+                            
+                            return
+                        }
+                    }
+                    
+                    if self.tempRecordedSchedule?.afternoon == .vacation {
+                        if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+                            
+                            return
+                        }
+                    }
+                }
+                
+                if self.recordedSchedule.morning == .vacation {
+                    
+                    if self.tempRecordedSchedule?.morning  != .vacation, self.tempRecordedSchedule?.afternoon != .vacation {
+                        if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+                            
+                            return
+                        }
+                    }
+                    
+                    if self.tempRecordedSchedule?.afternoon == .vacation {
+                        if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+                            
+                            return
+                        }
+                    }
+                }
+                
+                if self.recordedSchedule.afternoon == .vacation {
+                    
+                    if self.tempRecordedSchedule?.morning  != .vacation, self.tempRecordedSchedule?.afternoon != .vacation {
+                        if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+                            
+                            return
+                        }
+                    }
+                    
+                    if self.tempRecordedSchedule?.morning == .vacation {
+                        if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+                            
+                            return
+                        }
+                    }
+                }
+            }
+        }
+        
+        // After calculateing, changing schedule.
         self.isEditingMode.toggle()
+        
+        if !self.isEditingMode { // After '완료'
+            self.recordedSchedule.updateDB(companyModel: self.companyModel)
+        }
+    }
+    
+    @objc func cancelEditingRecordedSchedule(_ sender: UIBarButtonItem) {
+        if let recordSchedule = self.tempRecordedSchedule {
+            self.recordedSchedule = recordSchedule
+            
+            self.isEditingMode = false
+        }
     }
     
     @objc func addScheduleButton(_ sender: UIButton) {
@@ -607,6 +710,36 @@ extension DayWorkRecordViewController: MenuCoverDelegate {
     }
     
     func menuCoverDidDetermineInsertNormalSchedule(_ scheduleType: RecordScheduleType) {
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+        let vacationRange = VacationModel.determineVacationScheduleDateRange()
+        
+        let startDateIdOfVacation = Int(dateFormatter.string(from: vacationRange.startDate))!
+        let endDateIdOfVacation = Int(dateFormatter.string(from: vacationRange.endDate))!
+        let thisRecordScheduleDateId = self.recordedSchedule.dateId
+        
+        if thisRecordScheduleDateId >= startDateIdOfVacation && thisRecordScheduleDateId <= endDateIdOfVacation {
+            // Calculate annualPaidHolidays and vacation hold before inserting schedule.
+            if case .morning(let workType) = scheduleType, workType == .vacation {
+                if self.recordedSchedule.morning != .vacation {
+                    if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                        SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+                        
+                        return
+                    }
+                }
+            }
+            if case .afternoon(let workType) = scheduleType, workType == .vacation {
+                if self.recordedSchedule.afternoon != .vacation {
+                    if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                        SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+                        
+                        return
+                    }
+                }
+            }
+        }
+        
+        // After calculateing, inserting schedule.
         switch scheduleType {
         case .morning(let workTimeType):
             self.recordedSchedule.morning = workTimeType
