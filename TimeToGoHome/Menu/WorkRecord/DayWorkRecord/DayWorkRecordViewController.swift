@@ -368,7 +368,7 @@ extension DayWorkRecordViewController {
                     print("Long Pressed for afternoon")
                     if self.recordedSchedule.overtime == nil {
                         var buttonType: NormalButtonType = .allButton
-                        switch self.recordedSchedule.afternoon! {
+                        switch self.recordedSchedule.morning! {
                         case .work:
                             buttonType = .allButton
                             
