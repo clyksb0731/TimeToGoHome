@@ -189,9 +189,9 @@ extension WorkScheduleModel {
                     self.morning = .morning(.holiday)
                     self.afternoon = .afternoon(.holiday)
                     
-                    let schedule = Schedule(date: self.self.date, morningType: WorkTimeType.holiday, afternoonType: WorkTimeType.holiday)
-                    
-                    companyModel.addSchedule(schedule)
+                    // No need to make schedule onto DB because it is regular holiday. So this code was removed.
+                    //let schedule = Schedule(date: self.self.date, morningType: WorkTimeType.holiday, afternoonType: WorkTimeType.holiday)
+                    //companyModel.applySchedule(schedule)
                     
                 } else {
                     if let vacation = VacationModel(date: self.date).vacation {
@@ -232,7 +232,7 @@ extension WorkScheduleModel {
                         
                         let schedule = Schedule(date: self.date, morningType: morningWorkTimeType, afternoonType: afternoonWorkTimeType)
                         
-                        companyModel.addSchedule(schedule)
+                        companyModel.applySchedule(schedule)
                         
                     } else {
                         self.morning = .morning(.work)
@@ -240,7 +240,7 @@ extension WorkScheduleModel {
                         
                         let schedule = Schedule(date: self.date, morningType: WorkTimeType.work, afternoonType: WorkTimeType.work)
                         
-                        companyModel.addSchedule(schedule)
+                        companyModel.applySchedule(schedule)
                     }
                 }
                 
@@ -404,13 +404,15 @@ extension WorkScheduleModel {
     }
     
     func updateTodayIntoDB() {
+        let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
         if case .morning(let morningWorkType) = self.morning, case .afternoon(let afternoonWorkType) = self.afternoon {
             let schedule = Schedule(date: self.date, morningType: morningWorkType, afternoonType: afternoonWorkType)
             if case .overtime(_) = self.overtime {
                 let overtime = self.overtimeSecondsSincReferenceDate - self.finishingRegularWorkTimeSecondsSinceReferenceDate!
                 schedule.overtime = overtime
             }
-            CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date).setSchedule(schedule)
+            
+            companyModel.applySchedule(schedule)
             
             var vacation: Vacation!
             if morningWorkType == .vacation && afternoonWorkType == .vacation {

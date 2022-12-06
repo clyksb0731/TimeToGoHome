@@ -36,25 +36,31 @@ struct WorkScheduleRecordModel {
     }
     
     func updateDB(companyModel: CompanyModel) {
-        if let date = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.dateId)), let morning = self.morning, let afternoon = self.afternoon {
-            let schedule = Schedule(date: date, morningType: morning, afternoonType: afternoon, overtime: self.overtime)
-            
-            companyModel.addSchedule(schedule)
-            
-            var vacation: Vacation!
-            if morning == .vacation && afternoon == .vacation {
-                vacation = Vacation(date: date, vacationType: .fullDay)
-                
-            } else if morning == .vacation {
-                vacation = Vacation(date: date, vacationType: .morning)
-                
-            } else if afternoon == .vacation {
-                vacation = Vacation(date: date, vacationType: .afternoon)
+        if let morning = self.morning, let afternoon = self.afternoon {
+            if morning == .holiday && afternoon == .holiday {
+                companyModel.removeScheduleAtDateId(self.dateId) // Remove full holiday from recorded schedules.
                 
             } else {
-                vacation = Vacation(date: date, vacationType: .none)
+                let date = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.dateId))!
+                let schedule = Schedule(date: date, morningType: morning, afternoonType: afternoon, overtime: self.overtime)
+                
+                companyModel.applySchedule(schedule)
+                
+                var vacation: Vacation!
+                if morning == .vacation && afternoon == .vacation {
+                    vacation = Vacation(date: date, vacationType: .fullDay)
+                    
+                } else if morning == .vacation {
+                    vacation = Vacation(date: date, vacationType: .morning)
+                    
+                } else if afternoon == .vacation {
+                    vacation = Vacation(date: date, vacationType: .afternoon)
+                    
+                } else {
+                    vacation = Vacation(date: date, vacationType: .none)
+                }
+                VacationModel.addVacation(vacation)
             }
-            VacationModel.addVacation(vacation)
         }
     }
 }

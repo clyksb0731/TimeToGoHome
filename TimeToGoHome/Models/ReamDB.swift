@@ -105,23 +105,23 @@ struct CompanyModel {
         return schedules
     }
     
-    func setSchedule(_ schedule: Schedule) {
-        let realm = try! Realm()
-        
-        let schedules = self.company?.schedules.where {
-            $0.dateId == schedule.dateId
-        }
-        try! realm.write {
-            schedules?.first?.year = schedule.year
-            schedules?.first?.month = schedule.month
-            schedules?.first?.day = schedule.day
-            schedules?.first?.morning = schedule.morning
-            schedules?.first?.afternoon = schedule.afternoon
-            schedules?.first?.overtime = schedule.overtime
-        }
-    }
+//    func setSchedule(_ schedule: Schedule) {
+//        let realm = try! Realm()
+//
+//        let schedules = self.company?.schedules.where {
+//            $0.dateId == schedule.dateId
+//        }
+//        try! realm.write {
+//            schedules?.first?.year = schedule.year
+//            schedules?.first?.month = schedule.month
+//            schedules?.first?.day = schedule.day
+//            schedules?.first?.morning = schedule.morning
+//            schedules?.first?.afternoon = schedule.afternoon
+//            schedules?.first?.overtime = schedule.overtime
+//        }
+//    }
     
-    func addSchedule(_ schedule: Schedule) {
+    func applySchedule(_ schedule: Schedule) {
         let realm = try! Realm()
         
         let schedules = self.company?.schedules.where {

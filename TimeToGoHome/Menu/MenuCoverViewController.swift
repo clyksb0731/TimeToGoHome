@@ -2085,10 +2085,18 @@ extension MenuCoverViewController: UICollectionViewDelegate, UICollectionViewDat
         collectionView.reloadData()
         
         DispatchQueue.main.async {
-            let recordedSchedule = {
+            let recordedSchedule: WorkScheduleRecordModel = {
                 let dateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: dateOfDay))!
                 if let schedule = self.companyModel.getScheduleOn(dateOfDay) {
-                    return WorkScheduleRecordModel(dateId: dateId, morning: WorkTimeType(rawValue: schedule.morning), afternoon: WorkTimeType(rawValue: schedule.afternoon), overtime: schedule.overtime)
+                    if schedule.morning == WorkTimeType.holiday.rawValue &&
+                        schedule.afternoon == WorkTimeType.holiday.rawValue {
+                        self.companyModel.removeSchedule(schedule) // Remove full holiday from recorded schedules.
+                        
+                        return WorkScheduleRecordModel(dateId: dateId)
+                        
+                    } else {
+                        return WorkScheduleRecordModel(dateId: dateId, morning: WorkTimeType(rawValue: schedule.morning), afternoon: WorkTimeType(rawValue: schedule.afternoon), overtime: schedule.overtime)
+                    }
                     
                 } else {
                     return WorkScheduleRecordModel(dateId: dateId)
