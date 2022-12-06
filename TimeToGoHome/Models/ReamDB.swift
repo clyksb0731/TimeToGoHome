@@ -8,7 +8,9 @@
 import UIKit
 import RealmSwift
 
+// MARK: - CompanyModel
 struct CompanyModel {
+    // MARK: Handling company
     private let dateId: Int
     
     init(joiningDate: Date) {
@@ -41,6 +43,14 @@ struct CompanyModel {
         }
     }
     
+    static func addCompany(_ company: Company) {
+        let realm = try! Realm()
+        
+        try! realm.write {
+            realm.add(company, update: .all)
+        }
+    }
+    
     func setLeavingDate(_ date: Date?) {
         let realm = try! Realm()
         
@@ -49,6 +59,28 @@ struct CompanyModel {
         }
     }
     
+    static func checkDuplicateJoiningDate(_ date: Date) -> Bool {
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+        let joiningDateId = Int(dateFormatter.string(from: date))!
+        
+        let realm = try! Realm()
+        
+        let companies = realm.objects(Company.self)
+        for company in companies {
+            if let leftDate = company.leavingDate {
+                let joinedDateId = Int(String(format: "%02d%02d%02d", company.year, company.month, company.day))!
+                let leftDateId = Int(dateFormatter.string(from: leftDate))!
+                
+                if joiningDateId >= joinedDateId && joiningDateId <= leftDateId {
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
+    
+    // MARK: Handling schedule
     var schedules: List<Schedule>? {
         return self.company?.schedules
     }
@@ -192,42 +224,38 @@ struct CompanyModel {
             return []
         }
     }
-    
-    static func addCompany(_ company: Company) {
-        let realm = try! Realm()
-        
-        try! realm.write {
-            realm.add(company, update: .all)
-        }
-    }
-    
-    static func checkDuplicateJoiningDate(_ date: Date) -> Bool {
-        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
-        let joiningDateId = Int(dateFormatter.string(from: date))!
-        
-        let realm = try! Realm()
-        
-        let companies = realm.objects(Company.self)
-        for company in companies {
-            if let leftDate = company.leavingDate {
-                let joinedDateId = Int(String(format: "%02d%02d%02d", company.year, company.month, company.day))!
-                let leftDateId = Int(dateFormatter.string(from: leftDate))!
-                
-                if joiningDateId >= joinedDateId && joiningDateId <= leftDateId {
-                    return true
-                }
-            }
-        }
-        
-        return false
-    }
 }
 
+// MARK: VacationModel
 struct VacationModel {
     private let dateId: Int
     
     init(date: Date) {
         self.dateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date))!
+    }
+    
+    var vacation: Vacation? {
+        get {
+            let realm = try! Realm()
+            
+            return realm.object(ofType: Vacation.self, forPrimaryKey: self.dateId)
+        }
+        
+        set {
+            let realm = try! Realm()
+            
+            if let newValue = newValue {
+                realm.add(newValue, update: .modified)
+            }
+        }
+    }
+    
+    static var vacations: Results<Vacation> {
+        get {
+            let realm = try! Realm()
+            
+            return realm.objects(Vacation.self)
+        }
     }
     
     static var annualPaidHolidaysType: AnnualPaidHolidaysType = {
@@ -245,20 +273,34 @@ struct VacationModel {
         }
     }
     
-    var vacation: Vacation? {
-        get {
-            let realm = try! Realm()
-            
-            return realm.object(ofType: Vacation.self, forPrimaryKey: self.dateId)
+    static func addVacation(_ vacation: Vacation) {
+        let realm = try! Realm()
+        
+        try! realm.write {
+            realm.add(vacation, update: .all)
+        }
+    }
+    
+    static var numberOfVacationsHold: Double {
+        let vacations = VacationModel.vacations
+        
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+        
+        let periodVacations = vacations.where {
+            $0.dateId >= Int(dateFormatter.string(from: self.determineVacationScheduleDateRange().startDate))!
+            && $0.dateId <= Int(dateFormatter.string(from: self.determineVacationScheduleDateRange().endDate))!
         }
         
-        set {
-            let realm = try! Realm()
-            
-            if let newValue = newValue {
-                realm.add(newValue, update: .modified)
-            }
+        let fullDayVacations = periodVacations.where {
+            $0.vacationType == VacationType.fullDay.rawValue
         }
+        
+        let halfDayVacations = periodVacations.where {
+            $0.vacationType == VacationType.morning.rawValue ||
+            $0.vacationType == VacationType.afternoon.rawValue
+        }
+        
+        return Double(fullDayVacations.count) * 1 + Double(halfDayVacations.count) * 0.5
     }
     
     private static func determineVacationScheduleDateRange() -> (startDate: Date, endDate: Date) {
@@ -338,41 +380,31 @@ struct VacationModel {
         }
     }
     
-    static var vacations: Results<Vacation> {
-        get {
-            let realm = try! Realm()
-            
-            return realm.objects(Vacation.self)
+    func removeFromDB() {
+        let realm = try! Realm()
+        
+        if let vacation = self.vacation {
+            try! realm.write {
+                realm.delete(vacation)
+            }
         }
     }
     
-    static var numberOfVacationsHold: Double {
-        let vacations = VacationModel.vacations
+    static func removeVacationAtDateId(_ dateId: Int) {
+        let realm = try! Realm()
         
-        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
-        
-        let periodVacations = vacations.where {
-            $0.dateId >= Int(dateFormatter.string(from: self.determineVacationScheduleDateRange().startDate))!
-            && $0.dateId <= Int(dateFormatter.string(from: self.determineVacationScheduleDateRange().endDate))!
+        if let vacation = realm.object(ofType: Vacation.self, forPrimaryKey: dateId) {
+            try! realm.write {
+                realm.delete(vacation)
+            }
         }
-        
-        let fullDayVacations = periodVacations.where {
-            $0.vacationType == VacationType.fullDay.rawValue
-        }
-        
-        let halfDayVacations = periodVacations.where {
-            $0.vacationType == VacationType.morning.rawValue ||
-            $0.vacationType == VacationType.afternoon.rawValue
-        }
-        
-        return Double(fullDayVacations.count) * 1 + Double(halfDayVacations.count) * 0.5
     }
     
-    static func addVacation(_ vacation: Vacation) {
+    static func removeAllVacations() {
         let realm = try! Realm()
         
         try! realm.write {
-            realm.add(vacation, update: .all)
+            realm.delete(self.vacations)
         }
     }
 }
