@@ -326,11 +326,11 @@ extension WorkScheduleModel {
                 } else {
                     SupportingMethods.shared.setAppSetting(with: nil, for: .timeDateForStartingTodayOfStaggeredSchedule)
                     
-                    return
+                    self.startingWorkTime = nil
                 }
                 
             } else {
-                return
+                self.startingWorkTime = nil
             }
             
         case .normal:
@@ -378,11 +378,11 @@ extension WorkScheduleModel {
                     self.startingWorkTime = calendar.date(from: todayDateComponents)
                     
                 } else {
-                    return
+                    self.startingWorkTime = nil
                 }
                 
             } else {
-                return
+                self.startingWorkTime = nil
             }
         }
     }
