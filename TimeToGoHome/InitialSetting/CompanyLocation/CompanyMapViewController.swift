@@ -325,6 +325,8 @@ extension CompanyMapViewController {
             let newCenter = self.mapView.convert(gesturedPoint, toCoordinateFrom: self.mapView)
             
             self.findAddressWithCenter(newCenter)
+            
+            UIDevice.lightHaptic()
         }
     }
 }
