@@ -103,6 +103,7 @@ class DayWorkRecordViewController: UIViewController {
             self.navigationItem.leftBarButtonItem = self.isEditingMode ?
             UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelEditingRecordedSchedule(_:))) :
             UIBarButtonItem(image: UIImage(named: "backButtonItemImage"), style: .plain, target: self, action: #selector(leftBarButtonItem(_:)))
+            self.navigationItem.leftBarButtonItem?.tintColor = .black
             
             self.navigationItem.rightBarButtonItem?.title = self.isEditingMode ? "완료" : "추가/제거"
             
