@@ -35,6 +35,8 @@ struct CompanyModel {
         }
     }
     
+    static private var companyNotification: NotificationToken?
+    
     static var companies: Results<Company> {
         get {
             let realm = try! Realm()
@@ -49,6 +51,35 @@ struct CompanyModel {
         try! realm.write {
             realm.add(company, update: .all)
         }
+    }
+    
+    static func removeCompany(_ dateId: Int) {
+        let realm = try! Realm()
+        
+        if let company = realm.object(ofType: Company.self, forPrimaryKey: dateId) {
+            try! realm.write {
+                realm.delete(company)
+            }
+        }
+    }
+    
+    static func observe(_ closure: (() -> ())?) {
+        self.companyNotification = self.companies.observe({ changes in
+            switch changes {
+            case .initial(_):
+                closure?()
+                
+            case .update(_, deletions: _, insertions: _, modifications: _):
+                closure?()
+                
+            case .error(let error):
+                fatalError("vacationNotification error: \(error.localizedDescription)")
+            }
+        })
+    }
+    
+    static func invalidateObserving() {
+        self.companyNotification?.invalidate()
     }
     
     func setLeavingDate(_ date: Date?) {
@@ -422,7 +453,7 @@ class Company: Object {
     @Persisted var longitude: Double = 0
     @Persisted var schedules: List<Schedule>
     
-    convenience init(joiningDate: Date, leavingDate: Date? = nil, name: String, address: String, latitude: Double, longitude: Double) {
+    convenience init(joiningDate: Date, leavingDate: Date? = nil, name: String, address: String = "", latitude: Double = 0, longitude: Double = 0) {
         self.init()
         
         self.dateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: joiningDate))!
