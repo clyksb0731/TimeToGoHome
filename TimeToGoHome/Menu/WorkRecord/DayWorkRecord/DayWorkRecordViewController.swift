@@ -12,7 +12,6 @@ class DayWorkRecordViewController: UIViewController {
     lazy var emptyView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
-        view.isHidden = !self.isEditingMode
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -392,6 +391,8 @@ extension DayWorkRecordViewController {
     // MARK: Complete changing recorded schedule
     @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
         if !self.isEditingMode { // After '추가/제거'
+            UIDevice.softHaptic()
+            
             self.tempRecordedSchedule = self.recordedSchedule
             
         } else { // After '완료'
@@ -421,6 +422,7 @@ extension DayWorkRecordViewController {
     
     @objc func addScheduleButton(_ sender: UIButton) {
         print("addRecordScheduleButton")
+        UIDevice.softHaptic()
         
         if self.recordedSchedule.count == 1 {
             switch self.recordedSchedule.morning! {
