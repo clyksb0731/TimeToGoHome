@@ -64,7 +64,7 @@ extension WorkRecordHeaderView: EssentialCellHeaderMethods {
         // categoryLabel
         NSLayoutConstraint.activate([
             self.yearMonthLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 5),
-            self.yearMonthLabel.heightAnchor.constraint(equalToConstant: 16),
+            self.yearMonthLabel.heightAnchor.constraint(equalToConstant: 18),
             self.yearMonthLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -5),
             self.yearMonthLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16)
         ])
