@@ -2309,6 +2309,67 @@ extension MainViewController {
     func makeTimerForSchedule() -> Timer {
         return Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timer(_:)), userInfo: nil, repeats: true)
     }
+    
+    func checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(schedule: WorkScheduleModel, tempSchedule: WorkScheduleModel) -> Bool {
+        if case .morning(let scheduleWorkType) = schedule.morning, scheduleWorkType == .vacation,
+           case .afternoon(let scheduleWorkType) = schedule.afternoon, scheduleWorkType == .vacation {
+            if case .morning(let scheduleWorkType) = tempSchedule.morning, scheduleWorkType != .vacation,
+               case .afternoon(let scheduleWorkType) = tempSchedule.afternoon, scheduleWorkType != .vacation {
+                if self.numberOfVacationsHold + 1.0 > self.numberOfAnnualPaidHolidays {
+                    return true
+                }
+            }
+            
+            if case .morning(let scheduleWorkType) = tempSchedule.morning, scheduleWorkType == .vacation {
+                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                    return true
+                }
+            }
+            
+            if case .afternoon(let scheduleWorkType) = tempSchedule.afternoon, scheduleWorkType == .vacation {
+                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                    return true
+                }
+            }
+        }
+        
+        if case .morning(let scheduleWorkType) = schedule.morning, scheduleWorkType == .vacation {
+            if case .morning(let scheduleWorkType) = tempSchedule.morning, scheduleWorkType != .vacation {
+                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                    return true
+                }
+            }
+        }
+        
+        if case .afternoon(let scheduleWorkType) = schedule.afternoon, scheduleWorkType == .vacation {
+            if case .afternoon(let scheduleWorkType) = tempSchedule.afternoon, scheduleWorkType != .vacation {
+                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
+    
+    func checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(insertNormalSchedule: ScheduleType, schedule: WorkScheduleModel) -> Bool {
+        if case .morning(let workType) = insertNormalSchedule, workType == .vacation {
+            if case .morning(let scheduleWorkType) = schedule.morning, scheduleWorkType != .vacation {
+                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                    return true
+                }
+            }
+        }
+        if case .afternoon(let workType) = insertNormalSchedule, workType == .vacation {
+            if case .afternoon(let scheduleWorkType) = schedule.afternoon, scheduleWorkType != .vacation {
+                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
 }
 
 // MARK: - Extension for Selector methods
@@ -2463,73 +2524,10 @@ extension MainViewController {
     
     @objc func completeChangingScheduleButtonView(_ sender: UIButton) {
         // Calculate annualPaidHolidays and vacation hold before changing schedule.
-        if case .morning(let scheduleWorkType) = self.schedule.morning, scheduleWorkType == .vacation,
-           case .afternoon(let scheduleWorkType) = self.schedule.afternoon, scheduleWorkType == .vacation {
+        if self.checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(schedule: self.schedule, tempSchedule: self.tempSchedule!) {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
             
-            if case .morning(let scheduleWorkType) = self.tempSchedule?.morning, scheduleWorkType != .vacation,
-               case .afternoon(let scheduleWorkType) = self.tempSchedule?.afternoon, scheduleWorkType != .vacation {
-                if self.numberOfVacationsHold + 1.0 > self.numberOfAnnualPaidHolidays {
-                    SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
-                    
-                    return
-                }
-            }
-            
-            if case .morning(let scheduleWorkType) = self.tempSchedule?.morning, scheduleWorkType == .vacation {
-                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
-                    SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
-                    
-                    return
-                }
-            }
-            
-            if case .afternoon(let scheduleWorkType) = self.tempSchedule?.afternoon, scheduleWorkType == .vacation {
-                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
-                    SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
-                    
-                    return
-                }
-            }
-        }
-        
-        if case .morning(let scheduleWorkType) = self.schedule.morning, scheduleWorkType == .vacation {
-            
-            if case .morning(let scheduleWorkType) = self.tempSchedule?.morning, scheduleWorkType != .vacation,
-               case .afternoon(let scheduleWorkType) = self.tempSchedule?.afternoon, scheduleWorkType != .vacation {
-                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
-                    SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
-                    
-                    return
-                }
-            }
-            
-            if case .afternoon(let scheduleWorkType) = self.tempSchedule?.afternoon, scheduleWorkType == .vacation {
-                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
-                    SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
-                    
-                    return
-                }
-            }
-        }
-        
-        if case .afternoon(let scheduleWorkType) = self.schedule.afternoon, scheduleWorkType == .vacation {
-            
-            if case .morning(let scheduleWorkType) = self.tempSchedule?.morning, scheduleWorkType != .vacation,
-               case .afternoon(let scheduleWorkType) = self.tempSchedule?.afternoon, scheduleWorkType != .vacation {
-                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
-                    SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
-                    
-                    return
-                }
-            }
-            
-            if case .morning(let scheduleWorkType) = self.tempSchedule?.morning, scheduleWorkType == .vacation {
-                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
-                    SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
-                    
-                    return
-                }
-            }
+            return
         }
         
         // After calculateing, changing schedule.
@@ -3006,23 +3004,10 @@ extension MainViewController: ScheduleButtonViewDelegate {
 extension MainViewController: MainCoverDelegate {
     func mainCoverDidDetermineNormalSchedule(_ schedule: ScheduleType) {
         // Calculate annualPaidHolidays and vacation hold before inserting schedule.
-        if case .morning(let workType) = schedule, workType == .vacation {
-            if case .morning(let scheduleWorkType) = self.schedule.morning, scheduleWorkType != .vacation {
-                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
-                    SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
-                    
-                    return
-                }
-            }
-        }
-        if case .afternoon(let workType) = schedule, workType == .vacation {
-            if case .afternoon(let scheduleWorkType) = self.schedule.afternoon, scheduleWorkType != .vacation {
-                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
-                    SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
-                    
-                    return
-                }
-            }
+        if self.checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(insertNormalSchedule: schedule, schedule: self.schedule) {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+            
+            return
         }
         
         // After calculateing, inserting schedule.
