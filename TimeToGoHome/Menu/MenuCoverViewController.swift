@@ -2155,14 +2155,22 @@ extension MenuCoverViewController: UIPickerViewDelegate, UIPickerViewDataSource 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         if pickerView.tag == 1 {
             print("\(self.overtimeHours[pickerView.selectedRow(inComponent: 0)])시간  \(self.overtimeMinutes[pickerView.selectedRow(inComponent: 1)])분")
+            
             if self.overtimeHours[pickerView.selectedRow(inComponent: 0)] == self.overtimeHours.last {
                 self.overtimePicker.selectRow(0, inComponent: 1, animated: true)
             }
             
         } else { // tag == 2
-            print("Number of annual paid holidays: \(self.annualPaidHolidays[row])")
-            
-            self.numberOfAnnualPaidHolidays = self.annualPaidHolidays[row]
+            if VacationModel.numberOfVacationsHold > Double(self.annualPaidHolidays[row]) {
+                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "사용한(혹은 사용할) 휴가 날 수보다 적게 설정할 수 없습니다.")
+                
+                pickerView.selectRow(self.annualPaidHolidays.firstIndex(of: self.numberOfAnnualPaidHolidays!)!, inComponent: 0, animated: true)
+                
+            } else {
+                print("Number of annual paid holidays: \(self.annualPaidHolidays[row])")
+                
+                self.numberOfAnnualPaidHolidays = self.annualPaidHolidays[row]
+            }
         }
     }
 }
