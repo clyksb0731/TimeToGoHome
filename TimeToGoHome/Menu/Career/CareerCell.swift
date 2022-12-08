@@ -77,7 +77,7 @@ class CareerCell: UITableViewCell {
 // MARK: - Extension for essential methods
 extension CareerCell: EssentialCellHeaderMethods {
     func setViewFoundation() {
-        self.selectionStyle = .none
+        //self.selectionStyle = .none
         self.contentView.isUserInteractionEnabled = true
     }
     

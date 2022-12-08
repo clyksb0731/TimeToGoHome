@@ -22,6 +22,8 @@ class CareerViewController: UIViewController {
         return tableView
     }()
     
+    var companies: [Company] = CompanyModel.companies.sorted(by: { $0.dateId > $1.dateId })
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -66,6 +68,8 @@ extension CareerViewController: EssentialViewMethods {
     
     func initializeObjects() {
         CompanyModel.observe {
+            self.companies = CompanyModel.companies.sorted(by: { $0.dateId > $1.dateId })
+            
             self.careerTableView.reloadData()
         }
     }
@@ -115,7 +119,7 @@ extension CareerViewController {
     }
     
     @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
-        let menuCoverVC = MenuCoverViewController(.careerManagement, delegate: self) // FIXME: Need to update handling about '.careerManagement'.
+        let menuCoverVC = MenuCoverViewController(.careerManagement(nil), delegate: self)
         
         self.present(menuCoverVC, animated: false)
     }
@@ -124,24 +128,42 @@ extension CareerViewController {
 // MARK: - Extension for UITableViewDelegate, UITableViewDataSource
 extension CareerViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return CompanyModel.companies.count
+        return self.companies.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let companies = CompanyModel.companies.sorted(by: { $0.dateId > $1.dateId })
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "CareerCell", for: indexPath) as! CareerCell
-        cell.setCell(companyName: companies[indexPath.row].name,
-                     joiningDate: SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(companies[indexPath.row].dateId))!,
-                     leavingDate: companies[indexPath.row].leavingDate)
+        cell.setCell(companyName: self.companies[indexPath.row].name,
+                     joiningDate: SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.companies[indexPath.row].dateId))!,
+                     leavingDate: self.companies[indexPath.row].leavingDate)
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.companies[indexPath.row].dateId))!
+        let menuCoverVC = MenuCoverViewController(.careerManagement(CompanyModel(joiningDate: joiningDate)), delegate: self)
+        
+        self.present(menuCoverVC, animated: false)
     }
 }
 
 // MARK: - Extension for MenuCoverDelegate
 extension CareerViewController: MenuCoverDelegate {
-    func menuCoverDidDetermineCompany(_ company: String, joiningDate: Date, leavingDate: Date) {
-        CompanyModel.addCompany(Company(joiningDate: joiningDate, leavingDate: leavingDate, name: company))
+    func menuCoverDidDetermineCompany(_ company:String, joiningDate: Date, leavingDate: Date?, ofCompanyModel companyModel: CompanyModel?) {
+        if let companyModel = companyModel { // When this company exists
+            if let leavingDate = leavingDate { // Old company
+                
+            } else { // Current company
+                
+            }
+            
+        } else { // When this company doesn't exist
+            
+        }
+        
+        //CompanyModel.addCompany(Company(joiningDate: joiningDate, leavingDate: leavingDate, name: company))
     }
 }

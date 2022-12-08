@@ -13,7 +13,7 @@ enum MenuCoverType {
     case insertNormalSchedule(RecordScheduleType, NormalButtonType)
     case overtime(Int?)
     case annualPaidHolidays(numberOfAnnualPaidHolidays: Int)
-    case careerManagement
+    case careerManagement(CompanyModel?)
     case calendarOfScheduleRecord(companyModel: CompanyModel)
 }
 
@@ -23,7 +23,7 @@ protocol MenuCoverDelegate {
     func menuCoverDidDetermineInsertNormalSchedule(_ scheduleType: RecordScheduleType)
     func menuCoverDidDetermineOvertimeSeconds(_ overtimeSeconds: Int)
     func menuCoverDidDetermineAnnualPaidHolidays(_ holidays: Int)
-    func menuCoverDidDetermineCompany(_ company:String, joiningDate: Date, leavingDate: Date)
+    func menuCoverDidDetermineCompany(_ company:String, joiningDate: Date, leavingDate: Date?, ofCompanyModel companyModel: CompanyModel?)
     func menuCoverDidDetermineSelectedDate(_ date: Date)
 }
 
@@ -34,7 +34,7 @@ extension MenuCoverDelegate {
     func menuCoverDidDetermineInsertNormalSchedule(_ scheduleType: RecordScheduleType) {}
     func menuCoverDidDetermineOvertimeSeconds(_ overtimeSeconds: Int) {}
     func menuCoverDidDetermineAnnualPaidHolidays(_ holidays: Int) {}
-    func menuCoverDidDetermineCompany(_ company:String, joiningDate: Date, leavingDate: Date) {}
+    func menuCoverDidDetermineCompany(_ company:String, joiningDate: Date, leavingDate: Date?, ofCompanyModel companyModel: CompanyModel?) {}
     func menuCoverDidDetermineSelectedDate(_ date: Date) {}
 }
 
@@ -397,7 +397,9 @@ class MenuCoverViewController: UIViewController {
         textField.font = .systemFont(ofSize: 16, weight: .regular)
         textField.textColor = .black
         textField.placeholder = "회사 이름을 입력하세요."
-        textField.clearButtonMode = .always
+        textField.clearButtonMode = .whileEditing
+        textField.returnKeyType = .done
+        textField.delegate = self
         textField.translatesAutoresizingMaskIntoConstraints = false
         
         return textField
@@ -504,7 +506,7 @@ class MenuCoverViewController: UIViewController {
         label.textAlignment = .center
         label.textColor = .black
         label.font = .systemFont(ofSize: 21, weight: .semibold)
-        label.text = "날짜를 선택해 주세요."
+        label.text = "날짜를 지정해 주세요."
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -619,7 +621,7 @@ class MenuCoverViewController: UIViewController {
         label.textAlignment = .center
         label.textColor = .black
         label.font = .systemFont(ofSize: 21, weight: .semibold)
-        label.text = "날짜를 선택해 주세요."
+        label.text = "날짜를 지정해 주세요."
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -663,14 +665,21 @@ class MenuCoverViewController: UIViewController {
         return button
     }()
     
+    lazy var bottomTransparentView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
     var joiningDate: Date? = nil {
         didSet {
             if let date = self.joiningDate {
                 let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
                 
                 self.joiningYearLabel.text = "\(yearMonthDay.year)"
-                self.joiningMonthLabel.text = "\(yearMonthDay.month)"
-                self.joiningDayLabel.text = "\(yearMonthDay.day)"
+                self.joiningMonthLabel.text = String(format: "%02d", yearMonthDay.month)
+                self.joiningDayLabel.text = String(format: "%02d", yearMonthDay.day)
                 
                 self.selectJoiningDateView.isHidden = true
                 self.joiningDateView.isHidden = false
@@ -688,8 +697,8 @@ class MenuCoverViewController: UIViewController {
                 let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
                 
                 self.leavingYearLabel.text = "\(yearMonthDay.year)"
-                self.leavingMonthLabel.text = "\(yearMonthDay.month)"
-                self.leavingDayLabel.text = "\(yearMonthDay.day)"
+                self.leavingMonthLabel.text = String(format: "%02d", yearMonthDay.month)
+                self.leavingDayLabel.text = String(format: "%02d", yearMonthDay.day)
                 
                 self.selectLeavingDateView.isHidden = true
                 self.leavingDateView.isHidden = false
@@ -700,6 +709,8 @@ class MenuCoverViewController: UIViewController {
             }
         }
     }
+    
+    var bottomTransparentViewBottomAnchor: NSLayoutConstraint!
     
     // MARK: Calendar of schedule record
     lazy var calendarBaseView: UIView = {
@@ -776,7 +787,8 @@ class MenuCoverViewController: UIViewController {
         return collectionView
     }()
     
-    var companyModel: CompanyModel!
+    var companyModelForCalendar: CompanyModel! // Due to initialization
+    var companyModelForCareerManagement: CompanyModel?
     var todayYearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(Date())
     var targetYearMonthDate: Date!
     var careerDateRange: (startDate: Date, endDate: Date)!
@@ -816,8 +828,7 @@ class MenuCoverViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.initializeOvertimePicker()
-        self.initializeAnnualPaidHolidaysOnPickerView()
+        self.initializeViewsRelatedToMenuCoverTypes()
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -838,69 +849,7 @@ extension MenuCoverViewController: EssentialViewMethods {
     }
     
     func initializeObjects() {
-        switch self.menuCoverType {
-        case .lastDateAtWork: // MARK: lastDateAtWork
-            self.datePicker.minimumDate = ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as? Date
-            //self.datePicker.maximumDate = Date()
-            
-        case .addNormalSchedule(let normalButtonType): // MARK: addNormalSchedule
-            switch normalButtonType {
-            case .allButton:
-                print("All buttons are available")
-                self.workButton.isEnabled = true
-                self.vacationButton.isEnabled = true
-                self.holidayButton.isEnabled = true
-                
-            case .vacation:
-                print("Work and vacation are available")
-                self.workButton.isEnabled = true
-                self.holidayButton.backgroundColor = .useRGB(red: 241, green: 241, blue: 241)
-                self.holidayButton.isEnabled = false
-                self.vacationButton.isEnabled = true
-                
-            case .holiday:
-                print("Work and holiday are available")
-                self.workButton.isEnabled = true
-                self.vacationButton.backgroundColor = .useRGB(red: 241, green: 241, blue: 241)
-                self.vacationButton.isEnabled = false
-                self.holidayButton.isEnabled = true
-            }
-            
-        case .insertNormalSchedule(_, let normalButtonType): // MARK: insertNormalSchedule
-            switch normalButtonType {
-            case .allButton:
-                print("All buttons are available")
-                self.workButton.isEnabled = true
-                self.vacationButton.isEnabled = true
-                self.holidayButton.isEnabled = true
-                
-            case .vacation:
-                print("Work and vacation are available")
-                self.workButton.isEnabled = true
-                self.holidayButton.backgroundColor = .useRGB(red: 241, green: 241, blue: 241)
-                self.holidayButton.isEnabled = false
-                self.vacationButton.isEnabled = true
-                
-            case .holiday:
-                print("Work and holiday are available")
-                self.workButton.isEnabled = true
-                self.vacationButton.backgroundColor = .useRGB(red: 241, green: 241, blue: 241)
-                self.vacationButton.isEnabled = false
-                self.holidayButton.isEnabled = true
-            }
-            
-        case .overtime: // MARK: overtime
-            print("")
-            
-        case .annualPaidHolidays: // MARK: annualPaidHolidays
-            print("")
-            
-        case .careerManagement: // MARK: careerManagement
-            print("")
-            
-        case .calendarOfScheduleRecord: // MARK: calendarOfScheduleRecord
-            print("")
-        }
+        
     }
     
     func setDelegates() {
@@ -913,7 +862,8 @@ extension MenuCoverViewController: EssentialViewMethods {
     }
     
     func setNotificationCenters() {
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     func setSubviews() {
@@ -999,6 +949,7 @@ extension MenuCoverViewController: EssentialViewMethods {
         case .careerManagement: // MARK: careerManagement
             SupportingMethods.shared.addSubviews([
                 self.careerBaseView,
+                self.bottomTransparentView,
                 self.popUpPanelView
             ], to: self.view)
             
@@ -1355,9 +1306,12 @@ extension MenuCoverViewController: EssentialViewMethods {
             
         case .careerManagement: // MARK: careerManagement
             // careerBaseView
+            let careerBaseCenterYAnchor = self.careerBaseView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor)
+            careerBaseCenterYAnchor.priority = UILayoutPriority(750)
             NSLayoutConstraint.activate([
-                self.careerBaseView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
+                careerBaseCenterYAnchor,
                 self.careerBaseView.heightAnchor.constraint(equalToConstant: 311),
+                self.careerBaseView.bottomAnchor.constraint(lessThanOrEqualTo: self.bottomTransparentView.topAnchor),
                 self.careerBaseView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 32),
                 self.careerBaseView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -32)
             ])
@@ -1458,7 +1412,7 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.selectJoiningDateView.topAnchor.constraint(equalTo: self.joiningDateMarkLabel.bottomAnchor, constant: 13),
                 self.selectJoiningDateView.heightAnchor.constraint(equalToConstant: 28),
                 self.selectJoiningDateView.leadingAnchor.constraint(equalTo: self.careerBaseView.leadingAnchor, constant: 22),
-                self.selectJoiningDateView.widthAnchor.constraint(equalToConstant: 150) // FIXME: Need to confirm
+                self.selectJoiningDateView.widthAnchor.constraint(equalTo: self.selectJoiningDateMarkLabel.widthAnchor)
             ])
             
             // selectJoiningDateMarkLabel
@@ -1466,6 +1420,7 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.selectJoiningDateMarkLabel.topAnchor.constraint(equalTo: self.selectJoiningDateView.topAnchor),
                 self.selectJoiningDateMarkLabel.heightAnchor.constraint(equalToConstant: 25),
                 self.selectJoiningDateMarkLabel.leadingAnchor.constraint(equalTo: self.selectJoiningDateView.leadingAnchor)
+                // FIXME: Need to adjust font size
             ])
             
             // selectJoiningDateMarkLineView
@@ -1557,7 +1512,7 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.selectLeavingDateView.topAnchor.constraint(equalTo: self.leavingDateMarkLabel.bottomAnchor, constant: 13),
                 self.selectLeavingDateView.heightAnchor.constraint(equalToConstant: 28),
                 self.selectLeavingDateView.leadingAnchor.constraint(equalTo: self.careerBaseView.leadingAnchor, constant: 22),
-                self.selectLeavingDateView.widthAnchor.constraint(equalToConstant: 150) // FIXME: Need to confirm
+                self.selectLeavingDateView.widthAnchor.constraint(equalTo: self.selectLeavingDateMarkLabel.widthAnchor)
             ])
             
             // selectLeavingDateMarkLabel
@@ -1565,6 +1520,7 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.selectLeavingDateMarkLabel.topAnchor.constraint(equalTo: self.selectLeavingDateView.topAnchor),
                 self.selectLeavingDateMarkLabel.heightAnchor.constraint(equalToConstant: 25),
                 self.selectLeavingDateMarkLabel.leadingAnchor.constraint(equalTo: self.selectLeavingDateView.leadingAnchor)
+                // FIXME: Need to adjust font size
             ])
             
             // selectLeavingDateMarkLineView
@@ -1597,6 +1553,15 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.addCareerButton.heightAnchor.constraint(equalToConstant: 28),
                 self.addCareerButton.leadingAnchor.constraint(equalTo: self.careerBaseView.centerXAnchor, constant: 60),
                 self.addCareerButton.widthAnchor.constraint(equalToConstant: 28)
+            ])
+            
+            // bottomTransparentView
+            self.bottomTransparentViewBottomAnchor = self.bottomTransparentView.bottomAnchor.constraint(equalTo: self.baseView.bottomAnchor)
+            NSLayoutConstraint.activate([
+                self.bottomTransparentViewBottomAnchor,
+                self.bottomTransparentView.heightAnchor.constraint(equalToConstant: 10),
+                self.bottomTransparentView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor),
+                self.bottomTransparentView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor)
             ])
             
             // popUpPanelView
@@ -1701,8 +1666,12 @@ extension MenuCoverViewController {
             self.tempAnnualPaidHolidaysType = self.annualPaidHolidaysType
         }
         
+        if case .careerManagement(let companyModel) = menuCoverType {
+            self.companyModelForCareerManagement = companyModel
+        }
+        
         if case .calendarOfScheduleRecord(let companyModel) = menuCoverType {
-            self.companyModel = companyModel
+            self.companyModelForCalendar = companyModel
             
             let startDateOfCareer = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(companyModel.company!.dateId))!
             
@@ -1714,8 +1683,59 @@ extension MenuCoverViewController {
         }
     }
     
-    func initializeOvertimePicker() {
-        if case .overtime(let overtime) = menuCoverType {
+    func initializeViewsRelatedToMenuCoverTypes() {
+        switch self.menuCoverType {
+        case .lastDateAtWork: // MARK: lastDateAtWork
+            self.datePicker.minimumDate = ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as? Date
+            //self.datePicker.maximumDate = Date()
+            
+        case .addNormalSchedule(let normalButtonType): // MARK: addNormalSchedule
+            switch normalButtonType {
+            case .allButton:
+                print("All buttons are available")
+                self.workButton.isEnabled = true
+                self.vacationButton.isEnabled = true
+                self.holidayButton.isEnabled = true
+                
+            case .vacation:
+                print("Work and vacation are available")
+                self.workButton.isEnabled = true
+                self.holidayButton.backgroundColor = .useRGB(red: 241, green: 241, blue: 241)
+                self.holidayButton.isEnabled = false
+                self.vacationButton.isEnabled = true
+                
+            case .holiday:
+                print("Work and holiday are available")
+                self.workButton.isEnabled = true
+                self.vacationButton.backgroundColor = .useRGB(red: 241, green: 241, blue: 241)
+                self.vacationButton.isEnabled = false
+                self.holidayButton.isEnabled = true
+            }
+            
+        case .insertNormalSchedule(_, let normalButtonType): // MARK: insertNormalSchedule
+            switch normalButtonType {
+            case .allButton:
+                print("All buttons are available")
+                self.workButton.isEnabled = true
+                self.vacationButton.isEnabled = true
+                self.holidayButton.isEnabled = true
+                
+            case .vacation:
+                print("Work and vacation are available")
+                self.workButton.isEnabled = true
+                self.holidayButton.backgroundColor = .useRGB(red: 241, green: 241, blue: 241)
+                self.holidayButton.isEnabled = false
+                self.vacationButton.isEnabled = true
+                
+            case .holiday:
+                print("Work and holiday are available")
+                self.workButton.isEnabled = true
+                self.vacationButton.backgroundColor = .useRGB(red: 241, green: 241, blue: 241)
+                self.vacationButton.isEnabled = false
+                self.holidayButton.isEnabled = true
+            }
+            
+        case .overtime(let overtime):
             if let overtime = overtime {
                 let hours = overtime / 3600
                 let minutes = (overtime % 3600) / 60
@@ -1730,14 +1750,57 @@ extension MenuCoverViewController {
                 self.overtimePicker.selectRow(0, inComponent: 0, animated: false)
                 self.overtimePicker.selectRow(0, inComponent: 1, animated: false)
             }
+            
+        case .annualPaidHolidays: // MARK: annualPaidHolidays
+            self.annualPaidHolidaysPickerView.selectRow(self.annualPaidHolidays.firstIndex(of: self.numberOfAnnualPaidHolidays!)!, inComponent: 0, animated: false)
+            
+        case .careerManagement(let companyModel): // MARK: careerManagement
+            self.datePicker.maximumDate = Date()
+            self.popUpPanelView.isHidden = true
+            
+            if let companyModel = companyModel {
+                self.companyNameTextField.text = companyModel.company?.name
+                
+                self.joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String((companyModel.company?.dateId)!))!
+                
+                if let leavingDate = companyModel.company?.leavingDate {
+                    self.leavingDate = leavingDate
+                    
+                } else {
+                    self.selectLeavingDateMarkLabel.text = "현재 회사입니다. 수정 할 수 없습니다."
+                    self.selectLeavingDateButton.isEnabled = false
+                }
+            }
+            
+        case .calendarOfScheduleRecord: // MARK: calendarOfScheduleRecord
+            print("")
         }
     }
     
-    func initializeAnnualPaidHolidaysOnPickerView() {
-        if case .annualPaidHolidays = menuCoverType {
-            self.annualPaidHolidaysPickerView.selectRow(self.annualPaidHolidays.firstIndex(of: self.numberOfAnnualPaidHolidays!)!, inComponent: 0, animated: false)
-        }
-    }
+//    func initializeOvertimePicker() {
+//        if case .overtime(let overtime) = menuCoverType {
+//            if let overtime = overtime {
+//                let hours = overtime / 3600
+//                let minutes = (overtime % 3600) / 60
+//
+//                let rowHours = hours >= self.overtimeHours.last! ? self.overtimeHours.last! : hours
+//                let rowMinutes = hours >= self.overtimeHours.last! ? 0 : minutes
+//
+//                self.overtimePicker.selectRow(rowHours, inComponent: 0, animated: false)
+//                self.overtimePicker.selectRow(rowMinutes, inComponent: 1, animated: false)
+//
+//            } else {
+//                self.overtimePicker.selectRow(0, inComponent: 0, animated: false)
+//                self.overtimePicker.selectRow(0, inComponent: 1, animated: false)
+//            }
+//        }
+//    }
+//
+//    func initializeAnnualPaidHolidaysOnPickerView() {
+//        if case .annualPaidHolidays = menuCoverType {
+//            self.annualPaidHolidaysPickerView.selectRow(self.annualPaidHolidays.firstIndex(of: self.numberOfAnnualPaidHolidays!)!, inComponent: 0, animated: false)
+//        }
+//    }
     
     func calculateSecondsWithOvertimePickerView() -> Int {
         let selectedHour = self.overtimeHours[self.overtimePicker.selectedRow(inComponent: 0)]
@@ -1762,42 +1825,44 @@ extension MenuCoverViewController {
     // MARK: datePicker
     @objc func datePicker(_ datePicker: UIDatePicker) {
         if case .lastDateAtWork = self.menuCoverType {
-            // FIXME: check realm
+            // nothing
         }
         
         if case .careerManagement = self.menuCoverType {
-            // FIXME: calculate joiningDate and leavingDate
+            // nothing
         }
     }
     
     @objc func declineButton(_ sender: UIButton) {
-        if case .lastDateAtWork = self.menuCoverType {
+        if case .lastDateAtWork = self.menuCoverType { // MARK: lastDateAtWork
             self.dismiss(animated: false)
         }
         
-        if case .overtime = self.menuCoverType {
+        if case .overtime = self.menuCoverType { // MARK: overtime
             self.dismiss(animated: false)
         }
         
-        if case .careerManagement = self.menuCoverType {
-            if self.datePicker.tag == 1 { // FIXME: joingDate
-                
+        if case .careerManagement = self.menuCoverType { // MARK: careerManagement
+            if self.datePicker.tag == 1 {
+                self.popUpPanelView.isHidden = true
+                self.careerBaseView.isHidden = false
             }
             
-            if self.datePicker.tag == 2 { // FIXME: leavingDate
-                
+            if self.datePicker.tag == 2 {
+                self.popUpPanelView.isHidden = true
+                self.careerBaseView.isHidden = false
             }
         }
     }
     @objc func confirmButton(_ sender: UIButton) {
         let tempSelf = self
-        if case .lastDateAtWork = self.menuCoverType {
+        if case .lastDateAtWork = self.menuCoverType { // MARK: lastDateAtWork
             self.dismiss(animated: false) {
-                tempSelf.delegate?.menuCoverDidDetermineLastDate(self.datePicker.date)
+                tempSelf.delegate?.menuCoverDidDetermineLastDate(tempSelf.datePicker.date)
             }
         }
         
-        if case .overtime = self.menuCoverType {
+        if case .overtime = self.menuCoverType { // MARK: overtime
             guard self.calculateSecondsWithOvertimePickerView() >= 60 else {
                 SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "추가 근무 시간은 최소 1분입니다.")
                 
@@ -1805,17 +1870,23 @@ extension MenuCoverViewController {
             }
             
             self.dismiss(animated: false) {
-                tempSelf.delegate?.menuCoverDidDetermineOvertimeSeconds(self.calculateSecondsWithOvertimePickerView())
+                tempSelf.delegate?.menuCoverDidDetermineOvertimeSeconds(tempSelf.calculateSecondsWithOvertimePickerView())
             }
         }
         
-        if case .careerManagement = self.menuCoverType {
-            if self.datePicker.tag == 1 { // FIXME: joingDate
+        if case .careerManagement = self.menuCoverType { // MARK: careerManagement
+            if self.datePicker.tag == 1 {
+                self.joiningDate = self.datePicker.date
                 
+                self.popUpPanelView.isHidden = true
+                self.careerBaseView.isHidden = false
             }
             
-            if self.datePicker.tag == 2 { // FIXME: leavingDate
+            if self.datePicker.tag == 2 {
+                self.leavingDate = self.datePicker.date
                 
+                self.popUpPanelView.isHidden = true
+                self.careerBaseView.isHidden = false
             }
         }
         
@@ -1921,39 +1992,111 @@ extension MenuCoverViewController {
         self.dismiss(animated: false) {
             UIDevice.lightHaptic()
             
-            tempSelf.delegate?.menuCoverDidDetermineAnnualPaidHolidays(self.annualPaidHolidays[self.annualPaidHolidaysPickerView.selectedRow(inComponent: 0)])
+            tempSelf.delegate?.menuCoverDidDetermineAnnualPaidHolidays(tempSelf.annualPaidHolidays[self.annualPaidHolidaysPickerView.selectedRow(inComponent: 0)])
         }
     }
     
     // MARK: career management
+    @objc func keyboardWillShow(_ notification: Notification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+            let keyboardDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval {
+            self.bottomTransparentViewBottomAnchor.constant = -keyboardSize.height
+            UIView.animate(withDuration: keyboardDuration) {
+                self.view.layoutIfNeeded()
+                
+            } completion: { finished in
+                
+            }
+        }
+    }
+    
+    @objc func keyboardWillHide(_ notification: Notification) {
+        if let keyboardDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval {
+            self.bottomTransparentViewBottomAnchor.constant = 0
+            UIView.animate(withDuration: keyboardDuration) {
+                self.view.layoutIfNeeded()
+                
+            } completion: { finished in
+                
+            }
+        }
+    }
+    
     @objc func selectJoiningDateButton(_ sender: UIButton) {
         // hide career base view
         // show date picker for joining date
+        self.companyNameTextField.resignFirstResponder()
+        
+        self.titleLabel.text = "입사 일자"
+        self.datePicker.tag = 1
+        if let dateId = self.companyModelForCareerManagement?.company?.dateId, let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: "\(dateId)") {
+            self.datePicker.setDate(joiningDate, animated: false)
+        } else {
+            self.datePicker.setDate(Date(), animated: false)
+        }
+        self.careerBaseView.isHidden = true
+        self.popUpPanelView.isHidden = false
     }
     
     @objc func joiningDateButton(_ sender: UIButton) {
         // hide career base view
         // show date picker for joining date
+        self.companyNameTextField.resignFirstResponder()
+        
+        self.titleLabel.text = "입사 일자"
+        self.datePicker.tag = 1
+        self.datePicker.setDate(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: "\(self.joiningYearLabel.text!)\(self.joiningMonthLabel.text!)\(self.joiningDayLabel.text!)")!, animated: false)
+        
+        self.careerBaseView.isHidden = true
+        self.popUpPanelView.isHidden = false
     }
     
     @objc func selectLeavingDateButton(_ sender: UIButton) {
         // hide career base view
         // show date picker for leaving date
+        self.companyNameTextField.resignFirstResponder()
+        
+        self.titleLabel.text = "퇴사 일자"
+        self.datePicker.tag = 2
+        self.datePicker.setDate(self.companyModelForCareerManagement?.company?.leavingDate ?? Date(), animated: false)
+        
+        self.careerBaseView.isHidden = true
+        self.popUpPanelView.isHidden = false
     }
     
     @objc func leavingDateButton(_ sender: UIButton) {
         // hide career base view
         // show date picker for leaving date
+        self.companyNameTextField.resignFirstResponder()
+        
+        self.titleLabel.text = "퇴사 일자"
+        self.datePicker.tag = 2
+        self.datePicker.setDate(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: "\(self.leavingYearLabel.text!)\(self.leavingMonthLabel.text!)\(self.leavingDayLabel.text!)")!, animated: false)
+        
+        self.careerBaseView.isHidden = true
+        self.popUpPanelView.isHidden = false
     }
     
     @objc func addCareerButton(_ sender: UIButton) {
-        guard let companyName = self.companyNameTextField.text,
-                let joiningDate = self.joiningDate,
-                let leavingDate = self.leavingDate else {
+        let trimmedCompanyName = self.companyNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard let companyName = self.companyNameTextField.text, trimmedCompanyName != "" else {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "회사 이름을 입력하세요.")
+            
+            return
+        }
+        guard let joiningDate = self.joiningDate else {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "입사 날짜를 선택하세요.")
+            
             return
         }
         
-        self.delegate?.menuCoverDidDetermineCompany(companyName, joiningDate: joiningDate, leavingDate: leavingDate)
+        // FIXME: Need to check if joiningDate and leavingDate are available.
+        
+        let tempSelf = self
+        self.dismiss(animated: false) {
+            tempSelf.delegate?.menuCoverDidDetermineCompany(companyName, joiningDate: joiningDate, leavingDate: tempSelf.leavingDate, ofCompanyModel: tempSelf.companyModelForCareerManagement)
+        }
     }
     
     @objc func cancelCareerButton(_ sender: UIButton) {
@@ -2020,6 +2163,15 @@ extension MenuCoverViewController {
     }
 }
 
+// MARK: - Extension for UITextFieldDelegate
+extension MenuCoverViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        
+        return true
+    }
+}
+
 // MARK: - Extension for UICollectionViewDelegate, UICollectionViewDataSource
 extension MenuCoverViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -2049,7 +2201,7 @@ extension MenuCoverViewController: UICollectionViewDelegate, UICollectionViewDat
             let isEnable = (dateOfDay >= self.careerDateRange.startDate && dateOfDay <= self.careerDateRange.endDate)
             
             var recordedSchedule: WorkScheduleRecordModel?
-            if let schedule = self.companyModel.getScheduleOn(dateOfDay) {
+            if let schedule = self.companyModelForCalendar.getScheduleOn(dateOfDay) {
                 recordedSchedule = WorkScheduleRecordModel(dateId: Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: dateOfDay))!, morning: WorkTimeType(rawValue: schedule.morning), afternoon: WorkTimeType(rawValue: schedule.afternoon), overtime: schedule.overtime)
             }
             
@@ -2087,10 +2239,10 @@ extension MenuCoverViewController: UICollectionViewDelegate, UICollectionViewDat
         DispatchQueue.main.async {
             let recordedSchedule: WorkScheduleRecordModel = {
                 let dateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: dateOfDay))!
-                if let schedule = self.companyModel.getScheduleOn(dateOfDay) {
+                if let schedule = self.companyModelForCalendar.getScheduleOn(dateOfDay) {
                     if schedule.morning == WorkTimeType.holiday.rawValue &&
                         schedule.afternoon == WorkTimeType.holiday.rawValue {
-                        self.companyModel.removeSchedule(schedule) // Remove full holiday from recorded schedules.
+                        self.companyModelForCalendar.removeSchedule(schedule) // Remove full holiday from recorded schedules.
                         
                         return WorkScheduleRecordModel(dateId: dateId)
                         
@@ -2103,7 +2255,7 @@ extension MenuCoverViewController: UICollectionViewDelegate, UICollectionViewDat
                 }
             }()
             
-            let dayWorkRecordVC = DayWorkRecordViewController(recordedSchedule: recordedSchedule, companyModel: self.companyModel)
+            let dayWorkRecordVC = DayWorkRecordViewController(recordedSchedule: recordedSchedule, companyModel: self.companyModelForCalendar)
             
             let presentingVC = self.presentingViewController as? CustomizedNavigationController
             self.dismiss(animated: false) {
