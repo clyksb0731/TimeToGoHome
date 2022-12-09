@@ -42,10 +42,22 @@ class MenuCoverViewController: UIViewController {
     
     lazy var baseView: UIView = {
         let view = UIView()
-        view.backgroundColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.5)
+        view.backgroundColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.7)
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
+    }()
+    
+    var titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "타이틀"
+        label.textAlignment = .right
+        label.textColor = UIColor.useRGB(red: 255, green: 255, blue: 255)
+        label.font = UIFont.systemFont(ofSize: 35, weight: .bold)
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
     }()
     
     // MARK: Date picker
@@ -58,7 +70,7 @@ class MenuCoverViewController: UIViewController {
         return view
     }()
     
-    lazy var titleLabel: UILabel = {
+    lazy var popUpPanelTitleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 21, weight: .bold)
         label.textAlignment = .center
@@ -369,12 +381,13 @@ class MenuCoverViewController: UIViewController {
     var annualPaidHolidays: [Int] = Array(1...25)
     
     var numberOfAnnualPaidHolidays: Int?
+    var tempNumberOfAnnualPaidHolidays: Int?
     
     // MARK: Career management
     lazy var careerBaseView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
-        view.layer.cornerRadius = 15
+        view.layer.cornerRadius = 20
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -507,6 +520,8 @@ class MenuCoverViewController: UIViewController {
         label.textColor = .black
         label.font = .systemFont(ofSize: 21, weight: .semibold)
         label.text = "날짜를 지정해 주세요."
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.5
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -622,6 +637,8 @@ class MenuCoverViewController: UIViewController {
         label.textColor = .black
         label.font = .systemFont(ofSize: 21, weight: .semibold)
         label.text = "날짜를 지정해 주세요."
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.5
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -868,7 +885,8 @@ extension MenuCoverViewController: EssentialViewMethods {
     
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
-            self.baseView
+            self.baseView,
+            self.titleLabel
         ], to: self.view)
         
         switch self.menuCoverType {
@@ -878,7 +896,7 @@ extension MenuCoverViewController: EssentialViewMethods {
             ], to: self.view)
             
             SupportingMethods.shared.addSubviews([
-                self.titleLabel,
+                self.popUpPanelTitleLabel,
                 self.datePicker,
                 self.declineButton,
                 self.confirmButton
@@ -890,7 +908,7 @@ extension MenuCoverViewController: EssentialViewMethods {
             ], to: self.view)
             
             SupportingMethods.shared.addSubviews([
-                self.titleLabel,
+                self.popUpPanelTitleLabel,
                 self.normalScheduleListView,
                 self.closeNormalScheduleButton
             ], to: self.popUpPanelView)
@@ -907,7 +925,7 @@ extension MenuCoverViewController: EssentialViewMethods {
             ], to: self.view)
             
             SupportingMethods.shared.addSubviews([
-                self.titleLabel,
+                self.popUpPanelTitleLabel,
                 self.overtimePicker,
                 self.declineButton,
                 self.confirmButton
@@ -1002,7 +1020,7 @@ extension MenuCoverViewController: EssentialViewMethods {
             
             // popUpPanelView
             SupportingMethods.shared.addSubviews([
-                self.titleLabel,
+                self.popUpPanelTitleLabel,
                 self.datePicker,
                 self.declineButton,
                 self.confirmButton
@@ -1045,17 +1063,17 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.popUpPanelView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -32)
             ])
             
-            // titleLabel
+            // popUpPanelTitleLabel
             NSLayoutConstraint.activate([
-                self.titleLabel.topAnchor.constraint(equalTo: self.popUpPanelView.topAnchor, constant: 22),
-                self.titleLabel.heightAnchor.constraint(equalToConstant: 22),
-                self.titleLabel.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor),
-                self.titleLabel.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor)
+                self.popUpPanelTitleLabel.topAnchor.constraint(equalTo: self.popUpPanelView.topAnchor, constant: 22),
+                self.popUpPanelTitleLabel.heightAnchor.constraint(equalToConstant: 22),
+                self.popUpPanelTitleLabel.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor),
+                self.popUpPanelTitleLabel.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor)
             ])
             
             // datePicker
             NSLayoutConstraint.activate([
-                self.datePicker.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 10),
+                self.datePicker.topAnchor.constraint(equalTo: self.popUpPanelTitleLabel.bottomAnchor, constant: 10),
                 self.datePicker.heightAnchor.constraint(equalToConstant: 195),
                 self.datePicker.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor, constant: 5),
                 self.datePicker.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor, constant: -5)
@@ -1086,17 +1104,17 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.popUpPanelView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -32)
             ])
             
-            // titleLabel
+            // popUpPanelTitleLabel
             NSLayoutConstraint.activate([
-                self.titleLabel.topAnchor.constraint(equalTo: self.popUpPanelView.topAnchor, constant: 22),
-                self.titleLabel.heightAnchor.constraint(equalToConstant: 22),
-                self.titleLabel.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor),
-                self.titleLabel.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor)
+                self.popUpPanelTitleLabel.topAnchor.constraint(equalTo: self.popUpPanelView.topAnchor, constant: 22),
+                self.popUpPanelTitleLabel.heightAnchor.constraint(equalToConstant: 22),
+                self.popUpPanelTitleLabel.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor),
+                self.popUpPanelTitleLabel.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor)
             ])
             
             // normalScheduleListView
             NSLayoutConstraint.activate([
-                self.normalScheduleListView.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 16),
+                self.normalScheduleListView.topAnchor.constraint(equalTo: self.popUpPanelTitleLabel.bottomAnchor, constant: 16),
                 self.normalScheduleListView.heightAnchor.constraint(equalToConstant: 179),
                 self.normalScheduleListView.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor, constant: 25),
                 self.normalScheduleListView.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor, constant: -25)
@@ -1143,17 +1161,17 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.popUpPanelView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -32)
             ])
             
-            // titleLabel
+            // popUpPanelTitleLabel
             NSLayoutConstraint.activate([
-                self.titleLabel.topAnchor.constraint(equalTo: self.popUpPanelView.topAnchor, constant: 22),
-                self.titleLabel.heightAnchor.constraint(equalToConstant: 22),
-                self.titleLabel.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor),
-                self.titleLabel.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor)
+                self.popUpPanelTitleLabel.topAnchor.constraint(equalTo: self.popUpPanelView.topAnchor, constant: 22),
+                self.popUpPanelTitleLabel.heightAnchor.constraint(equalToConstant: 22),
+                self.popUpPanelTitleLabel.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor),
+                self.popUpPanelTitleLabel.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor)
             ])
             
             // overtimePicker
             NSLayoutConstraint.activate([
-                self.overtimePicker.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor),
+                self.overtimePicker.topAnchor.constraint(equalTo: self.popUpPanelTitleLabel.bottomAnchor),
                 self.overtimePicker.bottomAnchor.constraint(equalTo: self.declineButton.topAnchor),
                 self.overtimePicker.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor),
                 self.overtimePicker.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor)
@@ -1305,6 +1323,12 @@ extension MenuCoverViewController: EssentialViewMethods {
             ])
             
         case .careerManagement: // MARK: careerManagement
+            // titleLabel
+            NSLayoutConstraint.activate([
+                self.titleLabel.bottomAnchor.constraint(equalTo: self.careerBaseView.topAnchor, constant: -20),
+                self.titleLabel.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor)
+            ])
+            
             // careerBaseView
             let careerBaseCenterYAnchor = self.careerBaseView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor)
             careerBaseCenterYAnchor.priority = UILayoutPriority(750)
@@ -1419,8 +1443,8 @@ extension MenuCoverViewController: EssentialViewMethods {
             NSLayoutConstraint.activate([
                 self.selectJoiningDateMarkLabel.topAnchor.constraint(equalTo: self.selectJoiningDateView.topAnchor),
                 self.selectJoiningDateMarkLabel.heightAnchor.constraint(equalToConstant: 25),
-                self.selectJoiningDateMarkLabel.leadingAnchor.constraint(equalTo: self.selectJoiningDateView.leadingAnchor)
-                // FIXME: Need to adjust font size
+                self.selectJoiningDateMarkLabel.leadingAnchor.constraint(equalTo: self.selectJoiningDateView.leadingAnchor),
+                self.selectJoiningDateMarkLabel.trailingAnchor.constraint(lessThanOrEqualTo: self.careerBaseView.trailingAnchor, constant: -5)
             ])
             
             // selectJoiningDateMarkLineView
@@ -1519,8 +1543,8 @@ extension MenuCoverViewController: EssentialViewMethods {
             NSLayoutConstraint.activate([
                 self.selectLeavingDateMarkLabel.topAnchor.constraint(equalTo: self.selectLeavingDateView.topAnchor),
                 self.selectLeavingDateMarkLabel.heightAnchor.constraint(equalToConstant: 25),
-                self.selectLeavingDateMarkLabel.leadingAnchor.constraint(equalTo: self.selectLeavingDateView.leadingAnchor)
-                // FIXME: Need to adjust font size
+                self.selectLeavingDateMarkLabel.leadingAnchor.constraint(equalTo: self.selectLeavingDateView.leadingAnchor),
+                self.selectLeavingDateMarkLabel.trailingAnchor.constraint(lessThanOrEqualTo: self.careerBaseView.trailingAnchor, constant: -5)
             ])
             
             // selectLeavingDateMarkLineView
@@ -1572,17 +1596,17 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.popUpPanelView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -32)
             ])
             
-            // titleLabel
+            // popUpPanelTitleLabel
             NSLayoutConstraint.activate([
-                self.titleLabel.topAnchor.constraint(equalTo: self.popUpPanelView.topAnchor, constant: 22),
-                self.titleLabel.heightAnchor.constraint(equalToConstant: 22),
-                self.titleLabel.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor),
-                self.titleLabel.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor)
+                self.popUpPanelTitleLabel.topAnchor.constraint(equalTo: self.popUpPanelView.topAnchor, constant: 22),
+                self.popUpPanelTitleLabel.heightAnchor.constraint(equalToConstant: 22),
+                self.popUpPanelTitleLabel.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor),
+                self.popUpPanelTitleLabel.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor)
             ])
             
             // datePicker
             NSLayoutConstraint.activate([
-                self.datePicker.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 10),
+                self.datePicker.topAnchor.constraint(equalTo: self.popUpPanelTitleLabel.bottomAnchor, constant: 10),
                 self.datePicker.heightAnchor.constraint(equalToConstant: 195),
                 self.datePicker.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor, constant: 5),
                 self.datePicker.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor, constant: -5)
@@ -1662,6 +1686,7 @@ extension MenuCoverViewController {
     func initializeValueRelatedToMenuCoverType(_ menuCoverType: MenuCoverType) {
         if case .annualPaidHolidays(let numberOfAnnualPaidHolidays) = menuCoverType {
             self.numberOfAnnualPaidHolidays = numberOfAnnualPaidHolidays
+            self.tempNumberOfAnnualPaidHolidays = numberOfAnnualPaidHolidays
             
             self.tempAnnualPaidHolidaysType = self.annualPaidHolidaysType
         }
@@ -1755,6 +1780,8 @@ extension MenuCoverViewController {
             self.annualPaidHolidaysPickerView.selectRow(self.annualPaidHolidays.firstIndex(of: self.numberOfAnnualPaidHolidays!)!, inComponent: 0, animated: false)
             
         case .careerManagement(let companyModel): // MARK: careerManagement
+            self.titleLabel.text = companyModel == nil ? "경력 추가" : "경력 수정"
+            self.titleLabel.isHidden = false
             self.datePicker.maximumDate = Date()
             self.popUpPanelView.isHidden = true
             
@@ -1767,7 +1794,9 @@ extension MenuCoverViewController {
                     self.leavingDate = leavingDate
                     
                 } else {
-                    self.selectLeavingDateMarkLabel.text = "현재 회사입니다. 수정 할 수 없습니다."
+                    self.selectLeavingDateMarkLineView.isHidden = true
+                    self.selectLeavingDateMarkLabel.text = "현재, 재직 중"
+                    self.selectLeavingDateMarkLabel.textColor = .useRGB(red: 151, green: 151, blue: 151)
                     self.selectLeavingDateButton.isEnabled = false
                 }
             }
@@ -1843,6 +1872,8 @@ extension MenuCoverViewController {
         }
         
         if case .careerManagement = self.menuCoverType { // MARK: careerManagement
+            self.titleLabel.isHidden = false
+            
             if self.datePicker.tag == 1 {
                 self.popUpPanelView.isHidden = true
                 self.careerBaseView.isHidden = false
@@ -1875,6 +1906,8 @@ extension MenuCoverViewController {
         }
         
         if case .careerManagement = self.menuCoverType { // MARK: careerManagement
+            self.titleLabel.isHidden = false
+            
             if self.datePicker.tag == 1 {
                 self.joiningDate = self.datePicker.date
                 
@@ -2027,7 +2060,8 @@ extension MenuCoverViewController {
         // show date picker for joining date
         self.companyNameTextField.resignFirstResponder()
         
-        self.titleLabel.text = "입사 일자"
+        self.titleLabel.isHidden = true
+        self.popUpPanelTitleLabel.text = "입사 일자"
         self.datePicker.tag = 1
         if let dateId = self.companyModelForCareerManagement?.company?.dateId, let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: "\(dateId)") {
             self.datePicker.setDate(joiningDate, animated: false)
@@ -2043,7 +2077,8 @@ extension MenuCoverViewController {
         // show date picker for joining date
         self.companyNameTextField.resignFirstResponder()
         
-        self.titleLabel.text = "입사 일자"
+        self.titleLabel.isHidden = true
+        self.popUpPanelTitleLabel.text = "입사 일자"
         self.datePicker.tag = 1
         self.datePicker.setDate(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: "\(self.joiningYearLabel.text!)\(self.joiningMonthLabel.text!)\(self.joiningDayLabel.text!)")!, animated: false)
         
@@ -2056,7 +2091,8 @@ extension MenuCoverViewController {
         // show date picker for leaving date
         self.companyNameTextField.resignFirstResponder()
         
-        self.titleLabel.text = "퇴사 일자"
+        self.titleLabel.isHidden = true
+        self.popUpPanelTitleLabel.text = "퇴사 일자"
         self.datePicker.tag = 2
         self.datePicker.setDate(self.companyModelForCareerManagement?.company?.leavingDate ?? Date(), animated: false)
         
@@ -2069,7 +2105,8 @@ extension MenuCoverViewController {
         // show date picker for leaving date
         self.companyNameTextField.resignFirstResponder()
         
-        self.titleLabel.text = "퇴사 일자"
+        self.titleLabel.isHidden = true
+        self.popUpPanelTitleLabel.text = "퇴사 일자"
         self.datePicker.tag = 2
         self.datePicker.setDate(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: "\(self.leavingYearLabel.text!)\(self.leavingMonthLabel.text!)\(self.leavingDayLabel.text!)")!, animated: false)
         
@@ -2316,7 +2353,7 @@ extension MenuCoverViewController: UIPickerViewDelegate, UIPickerViewDataSource 
             if VacationModel.numberOfVacationsHold > Double(self.annualPaidHolidays[row]) {
                 SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "사용한(혹은 사용할) 휴가 날 수보다 적게 설정할 수 없습니다.")
                 
-                pickerView.selectRow(self.annualPaidHolidays.firstIndex(of: self.numberOfAnnualPaidHolidays!)!, inComponent: 0, animated: true)
+                pickerView.selectRow(self.annualPaidHolidays.firstIndex(of: self.tempNumberOfAnnualPaidHolidays!)!, inComponent: 0, animated: true)
                 
             } else {
                 print("Number of annual paid holidays: \(self.annualPaidHolidays[row])")
