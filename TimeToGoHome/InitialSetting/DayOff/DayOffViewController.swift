@@ -1509,7 +1509,6 @@ extension DayOffViewController {
 //            windowScene.windows.first?.makeKeyAndVisible()
 //        }
         
-        mainNaviVC.modalPresentationStyle = .fullScreen
         self.present(mainNaviVC, animated: true)
         
         self.vacationNotification?.invalidate()

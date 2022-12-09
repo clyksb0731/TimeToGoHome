@@ -39,12 +39,22 @@ class InitialViewController: UIViewController {
         return view
     }()
     
+    lazy var dismissButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "dismissButtonImage"), for: .normal)
+        button.addTarget(self, action: #selector(dismissButton(_:)), for: .touchUpInside)
+        button.isHidden = self.tempInitialSetting == nil
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "입사 일자"
-        label.textAlignment = .right
-        label.adjustsFontSizeToFitWidth = true
-        label.minimumScaleFactor = 0.5
+        label.textAlignment = .left
+        //label.adjustsFontSizeToFitWidth = true
+        //label.minimumScaleFactor = 0.5
         label.textColor = UIColor.useRGB(red: 109, green: 114, blue: 120, alpha: 0.4)
         label.font = UIFont.systemFont(ofSize: 50, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -394,6 +404,7 @@ extension InitialViewController {
         ], to: self.contentView)
         
         SupportingMethods.shared.addSubviews([
+            self.dismissButton,
             self.titleLabel,
             self.backgroundImageView
             ], to: self.upperView)
@@ -481,12 +492,27 @@ extension InitialViewController {
             self.lowerView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor)
         ])
         
+        // Dismiss button layout
+        NSLayoutConstraint.activate([
+            self.dismissButton.topAnchor.constraint(equalTo: self.upperView.topAnchor),
+            self.dismissButton.heightAnchor.constraint(equalToConstant: 44),
+            self.dismissButton.trailingAnchor.constraint(equalTo: self.upperView.trailingAnchor, constant: -5),
+            self.dismissButton.widthAnchor.constraint(equalToConstant: 44)
+        ])
+        
         // Title label layout
         NSLayoutConstraint.activate([
             self.titleLabel.topAnchor.constraint(equalTo: self.upperView.topAnchor, constant: 44),
             self.titleLabel.heightAnchor.constraint(equalToConstant: 45),
+            self.titleLabel.leadingAnchor.constraint(equalTo: self.upperView.leadingAnchor, constant: 16),
+            self.titleLabel.widthAnchor.constraint(equalToConstant: 191)
+            
+            /*
+            self.titleLabel.topAnchor.constraint(equalTo: self.upperView.topAnchor, constant: 44),
+            self.titleLabel.heightAnchor.constraint(equalToConstant: 45),
             self.titleLabel.trailingAnchor.constraint(equalTo: self.upperView.trailingAnchor, constant: -16),
             self.titleLabel.widthAnchor.constraint(equalToConstant: 191)
+             */
         ])
         
         // Background image layout
@@ -731,6 +757,12 @@ extension InitialViewController {
 
 // MARK: - Extension for Selector methods
 extension InitialViewController {
+    @objc func dismissButton(_ sender: UIButton) {
+        ReferenceValues.initialSetting = self.tempInitialSetting!
+        
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     @objc func resignTextFields(_ sender: Any) {
         self.companyNameTextField.resignFirstResponder()
     }
@@ -833,17 +865,17 @@ extension InitialViewController {
             return
         }
         
-        guard !CompanyModel.checkDuplicateJoiningDate(self.joiningDate) else {
+        guard CompanyModel.checkIfJoiningDateIsNew(self.joiningDate) else {
             let presentingVC = self.presentingViewController
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "오류", andMessage: "중복된 기간의 회사가 있습니다. 경력 사항으로 이동할까요?", okAction: UIAlertAction(title: "이동", style: .default, handler: { action in
-                if let tempInitialSetting = self.self.tempInitialSetting {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "신규 회사는 최종 경력보다 빠를 수 없습니다. 경력 사항을 수정할까요?", okAction: UIAlertAction(title: "경력 수정", style: .default, handler: { action in
+                if let tempInitialSetting = self.tempInitialSetting {
                     ReferenceValues.initialSetting = tempInitialSetting
                 }
                 
-                presentingVC?.dismiss(animated: true) {
+                presentingVC?.dismiss(animated: false) {
                     let menuNaviVC = CustomizedNavigationController()
-                    menuNaviVC.viewControllers = [MenuViewController(), CareerViewController()]
-                    presentingVC?.present(menuNaviVC, animated: true)
+                    menuNaviVC.viewControllers = [MenuViewController(), CareerViewController()] // FIXME: What happen at leavingDate ??
+                    presentingVC?.present(menuNaviVC, animated: false)
                 }
             }), cancelAction: UIAlertAction(title: "취소", style: .cancel))
             
@@ -856,7 +888,6 @@ extension InitialViewController {
         
         let companyLocationVC = CompanyLocationViewController()
         let naviVC = CustomizedNavigationController(rootViewController: companyLocationVC)
-        naviVC.modalPresentationStyle = .fullScreen
         
         self.present(naviVC, animated: true, completion: {
             self.upperViewTopAnchorConstant.constant = 0

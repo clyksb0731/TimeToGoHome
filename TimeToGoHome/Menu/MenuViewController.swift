@@ -62,6 +62,8 @@ class MenuViewController: UIViewController {
         return tableView
     }()
     
+    weak var mainVC: MainViewController?
+    
     var leavingDate: Date? = {
         return ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date
     }()
@@ -323,10 +325,10 @@ extension MenuViewController: MenuCoverDelegate {
     func menuCoverDidDetermineLastDate(_ date: Date) {
         let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
         
-        let targetDate = SupportingMethods.shared.makeDateFormatter("yyyy년 M월 d일").string(from: date)
+        let dateFormatted = SupportingMethods.shared.makeDateFormatter("yyyy년 M월 d일").string(from: date)
         
         if let schedules = companyModel.getSchedulesAfter(date), !schedules.isEmpty {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(targetDate) 이후에 기록된 일정이 있습니다. 퇴직 처리 시 해당 일정이 삭제됩니다. 퇴직 처리할까요?", okAction: UIAlertAction(title: "퇴직 처리", style: .default, handler: { _ in
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(dateFormatted) 이후에 기록된 일정이 있습니다. 퇴직 처리 시 해당 일정이 삭제됩니다. 퇴직 처리할까요?", okAction: UIAlertAction(title: "퇴직 처리", style: .default, handler: { _ in
                 companyModel.removeSchedules(schedules)
                 companyModel.setLeavingDate(date)
                 
@@ -336,12 +338,16 @@ extension MenuViewController: MenuCoverDelegate {
                 
                 self.menuTableView.reloadData()
                 
+                // Because today is also removed.
+                self.mainVC?.timer?.invalidate()
+                self.mainVC?.schedule.updateStartingWorkTime(nil)
+                
                 // FIXME: Go to menu? Main? How to handle today schedule after this?
                 
             }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)
             
         } else {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(targetDate)부로 퇴직 처리할까요?", okAction: UIAlertAction(title: "퇴직 처리", style: .default, handler: { _ in
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(dateFormatted)부로 퇴직 처리할까요?", okAction: UIAlertAction(title: "퇴직 처리", style: .default, handler: { _ in
                 companyModel.setLeavingDate(date)
                 
                 self.leavingDate = date

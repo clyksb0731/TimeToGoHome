@@ -851,10 +851,12 @@ extension MainViewController {
            todayDateId > leavingDateId {
             self.leavingDateCoverView.isHidden = false
             
-            self.schedule.refreshToday()
-            
-            self.timer?.invalidate()
+        } else {
+            self.leavingDateCoverView.isHidden = true
         }
+        
+        // FIXME: determine after leaving company && after canceling leaving company as well
+        self.schedule.refreshToday()
         
         if case .normal = self.schedule.workType {
             self.startWorkingTimeButton.isEnabled = false
@@ -887,6 +889,8 @@ extension MainViewController {
         if self.schedule.startingWorkTime == nil {
             self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
             self.resetMainTimeViewValues(self.todayRegularScheduleType)
+            
+            self.timer?.invalidate()
 
         } else {
             if self.schedule.startingWorkTimeSecondsSinceReferenceDate! >= SupportingMethods.getCurrentTimeSeconds() {
@@ -2375,8 +2379,9 @@ extension MainViewController {
 // MARK: - Extension for Selector methods
 extension MainViewController {
     @objc func menuBarButtonItem(_ sender: UIBarButtonItem) {
-        let menuNaviVC = CustomizedNavigationController(rootViewController: MenuViewController())
-        menuNaviVC.modalPresentationStyle = .fullScreen
+        let menuVC = MenuViewController()
+        menuVC.mainVC = self
+        let menuNaviVC = CustomizedNavigationController(rootViewController: menuVC)
         
         self.present(menuNaviVC, animated: true, completion: nil)
     }

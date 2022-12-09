@@ -90,25 +90,22 @@ struct CompanyModel {
         }
     }
     
-    static func checkDuplicateJoiningDate(_ date: Date) -> Bool {
+    static func checkIfJoiningDateIsNew(_ date: Date) -> Bool {
         let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
         let joiningDateId = Int(dateFormatter.string(from: date))!
         
         let realm = try! Realm()
+        let companies = realm.objects(Company.self).sorted(by: { $0.dateId > $1.dateId })
         
-        let companies = realm.objects(Company.self)
-        for company in companies {
-            if let leftDate = company.leavingDate {
-                let joinedDateId = Int(String(format: "%02d%02d%02d", company.year, company.month, company.day))!
-                let leftDateId = Int(dateFormatter.string(from: leftDate))!
-                
-                if joiningDateId >= joinedDateId && joiningDateId <= leftDateId {
-                    return true
-                }
-            }
+        if let lastCompany = companies.first, // sorted
+            let leavingDate = lastCompany.leavingDate,
+            let leavingDateId = Int(dateFormatter.string(from: leavingDate)) {
+            
+            return joiningDateId > leavingDateId
+            
+        } else {
+            return false
         }
-        
-        return false
     }
     
     // MARK: Handling schedule
