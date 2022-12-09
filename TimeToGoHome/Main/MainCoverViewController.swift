@@ -189,10 +189,6 @@ class MainCoverViewController: UIViewController {
     
     private var delegate: MainCoverDelegate?
     
-    var tempMaximumOvertimeHour: Int = 6 // FIXME: Temp variable
-    var previousPickerViewHourRowIndex: Int = 0
-    var previousPickerViewMinuteRowIndex: Int = 0
-    
     var isEditingBeforePresented: Bool?
     
     init(_ mainCoverType: MainCoverType, delegate: MainCoverDelegate?) {
