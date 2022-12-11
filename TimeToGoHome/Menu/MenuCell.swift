@@ -153,13 +153,12 @@ extension MenuCell: EssentialCellHeaderMethods {
 extension MenuCell {
     func setCell(_ style: MenuSettingCellType, itemText text: String, isEnable: Bool = true) {
         self.selectionStyle = isEnable ? .default : .none
+        
         self.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
         self.openVCImageView.alpha = isEnable ? 1.0 : 0.5
         
         self.itemTextLabel.font = .systemFont(ofSize: 17, weight: .regular)
         self.itemTextLabel.text = text
-        
-        self.selectionStyle = .default
         
         switch style {
         case .openVC:
