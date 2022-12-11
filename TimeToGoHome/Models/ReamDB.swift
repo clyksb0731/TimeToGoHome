@@ -45,6 +45,23 @@ struct CompanyModel {
         }
     }
     
+    func setLeavingDate(_ date: Date?) {
+        let realm = try! Realm()
+        
+        try! realm.write {
+            self.company?.leavingDate = date
+        }
+    }
+    
+    func update(leavingDate: Date?, companyName name: String) {
+        let realm = try! Realm()
+        
+        try! realm.write {
+            self.company?.leavingDate = leavingDate
+            self.company?.name = name
+        }
+    }
+    
     static func addCompany(_ company: Company) {
         let realm = try! Realm()
         
@@ -53,13 +70,21 @@ struct CompanyModel {
         }
     }
     
-    static func removeCompany(_ dateId: Int) {
+    static func removeCompanyWithDateId(_ dateId: Int) {
         let realm = try! Realm()
         
         if let company = realm.object(ofType: Company.self, forPrimaryKey: dateId) {
             try! realm.write {
                 realm.delete(company)
             }
+        }
+    }
+    
+    static func removeCompany(_ company: Company) {
+        let realm = try! Realm()
+        
+        try! realm.write {
+            realm.delete(company)
         }
     }
     
@@ -82,22 +107,14 @@ struct CompanyModel {
         self.companyNotification?.invalidate()
     }
     
-    func setLeavingDate(_ date: Date?) {
-        let realm = try! Realm()
-        
-        try! realm.write {
-            self.company?.leavingDate = date
-        }
-    }
-    
     static func checkIfJoiningDateIsNew(_ date: Date) -> Bool {
         let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
         let joiningDateId = Int(dateFormatter.string(from: date))!
         
         let realm = try! Realm()
-        let companies = realm.objects(Company.self).sorted(by: { $0.dateId > $1.dateId })
+        let companies = realm.objects(Company.self).sorted(by: { $0.dateId < $1.dateId })
         
-        if let lastCompany = companies.first, // sorted
+        if let lastCompany = companies.last, // sorted
             let leavingDate = lastCompany.leavingDate,
             let leavingDateId = Int(dateFormatter.string(from: leavingDate)) {
             
@@ -106,6 +123,63 @@ struct CompanyModel {
         } else {
             return false
         }
+    }
+    
+    static func hasAnyCompanyExistedFor(joiningDate: Date, andLeavingDate leavingDate: Date, exceptCompany company: Company? = nil) -> Bool {
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+        let joiningDateId = Int(dateFormatter.string(from: joiningDate))!
+        let leavingDateId = Int(dateFormatter.string(from: leavingDate))!
+        
+        let realm = try! Realm()
+        
+        if let company = company {
+            let companies = realm.objects(Company.self).filter {
+                $0.dateId != company.dateId
+            }
+            
+            for company in companies {
+                let companyLeavingDateId = Int(dateFormatter.string(from: company.leavingDate ?? Date()))!
+                if (company.dateId >= joiningDateId && company.dateId <= leavingDateId) ||
+                (companyLeavingDateId >= joiningDateId && companyLeavingDateId <= leavingDateId) ||
+                    (joiningDateId >= company.dateId && joiningDateId <= companyLeavingDateId) ||
+                    (leavingDateId >= company.dateId && leavingDateId <= companyLeavingDateId) {
+                    return true
+                }
+            }
+            
+        } else {
+            let companies = realm.objects(Company.self)
+            
+            for company in companies {
+                let companyLeavingDateId = Int(dateFormatter.string(from: company.leavingDate ?? Date()))!
+                if (company.dateId >= joiningDateId && company.dateId <= leavingDateId) ||
+                (companyLeavingDateId >= joiningDateId && companyLeavingDateId <= leavingDateId) ||
+                    (joiningDateId >= company.dateId && joiningDateId <= companyLeavingDateId) ||
+                    (leavingDateId >= company.dateId && leavingDateId <= companyLeavingDateId) {
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
+    
+    static func getLastCompany() -> Company? {
+        let realm = try! Realm()
+        let companies = realm.objects(Company.self).sorted(by: { $0.dateId < $1.dateId })
+        
+        return companies.last
+    }
+    
+    static func replaceCompany(_ company: Company, withJoiningDate joiningDate: Date, leavingDate: Date?, name: String) {
+        let schedules = company.schedules
+        
+        let newCompany = Company(joiningDate: joiningDate, leavingDate: leavingDate, name: name, address: company.address, latitude: company.latitude, longitude: company.longitude)
+        self.addCompany(newCompany)
+        
+        self.replaceSchedules(schedules, inCompany: newCompany)
+        
+        self.removeCompany(company)
     }
     
     // MARK: Handling schedule
@@ -205,6 +279,20 @@ struct CompanyModel {
         }
     }
     
+    func replaceSchedules(_ schedules: List<Schedule>) {
+        let realm = try! Realm()
+        
+        try! realm.write {
+            self.company?.schedules.removeAll()
+            
+            for schedule in schedules {
+                let date = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(schedule.dateId))!
+                let schedule = Schedule(date: date, morningType: WorkTimeType(rawValue: schedule.morning)!, afternoonType: WorkTimeType(rawValue: schedule.afternoon)!, overtime: schedule.overtime)
+                self.company?.schedules.append(schedule)
+            }
+        }
+    }
+    
     func convertSchedulesToWorkRecords() -> [WorkRecord] {
         if let schedules = self.schedules?.sorted(by: { $0.dateId < $1.dateId }) {
             var workRecords: [WorkRecord] = []
@@ -250,6 +338,20 @@ struct CompanyModel {
             
         } else {
             return []
+        }
+    }
+    
+    static func replaceSchedules(_ schedules: List<Schedule>, inCompany company: Company) {
+        let realm = try! Realm()
+        
+        try! realm.write {
+            company.schedules.removeAll()
+            
+            for schedule in schedules {
+                let date = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(schedule.dateId))!
+                let schedule = Schedule(date: date, morningType: WorkTimeType(rawValue: schedule.morning)!, afternoonType: WorkTimeType(rawValue: schedule.afternoon)!, overtime: schedule.overtime)
+                company.schedules.append(schedule)
+            }
         }
     }
 }

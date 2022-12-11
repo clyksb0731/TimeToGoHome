@@ -23,7 +23,7 @@ protocol MenuCoverDelegate {
     func menuCoverDidDetermineInsertNormalSchedule(_ scheduleType: RecordScheduleType)
     func menuCoverDidDetermineOvertimeSeconds(_ overtimeSeconds: Int)
     func menuCoverDidDetermineAnnualPaidHolidays(_ holidays: Int)
-    func menuCoverDidDetermineCompany(_ company:String, joiningDate: Date, leavingDate: Date?, ofCompanyModel companyModel: CompanyModel?)
+    func menuCoverDidDetermineCompanyName(_ name:String, joiningDate: Date, leavingDate: Date?, ofCompanyModel companyModel: CompanyModel?)
     func menuCoverDidDetermineSelectedDate(_ date: Date)
 }
 
@@ -34,7 +34,7 @@ extension MenuCoverDelegate {
     func menuCoverDidDetermineInsertNormalSchedule(_ scheduleType: RecordScheduleType) {}
     func menuCoverDidDetermineOvertimeSeconds(_ overtimeSeconds: Int) {}
     func menuCoverDidDetermineAnnualPaidHolidays(_ holidays: Int) {}
-    func menuCoverDidDetermineCompany(_ company:String, joiningDate: Date, leavingDate: Date?, ofCompanyModel companyModel: CompanyModel?) {}
+    func menuCoverDidDetermineCompanyName(_ name:String, joiningDate: Date, leavingDate: Date?, ofCompanyModel companyModel: CompanyModel?) {}
     func menuCoverDidDetermineSelectedDate(_ date: Date) {}
 }
 
@@ -660,23 +660,23 @@ class MenuCoverViewController: UIViewController {
         return button
     }()
     
-    lazy var cancelCareerButton: UIButton = {
+    lazy var cancelApplyCareerButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "x.circle", withConfiguration: UIImage.SymbolConfiguration(scale: .large)), for: .normal)
         button.tintColor = .useRGB(red: 61, green: 61, blue: 61, alpha: 0.5)
         button.imageView?.contentMode = .scaleAspectFit
-        button.addTarget(self, action: #selector(cancelCareerButton(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(cancelApplyCareerButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
     
-    lazy var addCareerButton: UIButton = {
+    lazy var applyCareerButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "checkmark.circle", withConfiguration: UIImage.SymbolConfiguration(scale: .large)), for: .normal)
         button.tintColor = .useRGB(red: 61, green: 61, blue: 61, alpha: 0.5)
         button.imageView?.contentMode = .scaleAspectFit
-        button.addTarget(self, action: #selector(addCareerButton(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(applyCareerButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -982,8 +982,8 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.leavingDateMarkLabel,
                 self.leavingDateView,
                 self.selectLeavingDateView,
-                self.cancelCareerButton,
-                self.addCareerButton
+                self.cancelApplyCareerButton,
+                self.applyCareerButton
             ], to: self.careerBaseView)
             
             SupportingMethods.shared.addSubviews([
@@ -1563,20 +1563,20 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.selectLeavingDateButton.trailingAnchor.constraint(equalTo: self.selectLeavingDateView.trailingAnchor)
             ])
             
-            // cancelCareerButton
+            // cancelApplyCareerButton
             NSLayoutConstraint.activate([
-                self.cancelCareerButton.bottomAnchor.constraint(equalTo: self.careerBaseView.bottomAnchor, constant: -10),
-                self.cancelCareerButton.heightAnchor.constraint(equalToConstant: 28),
-                self.cancelCareerButton.trailingAnchor.constraint(equalTo: self.careerBaseView.centerXAnchor, constant: -60),
-                self.cancelCareerButton.widthAnchor.constraint(equalToConstant: 28)
+                self.cancelApplyCareerButton.bottomAnchor.constraint(equalTo: self.careerBaseView.bottomAnchor, constant: -10),
+                self.cancelApplyCareerButton.heightAnchor.constraint(equalToConstant: 28),
+                self.cancelApplyCareerButton.trailingAnchor.constraint(equalTo: self.careerBaseView.centerXAnchor, constant: -60),
+                self.cancelApplyCareerButton.widthAnchor.constraint(equalToConstant: 28)
             ])
             
-            // addCareerButton
+            // applyCareerButton
             NSLayoutConstraint.activate([
-                self.addCareerButton.bottomAnchor.constraint(equalTo: self.careerBaseView.bottomAnchor, constant: -10),
-                self.addCareerButton.heightAnchor.constraint(equalToConstant: 28),
-                self.addCareerButton.leadingAnchor.constraint(equalTo: self.careerBaseView.centerXAnchor, constant: 60),
-                self.addCareerButton.widthAnchor.constraint(equalToConstant: 28)
+                self.applyCareerButton.bottomAnchor.constraint(equalTo: self.careerBaseView.bottomAnchor, constant: -10),
+                self.applyCareerButton.heightAnchor.constraint(equalToConstant: 28),
+                self.applyCareerButton.leadingAnchor.constraint(equalTo: self.careerBaseView.centerXAnchor, constant: 60),
+                self.applyCareerButton.widthAnchor.constraint(equalToConstant: 28)
             ])
             
             // bottomTransparentView
@@ -2114,29 +2114,42 @@ extension MenuCoverViewController {
         self.popUpPanelView.isHidden = false
     }
     
-    @objc func addCareerButton(_ sender: UIButton) {
+    @objc func applyCareerButton(_ sender: UIButton) {
         let trimmedCompanyName = self.companyNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
         
-        guard let companyName = self.companyNameTextField.text, trimmedCompanyName != "" else {
+        guard let newCompanyName = self.companyNameTextField.text, trimmedCompanyName != "" else {
             SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "회사 이름을 입력하세요.")
             
             return
         }
-        guard let joiningDate = self.joiningDate else {
+        guard let newJoiningDate = self.joiningDate else {
             SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "입사 날짜를 선택하세요.")
             
             return
         }
         
-        // FIXME: Need to check if joiningDate and leavingDate are available.
+        if let companyModel = self.companyModelForCareerManagement { // If company is selected
+            if CompanyModel.hasAnyCompanyExistedFor(joiningDate: newJoiningDate, andLeavingDate: self.leavingDate ?? Date(), exceptCompany: companyModel.company) {
+                SupportingMethods.shared.makeAlert(on: self, withTitle: "회사 중복", andMessage: "해당 기간과 중복되는 경력 사항이 있습니다.")
+                
+                return
+            }
+            
+        } else { // If no company is selected
+            if CompanyModel.hasAnyCompanyExistedFor(joiningDate: newJoiningDate, andLeavingDate: self.leavingDate!) {
+                SupportingMethods.shared.makeAlert(on: self, withTitle: "회사 중복", andMessage: "해당 기간과 중복되는 경력 사항이 있습니다.")
+                
+                return
+            }
+        }
         
         let tempSelf = self
         self.dismiss(animated: false) {
-            tempSelf.delegate?.menuCoverDidDetermineCompany(companyName, joiningDate: joiningDate, leavingDate: tempSelf.leavingDate, ofCompanyModel: tempSelf.companyModelForCareerManagement)
+            tempSelf.delegate?.menuCoverDidDetermineCompanyName(newCompanyName, joiningDate: newJoiningDate, leavingDate: tempSelf.leavingDate, ofCompanyModel: tempSelf.companyModelForCareerManagement)
         }
     }
     
-    @objc func cancelCareerButton(_ sender: UIButton) {
+    @objc func cancelApplyCareerButton(_ sender: UIButton) {
         self.dismiss(animated: false)
     }
     

@@ -139,6 +139,6 @@ extension CareerCell {
         
         self.companyLabel.text = companyName
         
-        self.careerPeriodLabel.text = "\(dateFormatter.string(from: joiningDate)) ~ \(leavingDate != nil ? dateFormatter.string(from: leavingDate!) : "현재")"
+        self.careerPeriodLabel.text = "\(dateFormatter.string(from: joiningDate)) ~ \(leavingDate != nil ? dateFormatter.string(from: leavingDate!) : "재직 중")"
     }
 }

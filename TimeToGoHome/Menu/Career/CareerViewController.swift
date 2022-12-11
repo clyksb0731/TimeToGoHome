@@ -10,11 +10,15 @@ import UIKit
 class CareerViewController: UIViewController {
     
     lazy var careerTableView: UITableView = {
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureToCell(_:)))
+        longPressGesture.minimumPressDuration = 0.5
+        
         let tableView = UITableView()
         tableView.backgroundColor = .white
         tableView.bounces = false
         tableView.register(CareerCell.self, forCellReuseIdentifier: "CareerCell")
         tableView.separatorStyle = .none
+        tableView.addGestureRecognizer(longPressGesture)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -123,6 +127,18 @@ extension CareerViewController {
         
         self.present(menuCoverVC, animated: false)
     }
+    
+    @objc func longPressGestureToCell(_ sender: UILongPressGestureRecognizer) {
+        if sender.state == .began {
+            let touchPoint = sender.location(in: self.careerTableView)
+            if let indexPath = self.careerTableView.indexPathForRow(at: touchPoint) {
+                let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.companies[indexPath.row].dateId))!
+                let menuCoverVC = MenuCoverViewController(.careerManagement(CompanyModel(joiningDate: joiningDate)), delegate: self)
+                
+                self.present(menuCoverVC, animated: false)
+            }
+        }
+    }
 }
 
 // MARK: - Extension for UITableViewDelegate, UITableViewDataSource
@@ -142,28 +158,42 @@ extension CareerViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
         let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.companies[indexPath.row].dateId))!
-        let menuCoverVC = MenuCoverViewController(.careerManagement(CompanyModel(joiningDate: joiningDate)), delegate: self)
         
-        self.present(menuCoverVC, animated: false)
+        let workRecordVC = WorkRecordViewController(companyModel: CompanyModel(joiningDate: joiningDate))
+        
+        self.navigationController?.pushViewController(workRecordVC, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let action = UIContextualAction(style: .destructive, title: "삭제") { action, view, completionHandler in
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "회사 삭제", andMessage: "\(self.companies[indexPath.row].name) 회사를 삭제할까요?", okAction: UIAlertAction(title: "삭제", style: .destructive, handler: { action in
+                CompanyModel.removeCompany(self.companies[indexPath.row])
+                
+            }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)
+            
+            completionHandler(true)
+        }
+        
+        return UISwipeActionsConfiguration(actions: [action])
     }
 }
 
 // MARK: - Extension for MenuCoverDelegate
 extension CareerViewController: MenuCoverDelegate {
-    func menuCoverDidDetermineCompany(_ company:String, joiningDate: Date, leavingDate: Date?, ofCompanyModel companyModel: CompanyModel?) {
+    func menuCoverDidDetermineCompanyName(_ name:String, joiningDate: Date, leavingDate: Date?, ofCompanyModel companyModel: CompanyModel?) {
+        let joiningDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: joiningDate))!
+        
         if let companyModel = companyModel { // When this company exists
-            if let leavingDate = leavingDate { // Old company
+            if companyModel.company?.dateId == joiningDateId {
+                companyModel.update(leavingDate: leavingDate, companyName: name)
                 
-            } else { // Current company
-                
+            } else {
+                CompanyModel.replaceCompany(companyModel.company!, withJoiningDate: joiningDate, leavingDate: leavingDate, name: name)
             }
             
         } else { // When this company doesn't exist
-            
+            CompanyModel.addCompany(Company(joiningDate: joiningDate, leavingDate: leavingDate, name: name))
         }
-        
-        //CompanyModel.addCompany(Company(joiningDate: joiningDate, leavingDate: leavingDate, name: company))
     }
 }
