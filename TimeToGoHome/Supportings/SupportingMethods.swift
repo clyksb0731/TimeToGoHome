@@ -48,6 +48,7 @@ enum CoverViewState {
 
 class SupportingMethods {
     private var coverView: UIView?
+    private var instantView: UIView?
     
     static let shared = SupportingMethods()
     
@@ -124,6 +125,79 @@ extension SupportingMethods {
         dashLayer.path = UIBezierPath(roundedRect: CGRect(x: 0, y: 0, width: width, height: height), cornerRadius: cornerRadius).cgPath
         
         return dashLayer
+    }
+    
+    // MARK: Instant view
+    enum InstantMessagePosition {
+        case top
+        case bottom
+    }
+    
+    func makeInstantViewWithText(_ text: String, duration: TimeInterval, on vc: UIViewController, withPosition position: InstantMessagePosition) {
+        var alertView: UIView = {
+            let view = UIView()
+            view.backgroundColor = .useRGB(red: 24, green: 163, blue: 240, alpha: 0.6)
+            view.layer.cornerRadius = 20
+            view.isHidden = true
+            view.translatesAutoresizingMaskIntoConstraints = false
+            
+            return view
+        }()
+        
+        var alertLabel: UILabel = {
+            let label = UILabel()
+            label.textAlignment = .center
+            label.font = .systemFont(ofSize: 17, weight: .bold)
+            label.textColor = .white
+            label.translatesAutoresizingMaskIntoConstraints = false
+            
+            return label
+        }()
+        
+        alertView.addSubview(alertLabel)
+        vc.view.addSubview(alertView)
+        
+        switch position {
+        case .top:
+            // alertView
+            NSLayoutConstraint.activate([
+                alertView.topAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.topAnchor, constant: 30),
+                alertView.heightAnchor.constraint(equalToConstant: 40),
+                alertView.centerXAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.centerXAnchor),
+                alertView.widthAnchor.constraint(greaterThanOrEqualToConstant: 50)
+            ])
+            
+        case .bottom:
+            // alertView
+            NSLayoutConstraint.activate([
+                alertView.bottomAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
+                alertView.heightAnchor.constraint(equalToConstant: 40),
+                alertView.centerXAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.centerXAnchor),
+                alertView.widthAnchor.constraint(greaterThanOrEqualToConstant: 50)
+            ])
+        }
+        
+        
+        // alertLabel
+        NSLayoutConstraint.activate([
+            alertLabel.centerYAnchor.constraint(equalTo: alertView.centerYAnchor),
+            alertLabel.leadingAnchor.constraint(equalTo: alertView.leadingAnchor, constant: 20),
+            alertLabel.trailingAnchor.constraint(equalTo: alertView.trailingAnchor, constant: -20)
+        ])
+        
+        // Alert label
+        alertLabel.text = text
+        alertView.alpha = 1
+        alertView.isHidden = false
+        UIView.animate(withDuration: duration) {
+            alertView.alpha = 0
+            
+        } completion: { finished in
+            alertView.isHidden = true
+            alertView.alpha = 1
+            
+            alertView.removeFromSuperview()
+        }
     }
     
     // MARK: Cover view

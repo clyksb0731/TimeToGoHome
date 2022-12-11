@@ -11,7 +11,7 @@ class CareerViewController: UIViewController {
     
     lazy var careerTableView: UITableView = {
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureToCell(_:)))
-        longPressGesture.minimumPressDuration = 0.5
+        longPressGesture.minimumPressDuration = 0.3
         
         let tableView = UITableView()
         tableView.backgroundColor = .white
@@ -43,7 +43,7 @@ class CareerViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        
+        SupportingMethods.shared.makeInstantViewWithText("길게 눌러 수정할 수 있습니다.", duration: 2.5, on: self, withPosition: .bottom)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {

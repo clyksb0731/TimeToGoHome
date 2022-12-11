@@ -29,26 +29,6 @@ class CompanyMapViewController: UIViewController {
         return button
     }()
     
-    lazy var alertView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .useRGB(red: 24, green: 163, blue: 240, alpha: 0.6)
-        view.layer.cornerRadius = 20
-        view.isHidden = true
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
-    }()
-    
-    lazy var alertLabel: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.font = .systemFont(ofSize: 17, weight: .bold)
-        label.textColor = .white
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        return label
-    }()
-    
     var currentLocation: CLLocationCoordinate2D!
     
     var address: CompanyAddress.Document!
@@ -77,7 +57,7 @@ class CompanyMapViewController: UIViewController {
         self.setPointAnnotation(center: self.initializeCenter().center, title: self.initializeCenter().address)
         self.setRegion(center: self.initializeCenter().center)
         
-        self.animateAlertLabel(message: "지도를 길게 눌러서 변경하세요.", for: 3.5)
+        SupportingMethods.shared.makeInstantViewWithText("지도를 길게 눌러서 변경하세요.", duration: 3.5, on: self, withPosition: .top)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -150,13 +130,8 @@ extension CompanyMapViewController {
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
             self.mapView,
-            self.currentLocationButton,
-            self.alertView
+            self.currentLocationButton
         ], to: self.view)
-        
-        SupportingMethods.shared.addSubviews([
-            self.alertLabel
-        ], to: self.alertView)
     }
     
     // Set layouts
@@ -177,21 +152,6 @@ extension CompanyMapViewController {
             self.currentLocationButton.heightAnchor.constraint(equalToConstant: 46),
             self.currentLocationButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16),
             self.currentLocationButton.widthAnchor.constraint(equalToConstant: 46)
-        ])
-        
-        // alertView
-        NSLayoutConstraint.activate([
-            self.alertView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -30),
-            self.alertView.heightAnchor.constraint(equalToConstant: 40),
-            self.alertView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
-            self.alertView.widthAnchor.constraint(greaterThanOrEqualToConstant: 50)
-        ])
-        
-        // alertLabel
-        NSLayoutConstraint.activate([
-            self.alertLabel.centerYAnchor.constraint(equalTo: self.alertView.centerYAnchor),
-            self.alertLabel.leadingAnchor.constraint(equalTo: self.alertView.leadingAnchor, constant: 20),
-            self.alertLabel.trailingAnchor.constraint(equalTo: self.alertView.trailingAnchor, constant: -20)
         ])
     }
 }
@@ -275,20 +235,6 @@ extension CompanyMapViewController {
             
         } failure: {
             SupportingMethods.shared.turnCoverView(.off, on: self.view)
-        }
-    }
-    
-    func animateAlertLabel(message: String, for time: TimeInterval) {
-        // Alert label
-        self.alertLabel.text = message
-        self.alertView.alpha = 1
-        self.alertView.isHidden = false
-        UIView.animate(withDuration: time) {
-            self.alertView.alpha = 0
-            
-        } completion: { finished in
-            self.alertView.isHidden = true
-            self.alertView.alpha = 1
         }
     }
 }

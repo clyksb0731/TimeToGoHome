@@ -121,7 +121,7 @@ struct CompanyModel {
             return joiningDateId > leavingDateId
             
         } else {
-            return false
+            return true
         }
     }
     
