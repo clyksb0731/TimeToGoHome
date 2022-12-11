@@ -200,10 +200,18 @@ extension WorkRecordViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let action = UIContextualAction(style: .destructive, title: "삭제") { action, view, completionHandler in
-            let dateId = self.workRecords[indexPath.section].schedules[indexPath.row].dateId
-            self.companyModel.removeScheduleAtDateId(dateId)
+            let date = SupportingMethods.shared.makeDateFormatter("yyyyMM").date(from: self.workRecords[indexPath.section].yearMonth)!
+            let yearMonth = SupportingMethods.shared.makeDateFormatter("yyyy년 M월").string(from: date)
             
-            self.determineTableViewWithRecordedSchedules()
+            let dateId = self.workRecords[indexPath.section].schedules[indexPath.row].dateId
+            
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "근무 내역 삭제", andMessage: "\(yearMonth) \(self.workRecords[indexPath.section].schedules[indexPath.row].day)일 근무 내역을 삭제할까요?", okAction: UIAlertAction(title: "삭제", style: .destructive, handler: { action in
+                
+                self.companyModel.removeScheduleAtDateId(dateId)
+                
+                self.determineTableViewWithRecordedSchedules()
+                
+            }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)
             
             completionHandler(true)
         }
