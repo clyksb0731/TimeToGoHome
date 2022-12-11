@@ -166,6 +166,13 @@ extension CareerViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+        let leavingDate = self.companies[indexPath.row].leavingDate
+        
+        guard leavingDate != nil && Int(dateFormatter.string(from: leavingDate!))! < Int(dateFormatter.string(from: Date()))! else {
+            return nil
+        }
+        
         let action = UIContextualAction(style: .destructive, title: "삭제") { action, view, completionHandler in
             SupportingMethods.shared.makeAlert(on: self, withTitle: "회사 삭제", andMessage: "\(self.companies[indexPath.row].name) 회사를 삭제할까요?", okAction: UIAlertAction(title: "삭제", style: .destructive, handler: { action in
                 CompanyModel.removeCompany(self.companies[indexPath.row])
@@ -191,6 +198,13 @@ extension CareerViewController: MenuCoverDelegate {
             } else {
                 CompanyModel.replaceCompany(companyModel.company!, withJoiningDate: joiningDate, leavingDate: leavingDate, name: name)
             }
+            
+            if let lastCompany = CompanyModel.getLastCompany() {
+                let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(lastCompany.dateId))!
+                ReferenceValues.initialSetting.updateValue(joiningDate, forKey: InitialSetting.joiningDate.rawValue)
+                SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+            }
+            
             
         } else { // When this company doesn't exist
             CompanyModel.addCompany(Company(joiningDate: joiningDate, leavingDate: leavingDate, name: name))

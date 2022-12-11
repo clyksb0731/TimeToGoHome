@@ -48,6 +48,42 @@ class CareerCell: UITableViewCell {
         return view
     }()
     
+//    lazy var topMarkView: UIView = {
+//        let view = UIView()
+//        view.backgroundColor = .useRGB(red: 60, green: 60, blue: 67)
+//        view.isHidden = true
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//
+//        return view
+//    }()
+    
+    lazy var bottomMarkView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 60, green: 60, blue: 67)
+        view.isHidden = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+//    lazy var leftMarkView: UIView = {
+//        let view = UIView()
+//        view.backgroundColor = .useRGB(red: 60, green: 60, blue: 67)
+//        view.isHidden = true
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//
+//        return view
+//    }()
+//
+//    lazy var rightMarkView: UIView = {
+//        let view = UIView()
+//        view.backgroundColor = .useRGB(red: 60, green: 60, blue: 67)
+//        view.isHidden = true
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//
+//        return view
+//    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -90,7 +126,12 @@ extension CareerCell: EssentialCellHeaderMethods {
             self.companyLabel,
             self.careerPeriodMarkLabel,
             self.careerPeriodLabel,
-            self.bottomLineView
+            self.bottomLineView,
+            
+            //self.topMarkView,
+            self.bottomMarkView,
+            //self.leftMarkView,
+            //self.rightMarkView
         ], to: self)
     }
     
@@ -129,16 +170,72 @@ extension CareerCell: EssentialCellHeaderMethods {
             self.bottomLineView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             self.bottomLineView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
         ])
+        
+//        // topMarkView
+//        NSLayoutConstraint.activate([
+//            self.topMarkView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+//            self.topMarkView.heightAnchor.constraint(equalToConstant: 2),
+//            self.topMarkView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+//            self.topMarkView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+//        ])
+        
+        // bottomMarkView
+        NSLayoutConstraint.activate([
+            self.bottomMarkView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+            self.bottomMarkView.heightAnchor.constraint(equalToConstant: 2),
+            self.bottomMarkView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            self.bottomMarkView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+        ])
+        
+//        // leftMarkView
+//        NSLayoutConstraint.activate([
+//            self.leftMarkView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+//            self.leftMarkView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+//            self.leftMarkView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+//            self.leftMarkView.widthAnchor.constraint(equalToConstant: 2)
+//        ])
+//
+//        // rightMarkView
+//        NSLayoutConstraint.activate([
+//            self.rightMarkView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+//            self.rightMarkView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+//            self.rightMarkView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+//            self.rightMarkView.widthAnchor.constraint(equalToConstant: 2)
+//        ])
     }
 }
 
 // MARK: - Extension for methods added
 extension CareerCell {
     func setCell(companyName: String, joiningDate: Date, leavingDate: Date?) {
+        let dateIdFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
         let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyy. MM. dd")
         
         self.companyLabel.text = companyName
         
-        self.careerPeriodLabel.text = "\(dateFormatter.string(from: joiningDate)) ~ \(leavingDate != nil ? dateFormatter.string(from: leavingDate!) : "재직 중")"
+        if let leavingDate = leavingDate {
+            if Int(dateIdFormatter.string(from: leavingDate))! < Int(dateIdFormatter.string(from: Date()))! {
+                self.careerPeriodLabel.text = "\(dateFormatter.string(from: joiningDate)) ~ \(dateFormatter.string(from: leavingDate))"
+                
+                self.makeBorderViewsHidden(true)
+                
+            } else {
+                self.careerPeriodLabel.text = "\(dateFormatter.string(from: joiningDate)) ~ 재직 중"
+                
+                self.makeBorderViewsHidden(false)
+            }
+            
+        } else {
+            self.careerPeriodLabel.text = "\(dateFormatter.string(from: joiningDate)) ~ 재직 중"
+            
+            self.makeBorderViewsHidden(false)
+        }
+    }
+    
+    func makeBorderViewsHidden(_ isHidden: Bool) {
+        //self.topMarkView.isHidden = isHidden
+        self.bottomMarkView.isHidden = isHidden
+        //self.leftMarkView.isHidden = isHidden
+        //self.rightMarkView.isHidden = isHidden
     }
 }

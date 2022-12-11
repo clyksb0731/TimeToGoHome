@@ -68,29 +68,31 @@ class MenuViewController: UIViewController {
         return ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date
     }()
     
-    let menuArray: [(header: String, items:[(menuStyle: MenuSettingCellType, menuText: String)])] = [
-        (header: "근무",
-         items: [
-            (menuStyle: .openVC, menuText: "근무 내역"),
-            (menuStyle: .openVC, menuText: "근무 통계")
-         ]
-        ),
-        
-        (header: "휴가",
-         items: [
-            (menuStyle: .openVC, menuText: "휴가 사용 현황"),
-            (menuStyle: .openVC, menuText: "휴가 일정")
-         ]
-        ),
-        
-        (header: "경력관리",
-         items: [
-            (menuStyle: .label(SupportingMethods.shared.makeDateFormatter("yyyy.M.d").string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)), menuText: "입사일"),
-            (menuStyle: .openVC, menuText: "경력 사항"),
-            (menuStyle: .button, menuText: "퇴직 처리")
-         ]
-        )
-    ]
+    var menuArray: [(header: String, items:[(menuStyle: MenuSettingCellType, menuText: String)])] {
+        [
+            (header: "근무",
+             items: [
+                (menuStyle: .openVC, menuText: "근무 내역"),
+                (menuStyle: .openVC, menuText: "근무 통계")
+             ]
+            ),
+            
+            (header: "휴가",
+             items: [
+                (menuStyle: .openVC, menuText: "휴가 사용 현황"),
+                (menuStyle: .openVC, menuText: "휴가 일정")
+             ]
+            ),
+            
+            (header: "경력관리",
+             items: [
+                (menuStyle: .label(SupportingMethods.shared.makeDateFormatter("yyyy.M.d").string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)), menuText: "입사일"),
+                (menuStyle: .openVC, menuText: "경력 사항"),
+                (menuStyle: .button, menuText: "퇴직 처리")
+             ]
+            )
+        ]
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -107,6 +109,8 @@ class MenuViewController: UIViewController {
         super.viewWillAppear(animated)
         
         self.setViewFoundation()
+        
+        self.menuTableView.reloadData()
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -261,7 +265,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
             cell.setCell((indexPath.section == 2 && indexPath.row == 2) &&
                          (todayDateId > leavingDateId) ? .label(infoDateFormatter.string(from: leavingDate)) : self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
                          itemText: indexPath.section == 2 && indexPath.row == 2 ?
-                         todayDateId <= leavingDateId ? "퇴사일 변경 (예정일: \(infoDateFormatter.string(from: leavingDate)))" : "퇴직일"
+                         todayDateId <= leavingDateId ? "퇴사일 변경 (근무 마지막 날: \(infoDateFormatter.string(from: leavingDate)))" : "퇴직일"
                          : self.menuArray[indexPath.section].items[indexPath.row].menuText,
                          isEnable: todayDateId <= leavingDateId || (indexPath.section == 2 && indexPath.row == 1))
             

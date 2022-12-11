@@ -711,14 +711,27 @@ class MenuCoverViewController: UIViewController {
     var leavingDate: Date? = nil {
         didSet {
             if let date = self.leavingDate {
-                let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
+                let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
                 
-                self.leavingYearLabel.text = "\(yearMonthDay.year)"
-                self.leavingMonthLabel.text = String(format: "%02d", yearMonthDay.month)
-                self.leavingDayLabel.text = String(format: "%02d", yearMonthDay.day)
-                
-                self.selectLeavingDateView.isHidden = true
-                self.leavingDateView.isHidden = false
+                if Int(dateFormatter.string(from: date))! < Int(dateFormatter.string(from: Date()))! {
+                    let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
+                    
+                    self.leavingYearLabel.text = "\(yearMonthDay.year)"
+                    self.leavingMonthLabel.text = String(format: "%02d", yearMonthDay.month)
+                    self.leavingDayLabel.text = String(format: "%02d", yearMonthDay.day)
+                    
+                    self.selectLeavingDateView.isHidden = true
+                    self.leavingDateView.isHidden = false
+                    
+                } else {
+                    self.selectLeavingDateMarkLineView.isHidden = true
+                    self.selectLeavingDateMarkLabel.text = "현재, 재직 중"
+                    self.selectLeavingDateMarkLabel.textColor = .useRGB(red: 151, green: 151, blue: 151)
+                    self.selectLeavingDateButton.isEnabled = false
+                    
+                    self.selectLeavingDateView.isHidden = false
+                    self.leavingDateView.isHidden = true
+                }
                 
             } else {
                 self.selectLeavingDateView.isHidden = false
@@ -1782,13 +1795,14 @@ extension MenuCoverViewController {
         case .careerManagement(let companyModel): // MARK: careerManagement
             self.titleLabel.text = companyModel == nil ? "경력 추가" : "경력 수정"
             self.titleLabel.isHidden = false
-            self.datePicker.maximumDate = Date()
+            self.datePicker.maximumDate = Date(timeIntervalSinceReferenceDate: Date().timeIntervalSinceReferenceDate - 86400) // to tomorrow
             self.popUpPanelView.isHidden = true
             
             if let companyModel = companyModel {
+                let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
                 self.companyNameTextField.text = companyModel.company?.name
                 
-                self.joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String((companyModel.company?.dateId)!))!
+                self.joiningDate = dateFormatter.date(from: String((companyModel.company?.dateId)!))!
                 
                 if let leavingDate = companyModel.company?.leavingDate {
                     self.leavingDate = leavingDate
@@ -2134,6 +2148,8 @@ extension MenuCoverViewController {
                 
                 return
             }
+            
+            // FIXME: Alert for deleting schedules out of period.
             
         } else { // If no company is selected
             if CompanyModel.hasAnyCompanyExistedFor(joiningDate: newJoiningDate, andLeavingDate: self.leavingDate!) {
