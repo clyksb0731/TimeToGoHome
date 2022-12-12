@@ -112,9 +112,9 @@ extension MenuCell: EssentialCellHeaderMethods {
         
         // itemTextLabel
         NSLayoutConstraint.activate([
-            self.itemTextLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 11),
+            self.itemTextLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 14),
             self.itemTextLabel.heightAnchor.constraint(equalToConstant: 22),
-            self.itemTextLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -11),
+            self.itemTextLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -14),
             self.itemTextLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
             self.itemTextLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -46)
         ])

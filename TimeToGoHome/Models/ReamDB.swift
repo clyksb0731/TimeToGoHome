@@ -207,6 +207,16 @@ struct CompanyModel {
         return schedules
     }
     
+    func getSchedulesBefore(_ date: Date) -> Results<Schedule>? {
+        let dateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date))!
+        
+        let schedules = self.schedules?.where {
+            $0.dateId < dateId
+        }
+        
+        return schedules
+    }
+    
 //    func setSchedule(_ schedule: Schedule) {
 //        let realm = try! Realm()
 //

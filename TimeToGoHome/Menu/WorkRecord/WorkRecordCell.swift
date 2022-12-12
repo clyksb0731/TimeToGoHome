@@ -118,33 +118,33 @@ extension WorkRecordCell: EssentialCellHeaderMethods {
         
         // dayLabel
         NSLayoutConstraint.activate([
-            self.dayLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 12),
+            self.dayLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 15),
             self.dayLabel.heightAnchor.constraint(equalToConstant: 20),
-            self.dayLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -12),
+            self.dayLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -15),
             self.dayLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20)
         ])
         
         // morningBar
         NSLayoutConstraint.activate([
             self.morningBar.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
-            self.morningBar.heightAnchor.constraint(equalToConstant: 20),
-            self.morningBar.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 90),
-            self.morningBar.widthAnchor.constraint(equalToConstant: 44)
+            self.morningBar.heightAnchor.constraint(equalToConstant: 24),
+            self.morningBar.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 80),
+            self.morningBar.widthAnchor.constraint(equalToConstant: 48)
         ])
         
         // afternoonBar
         NSLayoutConstraint.activate([
             self.afternoonBar.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
-            self.afternoonBar.heightAnchor.constraint(equalToConstant: 20),
+            self.afternoonBar.heightAnchor.constraint(equalToConstant: 24),
             self.afternoonBar.leadingAnchor.constraint(equalTo: self.morningBar.trailingAnchor, constant: 5),
-            self.afternoonBar.widthAnchor.constraint(equalToConstant: 44)
+            self.afternoonBar.widthAnchor.constraint(equalToConstant: 48)
         ])
         
         // overtimeBar
-        self.overtimeWidthAnchor = self.overtimeBar.widthAnchor.constraint(equalToConstant: 11)
+        self.overtimeWidthAnchor = self.overtimeBar.widthAnchor.constraint(equalToConstant: 12)
         NSLayoutConstraint.activate([
             self.overtimeBar.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
-            self.overtimeBar.heightAnchor.constraint(equalToConstant: 20),
+            self.overtimeBar.heightAnchor.constraint(equalToConstant: 24),
             self.overtimeBar.leadingAnchor.constraint(equalTo: self.afternoonBar.trailingAnchor, constant: 5),
             self.overtimeWidthAnchor
         ])
@@ -218,11 +218,11 @@ extension WorkRecordCell {
                 overtimeMultiplier = 4
             }
             
-            self.overtimeWidthAnchor.constant = 11 * CGFloat(overtimeMultiplier)
+            self.overtimeWidthAnchor.constant = 12 * CGFloat(overtimeMultiplier)
             self.overtimeBar.isHidden = false
             
         } else {
-            self.overtimeWidthAnchor.constant = 11
+            self.overtimeWidthAnchor.constant = 12
             self.overtimeBar.isHidden = true
         }
         
