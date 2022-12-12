@@ -557,12 +557,12 @@ class Company: Object {
     @Persisted var month: Int = 0
     @Persisted var day: Int = 0
     @Persisted var name: String = ""
-    @Persisted var address: String = ""
-    @Persisted var latitude: Double = 0
-    @Persisted var longitude: Double = 0
+    @Persisted var address: String?
+    @Persisted var latitude: Double?
+    @Persisted var longitude: Double?
     @Persisted var schedules: List<Schedule>
     
-    convenience init(joiningDate: Date, leavingDate: Date? = nil, name: String, address: String = "", latitude: Double = 0, longitude: Double = 0) {
+    convenience init(joiningDate: Date, leavingDate: Date? = nil, name: String, address: String? = nil, latitude: Double? = nil, longitude: Double? = nil) {
         self.init()
         
         self.dateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: joiningDate))!
