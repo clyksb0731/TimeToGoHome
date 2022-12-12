@@ -1716,8 +1716,21 @@ extension MenuCoverViewController {
             let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(Date(timeIntervalSinceReferenceDate: Date().timeIntervalSinceReferenceDate - 86400))
             let yesterday = SupportingMethods.shared.makeDateWithYear(yearMonthDay.year, month: yearMonthDay.month, andDay: yearMonthDay.day)
             
-            self.careerDateRange = (startDate: startDateOfCareer, endDate: companyModel.company!.leavingDate ?? yesterday)
-            self.targetYearMonthDate = companyModel.company!.leavingDate ?? yesterday
+            if let leavingDate = companyModel.company?.leavingDate {
+                let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+                
+                if Int(dateFormatter.string(from: leavingDate))! < Int(dateFormatter.string(from: Date()))! {
+                    self.careerDateRange = (startDate: startDateOfCareer, endDate: leavingDate)
+                    
+                } else {
+                    self.careerDateRange = (startDate: startDateOfCareer, endDate: yesterday)
+                }
+                
+            } else {
+                self.careerDateRange = (startDate: startDateOfCareer, endDate: yesterday)
+            }
+            
+            self.targetYearMonthDate = self.careerDateRange.endDate
         }
     }
     
@@ -2149,7 +2162,28 @@ extension MenuCoverViewController {
                 return
             }
             
-            // FIXME: Alert for deleting schedules out of period.
+            UIDevice.lightHaptic()
+            
+            let schedulesBefore = companyModel.getSchedulesBefore(newJoiningDate)!
+            let scheduleAfter = companyModel.getSchedulesAfter(self.leavingDate ?? Date())!
+            if !schedulesBefore.isEmpty || !scheduleAfter.isEmpty {
+                SupportingMethods.shared.makeAlert(on: self, withTitle: "근무 내역 삭제", andMessage: "지정된 기간 외 시간에 근무 내역이 존재합니다. 지정된 기간으로 변경 시 해당 근무 내역은 삭제됩니다. 계속 진행할까요?", okAction: UIAlertAction(title: "예", style: .destructive, handler: { action in
+                    companyModel.removeSchedules(schedulesBefore)
+                    companyModel.removeSchedules(scheduleAfter)
+                    
+                    let tempSelf = self
+                    self.dismiss(animated: false) {
+                        tempSelf.delegate?.menuCoverDidDetermineCompanyName(newCompanyName, joiningDate: newJoiningDate, leavingDate: tempSelf.leavingDate, ofCompanyModel: companyModel)
+                    }
+                    
+                }), cancelAction: UIAlertAction(title: "아니오", style: .cancel), completion: nil)
+                
+            } else {
+                let tempSelf = self
+                self.dismiss(animated: false) {
+                    tempSelf.delegate?.menuCoverDidDetermineCompanyName(newCompanyName, joiningDate: newJoiningDate, leavingDate: tempSelf.leavingDate, ofCompanyModel: companyModel)
+                }
+            }
             
         } else { // If no company is selected
             if CompanyModel.hasAnyCompanyExistedFor(joiningDate: newJoiningDate, andLeavingDate: self.leavingDate!) {
@@ -2157,11 +2191,13 @@ extension MenuCoverViewController {
                 
                 return
             }
-        }
-        
-        let tempSelf = self
-        self.dismiss(animated: false) {
-            tempSelf.delegate?.menuCoverDidDetermineCompanyName(newCompanyName, joiningDate: newJoiningDate, leavingDate: tempSelf.leavingDate, ofCompanyModel: tempSelf.companyModelForCareerManagement)
+            
+            UIDevice.lightHaptic()
+            
+            let tempSelf = self
+            self.dismiss(animated: false) {
+                tempSelf.delegate?.menuCoverDidDetermineCompanyName(newCompanyName, joiningDate: newJoiningDate, leavingDate: tempSelf.leavingDate, ofCompanyModel: tempSelf.companyModelForCareerManagement)
+            }
         }
     }
     

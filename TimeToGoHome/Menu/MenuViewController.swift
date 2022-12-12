@@ -64,9 +64,9 @@ class MenuViewController: UIViewController {
     
     weak var mainVC: MainViewController?
     
-    var leavingDate: Date? = {
-        return ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date
-    }()
+    var leavingDate: Date?  {
+        ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date
+    }
     
     var menuArray: [(header: String, items:[(menuStyle: MenuSettingCellType, menuText: String)])] {
         [
@@ -336,7 +336,6 @@ extension MenuViewController: MenuCoverDelegate {
                 companyModel.removeSchedules(schedules)
                 companyModel.setLeavingDate(date)
                 
-                self.leavingDate = date
                 ReferenceValues.initialSetting.updateValue(date, forKey: InitialSetting.leavingDate.rawValue)
                 SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
                 
@@ -346,21 +345,16 @@ extension MenuViewController: MenuCoverDelegate {
                 self.mainVC?.timer?.invalidate()
                 self.mainVC?.schedule.updateStartingWorkTime(nil)
                 
-                // FIXME: Go to menu? Main? How to handle today schedule after this?
-                
             }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)
             
         } else {
             SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(dateFormatted)부로 퇴직 처리할까요?", okAction: UIAlertAction(title: "퇴직 처리", style: .default, handler: { _ in
                 companyModel.setLeavingDate(date)
                 
-                self.leavingDate = date
                 ReferenceValues.initialSetting.updateValue(date, forKey: InitialSetting.leavingDate.rawValue)
                 SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
                 
                 self.menuTableView.reloadData()
-                
-                // FIXME: Go to menu? Main? How to handle today schedule after this?
                 
             }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)
         }

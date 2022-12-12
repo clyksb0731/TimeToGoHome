@@ -132,6 +132,8 @@ extension CareerViewController {
         if sender.state == .began {
             let touchPoint = sender.location(in: self.careerTableView)
             if let indexPath = self.careerTableView.indexPathForRow(at: touchPoint) {
+                UIDevice.heavyHaptic()
+                
                 let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.companies[indexPath.row].dateId))!
                 let menuCoverVC = MenuCoverViewController(.careerManagement(CompanyModel(joiningDate: joiningDate)), delegate: self)
                 
@@ -177,6 +179,33 @@ extension CareerViewController: UITableViewDelegate, UITableViewDataSource {
             SupportingMethods.shared.makeAlert(on: self, withTitle: "회사 삭제", andMessage: "\(self.companies[indexPath.row].name) 회사를 삭제할까요?", okAction: UIAlertAction(title: "삭제", style: .destructive, handler: { action in
                 CompanyModel.removeCompany(self.companies[indexPath.row])
                 
+                if let lastCompany = CompanyModel.getLastCompany() {
+                    let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(lastCompany.dateId))!
+                    
+                    ReferenceValues.initialSetting.updateValue(joiningDate, forKey: InitialSetting.joiningDate.rawValue)
+                    ReferenceValues.initialSetting.updateValue(lastCompany.name, forKey: InitialSetting.companyName.rawValue)
+                    
+                    if let leavingDate = lastCompany.leavingDate {
+                        ReferenceValues.initialSetting.updateValue(leavingDate, forKey: InitialSetting.leavingDate.rawValue)
+                    } else {
+                        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.leavingDate.rawValue)
+                    }
+                    
+                    SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+                    
+                } else {
+                    SupportingMethods.shared.makeAlert(on: self, withTitle: "새 회사 설정", andMessage: "모든 경력 사항이 삭제되었습니다. 새로운 회사 설정이 필요합니다.", okAction: UIAlertAction(title: "확인", style: .default, handler: { action in
+                        
+                        let initialVC = InitialViewController()
+                        initialVC.modalPresentationStyle = .fullScreen
+                        self.present(initialVC, animated: true) {
+                            ReferenceValues.initialSetting = [:]
+                            SupportingMethods.shared.setAppSetting(with: nil, for: .initialSetting)
+                        }
+                        
+                    }), cancelAction: nil, completion: nil)
+                }
+                
             }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)
             
             completionHandler(true)
@@ -204,7 +233,6 @@ extension CareerViewController: MenuCoverDelegate {
                 ReferenceValues.initialSetting.updateValue(joiningDate, forKey: InitialSetting.joiningDate.rawValue)
                 SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
             }
-            
             
         } else { // When this company doesn't exist
             CompanyModel.addCompany(Company(joiningDate: joiningDate, leavingDate: leavingDate, name: name))
