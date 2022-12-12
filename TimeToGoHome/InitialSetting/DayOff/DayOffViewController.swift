@@ -1170,9 +1170,9 @@ extension DayOffViewController {
         
         let company = Company(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date,
                               name: ReferenceValues.initialSetting[InitialSetting.companyName.rawValue] as! String,
-                              address: ReferenceValues.initialSetting[InitialSetting.companyAddress.rawValue] as! String,
-                              latitude: ReferenceValues.initialSetting[InitialSetting.companyLatitude.rawValue] as! Double,
-                              longitude: ReferenceValues.initialSetting[InitialSetting.companyLongitude.rawValue] as! Double)
+                              address: ReferenceValues.initialSetting[InitialSetting.companyAddress.rawValue] as? String,
+                              latitude: ReferenceValues.initialSetting[InitialSetting.companyLatitude.rawValue] as? Double,
+                              longitude: ReferenceValues.initialSetting[InitialSetting.companyLongitude.rawValue] as? Double)
         
         CompanyModel.addCompany(company)
     }
