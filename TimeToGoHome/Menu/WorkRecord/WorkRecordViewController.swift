@@ -202,8 +202,9 @@ extension WorkRecordViewController: UITableViewDelegate, UITableViewDataSource {
         let action = UIContextualAction(style: .destructive, title: "삭제") { action, view, completionHandler in
             let date = SupportingMethods.shared.makeDateFormatter("yyyyMM").date(from: self.workRecords[indexPath.section].yearMonth)!
             let yearMonth = SupportingMethods.shared.makeDateFormatter("yyyy년 M월").string(from: date)
-            
             let dateId = self.workRecords[indexPath.section].schedules[indexPath.row].dateId
+            
+            UIDevice.lightHaptic()
             
             SupportingMethods.shared.makeAlert(on: self, withTitle: "근무 내역 삭제", andMessage: "\(yearMonth) \(self.workRecords[indexPath.section].schedules[indexPath.row].day)일 근무 내역을 삭제할까요?", okAction: UIAlertAction(title: "삭제", style: .destructive, handler: { action in
                 
@@ -219,7 +220,7 @@ extension WorkRecordViewController: UITableViewDelegate, UITableViewDataSource {
         //action.image = UIImage(named: "")
         
         let swipeActions = UISwipeActionsConfiguration(actions: [action])
-        //swipeActions.performsFirstActionWithFullSwipe = false
+        swipeActions.performsFirstActionWithFullSwipe = false
         
         return swipeActions
     }

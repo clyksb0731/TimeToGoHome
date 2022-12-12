@@ -17,16 +17,26 @@ class CareerViewController: UIViewController {
         tableView.backgroundColor = .white
         tableView.bounces = false
         tableView.register(CareerCell.self, forCellReuseIdentifier: "CareerCell")
+        tableView.register(CareerHeaderView.self, forHeaderFooterViewReuseIdentifier: "CareerHeaderView")
         tableView.separatorStyle = .none
         tableView.addGestureRecognizer(longPressGesture)
         tableView.delegate = self
         tableView.dataSource = self
+        if #available(iOS 15.0, *) {
+            tableView.sectionHeaderTopPadding = 0
+        }
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         return tableView
     }()
     
-    var companies: [Company] = CompanyModel.companies.sorted(by: { $0.dateId > $1.dateId })
+    lazy var companiesClassified: [(careerMark: String, companies: [Company])] = self.makeCompaniesClassifiedWithCompanies(self.companies)
+    
+    var companies: [Company] = CompanyModel.companies.sorted(by: { $0.dateId > $1.dateId }) {
+        willSet {
+            self.companiesClassified = self.makeCompaniesClassifiedWithCompanies(newValue)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -111,7 +121,36 @@ extension CareerViewController: EssentialViewMethods {
 
 // MARK: - Extension for methods added
 extension CareerViewController {
-    
+    func makeCompaniesClassifiedWithCompanies(_ companies: [Company]) -> [(careerMark: String, companies: [Company])] {
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+        var currentCompany: Company?
+        var oldCompanies: [Company] = []
+        var companiesClassified: [(careerMark: String, companies: [Company])] = []
+        
+        for company in companies {
+            if let leavingDate = company.leavingDate {
+                if Int(dateFormatter.string(from: leavingDate))! < Int(dateFormatter.string(from: Date()))! {
+                    oldCompanies.append(company)
+                    
+                } else {
+                    currentCompany = company
+                }
+                
+            } else {
+                currentCompany = company
+            }
+        }
+        
+        if let currentCompany = currentCompany {
+            companiesClassified.append((careerMark: "현재 회사", companies: [currentCompany]))
+        }
+        
+        if !oldCompanies.isEmpty {
+            companiesClassified.append((careerMark: "이전 회사", companies: oldCompanies))
+        }
+        
+        return companiesClassified
+    }
 }
 
 // MARK: - Extension for selector methods
@@ -134,7 +173,7 @@ extension CareerViewController {
             if let indexPath = self.careerTableView.indexPathForRow(at: touchPoint) {
                 UIDevice.heavyHaptic()
                 
-                let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.companies[indexPath.row].dateId))!
+                let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.companiesClassified[indexPath.section].companies[indexPath.row].dateId))!
                 let menuCoverVC = MenuCoverViewController(.careerManagement(CompanyModel(joiningDate: joiningDate)), delegate: self)
                 
                 self.present(menuCoverVC, animated: false)
@@ -145,22 +184,41 @@ extension CareerViewController {
 
 // MARK: - Extension for UITableViewDelegate, UITableViewDataSource
 extension CareerViewController: UITableViewDelegate, UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return self.companiesClassified.count
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "CareerHeaderView") as! CareerHeaderView
+        headerView.setHeaderView(mark: self.companiesClassified[section].careerMark)
+        
+        return headerView
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.companies.count
+        return self.companiesClassified[section].companies.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CareerCell", for: indexPath) as! CareerCell
-        cell.setCell(companyName: self.companies[indexPath.row].name,
-                     joiningDate: SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.companies[indexPath.row].dateId))!,
-                     leavingDate: self.companies[indexPath.row].leavingDate)
+        cell.setCell(companyName: self.companiesClassified[indexPath.section].companies[indexPath.row].name,
+                     joiningDate: SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.companiesClassified[indexPath.section].companies[indexPath.row].dateId))!,
+                     leavingDate: self.companiesClassified[indexPath.section].companies[indexPath.row].leavingDate)
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.companies[indexPath.row].dateId))!
+        let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.companiesClassified[indexPath.section].companies[indexPath.row].dateId))!
         
         let workRecordVC = WorkRecordViewController(companyModel: CompanyModel(joiningDate: joiningDate))
         
@@ -169,15 +227,18 @@ extension CareerViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
-        let leavingDate = self.companies[indexPath.row].leavingDate
+        let leavingDate = self.companiesClassified[indexPath.section].companies[indexPath.row].leavingDate
         
         guard leavingDate != nil && Int(dateFormatter.string(from: leavingDate!))! < Int(dateFormatter.string(from: Date()))! else {
             return nil
         }
         
         let action = UIContextualAction(style: .destructive, title: "삭제") { action, view, completionHandler in
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "회사 삭제", andMessage: "\(self.companies[indexPath.row].name) 회사를 삭제할까요?", okAction: UIAlertAction(title: "삭제", style: .destructive, handler: { action in
-                CompanyModel.removeCompany(self.companies[indexPath.row])
+            UIDevice.lightHaptic()
+            
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "회사 삭제", andMessage: "\(self.companiesClassified[indexPath.section].companies[indexPath.row].name) 회사를 삭제할까요?", okAction: UIAlertAction(title: "삭제", style: .destructive, handler: { action in
+                
+                CompanyModel.removeCompany(self.companiesClassified[indexPath.section].companies[indexPath.row])
                 
                 if let lastCompany = CompanyModel.getLastCompany() {
                     let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(lastCompany.dateId))!
@@ -185,16 +246,38 @@ extension CareerViewController: UITableViewDelegate, UITableViewDataSource {
                     ReferenceValues.initialSetting.updateValue(joiningDate, forKey: InitialSetting.joiningDate.rawValue)
                     ReferenceValues.initialSetting.updateValue(lastCompany.name, forKey: InitialSetting.companyName.rawValue)
                     
+                    // leaving date
                     if let leavingDate = lastCompany.leavingDate {
                         ReferenceValues.initialSetting.updateValue(leavingDate, forKey: InitialSetting.leavingDate.rawValue)
                     } else {
                         ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.leavingDate.rawValue)
                     }
                     
+                    // address
+                    if let address = lastCompany.address {
+                        ReferenceValues.initialSetting.updateValue(address, forKey: InitialSetting.companyAddress.rawValue)
+                    } else {
+                        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.companyAddress.rawValue)
+                    }
+                    
+                    // latitude
+                    if let latitude = lastCompany.latitude {
+                        ReferenceValues.initialSetting.updateValue(latitude, forKey: InitialSetting.companyLatitude.rawValue)
+                    } else {
+                        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.companyLatitude.rawValue)
+                    }
+                    
+                    // longitude
+                    if let longitude = lastCompany.longitude {
+                        ReferenceValues.initialSetting.updateValue(longitude, forKey: InitialSetting.companyLongitude.rawValue)
+                    } else {
+                        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.companyLongitude.rawValue)
+                    }
+                    
                     SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
                     
                 } else {
-                    SupportingMethods.shared.makeAlert(on: self, withTitle: "새 회사 설정", andMessage: "모든 경력 사항이 삭제되었습니다. 새로운 회사 설정이 필요합니다.", okAction: UIAlertAction(title: "확인", style: .default, handler: { action in
+                    SupportingMethods.shared.makeAlert(on: self, withTitle: "새 회사 설정", andMessage: "경력 사항이 없습니다.\n새로운 회사 설정이 필요합니다.", okAction: UIAlertAction(title: "확인", style: .default, handler: { action in
                         
                         let initialVC = InitialViewController()
                         initialVC.modalPresentationStyle = .fullScreen
@@ -211,7 +294,10 @@ extension CareerViewController: UITableViewDelegate, UITableViewDataSource {
             completionHandler(true)
         }
         
-        return UISwipeActionsConfiguration(actions: [action])
+        let swipeActions = UISwipeActionsConfiguration(actions: [action])
+        swipeActions.performsFirstActionWithFullSwipe = false
+        
+        return swipeActions
     }
 }
 
