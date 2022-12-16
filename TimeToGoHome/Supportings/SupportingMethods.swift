@@ -134,7 +134,7 @@ extension SupportingMethods {
     }
     
     func makeInstantViewWithText(_ text: String, duration: TimeInterval, on vc: UIViewController, withPosition position: InstantMessagePosition) {
-        var alertView: UIView = {
+        let alertView: UIView = {
             let view = UIView()
             view.backgroundColor = .useRGB(red: 24, green: 163, blue: 240, alpha: 0.6)
             view.layer.cornerRadius = 20
@@ -144,7 +144,7 @@ extension SupportingMethods {
             return view
         }()
         
-        var alertLabel: UILabel = {
+        let alertLabel: UILabel = {
             let label = UILabel()
             label.textAlignment = .center
             label.font = .systemFont(ofSize: 17, weight: .bold)
