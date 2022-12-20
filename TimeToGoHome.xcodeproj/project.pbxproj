@@ -33,6 +33,7 @@
 		CA612DEC292D13BD00547AC2 /* WorkRecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA612DEB292D13BD00547AC2 /* WorkRecordViewController.swift */; };
 		CA6D12FB2910215300835CB6 /* CustomizedTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6D12FA2910215300835CB6 /* CustomizedTabBarController.swift */; };
 		CA79A8E627D85550000F58E2 /* TemplateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA79A8E527D85550000F58E2 /* TemplateCell.swift */; };
+		CA8ED6A5295203F30026478A /* MenuLargeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8ED6A4295203F30026478A /* MenuLargeCell.swift */; };
 		CAA3B24B2801755D00FFF892 /* CalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24A2801755D00FFF892 /* CalendarDayCell.swift */; };
 		CAA3B24D2801758200FFF892 /* CalendarHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */; };
 		CAA3B24F28018ED600FFF892 /* VacationButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24E28018ED600FFF892 /* VacationButtonView.swift */; };
@@ -99,6 +100,7 @@
 		CA612DEB292D13BD00547AC2 /* WorkRecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkRecordViewController.swift; sourceTree = "<group>"; };
 		CA6D12FA2910215300835CB6 /* CustomizedTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizedTabBarController.swift; sourceTree = "<group>"; };
 		CA79A8E527D85550000F58E2 /* TemplateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateCell.swift; sourceTree = "<group>"; };
+		CA8ED6A4295203F30026478A /* MenuLargeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuLargeCell.swift; sourceTree = "<group>"; };
 		CAA3B24A2801755D00FFF892 /* CalendarDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayCell.swift; sourceTree = "<group>"; };
 		CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderView.swift; sourceTree = "<group>"; };
 		CAA3B24E28018ED600FFF892 /* VacationButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VacationButtonView.swift; sourceTree = "<group>"; };
@@ -183,6 +185,16 @@
 			path = TimeToGoHome;
 			sourceTree = "<group>";
 		};
+		CA8ED6A3295203AF0026478A /* MenuCover */ = {
+			isa = PBXGroup;
+			children = (
+				CABD62922928F96F004F3C4F /* MenuCoverViewController.swift */,
+				CA14AE432937A321001497DF /* CalendarHeaderOfScheduleRecordView.swift */,
+				CA14AE41293798E4001497DF /* CalendarDayOfScheduleRecordCell.swift */,
+			);
+			path = MenuCover;
+			sourceTree = "<group>";
+		};
 		CAB9AD642926701E006AB951 /* InitialSetting */ = {
 			isa = PBXGroup;
 			children = (
@@ -244,11 +256,10 @@
 			isa = PBXGroup;
 			children = (
 				CA47B0F62924BA9A00D3D8F7 /* MenuViewController.swift */,
-				CA47B0F82924BAE700D3D8F7 /* MenuCell.swift */,
 				CA47B0FC2924C0F400D3D8F7 /* MenuHeaderView.swift */,
-				CABD62922928F96F004F3C4F /* MenuCoverViewController.swift */,
-				CA14AE432937A321001497DF /* CalendarHeaderOfScheduleRecordView.swift */,
-				CA14AE41293798E4001497DF /* CalendarDayOfScheduleRecordCell.swift */,
+				CA47B0F82924BAE700D3D8F7 /* MenuCell.swift */,
+				CA8ED6A4295203F30026478A /* MenuLargeCell.swift */,
+				CA8ED6A3295203AF0026478A /* MenuCover */,
 				CAD8E616293CC75900E3E634 /* WorkRecord */,
 				CAD8E624293CC91500E3E634 /* WorkStatistics */,
 				CAD8E621293CC8B200E3E634 /* NumberOfPaidHolidays */,
@@ -451,6 +462,7 @@
 				CAB7CF2F2750B2FE005C9232 /* TemplateViewController.swift in Sources */,
 				CA47B0FD2924C0F400D3D8F7 /* MenuHeaderView.swift in Sources */,
 				CAB7CF2B2750B146005C9232 /* SupportingMethods.swift in Sources */,
+				CA8ED6A5295203F30026478A /* MenuLargeCell.swift in Sources */,
 				CAD8E61B293CC84800E3E634 /* VacationUsageViewController.swift in Sources */,
 				CA4589F02933B396003CA0EB /* WorkRecordModel.swift in Sources */,
 				CAD8E61D293CC87700E3E634 /* CalendarHeaderOfVacationUsageView.swift in Sources */,
