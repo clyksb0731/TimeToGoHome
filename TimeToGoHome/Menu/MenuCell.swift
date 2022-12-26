@@ -11,7 +11,13 @@ enum MenuSettingCellType {
     case openVC
     case `switch`(Bool)
     case label(String)
-    case button
+    case button(MenuButtonType)
+}
+
+enum MenuButtonType {
+    case withoutAnything
+    case withSubText
+    case withSubButton
 }
 
 class MenuCell: UITableViewCell {

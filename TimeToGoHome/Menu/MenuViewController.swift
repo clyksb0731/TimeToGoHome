@@ -51,6 +51,7 @@ class MenuViewController: UIViewController {
         tableView.bounces = false
         tableView.separatorStyle = .none
         tableView.register(MenuCell.self, forCellReuseIdentifier: "MenuCell")
+        tableView.register(MenuLargeCell.self, forCellReuseIdentifier: "MenuLargeCell")
         tableView.register(MenuHeaderView.self, forHeaderFooterViewReuseIdentifier: "MenuHeaderView")
         tableView.delegate = self
         tableView.dataSource = self
@@ -88,7 +89,7 @@ class MenuViewController: UIViewController {
              items: [
                 (menuStyle: .label(SupportingMethods.shared.makeDateFormatter("yyyy.M.d").string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)), menuText: "입사일"),
                 (menuStyle: .openVC, menuText: "경력 사항"),
-                (menuStyle: .button, menuText: "퇴직 처리")
+                (menuStyle: .button(.withoutAnything), menuText: "퇴직 처리")
              ]
             )
         ]
@@ -226,6 +227,12 @@ extension MenuViewController {
     @objc func dismiss(_ sender: UIButton) {
         self.dismiss(animated: true)
     }
+    
+    @objc func changeLeavingDate(_ sender: UIButton) {
+        let menuCoverVC = MenuCoverViewController(.lastDateAtWork, delegate: self)
+        
+        self.present(menuCoverVC, animated: false)
+    }
 }
 
 // MARK: - Extension for UITableViewDelegate, UITableViewDataSource
@@ -241,6 +248,10 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         return headerView
     }
     
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 38
+    }
+    
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 0
     }
@@ -254,7 +265,7 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "MenuCell", for: indexPath) as! MenuCell
+        var cell: UITableViewCell!
         
         if let leavingDate = self.leavingDate {
             let infoDateFormatter = SupportingMethods.shared.makeDateFormatter("yyyy.M.d")
@@ -262,17 +273,33 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
             let leavingDateId = Int(orderingDateFormatter.string(from: leavingDate))!
             let todayDateId = Int(orderingDateFormatter.string(from: Date()))!
             
-            cell.setCell((indexPath.section == 2 && indexPath.row == 2) &&
-                         (todayDateId > leavingDateId) ? .label(infoDateFormatter.string(from: leavingDate)) : self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
-                         itemText: indexPath.section == 2 && indexPath.row == 2 ?
-                         todayDateId <= leavingDateId ? "퇴사일 변경 (근무 마지막 날: \(infoDateFormatter.string(from: leavingDate)))" : "퇴직일"
-                         : self.menuArray[indexPath.section].items[indexPath.row].menuText,
-                         isEnable: todayDateId <= leavingDateId || (indexPath.section == 2 && indexPath.row == 1))
+            if indexPath.section == 2 && indexPath.row == 2 {
+                let menuLargeCell = tableView.dequeueReusableCell(withIdentifier: "MenuLargeCell", for: indexPath) as! MenuLargeCell
+                if todayDateId > leavingDateId {
+                    menuLargeCell.setCell(.button(.withSubText), itemText: "퇴직 취소", subTexts: (upperText: "마지막 근무일", lowerText: infoDateFormatter.string(from: leavingDate)))
+                    
+                } else {
+                    menuLargeCell.setCell(.button(.withSubButton), itemText: "퇴직예정 취소", subTexts: (upperText: nil, lowerText: infoDateFormatter.string(from: leavingDate)), subUpperButtonTarger: (target: self, action: #selector(changeLeavingDate(_:)), for: .touchUpInside))
+                }
+                
+                cell = menuLargeCell
+                
+            } else {
+                let menuCell = tableView.dequeueReusableCell(withIdentifier: "MenuCell", for: indexPath) as! MenuCell
+                menuCell.setCell(self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
+                             itemText: self.menuArray[indexPath.section].items[indexPath.row].menuText,
+                             isEnable: todayDateId <= leavingDateId || (indexPath.section == 2 && indexPath.row == 1))
+                
+                cell = menuCell
+            }
             
         } else {
-            cell.setCell(self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
+            let menuCell = tableView.dequeueReusableCell(withIdentifier: "MenuCell", for: indexPath) as! MenuCell
+            menuCell.setCell(self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
                          itemText: self.menuArray[indexPath.section].items[indexPath.row].menuText,
                          isEnable: true)
+            
+            cell = menuCell
         }
         
         return cell
@@ -281,13 +308,33 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        let today = Date()
+        let todayDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: today))!
+        
         if indexPath.section == 2 && indexPath.row == 1 {
             let careerVC = CareerViewController()
 
             self.navigationController?.pushViewController(careerVC, animated: true)
         }
         
-        let todayDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: Date()))!
+        if indexPath.section == 2 && indexPath.row == 2 {
+            if self.leavingDate != nil {
+                SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 취소", andMessage: "퇴직처리를 취소할까요?", okAction: UIAlertAction(title: "예", style: .default, handler: { action in
+                    let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
+                    companyModel.setLeavingDate(nil)
+                    ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.leavingDate.rawValue)
+                    
+                    self.menuTableView.reloadData()
+                    
+                }), cancelAction: UIAlertAction(title: "아니오", style: .cancel), completion: nil)
+                
+            } else {
+                let menuCoverVC = MenuCoverViewController(.lastDateAtWork, delegate: self)
+                
+                self.present(menuCoverVC, animated: false)
+            }
+        }
+       
         if let leavingDate = self.leavingDate {
             let leavingDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: leavingDate))!
             if todayDateId > leavingDateId {
@@ -314,12 +361,6 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         
         if indexPath.section == 1 && indexPath.row == 1 {
             // VacationUsageViewController
-        }
-        
-        if indexPath.section == 2 && indexPath.row == 2 {
-            let menuCoverVC = MenuCoverViewController(.lastDateAtWork, delegate: self)
-            
-            self.present(menuCoverVC, animated: false)
         }
     }
 }
