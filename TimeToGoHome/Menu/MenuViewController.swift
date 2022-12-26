@@ -360,7 +360,9 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         if indexPath.section == 1 && indexPath.row == 1 {
-            // VacationUsageViewController
+            let vacationUsageVC = VacationUsageViewController()
+            
+            self.navigationController?.pushViewController(vacationUsageVC, animated: true)
         }
     }
 }

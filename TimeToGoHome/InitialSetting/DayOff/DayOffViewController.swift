@@ -180,11 +180,16 @@ class DayOffViewController: UIViewController {
         paragraphStyle.alignment = .center
         
         let attributedText = NSMutableAttributedString()
-        let usedVacationText = NSAttributedString(string: "\(self.numberOfVacationsHold == 0 ? "0" : "\(self.numberOfVacationsHold)")일 |", attributes: [
+        let usedVacationText = NSAttributedString(string: "\((Int(self.numberOfVacationsHold * 10)) % 10 == 0 ? "\(Int(self.numberOfVacationsHold))" : "\(self.numberOfVacationsHold)")일 |", attributes: [
             .font:UIFont.systemFont(ofSize: 16),
             .foregroundColor:UIColor.black,
             .paragraphStyle:paragraphStyle
         ])
+//        let usedVacationText = NSAttributedString(string: "\(self.numberOfVacationsHold == 0 ? "0" : "\(self.numberOfVacationsHold)")일 |", attributes: [
+//            .font:UIFont.systemFont(ofSize: 16),
+//            .foregroundColor:UIColor.black,
+//            .paragraphStyle:paragraphStyle
+//        ])
         let totalOfVacationsText = NSAttributedString(string: " \(self.numberOfAnnualPaidHolidays)일", attributes: [
             .font:UIFont.systemFont(ofSize: 16, weight: .bold),
             .foregroundColor:UIColor.black,

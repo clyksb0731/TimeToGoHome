@@ -13,7 +13,7 @@ class NumberOfPaidHolidaysViewController: UIViewController {
         let label = UILabel()
         label.textColor = .black
         label.font = .systemFont(ofSize: 21, weight: .regular)
-        label.text = "\(VacationModel.numberOfVacationsHold)"
+        label.text = "\((Int(VacationModel.numberOfVacationsHold * 10)) % 10 == 0 ? "\(Int(VacationModel.numberOfVacationsHold))" : "\(VacationModel.numberOfVacationsHold)")"
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -142,7 +142,7 @@ extension NumberOfPaidHolidaysViewController {
 // MARK: - Extension for MenuCoverDelegate
 extension NumberOfPaidHolidaysViewController: MenuCoverDelegate {
     func menuCoverDidDetermineAnnualPaidHolidays(_ holidays: Int) {
-        self.numberOfVacationsHoldLabel.text = "\(VacationModel.numberOfVacationsHold)일"
+        self.numberOfVacationsHoldLabel.text = "\((Int(VacationModel.numberOfVacationsHold * 10)) % 10 == 0 ? "\(Int(VacationModel.numberOfVacationsHold))" : "\(VacationModel.numberOfVacationsHold)")"
         
         self.numberOfAnnualPaidHolidays = holidays
     }
