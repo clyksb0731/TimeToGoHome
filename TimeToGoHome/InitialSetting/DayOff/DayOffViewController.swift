@@ -169,7 +169,7 @@ class DayOffViewController: UIViewController {
         label.textColor = .useRGB(red: 197, green: 199, blue: 201)
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 20, weight: .bold)
-        label.text = "휴가"
+        label.text = "휴가 (\(VacationModel.annualPaidHolidaysType == .fiscalYear ? "회계연도" : "입사날짜"))"
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label

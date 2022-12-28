@@ -80,7 +80,7 @@ class MenuViewController: UIViewController {
             
             (header: "휴가",
              items: [
-                (menuStyle: .openVC, menuText: "휴가 사용 현황"),
+                (menuStyle: .openVC, menuText: "휴가 설정"),
                 (menuStyle: .openVC, menuText: "휴가 일정")
              ]
             ),
