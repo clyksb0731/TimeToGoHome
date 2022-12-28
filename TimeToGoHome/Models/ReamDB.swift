@@ -479,7 +479,13 @@ struct VacationModel {
             let startDate = joiningDateFromYearMonthDay >= calendar.date(from: firstDayOfYearDateComponents)! ? joiningDateFromYearMonthDay : calendar.date(from: firstDayOfYearDateComponents)!
             let endDate = calendar.date(from: lastDayOfYearDateComponents)!
             
-            return (startDate, endDate)
+            if let leavingDate = ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date, leavingDate < endDate {
+                return (startDate, leavingDate)
+                
+            } else {
+                return (startDate, endDate)
+            }
+            
             
         } else { // joiningDay
             var firstDayOfVacationDate = ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date
@@ -537,7 +543,12 @@ struct VacationModel {
                 endDayOfVacationDate = Date(timeIntervalSinceReferenceDate: endDayAfterOneDayOfVacationDate.timeIntervalSinceReferenceDate - 86400)
             }
             
-            return (firstDayOfVacationDate, endDayOfVacationDate)
+            if let leavingDate = ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date, leavingDate < endDayOfVacationDate {
+                return (firstDayOfVacationDate, leavingDate)
+                
+            } else {
+                return (firstDayOfVacationDate, endDayOfVacationDate)
+            }
         }
     }
     

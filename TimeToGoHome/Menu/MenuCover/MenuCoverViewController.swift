@@ -1751,7 +1751,11 @@ extension MenuCoverViewController {
                 self.careerDateRange = (startDate: startDateOfCareer, endDate: yesterday)
             }
             
-            self.targetYearMonthDate = self.careerDateRange.endDate
+            self.targetYearMonthDate = {
+                let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange.endDate)
+                
+                return SupportingMethods.shared.makeDateWithYear(yearMonthDay.year, month: yearMonthDay.month)
+            }()
         }
     }
     

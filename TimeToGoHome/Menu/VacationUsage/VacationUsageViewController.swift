@@ -155,7 +155,11 @@ class VacationUsageViewController: UIViewController {
         return dateComponents
     }()
     
-    var targetYearMonthDate: Date = Date()
+    var targetYearMonthDate: Date = {
+        let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(Date())
+        
+        return SupportingMethods.shared.makeDateWithYear(yearMonthDay.year, month: yearMonthDay.month)
+    }()
     
     var selectedIndexOfYearMonthAndDay: (year: Int, month: Int, day: Int)?
     
@@ -579,7 +583,7 @@ extension VacationUsageViewController {
                 }
             }
             
-            VacationModel.addVacation(vacation) // FIXME: Need notification token for VacationModel.
+            VacationModel.addVacation(vacation)
         }
     }
 }
