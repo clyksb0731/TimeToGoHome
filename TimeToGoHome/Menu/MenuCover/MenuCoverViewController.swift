@@ -2338,7 +2338,10 @@ extension MenuCoverViewController: UICollectionViewDelegate, UICollectionViewDat
                                                SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month,
                                                day)
         
-        collectionView.reloadData()
+        //collectionView.reloadData() // replace as followings.
+        // MARK: Because not necessary to change day after selecting another day.
+        let item = collectionView.cellForItem(at: indexPath) as! CalendarDayOfScheduleRecordCell
+        item.bottomLineView.isHidden = false
         
         DispatchQueue.main.async {
             let recordedSchedule: WorkScheduleRecordModel = {
