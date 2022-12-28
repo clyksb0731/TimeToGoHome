@@ -53,6 +53,21 @@ class VacationUsageViewController: UIViewController {
         return button
     }()
     
+    lazy var calendarBaseView: UIView = {
+        let previousMonthSwipe = UISwipeGestureRecognizer(target: self, action: #selector(previousMonthSwipeGesture(_:)))
+        let nextMonthSwipe = UISwipeGestureRecognizer(target: self, action: #selector(nextMonthSwipeGesure(_:)))
+        
+        previousMonthSwipe.direction = .right
+        nextMonthSwipe.direction = .left
+        
+        let view = UIView()
+        view.addGestureRecognizer(previousMonthSwipe)
+        view.addGestureRecognizer(nextMonthSwipe)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
     lazy var calendarCollectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.itemSize = CGSize(width: 45, height: 45)
@@ -82,26 +97,24 @@ class VacationUsageViewController: UIViewController {
         return view
     }()
     
-    lazy var numberOfVacationLabel: UILabel = { // FIXME: Not necessary to be attributed.
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
+    lazy var numberOfVacationMarkLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .useRGB(red: 197, green: 199, blue: 201)
+        label.textAlignment = .left
+        label.font = .systemFont(ofSize: 16, weight: .bold)
+        label.text = "휴가 (\(VacationModel.annualPaidHolidaysType == .fiscalYear ? "회계연도" : "입사날짜"))"
+        label.translatesAutoresizingMaskIntoConstraints = false
         
-        let attributedText = NSMutableAttributedString()
-        let usedVacationText = NSAttributedString(string: "\((Int(VacationModel.numberOfVacationsHold * 10)) % 10 == 0 ? "\(Int(VacationModel.numberOfVacationsHold))" : "\(VacationModel.numberOfVacationsHold)")일 |", attributes: [
-            .font:UIFont.systemFont(ofSize: 16),
-            .foregroundColor:UIColor.black,
-            .paragraphStyle:paragraphStyle
-        ])
-        let totalOfVacationsText = NSAttributedString(string: " \(self.numberOfAnnualPaidHolidays)일", attributes: [
-            .font:UIFont.systemFont(ofSize: 16, weight: .bold),
-            .foregroundColor:UIColor.black,
-            .paragraphStyle:paragraphStyle
-        ])
-        attributedText.append(usedVacationText)
-        attributedText.append(totalOfVacationsText)
+        return label
+    }()
+    
+    lazy var numberOfVacationLabel: UILabel = {
+        let numberOfVacationsHold = VacationModel.numberOfVacationsHold
         
         let label = UILabel()
-        label.attributedText = attributedText
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 16, weight: .regular)
+        label.text = "\((Int(numberOfVacationsHold * 10)) % 10 == 0 ? "\(Int(numberOfVacationsHold))" : "\(numberOfVacationsHold)")일 | \(self.numberOfAnnualPaidHolidays)일"
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -202,7 +215,16 @@ extension VacationUsageViewController: EssentialViewMethods {
     }
     
     func initializeObjects() {
-        
+        VacationModel.observe {
+            self.calendarCollectionView.reloadData()
+            
+            DispatchQueue.main.async {
+                let numberOfVacationsHold = VacationModel.numberOfVacationsHold
+                self.numberOfVacationLabel.text = "\((Int(numberOfVacationsHold * 10)) % 10 == 0 ? "\(Int(numberOfVacationsHold))" : "\(numberOfVacationsHold)")일 | \(self.numberOfAnnualPaidHolidays)일"
+                
+                SupportingMethods.shared.turnCoverView(.off, on: self.view)
+            }
+        }
     }
     
     func setDelegates() {
@@ -220,8 +242,9 @@ extension VacationUsageViewController: EssentialViewMethods {
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
             self.yearMonthButtonView,
-            self.calendarCollectionView,
+            self.calendarBaseView,
             self.separatorLineView,
+            self.numberOfVacationMarkLabel,
             self.numberOfVacationLabel,
             self.vacationSettingButtonView
         ], to: self.view)
@@ -231,6 +254,10 @@ extension VacationUsageViewController: EssentialViewMethods {
             self.yearMonthLabel,
             self.nextMonthButton
         ], to: self.yearMonthButtonView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.calendarCollectionView
+        ], to: self.calendarBaseView)
         
         SupportingMethods.shared.addSubviews([
             self.morningVacationButtonView,
@@ -273,20 +300,30 @@ extension VacationUsageViewController: EssentialViewMethods {
             self.nextMonthButton.widthAnchor.constraint(equalToConstant: 20)
         ])
         
-        // calendarCollectionView
+        // calendarBaseView
         NSLayoutConstraint.activate([
-            self.calendarCollectionView.topAnchor.constraint(equalTo: self.yearMonthButtonView.bottomAnchor, constant: 26),
-            self.calendarCollectionView.heightAnchor.constraint(equalToConstant: 21 + 45 * 6),
-            self.calendarCollectionView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
-            self.calendarCollectionView.widthAnchor.constraint(equalToConstant: 7 * 45)
+            self.calendarBaseView.topAnchor.constraint(equalTo: self.yearMonthButtonView.bottomAnchor, constant: 26),
+            self.calendarBaseView.heightAnchor.constraint(equalToConstant: 21 + 45 * 6),
+            self.calendarBaseView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            self.calendarBaseView.widthAnchor.constraint(equalToConstant: 7 * 45)
         ])
+        
+        // calendarCollectionView
+        SupportingMethods.shared.makeConstraintsOf(self.calendarCollectionView, sameAs: self.calendarBaseView)
         
         // separatorLineView
         NSLayoutConstraint.activate([
-            self.separatorLineView.topAnchor.constraint(equalTo: self.calendarCollectionView.bottomAnchor, constant: 16),
+            self.separatorLineView.topAnchor.constraint(equalTo: self.calendarCollectionView.bottomAnchor),
             self.separatorLineView.heightAnchor.constraint(equalToConstant: 1),
             self.separatorLineView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
             self.separatorLineView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16)
+        ])
+        
+        // numberOfVacationMarkLabel
+        NSLayoutConstraint.activate([
+            self.numberOfVacationMarkLabel.topAnchor.constraint(equalTo: self.separatorLineView.bottomAnchor, constant: 24),
+            self.numberOfVacationMarkLabel.heightAnchor.constraint(equalToConstant: 21),
+            self.numberOfVacationMarkLabel.leadingAnchor.constraint(equalTo: self.separatorLineView.leadingAnchor, constant: 5)
         ])
         
         // numberOfVacationLabel
@@ -298,7 +335,7 @@ extension VacationUsageViewController: EssentialViewMethods {
         
         // vacationSettingButtonView
         NSLayoutConstraint.activate([
-            self.vacationSettingButtonView.topAnchor.constraint(equalTo: self.numberOfVacationLabel.bottomAnchor, constant: 25),
+            self.vacationSettingButtonView.topAnchor.constraint(equalTo: self.numberOfVacationLabel.bottomAnchor, constant: 30),
             self.vacationSettingButtonView.heightAnchor.constraint(equalToConstant: 44),
             self.vacationSettingButtonView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
             self.vacationSettingButtonView.widthAnchor.constraint(equalToConstant: 159)
@@ -324,7 +361,80 @@ extension VacationUsageViewController: EssentialViewMethods {
 
 // MARK: - Extension for methods added
 extension VacationUsageViewController {
+    func moveToPreviousMonth() {
+        let startingVacationRangeYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate)
+        let endingVacationRangeYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate)
+        
+        guard self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(startingVacationRangeYearMonth.year, month: startingVacationRangeYearMonth.month) else {
+            
+            return
+        }
+        
+        self.selectedIndexOfYearMonthAndDay = nil
+        
+        let initialYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
+        var year = initialYearMonth.year
+        var month = initialYearMonth.month
+        
+        month -= 1
+        if month == 0 {
+            year -= 1
+            month = 12
+        }
+        self.targetYearMonthDate = SupportingMethods.shared.makeDateWithYear(year, month: month)
+        
+        self.calendarCollectionView.reloadData()
+        
+        self.yearMonthLabel.text = "\(year)년 \(month)월"
+        
+        self.previousMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(startingVacationRangeYearMonth.year, month: startingVacationRangeYearMonth.month)
+        self.nextMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(endingVacationRangeYearMonth.year, month: endingVacationRangeYearMonth.month)
+        
+        //UIDevice.lightHaptic()
+        
+        self.morningVacationButtonView.isEnable = false
+        self.morningVacationButtonView.isSelected = false
+        self.afternoonVacationButtonView.isEnable = false
+        self.afternoonVacationButtonView.isSelected = false
+    }
     
+    func moveToNextMonth() {
+        let startingVacationRangeYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate)
+        let endingVacationRangeYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate)
+        
+        guard self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(endingVacationRangeYearMonth.year, month: endingVacationRangeYearMonth.month) else {
+            
+            return
+        }
+        
+        self.selectedIndexOfYearMonthAndDay = nil
+        
+        let initialYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
+        
+        var year = initialYearMonth.year
+        var month = initialYearMonth.month
+        
+        month += 1
+        if month > 12 {
+            year += 1
+            month = 1
+        }
+        self.targetYearMonthDate = SupportingMethods.shared.makeDateWithYear(year, month: month)
+        
+        self.calendarCollectionView.reloadData()
+        
+        self.yearMonthLabel.text = "\(year)년 \(month)월"
+        
+        self.previousMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(startingVacationRangeYearMonth.year, month: startingVacationRangeYearMonth.month)
+        self.nextMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(endingVacationRangeYearMonth.year, month: endingVacationRangeYearMonth.month)
+        
+        //UIDevice.lightHaptic()
+        
+        self.morningVacationButtonView.isEnable = false
+        self.morningVacationButtonView.isSelected = false
+        self.afternoonVacationButtonView.isEnable = false
+        self.afternoonVacationButtonView.isSelected = false
+    }
 }
 
 // MARK: - Extension for selector methods
@@ -333,7 +443,20 @@ extension VacationUsageViewController {
         self.navigationController?.popViewController(animated: true)
     }
     
+    @objc func previousMonthSwipeGesture(_ sender: UISwipeGestureRecognizer) {
+        self.moveToPreviousMonth()
+    }
+    
+    @objc func nextMonthSwipeGesure(_ sender: UISwipeGestureRecognizer) {
+        self.moveToNextMonth()
+    }
+    
     @objc func perviousMonthButton(_ sender: UIButton) {
+        UIDevice.lightHaptic()
+        
+        self.moveToPreviousMonth()
+        
+        /*
         self.selectedIndexOfYearMonthAndDay = nil
         
         let initialYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
@@ -363,9 +486,15 @@ extension VacationUsageViewController {
         self.morningVacationButtonView.isSelected = false
         self.afternoonVacationButtonView.isEnable = false
         self.afternoonVacationButtonView.isSelected = false
+        */
     }
     
     @objc func nextMonthButton(_ sender: UIButton) {
+        UIDevice.lightHaptic()
+        
+        self.moveToNextMonth()
+        
+        /*
         self.selectedIndexOfYearMonthAndDay = nil
         
         let initialYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
@@ -396,6 +525,7 @@ extension VacationUsageViewController {
         self.morningVacationButtonView.isSelected = false
         self.afternoonVacationButtonView.isEnable = false
         self.afternoonVacationButtonView.isSelected = false
+        */
     }
     
     @objc func vacationButton(_ sender: UIButton) {
