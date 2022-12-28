@@ -142,7 +142,9 @@ extension NumberOfPaidHolidaysViewController {
 // MARK: - Extension for MenuCoverDelegate
 extension NumberOfPaidHolidaysViewController: MenuCoverDelegate {
     func menuCoverDidDetermineAnnualPaidHolidays(_ holidays: Int) {
-        self.numberOfVacationsHoldLabel.text = "\((Int(VacationModel.numberOfVacationsHold * 10)) % 10 == 0 ? "\(Int(VacationModel.numberOfVacationsHold))" : "\(VacationModel.numberOfVacationsHold)")"
+        let numberOfVacationsHold = VacationModel.numberOfVacationsHold
+        
+        self.numberOfVacationsHoldLabel.text = "\((Int(numberOfVacationsHold * 10)) % 10 == 0 ? "\(Int(numberOfVacationsHold))" : "\(numberOfVacationsHold)")"
         
         self.numberOfAnnualPaidHolidays = holidays
     }
