@@ -523,7 +523,7 @@ extension MainCoverViewController {
             ])
             
             // instanceMessageLabel layout
-            SupportingMethods.shared.makeSameBoundConstraints(self.instanceMessageLabel, self.instanceMessageView)
+            SupportingMethods.shared.makeConstraintsOf(self.instanceMessageLabel, sameAs: self.instanceMessageView)
             
             // Starting work time date picker layout
             NSLayoutConstraint.activate([

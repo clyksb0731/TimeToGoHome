@@ -184,34 +184,34 @@ extension ScheduleButtonView {
     
     func setLayouts() {
         // threeSchedules view layout
-        SupportingMethods.shared.makeSameBoundConstraints(self.threeSchedulesView, self)
+        SupportingMethods.shared.makeConstraintsOf(self.threeSchedulesView, sameAs: self)
         
         // twoScheduleForVacation view layout
-        SupportingMethods.shared.makeSameBoundConstraints(self.twoScheduleForVacationView, self)
+        SupportingMethods.shared.makeConstraintsOf(self.twoScheduleForVacationView, sameAs: self)
         
         // twoScheduleForHoliday view layout
-        SupportingMethods.shared.makeSameBoundConstraints(self.twoScheduleForHolidayView, self)
+        SupportingMethods.shared.makeConstraintsOf(self.twoScheduleForHolidayView, sameAs: self)
         
         // addOvertime view layout
-        SupportingMethods.shared.makeSameBoundConstraints(self.addOvertimeView, self)
+        SupportingMethods.shared.makeConstraintsOf(self.addOvertimeView, sameAs: self)
         
         // addOvertimeOrFinishWork view layout
-        SupportingMethods.shared.makeSameBoundConstraints(self.addOvertimeOrFinishWorkView, self)
+        SupportingMethods.shared.makeConstraintsOf(self.addOvertimeOrFinishWorkView, sameAs: self)
         
         // replaceOvertimeOrFinishWork view layout
-        SupportingMethods.shared.makeSameBoundConstraints(self.replaceOvertimeOrFinishWorkView, self)
+        SupportingMethods.shared.makeConstraintsOf(self.replaceOvertimeOrFinishWorkView, sameAs: self)
         
         // finishWorkWithOvertime view layout
-        SupportingMethods.shared.makeSameBoundConstraints(self.finishWorkWithOvertimeView, self)
+        SupportingMethods.shared.makeConstraintsOf(self.finishWorkWithOvertimeView, sameAs: self)
         
         // finishWork view layout
-        SupportingMethods.shared.makeSameBoundConstraints(self.finishWorkView, self)
+        SupportingMethods.shared.makeConstraintsOf(self.finishWorkView, sameAs: self)
         
         // workFinished view layout
-        SupportingMethods.shared.makeSameBoundConstraints(self.workFinishedView, self)
+        SupportingMethods.shared.makeConstraintsOf(self.workFinishedView, sameAs: self)
         
         // noButton view layout
-        SupportingMethods.shared.makeSameBoundConstraints(self.noButtonView, self)
+        SupportingMethods.shared.makeConstraintsOf(self.noButtonView, sameAs: self)
     }
 }
 

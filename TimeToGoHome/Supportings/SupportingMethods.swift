@@ -447,7 +447,7 @@ extension SupportingMethods {
     }
     
     // MARK: About constraint
-    func makeSameBoundConstraints(_ firstView: UIView, _ secondView: UIView) {
+    func makeConstraintsOf(_ firstView: UIView, sameAs secondView: UIView) {
         NSLayoutConstraint.activate([
             firstView.topAnchor.constraint(equalTo: secondView.topAnchor),
             firstView.bottomAnchor.constraint(equalTo: secondView.bottomAnchor),

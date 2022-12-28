@@ -91,7 +91,7 @@ extension RecordSchedulingCell: EssentialCellHeaderMethods {
         ])
         
         // addScheduleButton
-        SupportingMethods.shared.makeSameBoundConstraints(self.addScheduleButton, self.addScheduleView)
+        SupportingMethods.shared.makeConstraintsOf(self.addScheduleButton, sameAs: self.addScheduleView)
     }
 }
 
