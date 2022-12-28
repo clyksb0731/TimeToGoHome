@@ -390,6 +390,8 @@ struct VacationModel {
         }
     }
     
+    static private var vacationNotification: NotificationToken?
+    
     static var vacations: Results<Vacation> {
         get {
             let realm = try! Realm()
@@ -411,6 +413,25 @@ struct VacationModel {
             ReferenceValues.initialSetting.updateValue(self.annualPaidHolidaysType.rawValue, forKey: InitialSetting.annualPaidHolidayType.rawValue)
             SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
         }
+    }
+    
+    static func observe(_ closure: (() -> ())?) {
+        self.vacationNotification = self.vacations.observe({ changes in
+            switch changes {
+            case .initial(_):
+                closure?()
+                
+            case .update(_, deletions: _, insertions: _, modifications: _):
+                closure?()
+                
+            case .error(let error):
+                fatalError("vacationNotification error: \(error.localizedDescription)")
+            }
+        })
+    }
+    
+    static func invalidateObserving() {
+        self.vacationNotification?.invalidate()
     }
     
     static func addVacation(_ vacation: Vacation) {
