@@ -743,7 +743,7 @@ class MenuCoverViewController: UIViewController {
     var bottomTransparentViewBottomAnchor: NSLayoutConstraint!
     
     // MARK: Calendar of schedule record
-    lazy var calendarBaseView: UIView = {
+    lazy var calendarPopUpView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
         view.layer.cornerRadius = 20
@@ -794,6 +794,21 @@ class MenuCoverViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
+    }()
+    
+    lazy var calendarBaseView: UIView = {
+        let previousMonthSwipe = UISwipeGestureRecognizer(target: self, action: #selector(previousMonthSwipeGesture(_:)))
+        let nextMonthSwipe = UISwipeGestureRecognizer(target: self, action: #selector(nextMonthSwipeGesure(_:)))
+        
+        previousMonthSwipe.direction = .right
+        nextMonthSwipe.direction = .left
+        
+        let view = UIView()
+        view.addGestureRecognizer(previousMonthSwipe)
+        view.addGestureRecognizer(nextMonthSwipe)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
     }()
     
     lazy var calendarCollectionView: UICollectionView = {
@@ -1041,19 +1056,23 @@ extension MenuCoverViewController: EssentialViewMethods {
             
         case .calendarOfScheduleRecord: // MARK: calendarOfScheduleRecord
             SupportingMethods.shared.addSubviews([
-                self.calendarBaseView
+                self.calendarPopUpView
             ], to: self.view)
             
             SupportingMethods.shared.addSubviews([
                 self.yearMonthButtonView,
-                self.calendarCollectionView
-            ], to: self.calendarBaseView)
+                self.calendarBaseView
+            ], to: self.calendarPopUpView)
             
             SupportingMethods.shared.addSubviews([
                 self.previousMonthButton,
                 self.yearMonthLabel,
                 self.nextMonthButton
             ], to: self.yearMonthButtonView)
+            
+            SupportingMethods.shared.addSubviews([
+                self.calendarCollectionView
+            ], to: self.calendarBaseView)
         }
     }
     
@@ -1642,19 +1661,19 @@ extension MenuCoverViewController: EssentialViewMethods {
             ])
             
         case .calendarOfScheduleRecord: // MARK: calendarOfScheduleRecord
-            // calendarBaseView
+            // calendarPopUpView
             NSLayoutConstraint.activate([
-                self.calendarBaseView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
-                self.calendarBaseView.heightAnchor.constraint(equalToConstant: 93 + 21 + 45 * 6),
-                self.calendarBaseView.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor),
-                self.calendarBaseView.widthAnchor.constraint(equalToConstant: 7 * 45)
+                self.calendarPopUpView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
+                self.calendarPopUpView.heightAnchor.constraint(equalToConstant: 93 + 21 + 45 * 6),
+                self.calendarPopUpView.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor),
+                self.calendarPopUpView.widthAnchor.constraint(equalToConstant: 7 * 45)
             ])
             
             // yearMonthButtonView
             NSLayoutConstraint.activate([
-                self.yearMonthButtonView.topAnchor.constraint(equalTo: self.calendarBaseView.topAnchor, constant: 26),
+                self.yearMonthButtonView.topAnchor.constraint(equalTo: self.calendarPopUpView.topAnchor, constant: 26),
                 self.yearMonthButtonView.heightAnchor.constraint(equalToConstant: 21),
-                self.yearMonthButtonView.centerXAnchor.constraint(equalTo: self.calendarBaseView.centerXAnchor),
+                self.yearMonthButtonView.centerXAnchor.constraint(equalTo: self.calendarPopUpView.centerXAnchor),
                 self.yearMonthButtonView.widthAnchor.constraint(equalToConstant: 170)
             ])
             
@@ -1682,14 +1701,16 @@ extension MenuCoverViewController: EssentialViewMethods {
                 self.nextMonthButton.widthAnchor.constraint(equalToConstant: 30)
             ])
             
-            // calendarCollectionView
+            // calendarBaseView
             NSLayoutConstraint.activate([
-                self.calendarCollectionView.topAnchor.constraint(equalTo: self.yearMonthButtonView.bottomAnchor, constant: 26),
-                self.calendarCollectionView.heightAnchor.constraint(equalToConstant: 21 + 45 * 6),
-                self.calendarCollectionView.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor),
-                self.calendarCollectionView.widthAnchor.constraint(equalToConstant: 7 * 45)
+                self.calendarBaseView.topAnchor.constraint(equalTo: self.yearMonthButtonView.bottomAnchor, constant: 26),
+                self.calendarBaseView.heightAnchor.constraint(equalToConstant: 21 + 45 * 6),
+                self.calendarBaseView.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor),
+                self.calendarBaseView.widthAnchor.constraint(equalToConstant: 7 * 45)
             ])
             
+            // calendarCollectionView
+            SupportingMethods.shared.makeConstraintsOf(self.calendarCollectionView, sameAs: self.calendarBaseView)
         }
     }
 }
@@ -1835,30 +1856,73 @@ extension MenuCoverViewController {
         }
     }
     
-//    func initializeOvertimePicker() {
-//        if case .overtime(let overtime) = menuCoverType {
-//            if let overtime = overtime {
-//                let hours = overtime / 3600
-//                let minutes = (overtime % 3600) / 60
-//
-//                let rowHours = hours >= self.overtimeHours.last! ? self.overtimeHours.last! : hours
-//                let rowMinutes = hours >= self.overtimeHours.last! ? 0 : minutes
-//
-//                self.overtimePicker.selectRow(rowHours, inComponent: 0, animated: false)
-//                self.overtimePicker.selectRow(rowMinutes, inComponent: 1, animated: false)
-//
-//            } else {
-//                self.overtimePicker.selectRow(0, inComponent: 0, animated: false)
-//                self.overtimePicker.selectRow(0, inComponent: 1, animated: false)
-//            }
-//        }
-//    }
-//
-//    func initializeAnnualPaidHolidaysOnPickerView() {
-//        if case .annualPaidHolidays = menuCoverType {
-//            self.annualPaidHolidaysPickerView.selectRow(self.annualPaidHolidays.firstIndex(of: self.numberOfAnnualPaidHolidays!)!, inComponent: 0, animated: false)
-//        }
-//    }
+    func moveToPreviousMonth() {
+        let startingCareerRangeYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange.startDate)
+        let endingCareerYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange.endDate)
+        
+        guard self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(startingCareerRangeYearMonth.year, month: startingCareerRangeYearMonth.month) else {
+            
+            return
+        }
+        
+        self.selectedIndexOfYearMonthAndDay = nil
+        
+        let initialYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
+        
+        var year = initialYearMonth.year
+        var month = initialYearMonth.month
+        
+        month -= 1
+        if month == 0 {
+            year -= 1
+            month = 12
+        }
+        self.targetYearMonthDate = SupportingMethods.shared.makeDateWithYear(year, month: month)
+        
+        self.todayYearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(Date())
+        self.calendarCollectionView.reloadData()
+        
+        self.yearMonthLabel.text = "\(year)년 \(month)월"
+        
+        self.previousMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(startingCareerRangeYearMonth.year, month: startingCareerRangeYearMonth.month)
+        self.nextMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(endingCareerYearMonth.year, month: endingCareerYearMonth.month)
+        
+        //UIDevice.softHaptic()
+    }
+    
+    func moveToNextMonth() {
+        let startingCareerRangeYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange.startDate)
+        let endingCareerRangeYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.careerDateRange.endDate)
+        
+        guard self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(endingCareerRangeYearMonth.year, month: endingCareerRangeYearMonth.month) else {
+            
+            return
+        }
+        
+        self.selectedIndexOfYearMonthAndDay = nil
+        
+        let initialYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
+        
+        var year = initialYearMonth.year
+        var month = initialYearMonth.month
+        
+        month += 1
+        if month > 12 {
+            year += 1
+            month = 1
+        }
+        self.targetYearMonthDate = SupportingMethods.shared.makeDateWithYear(year, month: month)
+        
+        self.todayYearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(Date())
+        self.calendarCollectionView.reloadData()
+        
+        self.yearMonthLabel.text = "\(year)년 \(month)월"
+        
+        self.previousMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(startingCareerRangeYearMonth.year, month: startingCareerRangeYearMonth.month)
+        self.nextMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(endingCareerRangeYearMonth.year, month: endingCareerRangeYearMonth.month)
+        
+        //UIDevice.softHaptic()
+    }
     
     func calculateSecondsWithOvertimePickerView() -> Int {
         let selectedHour = self.overtimeHours[self.overtimePicker.selectedRow(inComponent: 0)]
@@ -2208,7 +2272,20 @@ extension MenuCoverViewController {
     }
     
     // MARK: calendar of schedule record
+    @objc func previousMonthSwipeGesture(_ sender: UISwipeGestureRecognizer) {
+        self.moveToPreviousMonth()
+    }
+    
+    @objc func nextMonthSwipeGesure(_ sender: UISwipeGestureRecognizer) {
+        self.moveToNextMonth()
+    }
+    
     @objc func perviousMonthButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
+        self.moveToPreviousMonth()
+        
+        /*
         self.selectedIndexOfYearMonthAndDay = nil
         
         let initialYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
@@ -2235,9 +2312,15 @@ extension MenuCoverViewController {
         self.nextMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(endingCareerYearMonth.year, month: endingCareerYearMonth.month)
         
         UIDevice.softHaptic()
+        */
     }
     
     @objc func nextMonthButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
+        self.moveToNextMonth()
+        
+        /*
         self.selectedIndexOfYearMonthAndDay = nil
         
         let initialYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
@@ -2264,6 +2347,7 @@ extension MenuCoverViewController {
         sender.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(endingCareerRangeYearMonth.year, month: endingCareerRangeYearMonth.month)
         
         UIDevice.softHaptic()
+        */
     }
 }
 
