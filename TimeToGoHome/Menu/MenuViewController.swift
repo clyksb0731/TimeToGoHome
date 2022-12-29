@@ -229,6 +229,8 @@ extension MenuViewController {
     }
     
     @objc func changeLeavingDate(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
         let menuCoverVC = MenuCoverViewController(.lastDateAtWork, delegate: self)
         
         self.present(menuCoverVC, animated: false)
@@ -329,6 +331,8 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
                 }), cancelAction: UIAlertAction(title: "아니오", style: .cancel), completion: nil)
                 
             } else {
+                UIDevice.softHaptic()
+                
                 let menuCoverVC = MenuCoverViewController(.lastDateAtWork, delegate: self)
                 
                 self.present(menuCoverVC, animated: false)
