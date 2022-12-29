@@ -251,6 +251,7 @@ extension CalendarDayOfScheduleRecordCell {
             
         } else {
             self.baseView.isHidden = true
+            self.date = nil
         }
     }
 }

@@ -86,6 +86,30 @@ class CalendarDayOfVacationUsageCell: UICollectionViewCell {
         return label
     }()
     
+    lazy var morningPointView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 2
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var afternoonPointView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 2
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var overtimePointView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 2
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
     lazy private var todayMarkLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 10)
@@ -138,6 +162,9 @@ extension CalendarDayOfVacationUsageCell {
             self.afternoonVacationShapeView,
             self.fullDayVacationShapeView,
             self.dayLabel,
+            self.morningPointView,
+            self.afternoonPointView,
+            self.overtimePointView,
             self.todayMarkLabel,
             self.bottomLineView
         ], to: self.baseView)
@@ -186,6 +213,30 @@ extension CalendarDayOfVacationUsageCell {
             self.dayLabel.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor)
         ])
         
+        // morningPointView
+        NSLayoutConstraint.activate([
+            self.morningPointView.centerYAnchor.constraint(equalTo: self.dayLabel.bottomAnchor, constant: 6),
+            self.morningPointView.heightAnchor.constraint(equalToConstant: 4),
+            self.morningPointView.trailingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 15),
+            self.morningPointView.widthAnchor.constraint(equalToConstant: 4)
+        ])
+        
+        // afternoonPointView
+        NSLayoutConstraint.activate([
+            self.afternoonPointView.centerYAnchor.constraint(equalTo: self.dayLabel.bottomAnchor, constant: 6),
+            self.afternoonPointView.heightAnchor.constraint(equalToConstant: 4),
+            self.afternoonPointView.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor),
+            self.afternoonPointView.widthAnchor.constraint(equalToConstant: 4)
+        ])
+        
+        // overtimePointView
+        NSLayoutConstraint.activate([
+            self.overtimePointView.centerYAnchor.constraint(equalTo: self.dayLabel.bottomAnchor, constant: 6),
+            self.overtimePointView.heightAnchor.constraint(equalToConstant: 4),
+            self.overtimePointView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 30),
+            self.overtimePointView.widthAnchor.constraint(equalToConstant: 4)
+        ])
+        
         // todayMarkLabel layout
         NSLayoutConstraint.activate([
             self.todayMarkLabel.topAnchor.constraint(equalTo: self.dayLabel.bottomAnchor),
@@ -218,6 +269,7 @@ extension CalendarDayOfVacationUsageCell {
             self.date = date
             
             self.dayLabel.text = "\(day)"
+            self.dayLabel.textColor = isEnable ? .black : .useRGB(red: 185, green: 185, blue: 185)
             
             if let vacationType = vacationType {
                 switch vacationType {
@@ -248,9 +300,66 @@ extension CalendarDayOfVacationUsageCell {
                 self.fullDayVacationShapeView.isHidden = true
             }
             
-            self.dayLabel.textColor = isEnable ? .black : .useRGB(red: 185, green: 185, blue: 185)
-            
-            self.todayMarkLabel.isHidden = !isToday
+            if isToday {
+                self.todayMarkLabel.isHidden = false
+                
+                self.morningPointView.backgroundColor = .clear
+                self.afternoonPointView.backgroundColor = .clear
+                self.overtimePointView.backgroundColor = .clear
+                
+            } else {
+                self.todayMarkLabel.isHidden = true
+                
+                if let joiningDate = ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as? Date {
+                    let companyModel = CompanyModel(joiningDate: joiningDate)
+                    if let schedule = companyModel.getScheduleOn(date) {
+                        if schedule.morning == WorkTimeType.holiday.rawValue && schedule.afternoon == WorkTimeType.holiday.rawValue {
+                            self.morningPointView.backgroundColor = .clear
+                            self.afternoonPointView.backgroundColor = .clear
+                            
+                        } else {
+                            if let morning = WorkTimeType(rawValue: schedule.morning) {
+                                switch morning {
+                                case .work:
+                                    self.morningPointView.backgroundColor = .record.work
+                                    
+                                case .vacation:
+                                    self.morningPointView.backgroundColor = .record.vacation
+                                    
+                                case .holiday:
+                                    self.morningPointView.backgroundColor = .record.holiday
+                                }
+                                
+                            } else {
+                                self.morningPointView.backgroundColor = .clear
+                            }
+                            
+                            if let afternoon = WorkTimeType(rawValue: schedule.afternoon) {
+                                switch afternoon {
+                                case .work:
+                                    self.afternoonPointView.backgroundColor = .record.work
+                                    
+                                case .vacation:
+                                    self.afternoonPointView.backgroundColor = .record.vacation
+                                    
+                                case .holiday:
+                                    self.afternoonPointView.backgroundColor = .record.holiday
+                                }
+                                
+                            } else {
+                                self.afternoonPointView.backgroundColor = .clear
+                            }
+                        }
+                        
+                        self.overtimePointView.backgroundColor = schedule.overtime != nil ? .record.overtime : .clear
+                        
+                    } else {
+                        self.morningPointView.backgroundColor = .clear
+                        self.afternoonPointView.backgroundColor = .clear
+                        self.overtimePointView.backgroundColor = .clear
+                    }
+                }
+            }
             
             self.bottomLineView.isHidden = !isSelected
             
