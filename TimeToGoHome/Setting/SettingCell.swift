@@ -9,7 +9,7 @@ import UIKit
 
 class SettingCell: UITableViewCell {
     
-    lazy var itemTitleLabel: UILabel = {
+    lazy var itemTextLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
         label.font = .systemFont(ofSize: 17, weight: .regular)
@@ -82,7 +82,7 @@ class SettingCell: UITableViewCell {
 // MARK: - Extension for essential methods
 extension SettingCell: EssentialCellHeaderMethods {
     func setViewFoundation() {
-        self.selectionStyle = .none
+        //self.selectionStyle = .none
         self.contentView.isUserInteractionEnabled = true
     }
     
@@ -92,7 +92,7 @@ extension SettingCell: EssentialCellHeaderMethods {
     
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
-            self.itemTitleLabel,
+            self.itemTextLabel,
             self.openVCImageView,
             self.switchButton,
             self.sideLabel,
@@ -103,12 +103,12 @@ extension SettingCell: EssentialCellHeaderMethods {
     func setLayouts() {
         let safeArea = self.safeAreaLayoutGuide
         
-        // itemTitleLabel
+        // itemTextLabel
         NSLayoutConstraint.activate([
-            self.itemTitleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 11),
-            self.itemTitleLabel.heightAnchor.constraint(equalToConstant: 22),
-            self.itemTitleLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -11),
-            self.itemTitleLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16)
+            self.itemTextLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 11),
+            self.itemTextLabel.heightAnchor.constraint(equalToConstant: 22),
+            self.itemTextLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -11),
+            self.itemTextLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16)
         ])
         
         // openVCImageView
@@ -143,8 +143,14 @@ extension SettingCell: EssentialCellHeaderMethods {
 
 // MARK: Extension for methods added
 extension SettingCell {
-    func setCell(_ style: MenuSettingCellType, itemText text: String) {
-        self.itemTitleLabel.text = text
+    func setCell(_ style: MenuSettingCellType, itemText text: String, isEnable: Bool = true) {
+        self.selectionStyle = isEnable ? .default : .none
+        
+        self.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
+        self.openVCImageView.alpha = isEnable ? 1.0 : 0.5
+        
+        self.itemTextLabel.font = .systemFont(ofSize: 17, weight: .regular)
+        self.itemTextLabel.text = text
         
         switch style {
         case .openVC:
@@ -166,10 +172,14 @@ extension SettingCell {
             
             self.sideLabel.text = text
             
+            self.selectionStyle = .none
+            
         case .button:
             self.openVCImageView.isHidden = true
             self.switchButton.isHidden = true
             self.sideLabel.isHidden = true
+            
+            self.itemTextLabel.font = .systemFont(ofSize: 17, weight: .bold)
         }
     }
 }

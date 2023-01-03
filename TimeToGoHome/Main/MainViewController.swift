@@ -2387,7 +2387,10 @@ extension MainViewController {
     }
     
     @objc func settingBarButtonItem(_ sender: UIBarButtonItem) {
+        let settingVC = SettingViewController()
+        let settingNaviVC = CustomizedNavigationController(rootViewController: settingVC)
         
+        self.present(settingNaviVC, animated: true, completion: nil)
     }
     
     @objc func timer(_ timer: Timer) {
