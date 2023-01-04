@@ -249,11 +249,13 @@ extension WorkScheduleModel {
         }
     }
     
-    mutating func updateDate(_ date: Date) {
+    mutating func refreshToday(_ date: Date) { // FIXME: Refresh today for setting change.
         self.date = date
-    }
-    
-    mutating func refreshToday() { // FIXME: Refresh today for setting change.
+        
+        self.morning = nil
+        self.afternoon = nil
+        self.overtime = nil
+        
         self.scheduling()
     }
     

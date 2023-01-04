@@ -461,9 +461,7 @@ class MainViewController: UIViewController {
         super.viewWillAppear(animated)
         
         self.setViewFoundation()
-        
         self.determineToday()
-        self.activateTimer()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -520,7 +518,7 @@ extension MainViewController {
     
     // Initialize views
     func initializeViews() {
-        
+        self.activateTimer()
     }
     
     // Set targets
@@ -855,9 +853,6 @@ extension MainViewController {
         } else {
             self.leavingDateCoverView.isHidden = true
         }
-        
-        // FIXME: determine after leaving company && after canceling leaving company as well
-        self.schedule.refreshToday()
         
         if case .normal = self.schedule.workType {
             self.startWorkingTimeButton.isEnabled = false
@@ -2414,8 +2409,7 @@ extension MainViewController {
                 }
             }
             
-            //self.schedule = .today
-            self.schedule.updateDate(Date())
+            self.schedule = .today
             self.determineToday()
             
         } else {

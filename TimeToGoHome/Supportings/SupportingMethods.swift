@@ -282,6 +282,21 @@ extension SupportingMethods {
         return calendar.date(from: dateComponents)!
     }
     
+    func makeMinuteDate(from date: Date) -> Date {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let dateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+        
+        let newDateComponents = DateComponents(year: dateComponents.year!,
+                                               month: dateComponents.month!,
+                                               day: dateComponents.day!,
+                                               hour: dateComponents.hour!,
+                                               minute: dateComponents.minute!,
+                                               second: 0)
+        
+        return calendar.date(from: newDateComponents)!
+    }
+    
     func getWeekdayOfDate(_ date: Date) -> Int { // 1: sunday ~ 7: saturday
         var calendar = Calendar.current
         calendar.timeZone = .current
@@ -400,7 +415,7 @@ extension SupportingMethods {
         var calendar = Calendar.current
         calendar.timeZone = TimeZone.current
         let dateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
-        let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute)
+        let todayDateComponents = DateComponents(timeZone: TimeZone.current, year: dateComponents.year!, month: dateComponents.month!, day: dateComponents.day!, hour: hour, minute: minute, second: 0)
         
         return calendar.date(from: todayDateComponents)
     }

@@ -633,11 +633,11 @@ extension MainCoverViewController {
         let tempSelf = self
         self.dismiss(animated: false) {
             if case .overtimeSchedule = tempSelf.mainCoverType {
-                tempSelf.delegate?.mainCoverDidDetermineOvertimeSchedule(.overtime(self.datePicker.date), isEditingModeBeforPresenting: self.isEditingBeforePresented)
+                tempSelf.delegate?.mainCoverDidDetermineOvertimeSchedule(.overtime(SupportingMethods.shared.makeMinuteDate(from: tempSelf.datePicker.date)), isEditingModeBeforPresenting: tempSelf.isEditingBeforePresented)
             }
             
             if case .startingWorkTime = tempSelf.mainCoverType {
-                tempSelf.delegate?.mianCoverDidDetermineStartingWorkTime(self.datePicker.date)
+                tempSelf.delegate?.mianCoverDidDetermineStartingWorkTime(SupportingMethods.shared.makeMinuteDate(from: tempSelf.datePicker.date))
             }
         }
     }
@@ -645,10 +645,11 @@ extension MainCoverViewController {
     @objc func declineButton(_ sender: UIButton) {
         if case .overtimeSchedule = self.mainCoverType {
             let presentingVC = self.presentingViewController
+            let tempSelf = self
             self.dismiss(animated: false) {
                 if let naviVC = presentingVC as? UINavigationController,
                     let mainVC = naviVC.topViewController as? MainViewController {
-                    mainVC.isEditingMode = false
+                    mainVC.isEditingMode = tempSelf.isEditingBeforePresented!
                 }
             }
         }
