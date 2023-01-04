@@ -65,6 +65,7 @@
 		CAD8E61F293CC89500E3E634 /* CalendarDayOfVacationUsageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD8E61E293CC89500E3E634 /* CalendarDayOfVacationUsageCell.swift */; };
 		CAD8E623293CC90E00E3E634 /* WorkStatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD8E622293CC90E00E3E634 /* WorkStatisticsViewController.swift */; };
 		CAECA69127ED982C005D7859 /* ScheduleButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAECA69027ED982C005D7859 /* ScheduleButtonView.swift */; };
+		CAF5E49929650E0A00038290 /* YSBlueSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF5E49829650E0A00038290 /* YSBlueSwitch.swift */; };
 		CAFA9F3627B3FCB00088003A /* WhiteButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFA9F3527B3FCB00088003A /* WhiteButtonView.swift */; };
 		CAFD580027DACDFD0027811C /* ScheduleTypeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFD57FF27DACDFD0027811C /* ScheduleTypeCell.swift */; };
 		CAFD580227DB2D0E0027811C /* SchedulingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFD580127DB2D0E0027811C /* SchedulingCell.swift */; };
@@ -129,6 +130,7 @@
 		CAD8E61E293CC89500E3E634 /* CalendarDayOfVacationUsageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayOfVacationUsageCell.swift; sourceTree = "<group>"; };
 		CAD8E622293CC90E00E3E634 /* WorkStatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkStatisticsViewController.swift; sourceTree = "<group>"; };
 		CAECA69027ED982C005D7859 /* ScheduleButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleButtonView.swift; sourceTree = "<group>"; };
+		CAF5E49829650E0A00038290 /* YSBlueSwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YSBlueSwitch.swift; sourceTree = "<group>"; };
 		CAFA9F3527B3FCB00088003A /* WhiteButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteButtonView.swift; sourceTree = "<group>"; };
 		CAFD57FF27DACDFD0027811C /* ScheduleTypeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTypeCell.swift; sourceTree = "<group>"; };
 		CAFD580127DB2D0E0027811C /* SchedulingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulingCell.swift; sourceTree = "<group>"; };
@@ -275,6 +277,7 @@
 				CA47B0FA2924BB0600D3D8F7 /* SettingViewController.swift */,
 				CAB9AD6B29267647006AB951 /* SettingCell.swift */,
 				CAB9AD6D2926765F006AB951 /* SettingHeaderView.swift */,
+				CAF5E49829650E0A00038290 /* YSBlueSwitch.swift */,
 			);
 			path = Setting;
 			sourceTree = "<group>";
@@ -477,6 +480,7 @@
 				CAB7CF442750CD01005C9232 /* CompanyDetailedAddressViewController.swift in Sources */,
 				CAB7CF352750C084005C9232 /* CompanyLocationViewController.swift in Sources */,
 				CAB9AD6E2926765F006AB951 /* SettingHeaderView.swift in Sources */,
+				CAF5E49929650E0A00038290 /* YSBlueSwitch.swift in Sources */,
 				CAB6C93B27FA9AAC00B67F1A /* NormalWorkTypeViewController.swift in Sources */,
 				CA4EC696293647290079CFBE /* RecordSchedulingCell.swift in Sources */,
 				CAB7CF392750C5C9005C9232 /* CompanyMapViewController.swift in Sources */,

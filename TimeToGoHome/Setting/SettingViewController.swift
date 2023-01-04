@@ -222,8 +222,18 @@ extension SettingViewController: EssentialViewMethods {
             self.settingTableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
         ])
     }
+}
+
+// MARK: - Extension for methods added
+extension SettingViewController {
     
-    
+}
+
+// MARK: - Extension for selector methods
+extension SettingViewController {
+    @objc func controlPushSwitch(_ sender: YSBlueSwitch) {
+        print("\(sender.isOn ? "On" : "Off")")
+    }
 }
 
 // MARK: - Extension for UITableViewDelegate, UITableViewDataSource
@@ -260,7 +270,12 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SettingCell", for: indexPath) as! SettingCell
         cell.setCell(self.settingArray[indexPath.section].items[indexPath.row].style,
                      itemText: self.settingArray[indexPath.section].items[indexPath.row].text, isEnable: true) // FIXME: Need to determine boolean value.
+        cell.switchButton.addTarget(self, action: #selector(controlPushSwitch(_:)), for: .valueChanged)
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }

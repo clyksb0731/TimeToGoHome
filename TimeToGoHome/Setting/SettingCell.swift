@@ -27,8 +27,8 @@ class SettingCell: UITableViewCell {
         
     }()
     
-    lazy var switchButton: UISwitch = {
-        let switchButton = UISwitch()
+    lazy var switchButton: YSBlueSwitch = {
+        let switchButton = YSBlueSwitch()
         switchButton.isHidden = true
         switchButton.translatesAutoresizingMaskIntoConstraints = false
         
@@ -122,7 +122,9 @@ extension SettingCell: EssentialCellHeaderMethods {
         // switchButton
         NSLayoutConstraint.activate([
             self.switchButton.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
-            self.switchButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16)
+            self.switchButton.heightAnchor.constraint(equalToConstant: 28),
+            self.switchButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -24),
+            self.switchButton.widthAnchor.constraint(equalToConstant: 52)
         ])
         
         // sideLabel
