@@ -389,7 +389,7 @@ extension MenuViewController: MenuCoverDelegate {
                 self.menuTableView.reloadData()
                 
                 // Because today is also removed.
-                self.mainVC?.timer?.invalidate()
+                //self.mainVC?.timer?.invalidate()
                 self.mainVC?.schedule.updateStartingWorkTime(nil)
                 
             }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)

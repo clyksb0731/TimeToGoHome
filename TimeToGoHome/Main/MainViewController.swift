@@ -463,6 +463,7 @@ class MainViewController: UIViewController {
         self.setViewFoundation()
         
         self.determineToday()
+        self.activateTimer()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -890,7 +891,7 @@ extension MainViewController {
             self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
             self.resetMainTimeViewValues(self.todayRegularScheduleType)
             
-            self.timer?.invalidate()
+            //self.timer?.invalidate()
 
         } else {
             if self.schedule.startingWorkTimeSecondsSinceReferenceDate! >= SupportingMethods.getCurrentTimeSeconds() {
@@ -900,8 +901,6 @@ extension MainViewController {
             } else {
                 // No need to reset main time view values
             }
-            
-            self.activateTimer()
         }
     }
     
@@ -1578,7 +1577,7 @@ extension MainViewController {
                         if schedule.startingWorkTime != nil {
                             let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
                             let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
-                                self.timer?.invalidate()
+                                //self.timer?.invalidate()
                                 schedule.updateStartingWorkTime(nil)
                                 
                                 completion?(regularScheduleType, schedule)
@@ -1611,7 +1610,7 @@ extension MainViewController {
                     if self.schedule.workType == .normal {
                         self.schedule.updateStartingWorkTime()
                         
-                        self.activateTimer()
+                        //self.activateTimer()
                     }
                     
                     self.remainingTimeButtonView.isEnabled = true
@@ -1645,7 +1644,7 @@ extension MainViewController {
                     if self.schedule.workType == .normal {
                         self.schedule.updateStartingWorkTime()
                         
-                        self.activateTimer()
+                        //self.activateTimer()
                     }
                     
                     self.remainingTimeButtonView.isEnabled = true
@@ -1681,7 +1680,7 @@ extension MainViewController {
                         if schedule.startingWorkTime != nil {
                             let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
                             let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
-                                self.timer?.invalidate()
+                                //self.timer?.invalidate()
                                 schedule.updateStartingWorkTime(nil)
                                 
                                 completion?(regularScheduleType, schedule)
@@ -1709,7 +1708,7 @@ extension MainViewController {
                     if self.schedule.workType == .normal {
                         self.schedule.updateStartingWorkTime()
                         
-                        self.activateTimer()
+                        //self.activateTimer()
                     }
                     
                     self.remainingTimeButtonView.isEnabled = true
@@ -1743,7 +1742,7 @@ extension MainViewController {
                     if self.schedule.workType == .normal {
                         self.schedule.updateStartingWorkTime()
                         
-                        self.activateTimer()
+                        //self.activateTimer()
                     }
                     
                     self.remainingTimeButtonView.isEnabled = true
@@ -1782,7 +1781,7 @@ extension MainViewController {
                     self.startWorkingTimeMarkLabel.isHidden = true
                     self.startWorkingTimeButton.isHidden = true
                     
-                    self.timer?.invalidate()
+                    //self.timer?.invalidate()
                     schedule.updateStartingWorkTime(nil)
                     
                     completion?(regularScheduleType, schedule)
@@ -1796,7 +1795,7 @@ extension MainViewController {
                     self.startWorkingTimeMarkLabel.isHidden = true
                     self.startWorkingTimeButton.isHidden = true
                     
-                    self.timer?.invalidate()
+                    //self.timer?.invalidate()
                     schedule.updateStartingWorkTime(nil)
                     
                     completion?(regularScheduleType, schedule)
@@ -1811,7 +1810,7 @@ extension MainViewController {
                     self.startWorkingTimeMarkLabel.isHidden = true
                     self.startWorkingTimeButton.isHidden = true
                     
-                    self.timer?.invalidate()
+                    //self.timer?.invalidate()
                     schedule.updateStartingWorkTime(nil)
                     
                     completion?(regularScheduleType, schedule)
@@ -1825,7 +1824,7 @@ extension MainViewController {
                     self.startWorkingTimeMarkLabel.isHidden = true
                     self.startWorkingTimeButton.isHidden = true
                     
-                    self.timer?.invalidate()
+                    //self.timer?.invalidate()
                     schedule.updateStartingWorkTime(nil)
                     
                     completion?(regularScheduleType, schedule)
@@ -1849,7 +1848,7 @@ extension MainViewController {
                     if self.schedule.startingWorkTime != nil {
                         let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
                         let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
-                            self.timer?.invalidate()
+                            //self.timer?.invalidate()
                             self.schedule.updateStartingWorkTime(nil)
                             
                             completion?(regularScheduleType)
@@ -1873,7 +1872,7 @@ extension MainViewController {
                 if self.schedule.workType == .normal {
                     self.schedule.updateStartingWorkTime()
                     
-                    self.activateTimer()
+                    //self.activateTimer()
                 }
                 
                 self.remainingTimeButtonView.isEnabled = true
@@ -1906,7 +1905,7 @@ extension MainViewController {
                 if self.schedule.workType == .normal {
                     self.schedule.updateStartingWorkTime()
                     
-                    self.activateTimer()
+                    //self.activateTimer()
                 }
                 
                 self.remainingTimeButtonView.isEnabled = true
@@ -1948,7 +1947,7 @@ extension MainViewController {
                     if self.schedule.startingWorkTime != nil {
                         let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
                         let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
-                            self.timer?.invalidate()
+                            //self.timer?.invalidate()
                             self.schedule.updateStartingWorkTime(nil)
                             
                             completion?(regularScheduleType)
@@ -1972,7 +1971,7 @@ extension MainViewController {
                 if self.schedule.workType == .normal {
                     self.schedule.updateStartingWorkTime()
                     
-                    self.activateTimer()
+                    //self.activateTimer()
                 }
                 
                 self.remainingTimeButtonView.isEnabled = true
@@ -2005,7 +2004,7 @@ extension MainViewController {
                 if self.schedule.workType == .normal {
                     self.schedule.updateStartingWorkTime()
                     
-                    self.activateTimer()
+                    //self.activateTimer()
                 }
                 
                 self.remainingTimeButtonView.isEnabled = true
@@ -2044,7 +2043,7 @@ extension MainViewController {
                     if self.schedule.startingWorkTime != nil {
                         let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
                         let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
-                            self.timer?.invalidate()
+                            //self.timer?.invalidate()
                             self.schedule.updateStartingWorkTime(nil)
                             
                             completion?(regularScheduleType)
@@ -2069,7 +2068,7 @@ extension MainViewController {
                     if self.schedule.startingWorkTime != nil {
                         let alertVC = UIAlertController(title: "알림", message: "일정이 변경되면 출근시간의 재설정이 필요합니다. 그래도 변경하시겠습니까?", preferredStyle: .alert)
                         let okAction = UIAlertAction(title: "확인", style: .destructive) { action in
-                            self.timer?.invalidate()
+                            //self.timer?.invalidate()
                             self.schedule.updateStartingWorkTime(nil)
                             
                             completion?(regularScheduleType)
@@ -2093,7 +2092,7 @@ extension MainViewController {
                 if self.schedule.workType == .normal {
                     self.schedule.updateStartingWorkTime()
                     
-                    self.activateTimer()
+                    //self.activateTimer()
                 }
                 
                 self.remainingTimeButtonView.isEnabled = true
@@ -2126,7 +2125,7 @@ extension MainViewController {
                 if self.schedule.workType == .normal {
                     self.schedule.updateStartingWorkTime()
                     
-                    self.activateTimer()
+                    //self.activateTimer()
                 }
                 
                 self.remainingTimeButtonView.isEnabled = true
@@ -2168,7 +2167,7 @@ extension MainViewController {
                 self.startWorkingTimeMarkLabel.isHidden = true
                 self.startWorkingTimeButton.isHidden = true
                 
-                self.timer?.invalidate()
+                //self.timer?.invalidate()
                 self.schedule.updateStartingWorkTime(nil)
                 
                 completion?(regularScheduleType)
@@ -2181,7 +2180,7 @@ extension MainViewController {
                 self.startWorkingTimeMarkLabel.isHidden = true
                 self.startWorkingTimeButton.isHidden = true
                 
-                self.timer?.invalidate()
+                //self.timer?.invalidate()
                 self.schedule.updateStartingWorkTime(nil)
                 
                 completion?(regularScheduleType)
@@ -2194,7 +2193,7 @@ extension MainViewController {
                 self.startWorkingTimeMarkLabel.isHidden = true
                 self.startWorkingTimeButton.isHidden = true
                 
-                self.timer?.invalidate()
+                //self.timer?.invalidate()
                 self.schedule.updateStartingWorkTime(nil)
                 
                 completion?(regularScheduleType)
@@ -2215,7 +2214,7 @@ extension MainViewController {
                 self.startWorkingTimeMarkLabel.isHidden = true
                 self.startWorkingTimeButton.isHidden = true
                 
-                self.timer?.invalidate()
+                //self.timer?.invalidate()
                 self.schedule.updateStartingWorkTime(nil)
                 
                 completion?(regularScheduleType)
@@ -2228,7 +2227,7 @@ extension MainViewController {
                 self.startWorkingTimeMarkLabel.isHidden = true
                 self.startWorkingTimeButton.isHidden = true
                 
-                self.timer?.invalidate()
+                //self.timer?.invalidate()
                 self.schedule.updateStartingWorkTime(nil)
                 
                 completion?(regularScheduleType)
@@ -2241,7 +2240,7 @@ extension MainViewController {
                 self.startWorkingTimeMarkLabel.isHidden = true
                 self.startWorkingTimeButton.isHidden = true
                 
-                self.timer?.invalidate()
+                //self.timer?.invalidate()
                 self.schedule.updateStartingWorkTime(nil)
                 
                 completion?(regularScheduleType)
@@ -2394,18 +2393,18 @@ extension MainViewController {
     }
     
     @objc func timer(_ timer: Timer) {
-        guard let startingWorkTimeSecondsSinceReferenceDate = self.schedule.startingWorkTimeSecondsSinceReferenceDate else {
-            return
-        }
-        
         let now = SupportingMethods.getCurrentTimeSeconds()
         
         if (now >= self.tomorrowTimeValue) {
-            self.timer?.invalidate()
+            //self.timer?.invalidate()
             
             if self.isEditingMode {
                 if self.mainTimeCoverView.isHidden {
-                    // FIXME: how to dismiss main cover vc
+                    if let presentedVC = self.presentedViewController, presentedVC is MainCoverViewController {
+                        self.dismiss(animated: false) {
+                            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "날이 바뀌어 메인화면으로 돌아왔습니다.")
+                        }
+                    }
                     
                 } else {
                     self.mainTimeCoverView.isHidden = true
@@ -2415,11 +2414,15 @@ extension MainViewController {
                 }
             }
             
-            self.schedule = .today
-            
+            //self.schedule = .today
+            self.schedule.updateDate(Date())
             self.determineToday()
             
         } else {
+            guard let startingWorkTimeSecondsSinceReferenceDate = self.schedule.startingWorkTimeSecondsSinceReferenceDate else {
+                return
+            }
+            
             if startingWorkTimeSecondsSinceReferenceDate >= now {
                 self.startWorkingTimeButton.setTitle("출근전", for: .normal)
                 
@@ -3069,6 +3072,6 @@ extension MainViewController: MainCoverDelegate {
         
         self.determineScheduleButtonState(for: self.schedule)
         
-        self.activateTimer()
+        //self.activateTimer()
     }
 }

@@ -249,37 +249,12 @@ extension WorkScheduleModel {
         }
     }
     
+    mutating func updateDate(_ date: Date) {
+        self.date = date
+    }
+    
     mutating func refreshToday() { // FIXME: Refresh today for setting change.
-        // Check DB if there is already today schedule.
-        // &&
-        // Check tody schedule condition for initial setting.
-        
         self.scheduling()
-        
-//        self.determineWorkType()
-//        self.determineLunchTimeDate()
-//        self.determineStartingWorkTimeDate()
-//
-//        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
-//        let todayDateId = Int(dateFormatter.string(from: self.date))!
-//        if let leavingDate = ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date,
-//            let leavingDateId = Int(dateFormatter.string(from: leavingDate)),
-//            todayDateId > leavingDateId {
-//            self.morning = .morning(.holiday)
-//            self.afternoon = .afternoon(.holiday)
-//            self.overtime = nil
-//
-//        } else {
-//            let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
-//            let schedule = companyModel.getScheduleOn(self.date)!
-//
-//            self.morning = .morning(WorkTimeType(rawValue: schedule.morning)!)
-//            self.afternoon = .afternoon(WorkTimeType(rawValue: schedule.afternoon)!)
-//
-//            if let overtime = schedule.overtime, let finishingRegularWorkTimeSecondsSinceReferenceDate = self.finishingRegularWorkTimeSecondsSinceReferenceDate {
-//                self.overtime = .overtime(Date(timeIntervalSinceReferenceDate: Double(finishingRegularWorkTimeSecondsSinceReferenceDate + overtime)))
-//            }
-//        }
     }
     
     mutating func updateStartingWorkTime(_ startingWorkTimeDate: Date? = nil) {
@@ -312,6 +287,8 @@ extension WorkScheduleModel {
         if let leavingDate = ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date,
             let leavingDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: leavingDate)),
            todayDateId > leavingDateId {
+            self.startingWorkTime = nil
+            
             return
         }
         
