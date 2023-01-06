@@ -27,6 +27,8 @@ class YSBlueSwitch: UIControl {
         return view
     }()
     
+    var indexPath: IndexPath!
+    
     var movableViewCenterXAnchor: NSLayoutConstraint!
     
     var isAnimating: Bool = false

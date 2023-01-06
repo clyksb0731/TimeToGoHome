@@ -51,6 +51,7 @@ class SettingViewController: UIViewController {
         tableView.bounces = false
         tableView.separatorStyle = .none
         tableView.register(SettingCell.self, forCellReuseIdentifier: "SettingCell")
+        tableView.register(SettingSubCell.self, forCellReuseIdentifier: "SettingSubCell")
         tableView.register(SettingHeaderView.self, forHeaderFooterViewReuseIdentifier: "SettingHeaderView")
         tableView.delegate = self
         tableView.dataSource = self
@@ -65,10 +66,12 @@ class SettingViewController: UIViewController {
     var settingArray: [(header: String, items:[(style: MenuSettingCellType, text: String)])] {
         [
             (header: "알림",
-             items: [
-                (style: .switch(true), text: "알림 설정"), // FIXME: Need to determine boolean value
-                (style: .switch(true), text: "    출근 시간 설정 (정기 휴일 제외)"), // FIXME: Need to determine boolean value
-                (style: .switch(true), text: "    업무 종료 알림"), // FIXME: Need to determine boolean value
+             items: SupportingMethods.shared.useAppSetting(for: .pushActivation) as? Bool == true ? [
+                (style: .switch(true), text: "알림 설정"),
+                (style: .switch(SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Bool == true), text: "ㄴ 출근 시간 설정 알림"),
+                (style: .switch(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? Bool == true), text: "ㄴ 업무 종료 알림") // FIXME: Need to determine boolean value
+             ] : [
+                (style: .switch(false), text: "알림 설정")
              ]
             ),
             
@@ -232,7 +235,49 @@ extension SettingViewController {
 // MARK: - Extension for selector methods
 extension SettingViewController {
     @objc func controlPushSwitch(_ sender: YSBlueSwitch) {
-        print("\(sender.isOn ? "On" : "Off")")
+        print("section:\(sender.indexPath.section ), row:\(sender.indexPath.row) switch is \(sender.isOn ? "On" : "Off")")
+        if sender.indexPath.section == 0 {
+            if sender.indexPath.row == 0 {
+                if sender.isOn {
+                    SupportingMethods.shared.setAppSetting(with: true, for: .pushActivation)
+                    
+                    self.settingTableView.reloadSections([0], with: .automatic)
+                    
+                } else {
+                    SupportingMethods.shared.setAppSetting(with: false, for: .pushActivation)
+                    SupportingMethods.shared.setAppSetting(with: false, for: .alertSettingStartingWorkTime)
+                    SupportingMethods.shared.setAppSetting(with: false, for: .alertFinishingWorkTime)
+                    
+                    self.settingTableView.reloadSections([0], with: .automatic)
+                }
+            }
+            
+            if sender.indexPath.row == 1 {
+                if sender.isOn {
+                    SupportingMethods.shared.setAppSetting(with: true, for: .alertSettingStartingWorkTime)
+                    
+                    self.settingTableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .automatic)
+                    
+                } else {
+                    SupportingMethods.shared.setAppSetting(with: false, for: .alertSettingStartingWorkTime)
+                    
+                    self.settingTableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .automatic)
+                }
+            }
+            
+            if sender.indexPath.row == 2 {
+                if sender.isOn {
+                    SupportingMethods.shared.setAppSetting(with: true, for: .alertFinishingWorkTime)
+                    
+                    self.settingTableView.reloadRows(at: [IndexPath(row: 2, section: 0)], with: .automatic)
+                    
+                } else {
+                    SupportingMethods.shared.setAppSetting(with: false, for: .alertFinishingWorkTime)
+                    
+                    self.settingTableView.reloadRows(at: [IndexPath(row: 2, section: 0)], with: .automatic)
+                }
+            }
+        }
     }
 }
 
@@ -266,11 +311,28 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "SettingCell", for: indexPath) as! SettingCell
-        cell.setCell(self.settingArray[indexPath.section].items[indexPath.row].style,
-                     itemText: self.settingArray[indexPath.section].items[indexPath.row].text, isEnable: true) // FIXME: Need to determine boolean value.
-        cell.switchButton.addTarget(self, action: #selector(controlPushSwitch(_:)), for: .valueChanged)
+        var cell: UITableViewCell!
+        if indexPath.section == 0 && (indexPath.row == 1 || indexPath.row == 2) {
+            let settingSubCell = tableView.dequeueReusableCell(withIdentifier: "SettingSubCell", for: indexPath) as! SettingSubCell
+            if case .switch(let onOff) = self.settingArray[indexPath.section].items[indexPath.row].style {
+                settingSubCell.setCell(self.settingArray[indexPath.section].items[indexPath.row].style,
+                                       itemText: self.settingArray[indexPath.section].items[indexPath.row].text,
+                                       indexPath: indexPath,
+                                       isEnable: onOff)
+                
+                settingSubCell.switchButton.addTarget(self, action: #selector(controlPushSwitch(_:)), for: .valueChanged)
+            }
+            
+            cell = settingSubCell
+            
+        } else {
+            let settingCell = tableView.dequeueReusableCell(withIdentifier: "SettingCell", for: indexPath) as! SettingCell
+            settingCell.setCell(self.settingArray[indexPath.section].items[indexPath.row].style,
+                         itemText: self.settingArray[indexPath.section].items[indexPath.row].text, indexPath: indexPath, isEnable: true) // FIXME: Need to determine boolean value.
+            settingCell.switchButton.addTarget(self, action: #selector(controlPushSwitch(_:)), for: .valueChanged)
+            
+            cell = settingCell
+        }
         
         return cell
     }

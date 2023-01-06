@@ -15,6 +15,9 @@ enum PListVariable: String {
     case initialSetting
     case timeDateForStartingTodayOfStaggeredSchedule
     case dateForFinishedSchedule
+    case pushActivation
+    case alertSettingStartingWorkTime
+    case alertFinishingWorkTime
 }
 
 enum InitialSetting: String {

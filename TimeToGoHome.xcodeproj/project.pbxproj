@@ -34,6 +34,7 @@
 		CA6D12FB2910215300835CB6 /* CustomizedTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6D12FA2910215300835CB6 /* CustomizedTabBarController.swift */; };
 		CA79A8E627D85550000F58E2 /* TemplateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA79A8E527D85550000F58E2 /* TemplateCell.swift */; };
 		CA8ED6A5295203F30026478A /* MenuLargeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8ED6A4295203F30026478A /* MenuLargeCell.swift */; };
+		CA9211B12968037000E0F288 /* SettingSubCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9211B02968037000E0F288 /* SettingSubCell.swift */; };
 		CAA3B24B2801755D00FFF892 /* CalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24A2801755D00FFF892 /* CalendarDayCell.swift */; };
 		CAA3B24D2801758200FFF892 /* CalendarHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */; };
 		CAA3B24F28018ED600FFF892 /* VacationButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24E28018ED600FFF892 /* VacationButtonView.swift */; };
@@ -102,6 +103,7 @@
 		CA6D12FA2910215300835CB6 /* CustomizedTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizedTabBarController.swift; sourceTree = "<group>"; };
 		CA79A8E527D85550000F58E2 /* TemplateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateCell.swift; sourceTree = "<group>"; };
 		CA8ED6A4295203F30026478A /* MenuLargeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuLargeCell.swift; sourceTree = "<group>"; };
+		CA9211B02968037000E0F288 /* SettingSubCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingSubCell.swift; sourceTree = "<group>"; };
 		CAA3B24A2801755D00FFF892 /* CalendarDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayCell.swift; sourceTree = "<group>"; };
 		CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderView.swift; sourceTree = "<group>"; };
 		CAA3B24E28018ED600FFF892 /* VacationButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VacationButtonView.swift; sourceTree = "<group>"; };
@@ -276,6 +278,7 @@
 			children = (
 				CA47B0FA2924BB0600D3D8F7 /* SettingViewController.swift */,
 				CAB9AD6B29267647006AB951 /* SettingCell.swift */,
+				CA9211B02968037000E0F288 /* SettingSubCell.swift */,
 				CAB9AD6D2926765F006AB951 /* SettingHeaderView.swift */,
 				CAF5E49829650E0A00038290 /* YSBlueSwitch.swift */,
 			);
@@ -472,6 +475,7 @@
 				CAA3B24D2801758200FFF892 /* CalendarHeaderView.swift in Sources */,
 				CA47B0F92924BAE700D3D8F7 /* MenuCell.swift in Sources */,
 				CAB7CF312750B5B9005C9232 /* InitialViewController.swift in Sources */,
+				CA9211B12968037000E0F288 /* SettingSubCell.swift in Sources */,
 				CAB7CF3D2750C7F3005C9232 /* CompanyLocationAlertViewController.swift in Sources */,
 				CA1592B127DF90E20021501D /* MainCoverViewController.swift in Sources */,
 				CAB6C93D27FA9C4800B67F1A /* DayOffViewController.swift in Sources */,

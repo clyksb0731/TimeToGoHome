@@ -1,18 +1,18 @@
 //
-//  SettingCell.swift
+//  SettingSubCell.swift
 //  TimeToGoHome
 //
-//  Created by Yongseok Choi on 2022/11/17.
+//  Created by Yongseok Choi on 2023/01/06.
 //
 
 import UIKit
 
-class SettingCell: UITableViewCell {
+class SettingSubCell: UITableViewCell {
     
     lazy var itemTextLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.font = .systemFont(ofSize: 14, weight: .regular)
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -38,7 +38,7 @@ class SettingCell: UITableViewCell {
     lazy var sideLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = .systemFont(ofSize: 17, weight: .bold)
+        label.font = .systemFont(ofSize: 14, weight: .bold)
         label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -80,7 +80,7 @@ class SettingCell: UITableViewCell {
 }
 
 // MARK: - Extension for essential methods
-extension SettingCell: EssentialCellHeaderMethods {
+extension SettingSubCell: EssentialCellHeaderMethods {
     func setViewFoundation() {
         //self.selectionStyle = .none
         self.contentView.isUserInteractionEnabled = true
@@ -105,10 +105,10 @@ extension SettingCell: EssentialCellHeaderMethods {
         
         // itemTextLabel
         NSLayoutConstraint.activate([
-            self.itemTextLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 14),
+            self.itemTextLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 9),
             self.itemTextLabel.heightAnchor.constraint(equalToConstant: 22),
-            self.itemTextLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -14),
-            self.itemTextLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16)
+            self.itemTextLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -9),
+            self.itemTextLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 24)
         ])
         
         // openVCImageView
@@ -144,7 +144,7 @@ extension SettingCell: EssentialCellHeaderMethods {
 }
 
 // MARK: Extension for methods added
-extension SettingCell {
+extension SettingSubCell {
     func setCell(_ style: MenuSettingCellType, itemText text: String, indexPath: IndexPath, isEnable: Bool = true) {
         self.selectionStyle = isEnable ? .default : .none
         
