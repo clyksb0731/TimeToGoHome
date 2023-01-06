@@ -38,8 +38,6 @@ class YSBlueSwitch: UIControl {
         }
         
         didSet {
-            UIDevice.lightHaptic()
-            
             self.movableViewCenterXAnchor.constant = self.isOn ? 34 : 14
             
             UIView.animate(withDuration: 0.2) {
@@ -98,6 +96,8 @@ class YSBlueSwitch: UIControl {
 
         if !self.isAnimating {
             self.isOn.toggle()
+            
+            UIDevice.lightHaptic()
 
             self.sendActions(for: .valueChanged)
         }
