@@ -9,6 +9,11 @@ import UIKit
 
 class SettingViewController: UIViewController {
     
+    enum SettingPopUpType {
+        case startingWorkTime
+        case finishingWorkTime
+    }
+    
     lazy var topView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -63,13 +68,151 @@ class SettingViewController: UIViewController {
         return tableView
     }()
     
+    lazy var coverView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.7)
+        view.isHidden = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var popUpPanelView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 20
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var popUpPanelTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 21, weight: .bold)
+        label.textAlignment = .center
+        label.textColor = .black
+        label.text = "출근 시간 설정 알림"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var datePicker: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        datePicker.preferredDatePickerStyle = .wheels
+        datePicker.datePickerMode = .time
+        //datePicker.addTarget(self, action: #selector(datePicker(_:)), for: .valueChanged)
+        datePicker.timeZone = TimeZone.current
+        datePicker.locale = Locale(identifier: "ko_KR")
+        datePicker.translatesAutoresizingMaskIntoConstraints = false
+        
+        return datePicker
+    }()
+    
+    lazy var popUpPanelButtonsView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var firstButton: UIButton = {
+        let button = UIButton()
+        button.setTitleColor(.useRGB(red: 151, green: 151, blue: 151), for: .normal)
+        button.setTitle("정각", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 27, weight: .bold)
+        button.backgroundColor = .useRGB(red: 216, green: 216, blue: 216)
+        button.layer.borderColor = UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
+        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 25
+        button.tag = 1
+        button.isSelected = false
+        button.addTarget(self, action: #selector(firstButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var secondButton: UIButton = {
+        let button = UIButton()
+        button.setTitleColor(.useRGB(red: 151, green: 151, blue: 151), for: .normal)
+        button.setTitle("5분전", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 27, weight: .bold)
+        button.backgroundColor = .useRGB(red: 216, green: 216, blue: 216)
+        button.layer.borderColor = UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
+        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 25
+        button.tag = 2
+        button.isSelected = false
+        button.addTarget(self, action: #selector(secondButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var thirdButton: UIButton = {
+        let button = UIButton()
+        button.setTitleColor(.useRGB(red: 151, green: 151, blue: 151), for: .normal)
+        button.setTitle("10분전", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 27, weight: .bold)
+        button.backgroundColor = .useRGB(red: 216, green: 216, blue: 216)
+        button.layer.borderColor = UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
+        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 25
+        button.tag = 3
+        button.isSelected = false
+        button.addTarget(self, action: #selector(thirdButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var fourthButton: UIButton = {
+        let button = UIButton()
+        button.setTitleColor(.useRGB(red: 151, green: 151, blue: 151), for: .normal)
+        button.setTitle("30분전", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 27, weight: .bold)
+        button.backgroundColor = .useRGB(red: 216, green: 216, blue: 216)
+        button.layer.borderColor = UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
+        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 25
+        button.tag = 4
+        button.isSelected = false
+        button.addTarget(self, action: #selector(fourthButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var declineButton: UIButton = {
+        let button = UIButton()
+        button.titleLabel?.font = .systemFont(ofSize: 21, weight: .semibold)
+        button.setTitle("취소", for: .normal)
+        button.setTitleColor(.blue, for: .normal)
+        button.addTarget(self, action: #selector(declineButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var confirmButton: UIButton = {
+        let button = UIButton()
+        button.titleLabel?.font = .systemFont(ofSize: 21, weight: .semibold)
+        button.setTitle("확인", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.addTarget(self, action: #selector(confirmButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     var settingArray: [(header: String, items:[(style: MenuSettingCellType, text: String)])] {
         [
             (header: "알림",
              items: SupportingMethods.shared.useAppSetting(for: .pushActivation) as? Bool == true ? [
                 (style: .switch(true), text: "알림 설정"),
-                (style: .switch(SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Bool == true), text: "ㄴ 출근 시간 설정 알림"),
-                (style: .switch(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? Bool == true), text: "ㄴ 업무 종료 알림") // FIXME: Need to determine boolean value
+                (style: .switch(SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Date != nil), text: "ㄴ 출근 시간 설정 알림"),
+                (style: .switch(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? [Int] != nil && !(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as! [Int]).isEmpty), text: "ㄴ 업무 종료 알림")
              ] : [
                 (style: .switch(false), text: "알림 설정")
              ]
@@ -90,6 +233,21 @@ class SettingViewController: UIViewController {
             ),
         ]
     }
+    
+    var popUpViewType: SettingPopUpType = .startingWorkTime {
+        didSet {
+            switch self.popUpViewType {
+            case .startingWorkTime:
+                self.datePicker.isHidden = false
+                self.popUpPanelButtonsView.isHidden = true
+                
+            case .finishingWorkTime:
+                self.datePicker.isHidden = true
+                self.popUpPanelButtonsView.isHidden = false
+            }
+        }
+    }
+    var alertFinishingWorkTimes: Set<Int> = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -119,18 +277,6 @@ class SettingViewController: UIViewController {
             print("----------------------------------- SettingViewController disposed -----------------------------------")
     }
 
-}
-
-// MARK: - Extension for methods added
-extension SettingViewController {
-    
-}
-
-// MARK: - Extension for selector methods
-extension SettingViewController {
-    @objc func dismiss(_ sender: UIButton) {
-        self.dismiss(animated: true)
-    }
 }
 
 // MARK: - Extension for essential methods
@@ -174,7 +320,8 @@ extension SettingViewController: EssentialViewMethods {
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
             self.topView,
-            self.settingTableView
+            self.settingTableView,
+            self.coverView
         ], to: self.view)
         
         SupportingMethods.shared.addSubviews([
@@ -182,6 +329,25 @@ extension SettingViewController: EssentialViewMethods {
             self.settingMarkLabel,
             self.topViewBottomLineView
         ], to: self.topView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.popUpPanelView
+        ], to: self.coverView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.popUpPanelTitleLabel,
+            self.datePicker,
+            self.popUpPanelButtonsView,
+            self.declineButton,
+            self.confirmButton
+        ], to: self.popUpPanelView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.firstButton,
+            self.secondButton,
+            self.thirdButton,
+            self.fourthButton
+        ], to: self.popUpPanelButtonsView)
     }
     
     func setLayouts() {
@@ -224,16 +390,178 @@ extension SettingViewController: EssentialViewMethods {
             self.settingTableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             self.settingTableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
         ])
+        
+        // coverView
+        NSLayoutConstraint.activate([
+            self.coverView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.coverView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            self.coverView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            self.coverView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)
+        ])
+        
+        // popUpPanelView
+        NSLayoutConstraint.activate([
+            self.popUpPanelView.centerYAnchor.constraint(equalTo: self.coverView.centerYAnchor),
+            self.popUpPanelView.heightAnchor.constraint(equalToConstant: 300),
+            self.popUpPanelView.leadingAnchor.constraint(equalTo: self.coverView.leadingAnchor, constant: 32),
+            self.popUpPanelView.trailingAnchor.constraint(equalTo: self.coverView.trailingAnchor, constant: -32)
+        ])
+        
+        // popUpPanelTitleLabel
+        NSLayoutConstraint.activate([
+            self.popUpPanelTitleLabel.topAnchor.constraint(equalTo: self.popUpPanelView.topAnchor, constant: 22),
+            self.popUpPanelTitleLabel.heightAnchor.constraint(equalToConstant: 22),
+            self.popUpPanelTitleLabel.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor),
+            self.popUpPanelTitleLabel.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor)
+        ])
+        
+        // datePicker
+        NSLayoutConstraint.activate([
+            self.datePicker.topAnchor.constraint(equalTo: self.popUpPanelTitleLabel.bottomAnchor, constant: 10),
+            self.datePicker.heightAnchor.constraint(equalToConstant: 195),
+            self.datePicker.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor, constant: 5),
+            self.datePicker.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor, constant: -5)
+        ])
+        
+        // popUpPanelButtonsView
+        NSLayoutConstraint.activate([
+            self.popUpPanelButtonsView.topAnchor.constraint(equalTo: self.popUpPanelTitleLabel.bottomAnchor, constant: 40),
+            self.popUpPanelButtonsView.bottomAnchor.constraint(equalTo: self.declineButton.topAnchor, constant: -40),
+            self.popUpPanelButtonsView.leadingAnchor.constraint(equalTo: self.popUpPanelView.leadingAnchor, constant: 28),
+            self.popUpPanelButtonsView.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor, constant: -28)
+        ])
+        
+        // firstButton
+        NSLayoutConstraint.activate([
+            self.firstButton.topAnchor.constraint(equalTo: self.popUpPanelButtonsView.topAnchor),
+            self.firstButton.heightAnchor.constraint(equalToConstant: 55),
+            self.firstButton.leadingAnchor.constraint(equalTo: self.popUpPanelButtonsView.leadingAnchor),
+            self.firstButton.widthAnchor.constraint(equalToConstant: 115)
+        ])
+        
+        // secondButton
+        NSLayoutConstraint.activate([
+            self.secondButton.topAnchor.constraint(equalTo: self.popUpPanelButtonsView.topAnchor),
+            self.secondButton.heightAnchor.constraint(equalToConstant: 55),
+            self.secondButton.trailingAnchor.constraint(equalTo: self.popUpPanelButtonsView.trailingAnchor),
+            self.secondButton.widthAnchor.constraint(equalToConstant: 115)
+        ])
+        
+        // thirdButton
+        NSLayoutConstraint.activate([
+            self.thirdButton.bottomAnchor.constraint(equalTo: self.popUpPanelButtonsView.bottomAnchor),
+            self.thirdButton.heightAnchor.constraint(equalToConstant: 55),
+            self.thirdButton.leadingAnchor.constraint(equalTo: self.popUpPanelButtonsView.leadingAnchor),
+            self.thirdButton.widthAnchor.constraint(equalToConstant: 115)
+        ])
+        
+        // fourthButton
+        NSLayoutConstraint.activate([
+            self.fourthButton.bottomAnchor.constraint(equalTo: self.popUpPanelButtonsView.bottomAnchor),
+            self.fourthButton.heightAnchor.constraint(equalToConstant: 55),
+            self.fourthButton.trailingAnchor.constraint(equalTo: self.popUpPanelButtonsView.trailingAnchor),
+            self.fourthButton.widthAnchor.constraint(equalToConstant: 115)
+        ])
+        
+        // declineButton
+        NSLayoutConstraint.activate([
+            self.declineButton.topAnchor.constraint(equalTo: self.datePicker.bottomAnchor, constant: 10),
+            self.declineButton.heightAnchor.constraint(equalToConstant: 35),
+            self.declineButton.trailingAnchor.constraint(equalTo: self.popUpPanelView.centerXAnchor, constant: -5),
+            self.declineButton.widthAnchor.constraint(equalToConstant: 97)
+        ])
+        
+        // confirmButton
+        NSLayoutConstraint.activate([
+            self.confirmButton.topAnchor.constraint(equalTo: self.datePicker.bottomAnchor, constant: 10),
+            self.confirmButton.heightAnchor.constraint(equalToConstant: 35),
+            self.confirmButton.leadingAnchor.constraint(equalTo: self.popUpPanelView.centerXAnchor, constant: 5),
+            self.confirmButton.widthAnchor.constraint(equalToConstant: 97)
+        ])
     }
 }
 
 // MARK: - Extension for methods added
 extension SettingViewController {
+    func determineFinishingWorkTimes() {
+        if self.firstButton.isSelected {
+            self.alertFinishingWorkTimes.insert(1)
+            
+        } else {
+            self.alertFinishingWorkTimes.remove(1)
+        }
+        
+        if self.secondButton.isSelected {
+            self.alertFinishingWorkTimes.insert(2)
+            
+        } else {
+            self.alertFinishingWorkTimes.remove(2)
+        }
+        
+        if self.thirdButton.isSelected {
+            self.alertFinishingWorkTimes.insert(3)
+            
+        } else {
+            self.alertFinishingWorkTimes.remove(3)
+        }
+        
+        if self.fourthButton.isSelected {
+            self.alertFinishingWorkTimes.insert(4)
+            
+        } else {
+            self.alertFinishingWorkTimes.remove(4)
+        }
+    }
     
+    func determineFinishingButtonsState() {
+        // firstButton
+        self.firstButton.backgroundColor = self.alertFinishingWorkTimes.contains(1) ?
+            .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
+        self.firstButton.layer.borderColor = self.alertFinishingWorkTimes.contains(1) ?
+        UIColor.useRGB(red: 25, green: 178, blue: 255).cgColor :
+        UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
+        self.firstButton.setTitleColor(self.alertFinishingWorkTimes.contains(1) ?
+            .white : .useRGB(red: 151, green: 151, blue: 151), for: .normal)
+        self.firstButton.isSelected = self.alertFinishingWorkTimes.contains(1)
+        
+        // secondButton
+        self.secondButton.backgroundColor = self.alertFinishingWorkTimes.contains(2) ?
+            .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
+        self.secondButton.layer.borderColor = self.alertFinishingWorkTimes.contains(2) ?
+        UIColor.useRGB(red: 25, green: 178, blue: 255).cgColor :
+        UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
+        self.secondButton.setTitleColor(self.alertFinishingWorkTimes.contains(2) ?
+            .white : .useRGB(red: 151, green: 151, blue: 151), for: .normal)
+        self.secondButton.isSelected = self.alertFinishingWorkTimes.contains(2)
+        
+        // thirdButton
+        self.thirdButton.backgroundColor = self.alertFinishingWorkTimes.contains(3) ?
+            .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
+        self.thirdButton.layer.borderColor = self.alertFinishingWorkTimes.contains(3) ?
+        UIColor.useRGB(red: 25, green: 178, blue: 255).cgColor :
+        UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
+        self.thirdButton.setTitleColor(self.alertFinishingWorkTimes.contains(3) ?
+            .white : .useRGB(red: 151, green: 151, blue: 151), for: .normal)
+        self.thirdButton.isSelected = self.alertFinishingWorkTimes.contains(3)
+        
+        // fourthButton
+        self.fourthButton.backgroundColor = self.alertFinishingWorkTimes.contains(4) ?
+            .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
+        self.fourthButton.layer.borderColor = self.alertFinishingWorkTimes.contains(4) ?
+        UIColor.useRGB(red: 25, green: 178, blue: 255).cgColor :
+        UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
+        self.fourthButton.setTitleColor(self.alertFinishingWorkTimes.contains(4) ?
+            .white : .useRGB(red: 151, green: 151, blue: 151), for: .normal)
+        self.fourthButton.isSelected = self.alertFinishingWorkTimes.contains(4)
+    }
 }
 
 // MARK: - Extension for selector methods
 extension SettingViewController {
+    @objc func dismiss(_ sender: UIButton) {
+        self.dismiss(animated: true)
+    }
+    
     @objc func controlPushSwitch(_ sender: YSBlueSwitch) {
         print("section:\(sender.indexPath.section ), row:\(sender.indexPath.row) switch is \(sender.isOn ? "On" : "Off")")
         if sender.indexPath.section == 0 {
@@ -245,8 +573,9 @@ extension SettingViewController {
                     
                 } else {
                     SupportingMethods.shared.setAppSetting(with: false, for: .pushActivation)
-                    SupportingMethods.shared.setAppSetting(with: false, for: .alertSettingStartingWorkTime)
-                    SupportingMethods.shared.setAppSetting(with: false, for: .alertFinishingWorkTime)
+                    SupportingMethods.shared.setAppSetting(with: nil, for: .alertSettingStartingWorkTime)
+                    SupportingMethods.shared.setAppSetting(with: nil, for: .alertFinishingWorkTime)
+                    self.alertFinishingWorkTimes = []
                     
                     self.settingTableView.reloadSections([0], with: .automatic)
                 }
@@ -254,30 +583,122 @@ extension SettingViewController {
             
             if sender.indexPath.row == 1 {
                 if sender.isOn {
-                    SupportingMethods.shared.setAppSetting(with: true, for: .alertSettingStartingWorkTime)
-                    
-                    self.settingTableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .automatic)
+                    self.datePicker.setDate(Date(), animated: false)
+                    self.popUpViewType = .startingWorkTime
+                    self.coverView.isHidden = false
                     
                 } else {
-                    SupportingMethods.shared.setAppSetting(with: false, for: .alertSettingStartingWorkTime)
-                    
-                    self.settingTableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .automatic)
+                    SupportingMethods.shared.setAppSetting(with: nil, for: .alertSettingStartingWorkTime)
+                    let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 1, section: 0)) as! SettingSubCell
+                    settingSubCell.itemTextLabel.alpha = 0.5
                 }
             }
             
             if sender.indexPath.row == 2 {
                 if sender.isOn {
-                    SupportingMethods.shared.setAppSetting(with: true, for: .alertFinishingWorkTime)
-                    
-                    self.settingTableView.reloadRows(at: [IndexPath(row: 2, section: 0)], with: .automatic)
+                    self.determineFinishingButtonsState()
+                    self.popUpViewType = .finishingWorkTime
+                    self.coverView.isHidden = false
                     
                 } else {
-                    SupportingMethods.shared.setAppSetting(with: false, for: .alertFinishingWorkTime)
-                    
-                    self.settingTableView.reloadRows(at: [IndexPath(row: 2, section: 0)], with: .automatic)
+                    SupportingMethods.shared.setAppSetting(with: nil, for: .alertFinishingWorkTime)
+                    self.alertFinishingWorkTimes = []
+                    let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 2, section: 0)) as! SettingSubCell
+                    settingSubCell.itemTextLabel.alpha = 0.5
                 }
             }
         }
+    }
+    
+    @objc func datePicker(_ datePicker: UIDatePicker) {
+        
+    }
+    
+    @objc func firstButton(_ sender: UIButton) {
+        sender.isSelected.toggle()
+        sender.backgroundColor = sender.isSelected ?
+            .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
+        sender.layer.borderColor = sender.isSelected ?
+        UIColor.useRGB(red: 25, green: 178, blue: 255).cgColor :
+        UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
+        sender.setTitleColor(sender.isSelected ?
+            .white : .useRGB(red: 151, green: 151, blue: 151), for: .normal)
+    }
+    
+    @objc func secondButton(_ sender: UIButton) {
+        sender.isSelected.toggle()
+        sender.backgroundColor = sender.isSelected ?
+            .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
+        sender.layer.borderColor = sender.isSelected ?
+        UIColor.useRGB(red: 25, green: 178, blue: 255).cgColor :
+        UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
+        sender.setTitleColor(sender.isSelected ?
+            .white : .useRGB(red: 151, green: 151, blue: 151), for: .normal)
+    }
+    
+    @objc func thirdButton(_ sender: UIButton) {
+        sender.isSelected.toggle()
+        sender.backgroundColor = sender.isSelected ?
+            .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
+        sender.layer.borderColor = sender.isSelected ?
+        UIColor.useRGB(red: 25, green: 178, blue: 255).cgColor :
+        UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
+        sender.setTitleColor(sender.isSelected ?
+            .white : .useRGB(red: 151, green: 151, blue: 151), for: .normal)
+    }
+    
+    @objc func fourthButton(_ sender: UIButton) {
+        sender.isSelected.toggle()
+        sender.backgroundColor = sender.isSelected ?
+            .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
+        sender.layer.borderColor = sender.isSelected ?
+        UIColor.useRGB(red: 25, green: 178, blue: 255).cgColor :
+        UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
+        sender.setTitleColor(sender.isSelected ?
+            .white : .useRGB(red: 151, green: 151, blue: 151), for: .normal)
+    }
+    
+    @objc func declineButton(_ sender: UIButton) {
+        switch self.popUpViewType {
+        case .startingWorkTime:
+            if let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? SettingSubCell {
+                settingSubCell.switchButton.isOn = SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Date != nil
+            }
+            
+        case .finishingWorkTime:
+            if let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SettingSubCell {
+                settingSubCell.switchButton.isOn = SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? [Int] != nil &&
+                !(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as! [Int]).isEmpty
+            }
+        }
+        
+        self.coverView.isHidden = true
+    }
+    
+    @objc func confirmButton(_ sender: UIButton) {
+        switch self.popUpViewType {
+        case .startingWorkTime:
+            SupportingMethods.shared.setAppSetting(with: self.datePicker.date, for: .alertSettingStartingWorkTime)
+            
+            if let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? SettingSubCell {
+                let isEnable = SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Date != nil
+                settingSubCell.switchButton.isOn = isEnable
+                settingSubCell.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
+            }
+            
+        case .finishingWorkTime:
+            self.determineFinishingWorkTimes()
+            SupportingMethods.shared.setAppSetting(with: Array(self.alertFinishingWorkTimes), for: .alertFinishingWorkTime)
+            
+            if let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SettingSubCell {
+                let isEnable = SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? [Int] != nil &&
+                !(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as! [Int]).isEmpty
+                settingSubCell.switchButton.isOn = isEnable
+                settingSubCell.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
+            }
+        }
+        
+        self.coverView.isHidden = true
     }
 }
 
@@ -312,24 +733,34 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell!
-        if indexPath.section == 0 && (indexPath.row == 1 || indexPath.row == 2) {
-            let settingSubCell = tableView.dequeueReusableCell(withIdentifier: "SettingSubCell", for: indexPath) as! SettingSubCell
-            if case .switch(let onOff) = self.settingArray[indexPath.section].items[indexPath.row].style {
-                settingSubCell.setCell(self.settingArray[indexPath.section].items[indexPath.row].style,
-                                       itemText: self.settingArray[indexPath.section].items[indexPath.row].text,
-                                       indexPath: indexPath,
-                                       isEnable: onOff)
+        if indexPath.section == 0 {
+            if indexPath.row == 0 {
+                let settingCell = tableView.dequeueReusableCell(withIdentifier: "SettingCell", for: indexPath) as! SettingCell
+                settingCell.setCell(self.settingArray[indexPath.section].items[indexPath.row].style,
+                             itemText: self.settingArray[indexPath.section].items[indexPath.row].text, indexPath: indexPath, isEnable: true)
+                settingCell.selectionStyle = .none
+                settingCell.switchButton.addTarget(self, action: #selector(controlPushSwitch(_:)), for: .valueChanged)
                 
-                settingSubCell.switchButton.addTarget(self, action: #selector(controlPushSwitch(_:)), for: .valueChanged)
+                cell = settingCell
+                
+            } else {
+                let settingSubCell = tableView.dequeueReusableCell(withIdentifier: "SettingSubCell", for: indexPath) as! SettingSubCell
+                if case .switch(let onOff) = self.settingArray[indexPath.section].items[indexPath.row].style {
+                    settingSubCell.setCell(self.settingArray[indexPath.section].items[indexPath.row].style,
+                                           itemText: self.settingArray[indexPath.section].items[indexPath.row].text,
+                                           indexPath: indexPath,
+                                           isEnable: onOff)
+                    
+                    settingSubCell.switchButton.addTarget(self, action: #selector(controlPushSwitch(_:)), for: .valueChanged)
+                }
+                
+                cell = settingSubCell
             }
-            
-            cell = settingSubCell
             
         } else {
             let settingCell = tableView.dequeueReusableCell(withIdentifier: "SettingCell", for: indexPath) as! SettingCell
             settingCell.setCell(self.settingArray[indexPath.section].items[indexPath.row].style,
-                         itemText: self.settingArray[indexPath.section].items[indexPath.row].text, indexPath: indexPath, isEnable: true) // FIXME: Need to determine boolean value.
-            settingCell.switchButton.addTarget(self, action: #selector(controlPushSwitch(_:)), for: .valueChanged)
+                         itemText: self.settingArray[indexPath.section].items[indexPath.row].text, indexPath: indexPath, isEnable: true)
             
             cell = settingCell
         }
@@ -339,5 +770,43 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        if indexPath.section == 0 {
+            if case .switch(let onOff) = self.settingArray[indexPath.section].items[indexPath.row].style, !onOff {
+                return
+            }
+        }
+        
+        if indexPath.section == 0 && indexPath.row == 1 {
+            self.datePicker.setDate(SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as! Date, animated: false)
+            self.popUpViewType = .startingWorkTime
+            
+            self.coverView.isHidden = false
+            
+        }
+        
+        if indexPath.section == 0 && indexPath.row == 2 {
+            self.alertFinishingWorkTimes = Set(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as! [Int])
+            self.determineFinishingButtonsState()
+            self.popUpViewType = .finishingWorkTime
+            
+            self.coverView.isHidden = false
+        }
+        
+        if indexPath.section == 1 && indexPath.row == 0 {
+            
+        }
+        
+        if indexPath.section == 1 && indexPath.row == 1 {
+            
+        }
+        
+        if indexPath.section == 2 && indexPath.row == 0 {
+            
+        }
+        
+        if indexPath.section == 2 && indexPath.row == 1 {
+            
+        }
     }
 }
