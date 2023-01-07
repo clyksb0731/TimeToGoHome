@@ -426,7 +426,7 @@ extension SupportingMethods {
     class func getCurrentTimeSeconds() -> Int {
         return Int(CFAbsoluteTimeGetCurrent())
         
-        // FIXME: For test
+        // MARK: For test
         //return self.makeTempTimeSeconds(hour: 17, minute: 3, second: 0)
     }
     
