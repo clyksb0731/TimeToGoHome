@@ -122,9 +122,9 @@ extension SettingCell: EssentialCellHeaderMethods {
         // switchButton
         NSLayoutConstraint.activate([
             self.switchButton.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
-            self.switchButton.heightAnchor.constraint(equalToConstant: 28),
+            //self.switchButton.heightAnchor.constraint(equalToConstant: 28),
             self.switchButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -24),
-            self.switchButton.widthAnchor.constraint(equalToConstant: 52)
+            //self.switchButton.widthAnchor.constraint(equalToConstant: 52)
         ])
         
         // sideLabel

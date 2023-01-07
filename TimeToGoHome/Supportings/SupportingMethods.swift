@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 /**
  Variables for app setting on UserDefaults
@@ -18,6 +19,7 @@ enum PListVariable: String {
     case pushActivation
     case alertSettingStartingWorkTime
     case alertFinishingWorkTime
+    case alertCompanyLocation
 }
 
 enum InitialSetting: String {
@@ -472,6 +474,194 @@ extension SupportingMethods {
             firstView.leadingAnchor.constraint(equalTo: secondView.leadingAnchor),
             firstView.trailingAnchor.constraint(equalTo: secondView.trailingAnchor)
         ])
+    }
+    
+    // MARK: Control push notification
+    func makePushNotificationsWithDateComponents(_ dateComponents: DateComponents,
+                                                 repeats: Bool,
+                                                 title: String,
+                                                 body: String,
+                                                 sound: UNNotificationSound,
+                                                 identifier: String,
+                                                 success: (() -> ())? = nil,
+                                                 failure: (() -> ())? = nil) {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = .default
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: repeats)
+        
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Adding push identifier(\(identifier)) error: \(error.localizedDescription)")
+                
+                DispatchQueue.main.async {
+                    failure?()
+                }
+                
+            } else {
+                print("Succeeded in adding push identifier: \(identifier)")
+                
+                DispatchQueue.main.async {
+                    success?()
+                }
+            }
+        }
+    }
+    
+    func makePushNotificationWithRegion(_ region: CLRegion,
+                                        repeats: Bool,
+                                        title: String,
+                                        body: String,
+                                        sound: UNNotificationSound,
+                                        identifier: String,
+                                        success: (() -> ())? = nil,
+                                        failure: (() -> ())? = nil) {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = .default
+        
+        let trigger = UNLocationNotificationTrigger(region: region, repeats: repeats)
+        
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Adding push identifier(\(identifier)) error: \(error.localizedDescription)")
+                
+                DispatchQueue.main.async {
+                    failure?()
+                }
+                
+            } else {
+                print("Succeeded in adding push identifier: \(identifier)")
+                
+                DispatchQueue.main.async {
+                    success?()
+                }
+            }
+        }
+    }
+    
+    func removePushNotificationForIdentifier(_ identifiers: [String]) {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
+        
+        for identifier in identifiers {
+            print("Remove push identifier: \(identifier)")
+        }
+    }
+    
+    func makeStartingWorkTimePush(_ startingWorkTime: Date,
+                                  success: (() -> ())? = nil,
+                                  failure: (() -> ())? = nil) {
+        guard let holidays = ReferenceValues.initialSetting[InitialSetting.regularHolidays.rawValue] as? [Int] else {
+            failure?()
+            
+            return
+        }
+        
+        var workDaysSet: Set<Int> = [1, 2, 3, 4, 5, 6, 7]
+        for holiday in holidays {
+            workDaysSet.remove(holiday)
+        }
+        let workDays = Array(workDaysSet)
+        
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let calendarDateComponents = calendar.dateComponents([.weekday, .hour, .minute, .second], from: startingWorkTime)
+        
+        for workDay in workDays {
+            let dateComponents = DateComponents(hour: calendarDateComponents.hour!, minute: calendarDateComponents.minute!, second: calendarDateComponents.second!, weekday: workDay)
+            self.makePushNotificationsWithDateComponents(dateComponents, repeats: true, title: "출근 시간 설정", body: "출근 시간을 설정하세요.", sound: .default, identifier: ReferenceValues.Identifier.Push.startingWorkTime) {
+                success?()
+                
+            } failure: {
+                failure?()
+            }
+        }
+    }
+    
+    func makeTodayFinishingWorkTimePush(_ schedule: WorkScheduleModel?,
+                                        success: (() -> ())? = nil,
+                                        failure: (() -> ())? = nil) {
+        self.removeTodayFinishingWorkTimePush()
+        
+        guard let finishingWorkTimes = SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? [Int], !finishingWorkTimes.isEmpty, let schedule = schedule,
+        let regulartime = schedule.finishingRegularWorkTimeSecondsSinceReferenceDate else {
+            
+            failure?()
+            
+            return
+        }
+        
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let now = Int(Date().timeIntervalSinceReferenceDate)
+        
+        for finishingWorkTime in finishingWorkTimes {
+            let identifier =
+            finishingWorkTime == 30 ? ReferenceValues.Identifier.Push.finishingWorkTime30minutes :
+            finishingWorkTime == 10 ? ReferenceValues.Identifier.Push.finishingWorkTime10minutes :
+            finishingWorkTime == 5 ? ReferenceValues.Identifier.Push.finishingWorkTime5minutes :
+            ReferenceValues.Identifier.Push.finishingWorkTimeOclock
+            
+            if schedule.overtimeSecondsSincReferenceDate > 0 {
+                let overtime = schedule.overtimeSecondsSincReferenceDate
+                
+                if now < overtime - finishingWorkTime * 60 {
+                    let date = Date(timeIntervalSinceReferenceDate: Double(overtime - finishingWorkTime * 60))
+                    let calendarDateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+                    
+                    self.makePushNotificationsWithDateComponents(calendarDateComponents, repeats: false, title: "업무 종료", body: finishingWorkTime == 0 ? "업무가 종료되었습니다. 자 이제 집으로!" : "업무 종료 \(finishingWorkTime)분 전입니다. 자 이제 곧 집으로!", sound: .default, identifier: identifier) {
+                        success?()
+                        
+                    } failure: {
+                        failure?()
+                    }
+                }
+                
+            } else {
+                if now < regulartime - finishingWorkTime * 60 {
+                    let date = Date(timeIntervalSinceReferenceDate: Double(regulartime - finishingWorkTime * 60))
+                    let calendarDateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+                    
+                    self.makePushNotificationsWithDateComponents(calendarDateComponents, repeats: false, title: "업무 종료", body: finishingWorkTime == 0 ? "업무가 종료되었습니다. 자 이제 집으로!" : "업무 종료 \(finishingWorkTime)분 전입니다. 자 이제 곧 집으로!", sound: .default, identifier: identifier) {
+                        success?()
+                        
+                    } failure: {
+                        failure?()
+                    }
+                }
+            }
+        }
+    }
+    
+    func removeTodayFinishingWorkTimePush() {
+        self.removePushNotificationForIdentifier([
+            ReferenceValues.Identifier.Push.finishingWorkTimeOclock,
+            ReferenceValues.Identifier.Push.finishingWorkTime5minutes,
+            ReferenceValues.Identifier.Push.finishingWorkTime10minutes,
+            ReferenceValues.Identifier.Push.finishingWorkTime30minutes
+        ])
+    }
+    
+    func makeCurrentCompanyLocationPush(success: (() -> ())? = nil,
+                                        failure: (() -> ())? = nil) {
+        let center = CLLocationCoordinate2D(latitude: ReferenceValues.initialSetting[InitialSetting.companyLatitude.rawValue] as! Double, longitude: ReferenceValues.initialSetting[InitialSetting.companyLongitude.rawValue] as! Double)
+        let region = CLCircularRegion(center: center, radius: 50, identifier: ReferenceValues.Identifier.Location.companyLocation)
+        region.notifyOnEntry = true
+        region.notifyOnExit = false
+        
+        self.makePushNotificationWithRegion(region, repeats: true, title: "회사 근처", body: "회사 근처입니다. 앱을 띄워 스케쥴을 확인하세요.", sound: .default, identifier: ReferenceValues.Identifier.Push.companyLocation) {
+            success?()
+            
+        } failure: {
+            failure?()
+        }
     }
 }
 

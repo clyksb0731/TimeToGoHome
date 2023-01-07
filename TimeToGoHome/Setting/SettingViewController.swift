@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 class SettingViewController: UIViewController {
     
@@ -206,13 +207,16 @@ class SettingViewController: UIViewController {
         return button
     }()
     
+    weak var mainVC: MainViewController?
+    
     var settingArray: [(header: String, items:[(style: MenuSettingCellType, text: String)])] {
         [
             (header: "알림",
              items: SupportingMethods.shared.useAppSetting(for: .pushActivation) as? Bool == true ? [
                 (style: .switch(true), text: "알림 설정"),
                 (style: .switch(SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Date != nil), text: "ㄴ 출근 시간 설정 알림"),
-                (style: .switch(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? [Int] != nil && !(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as! [Int]).isEmpty), text: "ㄴ 업무 종료 알림")
+                (style: .switch(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? [Int] != nil && !(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as! [Int]).isEmpty), text: "ㄴ 업무 종료 알림"),
+                (style: .switch(SupportingMethods.shared.useAppSetting(for: .alertCompanyLocation) as? Bool == true), text: "ㄴ 근무지 근처 알림")
              ] : [
                 (style: .switch(false), text: "알림 설정")
              ]
@@ -484,75 +488,75 @@ extension SettingViewController: EssentialViewMethods {
 // MARK: - Extension for methods added
 extension SettingViewController {
     func determineFinishingWorkTimes() {
-        if self.firstButton.isSelected {
-            self.alertFinishingWorkTimes.insert(1)
+        if self.fourthButton.isSelected {
+            self.alertFinishingWorkTimes.insert(30)
             
         } else {
-            self.alertFinishingWorkTimes.remove(1)
-        }
-        
-        if self.secondButton.isSelected {
-            self.alertFinishingWorkTimes.insert(2)
-            
-        } else {
-            self.alertFinishingWorkTimes.remove(2)
+            self.alertFinishingWorkTimes.remove(30)
         }
         
         if self.thirdButton.isSelected {
-            self.alertFinishingWorkTimes.insert(3)
+            self.alertFinishingWorkTimes.insert(10)
             
         } else {
-            self.alertFinishingWorkTimes.remove(3)
+            self.alertFinishingWorkTimes.remove(10)
         }
         
-        if self.fourthButton.isSelected {
-            self.alertFinishingWorkTimes.insert(4)
+        if self.secondButton.isSelected {
+            self.alertFinishingWorkTimes.insert(5)
             
         } else {
-            self.alertFinishingWorkTimes.remove(4)
+            self.alertFinishingWorkTimes.remove(5)
+        }
+        
+        if self.firstButton.isSelected {
+            self.alertFinishingWorkTimes.insert(0)
+            
+        } else {
+            self.alertFinishingWorkTimes.remove(0)
         }
     }
     
     func determineFinishingButtonsState() {
         // firstButton
-        self.firstButton.backgroundColor = self.alertFinishingWorkTimes.contains(1) ?
+        self.firstButton.backgroundColor = self.alertFinishingWorkTimes.contains(0) ?
             .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
-        self.firstButton.layer.borderColor = self.alertFinishingWorkTimes.contains(1) ?
+        self.firstButton.layer.borderColor = self.alertFinishingWorkTimes.contains(0) ?
         UIColor.useRGB(red: 25, green: 178, blue: 255).cgColor :
         UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
-        self.firstButton.setTitleColor(self.alertFinishingWorkTimes.contains(1) ?
+        self.firstButton.setTitleColor(self.alertFinishingWorkTimes.contains(0) ?
             .white : .useRGB(red: 151, green: 151, blue: 151), for: .normal)
-        self.firstButton.isSelected = self.alertFinishingWorkTimes.contains(1)
+        self.firstButton.isSelected = self.alertFinishingWorkTimes.contains(0)
         
         // secondButton
-        self.secondButton.backgroundColor = self.alertFinishingWorkTimes.contains(2) ?
+        self.secondButton.backgroundColor = self.alertFinishingWorkTimes.contains(5) ?
             .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
-        self.secondButton.layer.borderColor = self.alertFinishingWorkTimes.contains(2) ?
+        self.secondButton.layer.borderColor = self.alertFinishingWorkTimes.contains(5) ?
         UIColor.useRGB(red: 25, green: 178, blue: 255).cgColor :
         UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
-        self.secondButton.setTitleColor(self.alertFinishingWorkTimes.contains(2) ?
+        self.secondButton.setTitleColor(self.alertFinishingWorkTimes.contains(5) ?
             .white : .useRGB(red: 151, green: 151, blue: 151), for: .normal)
-        self.secondButton.isSelected = self.alertFinishingWorkTimes.contains(2)
+        self.secondButton.isSelected = self.alertFinishingWorkTimes.contains(5)
         
         // thirdButton
-        self.thirdButton.backgroundColor = self.alertFinishingWorkTimes.contains(3) ?
+        self.thirdButton.backgroundColor = self.alertFinishingWorkTimes.contains(10) ?
             .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
-        self.thirdButton.layer.borderColor = self.alertFinishingWorkTimes.contains(3) ?
+        self.thirdButton.layer.borderColor = self.alertFinishingWorkTimes.contains(10) ?
         UIColor.useRGB(red: 25, green: 178, blue: 255).cgColor :
         UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
-        self.thirdButton.setTitleColor(self.alertFinishingWorkTimes.contains(3) ?
+        self.thirdButton.setTitleColor(self.alertFinishingWorkTimes.contains(10) ?
             .white : .useRGB(red: 151, green: 151, blue: 151), for: .normal)
-        self.thirdButton.isSelected = self.alertFinishingWorkTimes.contains(3)
+        self.thirdButton.isSelected = self.alertFinishingWorkTimes.contains(10)
         
         // fourthButton
-        self.fourthButton.backgroundColor = self.alertFinishingWorkTimes.contains(4) ?
+        self.fourthButton.backgroundColor = self.alertFinishingWorkTimes.contains(30) ?
             .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
-        self.fourthButton.layer.borderColor = self.alertFinishingWorkTimes.contains(4) ?
+        self.fourthButton.layer.borderColor = self.alertFinishingWorkTimes.contains(30) ?
         UIColor.useRGB(red: 25, green: 178, blue: 255).cgColor :
         UIColor.useRGB(red: 151, green: 151, blue: 151).cgColor
-        self.fourthButton.setTitleColor(self.alertFinishingWorkTimes.contains(4) ?
+        self.fourthButton.setTitleColor(self.alertFinishingWorkTimes.contains(30) ?
             .white : .useRGB(red: 151, green: 151, blue: 151), for: .normal)
-        self.fourthButton.isSelected = self.alertFinishingWorkTimes.contains(4)
+        self.fourthButton.isSelected = self.alertFinishingWorkTimes.contains(30)
     }
 }
 
@@ -567,21 +571,54 @@ extension SettingViewController {
         if sender.indexPath.section == 0 {
             if sender.indexPath.row == 0 {
                 if sender.isOn {
-                    SupportingMethods.shared.setAppSetting(with: true, for: .pushActivation)
-                    
-                    self.settingTableView.reloadSections([0], with: .automatic)
+                    let notificationCenter = UNUserNotificationCenter.current()
+                    notificationCenter.getNotificationSettings { setting in
+                        if setting.authorizationStatus != .authorized {
+                            DispatchQueue.main.async {
+                                sender.isOn = false
+                                
+                                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림 설정", andMessage: "시스템 알림이 꺼져있습니다. 시스템 설정으로 이동합니다.", okAction: UIAlertAction(title: "확인", style: .default, handler: { action in
+                                    if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
+                                        if UIApplication.shared.canOpenURL(settingsUrl) {
+                                            UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
+                                                print("Settings opened: \(success)") // Prints true
+                                            })
+                                        }
+                                    }
+                                    
+                                }), cancelAction: nil, completion: nil)
+                            }
+                            
+                        } else {
+                            DispatchQueue.main.async {
+                                SupportingMethods.shared.setAppSetting(with: true, for: .pushActivation)
+                                
+                                self.settingTableView.reloadSections([0], with: .automatic)
+                            }
+                        }
+                    }
                     
                 } else {
                     SupportingMethods.shared.setAppSetting(with: false, for: .pushActivation)
                     SupportingMethods.shared.setAppSetting(with: nil, for: .alertSettingStartingWorkTime)
                     SupportingMethods.shared.setAppSetting(with: nil, for: .alertFinishingWorkTime)
                     self.alertFinishingWorkTimes = []
+                    SupportingMethods.shared.setAppSetting(with: false, for: .alertCompanyLocation)
+                    
+                    SupportingMethods.shared.removePushNotificationForIdentifier([
+                        ReferenceValues.Identifier.Push.startingWorkTime,
+                        ReferenceValues.Identifier.Push.finishingWorkTimeOclock,
+                        ReferenceValues.Identifier.Push.finishingWorkTime5minutes,
+                        ReferenceValues.Identifier.Push.finishingWorkTime10minutes,
+                        ReferenceValues.Identifier.Push.finishingWorkTime30minutes,
+                        ReferenceValues.Identifier.Push.companyLocation
+                    ])
                     
                     self.settingTableView.reloadSections([0], with: .automatic)
                 }
             }
             
-            if sender.indexPath.row == 1 {
+            if sender.indexPath.row == 1 { // MARK: startingWorkTime
                 if sender.isOn {
                     self.datePicker.setDate(Date(), animated: false)
                     self.popUpViewType = .startingWorkTime
@@ -589,12 +626,16 @@ extension SettingViewController {
                     
                 } else {
                     SupportingMethods.shared.setAppSetting(with: nil, for: .alertSettingStartingWorkTime)
+                    SupportingMethods.shared.removePushNotificationForIdentifier([
+                        ReferenceValues.Identifier.Push.startingWorkTime
+                    ])
+                    
                     let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 1, section: 0)) as! SettingSubCell
                     settingSubCell.itemTextLabel.alpha = 0.5
                 }
             }
             
-            if sender.indexPath.row == 2 {
+            if sender.indexPath.row == 2 { // MARK: finishingWorkTime
                 if sender.isOn {
                     self.determineFinishingButtonsState()
                     self.popUpViewType = .finishingWorkTime
@@ -603,7 +644,41 @@ extension SettingViewController {
                 } else {
                     SupportingMethods.shared.setAppSetting(with: nil, for: .alertFinishingWorkTime)
                     self.alertFinishingWorkTimes = []
+                    SupportingMethods.shared.removePushNotificationForIdentifier([
+                        ReferenceValues.Identifier.Push.finishingWorkTimeOclock,
+                        ReferenceValues.Identifier.Push.finishingWorkTime5minutes,
+                        ReferenceValues.Identifier.Push.finishingWorkTime10minutes,
+                        ReferenceValues.Identifier.Push.finishingWorkTime30minutes
+                    ])
+                    
                     let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 2, section: 0)) as! SettingSubCell
+                    settingSubCell.itemTextLabel.alpha = 0.5
+                }
+            }
+            
+            if sender.indexPath.row == 3 { // MARK: companyLocation
+                if sender.isOn {
+                    SupportingMethods.shared.makeAlert(on: self, withTitle: "알림 생성", andMessage: "근무지 근처에서 알림을 띄울까요? (이동 위치에 따라 반복될 수 있습니다.)", okAction: UIAlertAction(title: "예", style: .default, handler: { action in
+                        SupportingMethods.shared.setAppSetting(with: true, for: .alertCompanyLocation)
+                        
+                        let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 3, section: 0)) as! SettingSubCell
+                        settingSubCell.itemTextLabel.alpha = 1
+                        
+                        SupportingMethods.shared.makeCurrentCompanyLocationPush()
+                        
+                    }), cancelAction: UIAlertAction(title: "아니오", style: .cancel, handler: { action in
+                        let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 3, section: 0)) as! SettingSubCell
+                        settingSubCell.switchButton.isOn = SupportingMethods.shared.useAppSetting(for: .alertCompanyLocation) as? Bool == true
+                        settingSubCell.itemTextLabel.alpha = SupportingMethods.shared.useAppSetting(for: .alertCompanyLocation) as? Bool == true ? 1 : 0.5
+                    }), completion: nil)
+                    
+                } else {
+                    SupportingMethods.shared.setAppSetting(with: false, for: .alertCompanyLocation)
+                    SupportingMethods.shared.removePushNotificationForIdentifier([
+                        ReferenceValues.Identifier.Push.companyLocation
+                    ])
+                    
+                    let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 3, section: 0)) as! SettingSubCell
                     settingSubCell.itemTextLabel.alpha = 0.5
                 }
             }
@@ -661,15 +736,16 @@ extension SettingViewController {
     @objc func declineButton(_ sender: UIButton) {
         switch self.popUpViewType {
         case .startingWorkTime:
-            if let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? SettingSubCell {
-                settingSubCell.switchButton.isOn = SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Date != nil
-            }
+            let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 1, section: 0)) as! SettingSubCell
+            settingSubCell.switchButton.isOn = SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Date != nil
+            settingSubCell.itemTextLabel.alpha = SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Date != nil ? 1 : 0.5
             
         case .finishingWorkTime:
-            if let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SettingSubCell {
-                settingSubCell.switchButton.isOn = SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? [Int] != nil &&
-                !(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as! [Int]).isEmpty
-            }
+            let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 2, section: 0)) as! SettingSubCell
+            settingSubCell.switchButton.isOn = SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? [Int] != nil &&
+            !(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as! [Int]).isEmpty
+            settingSubCell.itemTextLabel.alpha = SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? [Int] != nil &&
+            !(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as! [Int]).isEmpty ? 1 : 0.5
         }
         
         self.coverView.isHidden = true
@@ -679,23 +755,24 @@ extension SettingViewController {
         switch self.popUpViewType {
         case .startingWorkTime:
             SupportingMethods.shared.setAppSetting(with: self.datePicker.date, for: .alertSettingStartingWorkTime)
+            let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 1, section: 0)) as! SettingSubCell
+            let isEnable = SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Date != nil
+            settingSubCell.switchButton.isOn = isEnable
+            settingSubCell.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
             
-            if let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? SettingSubCell {
-                let isEnable = SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Date != nil
-                settingSubCell.switchButton.isOn = isEnable
-                settingSubCell.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
-            }
+            SupportingMethods.shared.makeStartingWorkTimePush(self.datePicker.date)
             
         case .finishingWorkTime:
             self.determineFinishingWorkTimes()
             SupportingMethods.shared.setAppSetting(with: Array(self.alertFinishingWorkTimes), for: .alertFinishingWorkTime)
             
-            if let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SettingSubCell {
-                let isEnable = SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? [Int] != nil &&
-                !(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as! [Int]).isEmpty
-                settingSubCell.switchButton.isOn = isEnable
-                settingSubCell.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
-            }
+            let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 2, section: 0)) as! SettingSubCell
+            let isEnable = SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? [Int] != nil &&
+            !(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as! [Int]).isEmpty
+            settingSubCell.switchButton.isOn = isEnable
+            settingSubCell.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
+            
+            SupportingMethods.shared.makeTodayFinishingWorkTimePush(self.mainVC?.schedule)
         }
         
         self.coverView.isHidden = true
@@ -727,6 +804,14 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         return nil
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 && (indexPath.row == 1 || indexPath.row == 2) {
+            return 40
+        }
+        
+        return 50
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.settingArray[section].items.count
     }
@@ -737,11 +822,24 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
             if indexPath.row == 0 {
                 let settingCell = tableView.dequeueReusableCell(withIdentifier: "SettingCell", for: indexPath) as! SettingCell
                 settingCell.setCell(self.settingArray[indexPath.section].items[indexPath.row].style,
-                             itemText: self.settingArray[indexPath.section].items[indexPath.row].text, indexPath: indexPath, isEnable: true)
+                                    itemText: self.settingArray[indexPath.section].items[indexPath.row].text, indexPath: indexPath, isEnable: true)
                 settingCell.selectionStyle = .none
                 settingCell.switchButton.addTarget(self, action: #selector(controlPushSwitch(_:)), for: .valueChanged)
                 
                 cell = settingCell
+            } else if indexPath.row == 3 {
+                let settingSubCell = tableView.dequeueReusableCell(withIdentifier: "SettingSubCell", for: indexPath) as! SettingSubCell
+                if case .switch(let onOff) = self.settingArray[indexPath.section].items[indexPath.row].style {
+                    settingSubCell.setCell(self.settingArray[indexPath.section].items[indexPath.row].style,
+                                           itemText: self.settingArray[indexPath.section].items[indexPath.row].text,
+                                           indexPath: indexPath,
+                                           isEnable: onOff)
+                    settingSubCell.selectionStyle = .none
+                    
+                    settingSubCell.switchButton.addTarget(self, action: #selector(controlPushSwitch(_:)), for: .valueChanged)
+                }
+                
+                cell = settingSubCell
                 
             } else {
                 let settingSubCell = tableView.dequeueReusableCell(withIdentifier: "SettingSubCell", for: indexPath) as! SettingSubCell

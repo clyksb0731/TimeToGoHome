@@ -397,6 +397,8 @@ extension WorkScheduleModel {
             
             companyModel.applySchedule(schedule)
             
+            SupportingMethods.shared.makeTodayFinishingWorkTimePush(self)
+            
             var vacation: Vacation!
             if morningWorkType == .vacation && afternoonWorkType == .vacation {
                 vacation = Vacation(date: self.date, vacationType: .fullDay)

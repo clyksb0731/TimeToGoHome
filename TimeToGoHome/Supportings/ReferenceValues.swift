@@ -39,6 +39,24 @@ extension ReferenceValues {
     }
 }
 
+// MARK: - Extension of referenceValues for push identifier
+extension ReferenceValues {
+    struct Identifier {
+        struct Push {
+            static let startingWorkTime = "TimeToGoHome.identifier.push.startingWorkTime"
+            static let finishingWorkTimeOclock = "TimeToGoHome.identifier.push.finishingWorkTimeOclock"
+            static let finishingWorkTime5minutes = "TimeToGoHome.identifier.push.finishingWorkTime5minutes"
+            static let finishingWorkTime10minutes = "TimeToGoHome.identifier.push.finishingWorkTime10minutes"
+            static let finishingWorkTime30minutes = "TimeToGoHome.identifier.push.finishingWorkTime30minutes"
+            static let companyLocation = "TimeToGoHome.identifier.push.companyLocation"
+        }
+        
+        struct Location {
+            static let companyLocation = "TimeToGoHome.identifier.location.companyLocation"
+        }
+    }
+}
+
 // MARK: - Extension of UIColor for view color
 extension UIColor {
     struct schedule {

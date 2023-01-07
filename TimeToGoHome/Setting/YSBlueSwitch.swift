@@ -38,7 +38,7 @@ class YSBlueSwitch: UIControl {
         }
         
         didSet {
-            self.movableViewCenterXAnchor.constant = self.isOn ? 34 : 14
+            self.movableViewCenterXAnchor.constant = self.isOn ? 30 : 14
             
             UIView.animate(withDuration: 0.2) {
                 self.layoutIfNeeded()
@@ -63,7 +63,7 @@ class YSBlueSwitch: UIControl {
         
         if frame == .zero {
             NSLayoutConstraint.activate([
-                self.heightAnchor.constraint(equalToConstant: 48),
+                self.heightAnchor.constraint(equalToConstant: 44),
                 self.widthAnchor.constraint(equalToConstant: 28)
             ])
         }
@@ -78,7 +78,7 @@ class YSBlueSwitch: UIControl {
             self.barView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             self.barView.heightAnchor.constraint(equalToConstant: 16),
             self.barView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            self.barView.widthAnchor.constraint(equalToConstant: 48),
+            self.barView.widthAnchor.constraint(equalToConstant: 44),
             
             self.movableView.centerYAnchor.constraint(equalTo: self.barView.centerYAnchor),
             self.movableView.heightAnchor.constraint(equalToConstant: 28),

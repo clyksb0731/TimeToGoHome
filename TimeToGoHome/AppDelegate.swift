@@ -82,8 +82,16 @@ extension AppDelegate {
         center.delegate = self
         
         center.requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
-            if !granted {
-                print("Something wrong for using Notification")
+            if granted {
+                SupportingMethods.shared.setAppSetting(with: true, for: .pushActivation)
+                
+            } else {
+                print("Push is denied")
+                SupportingMethods.shared.setAppSetting(with: false, for: .pushActivation)
+                
+                if let error = error {
+                    print("Error for push notification: \(error.localizedDescription)")
+                }
             }
         }
     }

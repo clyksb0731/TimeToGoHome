@@ -122,9 +122,9 @@ extension SettingSubCell: EssentialCellHeaderMethods {
         // switchButton
         NSLayoutConstraint.activate([
             self.switchButton.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
-            self.switchButton.heightAnchor.constraint(equalToConstant: 28),
+            //self.switchButton.heightAnchor.constraint(equalToConstant: 28),
             self.switchButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -24),
-            self.switchButton.widthAnchor.constraint(equalToConstant: 52)
+            //self.switchButton.widthAnchor.constraint(equalToConstant: 52)
         ])
         
         // sideLabel
@@ -151,7 +151,7 @@ extension SettingSubCell {
         self.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
         self.openVCImageView.alpha = isEnable ? 1.0 : 0.5
         
-        self.itemTextLabel.font = .systemFont(ofSize: 17, weight: .regular)
+        self.itemTextLabel.font = .systemFont(ofSize: 14, weight: .regular)
         self.itemTextLabel.text = text
         
         switch style {
@@ -182,7 +182,7 @@ extension SettingSubCell {
             self.switchButton.isHidden = true
             self.sideLabel.isHidden = true
             
-            self.itemTextLabel.font = .systemFont(ofSize: 17, weight: .bold)
+            self.itemTextLabel.font = .systemFont(ofSize: 14, weight: .bold)
         }
     }
 }

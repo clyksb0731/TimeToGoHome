@@ -840,6 +840,8 @@ extension MainViewController {
 // MARK: - Extension for methods added
 extension MainViewController {
     func determineToday() {
+        SupportingMethods.shared.makeTodayFinishingWorkTimePush(self.schedule)
+        
         self.todayTimeValue = self.determineTodayTimeValue()
         self.tomorrowTimeValue = self.todayTimeValue + 86400
         
@@ -2382,6 +2384,7 @@ extension MainViewController {
     
     @objc func settingBarButtonItem(_ sender: UIBarButtonItem) {
         let settingVC = SettingViewController()
+        settingVC.mainVC = self
         let settingNaviVC = CustomizedNavigationController(rootViewController: settingVC)
         
         self.present(settingNaviVC, animated: true, completion: nil)
