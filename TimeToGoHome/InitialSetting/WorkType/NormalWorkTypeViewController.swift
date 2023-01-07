@@ -936,7 +936,7 @@ extension NormalWorkTypeViewController {
         NSLayoutConstraint.activate([
             self.staggeredTypeButton.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 32),
             self.staggeredTypeButton.heightAnchor.constraint(equalToConstant: 92),
-            self.staggeredTypeButton.trailingAnchor.constraint(equalTo: self.contentView.centerXAnchor, constant: -25),
+            self.staggeredTypeButton.trailingAnchor.constraint(equalTo: self.contentView.centerXAnchor, constant: -50),
             self.staggeredTypeButton.widthAnchor.constraint(equalToConstant: 92)
         ])
         
@@ -944,7 +944,7 @@ extension NormalWorkTypeViewController {
         NSLayoutConstraint.activate([
             self.normalTypeButton.topAnchor.constraint(equalTo: self.staggeredTypeButton.topAnchor),
             self.normalTypeButton.heightAnchor.constraint(equalToConstant: 92),
-            self.normalTypeButton.leadingAnchor.constraint(equalTo: self.contentView.centerXAnchor, constant: 25),
+            self.normalTypeButton.leadingAnchor.constraint(equalTo: self.contentView.centerXAnchor, constant: 50),
             self.normalTypeButton.widthAnchor.constraint(equalToConstant: 92)
         ])
         
