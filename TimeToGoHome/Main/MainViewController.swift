@@ -852,6 +852,17 @@ extension MainViewController {
            todayDateId > leavingDateId {
             self.leavingDateCoverView.isHidden = false
             
+            self.navigationItem.rightBarButtonItem?.isEnabled = false
+            SupportingMethods.shared.turnOffAndRemoveLocalPush()
+            
+            if self.presentedViewController is SettingViewController {
+                self.dismiss(animated: true)
+            }
+            
+            if let menuVC = self.presentedViewController as? MenuViewController {
+                menuVC.menuTableView.reloadData()
+            }
+            
         } else {
             self.leavingDateCoverView.isHidden = true
         }
@@ -2417,6 +2428,8 @@ extension MainViewController {
             
         } else {
             guard let startingWorkTimeSecondsSinceReferenceDate = self.schedule.startingWorkTimeSecondsSinceReferenceDate else {
+                self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
+                
                 return
             }
             

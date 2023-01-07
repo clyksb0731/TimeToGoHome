@@ -380,17 +380,18 @@ extension MenuViewController: MenuCoverDelegate {
         
         if let schedules = companyModel.getSchedulesAfter(date), !schedules.isEmpty {
             SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(dateFormatted) 이후에 기록된 일정이 있습니다. 퇴직 처리 시 해당 일정이 삭제됩니다. 퇴직 처리할까요?", okAction: UIAlertAction(title: "퇴직 처리", style: .default, handler: { _ in
-                companyModel.removeSchedules(schedules)
-                companyModel.setLeavingDate(date)
+                self.mainVC?.schedule.updateStartingWorkTime(nil)
+                SupportingMethods.shared.turnOffAndRemoveLocalPush()
                 
                 ReferenceValues.initialSetting.updateValue(date, forKey: InitialSetting.leavingDate.rawValue)
                 SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
                 
-                self.menuTableView.reloadData()
+                companyModel.setLeavingDate(date)
+                companyModel.removeSchedules(schedules)
                 
-                // Because today is also removed.
-                //self.mainVC?.timer?.invalidate()
-                self.mainVC?.schedule.updateStartingWorkTime(nil)
+                self.mainVC?.schedule = .today
+                
+                self.menuTableView.reloadData()
                 
             }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)
             
