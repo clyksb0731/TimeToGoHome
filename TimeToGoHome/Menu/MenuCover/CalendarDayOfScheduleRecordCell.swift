@@ -54,7 +54,7 @@ class CalendarDayOfScheduleRecordCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 10)
         label.textAlignment = .center
-        label.textColor = .calendar.todayMark
+        label.textColor = .Calendar.todayMark
         label.text = "오늘"
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -63,7 +63,7 @@ class CalendarDayOfScheduleRecordCell: UICollectionViewCell {
     
     lazy var bottomLineView: UIView = {
         let view = UIView()
-        view.backgroundColor = .calendar.selectedDayBottomLine
+        view.backgroundColor = .Calendar.selectedDayBottomLine
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -208,13 +208,13 @@ extension CalendarDayOfScheduleRecordCell {
                         if let morning = recordedSchedule.morning {
                             switch morning {
                             case .work:
-                                self.morningPointView.backgroundColor = .record.work
+                                self.morningPointView.backgroundColor = .Record.work
                                 
                             case .vacation:
-                                self.morningPointView.backgroundColor = .record.vacation
+                                self.morningPointView.backgroundColor = .Record.vacation
                                 
                             case .holiday:
-                                self.morningPointView.backgroundColor = .record.holiday
+                                self.morningPointView.backgroundColor = .Record.holiday
                             }
                             
                         } else {
@@ -224,13 +224,13 @@ extension CalendarDayOfScheduleRecordCell {
                         if let afternoon = recordedSchedule.afternoon {
                             switch afternoon {
                             case .work:
-                                self.afternoonPointView.backgroundColor = .record.work
+                                self.afternoonPointView.backgroundColor = .Record.work
                                 
                             case .vacation:
-                                self.afternoonPointView.backgroundColor = .record.vacation
+                                self.afternoonPointView.backgroundColor = .Record.vacation
                                 
                             case .holiday:
-                                self.afternoonPointView.backgroundColor = .record.holiday
+                                self.afternoonPointView.backgroundColor = .Record.holiday
                             }
                             
                         } else {
@@ -238,7 +238,7 @@ extension CalendarDayOfScheduleRecordCell {
                         }
                     }
                     
-                    self.overtimePointView.backgroundColor = recordedSchedule.overtime != nil ? .record.overtime : .clear
+                    self.overtimePointView.backgroundColor = recordedSchedule.overtime != nil ? .Record.overtime : .clear
                     
                 } else {
                     self.morningPointView.backgroundColor = .clear

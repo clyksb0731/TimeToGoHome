@@ -19,9 +19,9 @@ class DayWorkRecordViewController: UIViewController {
     
     lazy var addScheduleView: UIView = {
         let view = UIView()
-        view.backgroundColor = .record.scheduling
+        view.backgroundColor = .Record.scheduling
         view.layer.cornerRadius = 9
-        let dashLayer = SupportingMethods.shared.makeDashLayer(dashColor: UIColor.record.schedulingDash, width: UIScreen.main.bounds.width - 10, height: 60, cornerRadius: 9)
+        let dashLayer = SupportingMethods.shared.makeDashLayer(dashColor: UIColor.Record.schedulingDash, width: UIScreen.main.bounds.width - 10, height: 60, cornerRadius: 9)
         view.layer.addSublayer(dashLayer)
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -261,30 +261,30 @@ extension DayWorkRecordViewController {
     
     func calculateTableViewHeight() -> CGFloat {
         if self.recordedSchedule.count == 1 {
-            return ReferenceValues.size.record.normalScheduleHeight + ReferenceValues.size.record.schedulingHeight
+            return ReferenceValues.Size.Record.normalScheduleHeight + ReferenceValues.Size.Record.schedulingHeight
             
         } else if self.recordedSchedule.count == 2 {
             if self.isEditingMode {
                 switch self.recordedSchedule.afternoon! {
                 case .holiday:
-                    return ReferenceValues.size.record.normalScheduleHeight * 2
+                    return ReferenceValues.Size.Record.normalScheduleHeight * 2
                     
                 case .vacation:
-                    return ReferenceValues.size.record.normalScheduleHeight * 2
+                    return ReferenceValues.Size.Record.normalScheduleHeight * 2
                     
                 case .work:
-                    return ReferenceValues.size.record.normalScheduleHeight * 2 + ReferenceValues.size.record.schedulingHeight
+                    return ReferenceValues.Size.Record.normalScheduleHeight * 2 + ReferenceValues.Size.Record.schedulingHeight
                 }
                 
             } else {
-                return ReferenceValues.size.record.normalScheduleHeight * 2
+                return ReferenceValues.Size.Record.normalScheduleHeight * 2
             }
             
         } else if self.recordedSchedule.count == 3 {
-            return ReferenceValues.size.record.normalScheduleHeight * 2 + ReferenceValues.size.record.overtimeScheduleHeight
+            return ReferenceValues.Size.Record.normalScheduleHeight * 2 + ReferenceValues.Size.Record.overtimeScheduleHeight
             
         } else { // 0
-            return ReferenceValues.size.record.schedulingHeight
+            return ReferenceValues.Size.Record.schedulingHeight
         }
     }
     
@@ -576,46 +576,46 @@ extension DayWorkRecordViewController: UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if self.recordedSchedule.count == 1 {
             if indexPath.row == 0 {
-                return ReferenceValues.size.record.normalScheduleHeight
+                return ReferenceValues.Size.Record.normalScheduleHeight
                 
             } else { // row == 1
-                return ReferenceValues.size.record.schedulingHeight
+                return ReferenceValues.Size.Record.schedulingHeight
             }
             
         } else if self.recordedSchedule.count == 2 {
             if self.isEditingMode {
                 if indexPath.row == 0 {
-                    return ReferenceValues.size.record.normalScheduleHeight
+                    return ReferenceValues.Size.Record.normalScheduleHeight
                     
                 } else if indexPath.row == 1 {
-                    return ReferenceValues.size.record.normalScheduleHeight
+                    return ReferenceValues.Size.Record.normalScheduleHeight
                     
                 } else { // row == 2
-                    return ReferenceValues.size.record.schedulingHeight
+                    return ReferenceValues.Size.Record.schedulingHeight
                 }
                 
             } else {
                 if indexPath.row == 0 {
-                    return ReferenceValues.size.record.normalScheduleHeight
+                    return ReferenceValues.Size.Record.normalScheduleHeight
                     
                 } else { // row == 1
-                    return ReferenceValues.size.record.normalScheduleHeight
+                    return ReferenceValues.Size.Record.normalScheduleHeight
                 }
             }
             
         } else if self.recordedSchedule.count == 3 {
             if indexPath.row == 0 {
-                return ReferenceValues.size.record.normalScheduleHeight
+                return ReferenceValues.Size.Record.normalScheduleHeight
                 
             } else if indexPath.row == 1 {
-                return ReferenceValues.size.record.normalScheduleHeight
+                return ReferenceValues.Size.Record.normalScheduleHeight
                 
             } else { // row == 2
-                return ReferenceValues.size.record.overtimeScheduleHeight
+                return ReferenceValues.Size.Record.overtimeScheduleHeight
             }
             
         } else { // count == 0
-            return ReferenceValues.size.record.schedulingHeight
+            return ReferenceValues.Size.Record.schedulingHeight
         }
     }
     

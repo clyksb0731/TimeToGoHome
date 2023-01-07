@@ -22,15 +22,15 @@ struct ReferenceValues {
 
 // MARK: - Extension of referenceValues for size
 extension ReferenceValues {
-    struct size {
-        struct schedule {
+    struct Size {
+        struct Schedule {
             static let normalScheduleHeight: CGFloat = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.27
             static let overtimeScheduleHeight: CGFloat = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.17
             
             static let changeScheduleDescriptionLabelHeight = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.024
         }
         
-        struct record {
+        struct Record {
             static let normalScheduleHeight: CGFloat = 130
             static let overtimeScheduleHeight: CGFloat = 70
             static let schedulingHeight: CGFloat = 60
@@ -67,7 +67,7 @@ extension ReferenceValues {
 
 // MARK: - Extension of UIColor for view color
 extension UIColor {
-    struct schedule {
+    struct Schedule {
         static var work: UIColor {
             return .useRGB(red: 125, green: 243, blue: 110)
         }
@@ -97,7 +97,7 @@ extension UIColor {
         }
     }
     
-    struct record {
+    struct Record {
         static var work: UIColor {
             return .useRGB(red: 125, green: 243, blue: 110)
         }
@@ -123,7 +123,7 @@ extension UIColor {
         }
     }
     
-    struct calendar {
+    struct Calendar {
         static var vacation: UIColor {
             return .useRGB(red: 110, green: 217, blue: 228)
         }
@@ -137,7 +137,7 @@ extension UIColor {
         }
     }
     
-    struct buttons {
+    struct Buttons {
         static var initialActiveBottom: UIColor {
             return .useRGB(red: 146, green: 243, blue: 205)
         }

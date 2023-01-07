@@ -21,7 +21,7 @@ class WorkRecordCell: UITableViewCell {
     
     lazy var morningBar: UIView = {
         let view = UIView()
-        view.backgroundColor = .schedule.holiday
+        view.backgroundColor = .Schedule.holiday
         view.layer.cornerRadius = 4
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -30,7 +30,7 @@ class WorkRecordCell: UITableViewCell {
     
     lazy var afternoonBar: UIView = {
         let view = UIView()
-        view.backgroundColor = .schedule.holiday
+        view.backgroundColor = .Schedule.holiday
         view.layer.cornerRadius = 4
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -39,7 +39,7 @@ class WorkRecordCell: UITableViewCell {
     
     lazy var overtimeBar: UIView = {
         let view = UIView()
-        view.backgroundColor = .schedule.overtime
+        view.backgroundColor = .Schedule.overtime
         view.layer.cornerRadius = 4
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -178,27 +178,27 @@ extension WorkRecordCell {
         // Morning Bar
         switch morning {
         case .work:
-            self.morningBar.backgroundColor = .schedule.work
+            self.morningBar.backgroundColor = .Schedule.work
             workTime += 3600 * 4
             
         case .vacation:
-            self.morningBar.backgroundColor = .schedule.vacation
+            self.morningBar.backgroundColor = .Schedule.vacation
             
         case .holiday:
-            self.morningBar.backgroundColor = .schedule.holiday
+            self.morningBar.backgroundColor = .Schedule.holiday
         }
         
         // Afternoon Bar
         switch afternoon {
         case .work:
-            self.afternoonBar.backgroundColor = .schedule.work
+            self.afternoonBar.backgroundColor = .Schedule.work
             workTime += 3600 * 4
             
         case .vacation:
-            self.afternoonBar.backgroundColor = .schedule.vacation
+            self.afternoonBar.backgroundColor = .Schedule.vacation
             
         case .holiday:
-            self.afternoonBar.backgroundColor = .schedule.holiday
+            self.afternoonBar.backgroundColor = .Schedule.holiday
         }
         
         if let overtime = overtime {

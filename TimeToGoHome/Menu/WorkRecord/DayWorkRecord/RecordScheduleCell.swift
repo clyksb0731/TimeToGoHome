@@ -168,19 +168,19 @@ extension RecordScheduleCell {
             
             switch morning {
             case .work:
-                self.scheduleView.backgroundColor = .schedule.work
+                self.scheduleView.backgroundColor = .Schedule.work
                 self.timeTypeLabel.textColor = .white
                 self.scheduleTypeLabel.textColor = .white
                 self.scheduleTypeLabel.text = "근무"
                 
             case .vacation:
-                self.scheduleView.backgroundColor = .schedule.vacation
+                self.scheduleView.backgroundColor = .Schedule.vacation
                 self.timeTypeLabel.textColor = .white
                 self.scheduleTypeLabel.textColor = .white
                 self.scheduleTypeLabel.text = "휴가"
                 
             case .holiday:
-                self.scheduleView.backgroundColor = .schedule.holiday
+                self.scheduleView.backgroundColor = .Schedule.holiday
                 self.timeTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
                 self.scheduleTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
                 self.scheduleTypeLabel.text = "휴일"
@@ -193,19 +193,19 @@ extension RecordScheduleCell {
             
             switch afternoon {
             case .work:
-                self.scheduleView.backgroundColor = .schedule.work
+                self.scheduleView.backgroundColor = .Schedule.work
                 self.timeTypeLabel.textColor = .white
                 self.scheduleTypeLabel.textColor = .white
                 self.scheduleTypeLabel.text = "근무"
                 
             case .vacation:
-                self.scheduleView.backgroundColor = .schedule.vacation
+                self.scheduleView.backgroundColor = .Schedule.vacation
                 self.timeTypeLabel.textColor = .white
                 self.scheduleTypeLabel.textColor = .white
                 self.scheduleTypeLabel.text = "휴가"
                 
             case .holiday:
-                self.scheduleView.backgroundColor = .schedule.holiday
+                self.scheduleView.backgroundColor = .Schedule.holiday
                 self.timeTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
                 self.scheduleTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
                 self.scheduleTypeLabel.text = "휴일"
@@ -215,7 +215,7 @@ extension RecordScheduleCell {
         if tag == 3, let overtime = schedule.overtime {
             self.timeTypeLabelTopAnchor.constant = 10
             self.timeTypeLabel.text = SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(overtime)
-            self.scheduleView.backgroundColor = .schedule.overtime
+            self.scheduleView.backgroundColor = .Schedule.overtime
             self.timeTypeLabel.textColor = .white
             self.scheduleTypeLabel.textColor = .white
             self.scheduleTypeLabel.text = "추가 근무"

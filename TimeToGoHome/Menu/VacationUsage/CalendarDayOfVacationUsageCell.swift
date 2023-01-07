@@ -17,11 +17,11 @@ class CalendarDayOfVacationUsageCell: UICollectionViewCell {
     
     lazy private var morningVacationShapeView: UIView = {
         let halfView = UIView()
-        halfView.backgroundColor = .calendar.vacation
+        halfView.backgroundColor = .Calendar.vacation
         halfView.translatesAutoresizingMaskIntoConstraints = false
         
         let view = UIView()
-        view.layer.borderColor = UIColor.calendar.vacation.cgColor
+        view.layer.borderColor = UIColor.Calendar.vacation.cgColor
         view.layer.borderWidth = 2
         view.layer.cornerRadius = 14
         view.clipsToBounds = true
@@ -42,11 +42,11 @@ class CalendarDayOfVacationUsageCell: UICollectionViewCell {
     
     lazy private var afternoonVacationShapeView: UIView = {
         let halfView = UIView()
-        halfView.backgroundColor = .calendar.vacation
+        halfView.backgroundColor = .Calendar.vacation
         halfView.translatesAutoresizingMaskIntoConstraints = false
         
         let view = UIView()
-        view.layer.borderColor = UIColor.calendar.vacation.cgColor
+        view.layer.borderColor = UIColor.Calendar.vacation.cgColor
         view.layer.borderWidth = 2
         view.layer.cornerRadius = 14
         view.clipsToBounds = true
@@ -67,7 +67,7 @@ class CalendarDayOfVacationUsageCell: UICollectionViewCell {
     
     lazy private var fullDayVacationShapeView: UIView = {
         let view = UIView()
-        view.backgroundColor = .calendar.vacation
+        view.backgroundColor = .Calendar.vacation
         view.layer.cornerRadius = 14
         view.clipsToBounds = true
         view.isHidden = true
@@ -114,7 +114,7 @@ class CalendarDayOfVacationUsageCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 10)
         label.textAlignment = .center
-        label.textColor = .calendar.todayMark
+        label.textColor = .Calendar.todayMark
         label.text = "오늘"
         label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -124,7 +124,7 @@ class CalendarDayOfVacationUsageCell: UICollectionViewCell {
     
     lazy private var bottomLineView: UIView = {
         let view = UIView()
-        view.backgroundColor = .calendar.selectedDayBottomLine
+        view.backgroundColor = .Calendar.selectedDayBottomLine
         view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -321,13 +321,13 @@ extension CalendarDayOfVacationUsageCell {
                             if let morning = WorkTimeType(rawValue: schedule.morning) {
                                 switch morning {
                                 case .work:
-                                    self.morningPointView.backgroundColor = .record.work
+                                    self.morningPointView.backgroundColor = .Record.work
                                     
                                 case .vacation:
-                                    self.morningPointView.backgroundColor = .record.vacation
+                                    self.morningPointView.backgroundColor = .Record.vacation
                                     
                                 case .holiday:
-                                    self.morningPointView.backgroundColor = .record.holiday
+                                    self.morningPointView.backgroundColor = .Record.holiday
                                 }
                                 
                             } else {
@@ -337,13 +337,13 @@ extension CalendarDayOfVacationUsageCell {
                             if let afternoon = WorkTimeType(rawValue: schedule.afternoon) {
                                 switch afternoon {
                                 case .work:
-                                    self.afternoonPointView.backgroundColor = .record.work
+                                    self.afternoonPointView.backgroundColor = .Record.work
                                     
                                 case .vacation:
-                                    self.afternoonPointView.backgroundColor = .record.vacation
+                                    self.afternoonPointView.backgroundColor = .Record.vacation
                                     
                                 case .holiday:
-                                    self.afternoonPointView.backgroundColor = .record.holiday
+                                    self.afternoonPointView.backgroundColor = .Record.holiday
                                 }
                                 
                             } else {
@@ -351,7 +351,7 @@ extension CalendarDayOfVacationUsageCell {
                             }
                         }
                         
-                        self.overtimePointView.backgroundColor = schedule.overtime != nil ? .record.overtime : .clear
+                        self.overtimePointView.backgroundColor = schedule.overtime != nil ? .Record.overtime : .clear
                         
                     } else {
                         self.morningPointView.backgroundColor = .clear

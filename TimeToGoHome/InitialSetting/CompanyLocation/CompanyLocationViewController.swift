@@ -87,7 +87,7 @@ class CompanyLocationViewController: UIViewController {
     
     var nextButtonView: UIView = {
         let view = UIView()
-        view.backgroundColor = .buttons.initialInactiveBottom
+        view.backgroundColor = .Buttons.initialInactiveBottom
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -408,7 +408,7 @@ extension CompanyLocationViewController {
         self.searchTextField.text = ""
         
         self.nextButton.isEnabled = false
-        self.nextButtonView.backgroundColor = .buttons.initialInactiveBottom
+        self.nextButtonView.backgroundColor = .Buttons.initialInactiveBottom
         self.nextButtonImageView.image = UIImage(named: "nextNormalImage")
         
         self.noResultTextLabel.isHidden = true
@@ -514,7 +514,7 @@ extension CompanyLocationViewController: UITextFieldDelegate {
         self.selectedLocationIndex = nil
         
         self.nextButton.isEnabled = false
-        self.nextButtonView.backgroundColor = .buttons.initialInactiveBottom
+        self.nextButtonView.backgroundColor = .Buttons.initialInactiveBottom
         self.nextButtonImageView.image = UIImage(named: "nextNormalImage")
         
         if textField.text != "" &&
@@ -564,7 +564,7 @@ extension CompanyLocationViewController: UITableViewDelegate, UITableViewDataSou
             LocationManager.shared.companyRegion = CLCircularRegion(center: center, radius: 5, identifier: "companyLocation")
             
             self.nextButton.isEnabled = true
-            self.nextButtonView.backgroundColor = .buttons.initialActiveBottom
+            self.nextButtonView.backgroundColor = .Buttons.initialActiveBottom
             self.nextButtonImageView.image = UIImage(named: "nextSelectedImage")
             
             tableView.reloadData()

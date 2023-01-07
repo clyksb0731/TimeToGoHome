@@ -10,9 +10,9 @@ import UIKit
 class RecordSchedulingCell: UITableViewCell {
     lazy var addScheduleView: UIView = {
         let view = UIView()
-        view.backgroundColor = .record.scheduling
+        view.backgroundColor = .Record.scheduling
         view.layer.cornerRadius = 9
-        let dashLayer = SupportingMethods.shared.makeDashLayer(dashColor: UIColor.record.schedulingDash, width: UIScreen.main.bounds.width - 10, height: 60, cornerRadius: 9)
+        let dashLayer = SupportingMethods.shared.makeDashLayer(dashColor: UIColor.Record.schedulingDash, width: UIScreen.main.bounds.width - 10, height: 60, cornerRadius: 9)
         view.layer.addSublayer(dashLayer)
         view.translatesAutoresizingMaskIntoConstraints = false
         

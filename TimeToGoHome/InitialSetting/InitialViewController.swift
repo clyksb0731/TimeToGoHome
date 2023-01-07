@@ -266,7 +266,7 @@ class InitialViewController: UIViewController {
     
     var nextButtonView: UIView = {
         let view = UIView()
-        view.backgroundColor = .buttons.initialInactiveBottom
+        view.backgroundColor = .Buttons.initialInactiveBottom
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -773,7 +773,7 @@ extension InitialViewController {
         self.companyNameEraserButton.isHidden = textField.text == "" || text == ""
         //self.nextButton.isSelected = textField.text != "" && text != ""
         self.nextButtonView.backgroundColor = textField.text != "" && text != "" ?
-            .buttons.initialActiveBottom : .buttons.initialInactiveBottom
+            .Buttons.initialActiveBottom : .Buttons.initialInactiveBottom
         self.nextButtonImageView.image = textField.text != "" && text != "" ?
             UIImage(named: "nextSelectedImage") : UIImage(named: "nextNormalImage")
         self.nextButton.isEnabled = textField.text != "" && text != ""
@@ -784,7 +784,7 @@ extension InitialViewController {
         self.companyNameEraserButton.isHidden = true
         
         //self.nextButton.isSelected = false
-        self.nextButtonView.backgroundColor = .buttons.initialInactiveBottom
+        self.nextButtonView.backgroundColor = .Buttons.initialInactiveBottom
         self.nextButtonImageView.image = UIImage(named: "nextNormalImage")
         self.nextButton.isEnabled = false
     }
