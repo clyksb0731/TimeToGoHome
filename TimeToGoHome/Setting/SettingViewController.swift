@@ -318,7 +318,7 @@ extension SettingViewController: EssentialViewMethods {
     }
     
     func setNotificationCenters() {
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(willEnterForegroundNotification(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
     
     func setSubviews() {
@@ -562,6 +562,19 @@ extension SettingViewController {
 
 // MARK: - Extension for selector methods
 extension SettingViewController {
+    @objc func willEnterForegroundNotification(_ notification: Notification) {
+        UNUserNotificationCenter.current().getNotificationSettings { setting in
+            if setting.authorizationStatus != .authorized {
+                DispatchQueue.main.async {
+                    SupportingMethods.shared.turnOffAndRemoveLocalPush()
+                    self.alertFinishingWorkTimes = []
+                    
+                    self.settingTableView.reloadSections([0], with: .automatic)
+                }
+            }
+        }
+    }
+    
     @objc func dismiss(_ sender: UIButton) {
         self.dismiss(animated: true)
     }
@@ -577,12 +590,10 @@ extension SettingViewController {
                             DispatchQueue.main.async {
                                 sender.isOn = false
                                 
-                                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림 설정", andMessage: "시스템 알림이 꺼져있습니다. 시스템 설정으로 이동합니다.", okAction: UIAlertAction(title: "확인", style: .default, handler: { action in
+                                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림 설정", andMessage: "시스템 알림이 꺼져있습니다. 먼저 시스템 알림을 켠 후 설정해 주세요. 시스템 설정으로 이동합니다.", okAction: UIAlertAction(title: "확인", style: .default, handler: { action in
                                     if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
                                         if UIApplication.shared.canOpenURL(settingsUrl) {
-                                            UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
-                                                print("Settings opened: \(success)") // Prints true
-                                            })
+                                            UIApplication.shared.open(settingsUrl)
                                         }
                                     }
                                     
@@ -599,20 +610,8 @@ extension SettingViewController {
                     }
                     
                 } else {
-                    SupportingMethods.shared.setAppSetting(with: false, for: .pushActivation)
-                    SupportingMethods.shared.setAppSetting(with: nil, for: .alertSettingStartingWorkTime)
-                    SupportingMethods.shared.setAppSetting(with: nil, for: .alertFinishingWorkTime)
+                    SupportingMethods.shared.turnOffAndRemoveLocalPush()
                     self.alertFinishingWorkTimes = []
-                    SupportingMethods.shared.setAppSetting(with: false, for: .alertCompanyLocation)
-                    
-                    SupportingMethods.shared.removePushNotificationForIdentifier([
-                        ReferenceValues.Identifier.Push.startingWorkTime,
-                        ReferenceValues.Identifier.Push.finishingWorkTimeOclock,
-                        ReferenceValues.Identifier.Push.finishingWorkTime5minutes,
-                        ReferenceValues.Identifier.Push.finishingWorkTime10minutes,
-                        ReferenceValues.Identifier.Push.finishingWorkTime30minutes,
-                        ReferenceValues.Identifier.Push.companyLocation
-                    ])
                     
                     self.settingTableView.reloadSections([0], with: .automatic)
                 }
@@ -626,9 +625,7 @@ extension SettingViewController {
                     
                 } else {
                     SupportingMethods.shared.setAppSetting(with: nil, for: .alertSettingStartingWorkTime)
-                    SupportingMethods.shared.removePushNotificationForIdentifier([
-                        ReferenceValues.Identifier.Push.startingWorkTime
-                    ])
+                    SupportingMethods.shared.removeStartingWorkTimePush()
                     
                     let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 1, section: 0)) as! SettingSubCell
                     settingSubCell.itemTextLabel.alpha = 0.5
@@ -644,12 +641,7 @@ extension SettingViewController {
                 } else {
                     SupportingMethods.shared.setAppSetting(with: nil, for: .alertFinishingWorkTime)
                     self.alertFinishingWorkTimes = []
-                    SupportingMethods.shared.removePushNotificationForIdentifier([
-                        ReferenceValues.Identifier.Push.finishingWorkTimeOclock,
-                        ReferenceValues.Identifier.Push.finishingWorkTime5minutes,
-                        ReferenceValues.Identifier.Push.finishingWorkTime10minutes,
-                        ReferenceValues.Identifier.Push.finishingWorkTime30minutes
-                    ])
+                    SupportingMethods.shared.removeTodayFinishingWorkTimePush()
                     
                     let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 2, section: 0)) as! SettingSubCell
                     settingSubCell.itemTextLabel.alpha = 0.5
@@ -674,9 +666,7 @@ extension SettingViewController {
                     
                 } else {
                     SupportingMethods.shared.setAppSetting(with: false, for: .alertCompanyLocation)
-                    SupportingMethods.shared.removePushNotificationForIdentifier([
-                        ReferenceValues.Identifier.Push.companyLocation
-                    ])
+                    SupportingMethods.shared.removeCurrentCompanyLocationPush()
                     
                     let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 3, section: 0)) as! SettingSubCell
                     settingSubCell.itemTextLabel.alpha = 0.5
@@ -805,7 +795,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 && (indexPath.row == 1 || indexPath.row == 2) {
+        if indexPath.section == 0 && (indexPath.row == 1 || indexPath.row == 2 || indexPath.row == 3) {
             return 40
         }
         

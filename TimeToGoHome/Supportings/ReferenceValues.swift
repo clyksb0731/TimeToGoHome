@@ -43,11 +43,19 @@ extension ReferenceValues {
 extension ReferenceValues {
     struct Identifier {
         struct Push {
-            static let startingWorkTime = "TimeToGoHome.identifier.push.startingWorkTime"
+            static let startingWorkTimeOnSun = "TimeToGoHome.identifier.push.startingWorkTimeOnSun"
+            static let startingWorkTimeOnMon = "TimeToGoHome.identifier.push.startingWorkTimeOnMon"
+            static let startingWorkTimeOnTue = "TimeToGoHome.identifier.push.startingWorkTimeOnTue"
+            static let startingWorkTimeOnWed = "TimeToGoHome.identifier.push.startingWorkTimeOnWed"
+            static let startingWorkTimeOnThu = "TimeToGoHome.identifier.push.startingWorkTimeOnThu"
+            static let startingWorkTimeOnFri = "TimeToGoHome.identifier.push.startingWorkTimeOnFri"
+            static let startingWorkTimeOnSat = "TimeToGoHome.identifier.push.startingWorkTimeOnSat"
+            
             static let finishingWorkTimeOclock = "TimeToGoHome.identifier.push.finishingWorkTimeOclock"
             static let finishingWorkTime5minutes = "TimeToGoHome.identifier.push.finishingWorkTime5minutes"
             static let finishingWorkTime10minutes = "TimeToGoHome.identifier.push.finishingWorkTime10minutes"
             static let finishingWorkTime30minutes = "TimeToGoHome.identifier.push.finishingWorkTime30minutes"
+            
             static let companyLocation = "TimeToGoHome.identifier.push.companyLocation"
         }
         

@@ -547,7 +547,7 @@ extension SupportingMethods {
         }
     }
     
-    func removePushNotificationForIdentifier(_ identifiers: [String]) {
+    private func removePushNotificationForIdentifier(_ identifiers: [String]) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
         
         for identifier in identifiers {
@@ -559,6 +559,8 @@ extension SupportingMethods {
                                   success: (() -> ())? = nil,
                                   failure: (() -> ())? = nil) {
         guard let holidays = ReferenceValues.initialSetting[InitialSetting.regularHolidays.rawValue] as? [Int] else {
+            print("Do not add push for starting work time.")
+            
             failure?()
             
             return
@@ -575,14 +577,35 @@ extension SupportingMethods {
         let calendarDateComponents = calendar.dateComponents([.weekday, .hour, .minute, .second], from: startingWorkTime)
         
         for workDay in workDays {
+            let identifier =
+            workDay == 1 ? ReferenceValues.Identifier.Push.startingWorkTimeOnSun :
+            workDay == 2 ? ReferenceValues.Identifier.Push.startingWorkTimeOnMon :
+            workDay == 3 ? ReferenceValues.Identifier.Push.startingWorkTimeOnTue :
+            workDay == 4 ? ReferenceValues.Identifier.Push.startingWorkTimeOnWed :
+            workDay == 5 ? ReferenceValues.Identifier.Push.startingWorkTimeOnThu :
+            workDay == 6 ? ReferenceValues.Identifier.Push.startingWorkTimeOnFri :
+            ReferenceValues.Identifier.Push.startingWorkTimeOnSat
+            
             let dateComponents = DateComponents(hour: calendarDateComponents.hour!, minute: calendarDateComponents.minute!, second: calendarDateComponents.second!, weekday: workDay)
-            self.makePushNotificationsWithDateComponents(dateComponents, repeats: true, title: "출근 시간 설정", body: "출근 시간을 설정하세요.", sound: .default, identifier: ReferenceValues.Identifier.Push.startingWorkTime) {
+            self.makePushNotificationsWithDateComponents(dateComponents, repeats: true, title: "출근 시간 설정", body: "출근 시간을 설정하세요.", sound: .default, identifier: identifier) {
                 success?()
                 
             } failure: {
                 failure?()
             }
         }
+    }
+    
+    func removeStartingWorkTimePush() {
+        self.removePushNotificationForIdentifier([
+            ReferenceValues.Identifier.Push.startingWorkTimeOnSun,
+            ReferenceValues.Identifier.Push.startingWorkTimeOnMon,
+            ReferenceValues.Identifier.Push.startingWorkTimeOnTue,
+            ReferenceValues.Identifier.Push.startingWorkTimeOnWed,
+            ReferenceValues.Identifier.Push.startingWorkTimeOnThu,
+            ReferenceValues.Identifier.Push.startingWorkTimeOnFri,
+            ReferenceValues.Identifier.Push.startingWorkTimeOnSat
+        ])
     }
     
     func makeTodayFinishingWorkTimePush(_ schedule: WorkScheduleModel?,
@@ -592,6 +615,7 @@ extension SupportingMethods {
         
         guard let finishingWorkTimes = SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? [Int], !finishingWorkTimes.isEmpty, let schedule = schedule,
         let regulartime = schedule.finishingRegularWorkTimeSecondsSinceReferenceDate else {
+            print("Do not add push for finishing work time.")
             
             failure?()
             
@@ -662,6 +686,23 @@ extension SupportingMethods {
         } failure: {
             failure?()
         }
+    }
+    
+    func removeCurrentCompanyLocationPush() {
+        self.removePushNotificationForIdentifier([
+            ReferenceValues.Identifier.Push.companyLocation
+        ])
+    }
+    
+    func turnOffAndRemoveLocalPush() {
+        self.setAppSetting(with: false, for: .pushActivation)
+        self.setAppSetting(with: nil, for: .alertSettingStartingWorkTime)
+        self.setAppSetting(with: nil, for: .alertFinishingWorkTime)
+        self.setAppSetting(with: false, for: .alertCompanyLocation)
+        
+        self.removeStartingWorkTimePush()
+        self.removeTodayFinishingWorkTimePush()
+        self.removeCurrentCompanyLocationPush()
     }
 }
 

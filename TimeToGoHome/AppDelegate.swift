@@ -36,6 +36,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        UNUserNotificationCenter.current().getNotificationSettings { setting in
+            if setting.authorizationStatus != .authorized {
+                DispatchQueue.main.async {
+                    SupportingMethods.shared.turnOffAndRemoveLocalPush()
+                }
+            }
+        }
+    }
+    
     func applicationDidEnterBackground(_ application: UIApplication) {
         self.scheduleBGTasks()
     }
@@ -83,11 +93,12 @@ extension AppDelegate {
         
         center.requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
             if granted {
-                SupportingMethods.shared.setAppSetting(with: true, for: .pushActivation)
+                print("Push authorization is granted")
                 
             } else {
-                print("Push is denied")
-                SupportingMethods.shared.setAppSetting(with: false, for: .pushActivation)
+                print("Push authorization is denied")
+                
+                SupportingMethods.shared.turnOffAndRemoveLocalPush()
                 
                 if let error = error {
                     print("Error for push notification: \(error.localizedDescription)")
