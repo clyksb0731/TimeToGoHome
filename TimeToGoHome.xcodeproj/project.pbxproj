@@ -37,6 +37,9 @@
 		CA79A8E627D85550000F58E2 /* TemplateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA79A8E527D85550000F58E2 /* TemplateCell.swift */; };
 		CA8ED6A5295203F30026478A /* MenuLargeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8ED6A4295203F30026478A /* MenuLargeCell.swift */; };
 		CA9211B12968037000E0F288 /* SettingSubCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9211B02968037000E0F288 /* SettingSubCell.swift */; };
+		CA95E146296ADF4700F95FF9 /* SettingCompanyMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA95E145296ADF4700F95FF9 /* SettingCompanyMapViewController.swift */; };
+		CA95E148296ADF9D00F95FF9 /* SettingCompanyAddressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA95E147296ADF9D00F95FF9 /* SettingCompanyAddressCell.swift */; };
+		CA95E14B296ADFCE00F95FF9 /* SettingHolidaysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA95E14A296ADFCE00F95FF9 /* SettingHolidaysViewController.swift */; };
 		CAA3B24B2801755D00FFF892 /* CalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24A2801755D00FFF892 /* CalendarDayCell.swift */; };
 		CAA3B24D2801758200FFF892 /* CalendarHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */; };
 		CAA3B24F28018ED600FFF892 /* VacationButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24E28018ED600FFF892 /* VacationButtonView.swift */; };
@@ -108,6 +111,9 @@
 		CA79A8E527D85550000F58E2 /* TemplateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateCell.swift; sourceTree = "<group>"; };
 		CA8ED6A4295203F30026478A /* MenuLargeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuLargeCell.swift; sourceTree = "<group>"; };
 		CA9211B02968037000E0F288 /* SettingSubCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingSubCell.swift; sourceTree = "<group>"; };
+		CA95E145296ADF4700F95FF9 /* SettingCompanyMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingCompanyMapViewController.swift; sourceTree = "<group>"; };
+		CA95E147296ADF9D00F95FF9 /* SettingCompanyAddressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingCompanyAddressCell.swift; sourceTree = "<group>"; };
+		CA95E14A296ADFCE00F95FF9 /* SettingHolidaysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingHolidaysViewController.swift; sourceTree = "<group>"; };
 		CAA3B24A2801755D00FFF892 /* CalendarDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayCell.swift; sourceTree = "<group>"; };
 		CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderView.swift; sourceTree = "<group>"; };
 		CAA3B24E28018ED600FFF892 /* VacationButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VacationButtonView.swift; sourceTree = "<group>"; };
@@ -212,6 +218,15 @@
 			path = SettingWorkType;
 			sourceTree = "<group>";
 		};
+		CA95E149296ADFA100F95FF9 /* SettingCompanyMap */ = {
+			isa = PBXGroup;
+			children = (
+				CA95E145296ADF4700F95FF9 /* SettingCompanyMapViewController.swift */,
+				CA95E147296ADF9D00F95FF9 /* SettingCompanyAddressCell.swift */,
+			);
+			path = SettingCompanyMap;
+			sourceTree = "<group>";
+		};
 		CAB9AD642926701E006AB951 /* InitialSetting */ = {
 			isa = PBXGroup;
 			children = (
@@ -295,6 +310,8 @@
 				CAB9AD6D2926765F006AB951 /* SettingHeaderView.swift */,
 				CAF5E49829650E0A00038290 /* YSBlueSwitch.swift */,
 				CA95E144296ADE6000F95FF9 /* SettingWorkType */,
+				CA95E149296ADFA100F95FF9 /* SettingCompanyMap */,
+				CA95E14A296ADFCE00F95FF9 /* SettingHolidaysViewController.swift */,
 			);
 			path = Setting;
 			sourceTree = "<group>";
@@ -463,6 +480,7 @@
 				CAB7CF372750C50F005C9232 /* CompanyAddressCell.swift in Sources */,
 				CAD8E619293CC80C00E3E634 /* NumberOfPaidHolidaysViewController.swift in Sources */,
 				CAB7CF332750B5C7005C9232 /* MainViewController.swift in Sources */,
+				CA95E148296ADF9D00F95FF9 /* SettingCompanyAddressCell.swift in Sources */,
 				CA14AE42293798E4001497DF /* CalendarDayOfScheduleRecordCell.swift in Sources */,
 				CAB7CF292750B0FA005C9232 /* LocationManager.swift in Sources */,
 				CAB7CF482750CDCE005C9232 /* DayButtonView.swift in Sources */,
@@ -481,6 +499,7 @@
 				CAECA69127ED982C005D7859 /* ScheduleButtonView.swift in Sources */,
 				CAB7CF2F2750B2FE005C9232 /* TemplateViewController.swift in Sources */,
 				CA47B0FD2924C0F400D3D8F7 /* MenuHeaderView.swift in Sources */,
+				CA95E146296ADF4700F95FF9 /* SettingCompanyMapViewController.swift in Sources */,
 				CAB7CF2B2750B146005C9232 /* SupportingMethods.swift in Sources */,
 				CA8ED6A5295203F30026478A /* MenuLargeCell.swift in Sources */,
 				CAD8E61B293CC84800E3E634 /* VacationUsageViewController.swift in Sources */,
@@ -517,6 +536,7 @@
 				CA12806C27D1A64800CAFCE8 /* WorkScheduleModel.swift in Sources */,
 				CABD62932928F96F004F3C4F /* MenuCoverViewController.swift in Sources */,
 				CAFEF7CF2839117200DE5BA9 /* ReamDB.swift in Sources */,
+				CA95E14B296ADFCE00F95FF9 /* SettingHolidaysViewController.swift in Sources */,
 				CA7696FF296A980A00F36A1D /* SettingNormalWorkTypeViewController.swift in Sources */,
 				CA79A8E627D85550000F58E2 /* TemplateCell.swift in Sources */,
 				CAB7CF2D2750B280005C9232 /* ReferenceValues.swift in Sources */,
