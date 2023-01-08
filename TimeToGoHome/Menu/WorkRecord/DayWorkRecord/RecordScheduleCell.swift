@@ -125,8 +125,8 @@ extension RecordScheduleCell: EssentialCellHeaderMethods {
         NSLayoutConstraint.activate([
             self.scheduleView.topAnchor.constraint(equalTo: self.baseView.topAnchor),
             self.scheduleView.bottomAnchor.constraint(equalTo: self.baseView.bottomAnchor, constant: -10),
-            self.scheduleView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 5),
-            self.scheduleView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -5)
+            self.scheduleView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 15),
+            self.scheduleView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -15)
         ])
         
         // timeTypeLabel
@@ -136,12 +136,12 @@ extension RecordScheduleCell: EssentialCellHeaderMethods {
             self.timeTypeLabelTopAnchor,
             self.timeTypeLabel.centerYAnchor.constraint(lessThanOrEqualTo: self.scheduleView.centerYAnchor),
             self.timeTypeLabel.leadingAnchor.constraint(equalTo: self.scheduleTypeLabel.trailingAnchor, constant: 5),
-            self.timeTypeLabel.trailingAnchor.constraint(equalTo: self.scheduleView.trailingAnchor, constant: -30)
+            self.timeTypeLabel.trailingAnchor.constraint(equalTo: self.scheduleView.trailingAnchor, constant: -20)
         ])
         
         // removeScheduleButton
         NSLayoutConstraint.activate([
-            self.removeScheduleButton.leadingAnchor.constraint(equalTo: self.scheduleView.leadingAnchor, constant: 30),
+            self.removeScheduleButton.leadingAnchor.constraint(equalTo: self.scheduleView.leadingAnchor, constant: 20),
             self.removeScheduleButton.centerYAnchor.constraint(equalTo: self.scheduleView.centerYAnchor)
         ])
         

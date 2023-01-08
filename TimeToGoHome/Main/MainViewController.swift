@@ -596,8 +596,8 @@ extension MainViewController {
         NSLayoutConstraint.activate([
             self.mainTimeView.topAnchor.constraint(equalTo: safeArea.topAnchor),
             self.mainTimeView.heightAnchor.constraint(equalToConstant: 180),
-            self.mainTimeView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 5),
-            self.mainTimeView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -5)
+            self.mainTimeView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
+            self.mainTimeView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10)
         ])
         
         // Left time button view layout
@@ -620,7 +620,7 @@ extension MainViewController {
         NSLayoutConstraint.activate([
             self.progressRateButtonView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 18),
             self.progressRateButtonView.heightAnchor.constraint(equalToConstant: 28),
-            self.progressRateButtonView.trailingAnchor.constraint(equalTo: self.mainTimeView.trailingAnchor, constant: -31),
+            self.progressRateButtonView.trailingAnchor.constraint(equalTo: self.mainTimeView.trailingAnchor, constant: -26),
             self.progressRateButtonView.widthAnchor.constraint(equalToConstant: 61)
         ])
         
@@ -760,7 +760,7 @@ extension MainViewController {
         NSLayoutConstraint.activate([
             self.editScheduleButton.bottomAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: -17),
             self.editScheduleButton.heightAnchor.constraint(equalToConstant: 15),
-            self.editScheduleButton.leadingAnchor.constraint(equalTo: self.mainTimeView.leadingAnchor, constant: 31),
+            self.editScheduleButton.leadingAnchor.constraint(equalTo: self.mainTimeView.leadingAnchor, constant: 26),
             self.editScheduleButton.widthAnchor.constraint(equalToConstant: 55)
         ])
         
@@ -776,7 +776,7 @@ extension MainViewController {
         NSLayoutConstraint.activate([
             self.startWorkingTimeButton.bottomAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: -17),
             self.startWorkingTimeButton.heightAnchor.constraint(equalToConstant: 15),
-            self.startWorkingTimeButton.trailingAnchor.constraint(equalTo: self.mainTimeView.trailingAnchor, constant: -31),
+            self.startWorkingTimeButton.trailingAnchor.constraint(equalTo: self.mainTimeView.trailingAnchor, constant: -26),
             self.startWorkingTimeButton.widthAnchor.constraint(equalToConstant: 42)
         ])
         
@@ -2736,7 +2736,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 
             } else { // row 1
                 let cell = tableView.dequeueReusableCell(withIdentifier: "SchedulingCell") as! SchedulingCell
-                cell.setCell(scheduleTypeText: "오후 일정", width: UIScreen.main.bounds.width - 10, height: ReferenceValues.Size.Schedule.normalScheduleHeight)
+                cell.setCell(scheduleTypeText: "오후 일정", width: UIScreen.main.bounds.width - 20, height: ReferenceValues.Size.Schedule.normalScheduleHeight)
                 
                 return cell
             }

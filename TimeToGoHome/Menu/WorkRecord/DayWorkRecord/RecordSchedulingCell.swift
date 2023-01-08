@@ -12,7 +12,7 @@ class RecordSchedulingCell: UITableViewCell {
         let view = UIView()
         view.backgroundColor = .Record.scheduling
         view.layer.cornerRadius = 9
-        let dashLayer = SupportingMethods.shared.makeDashLayer(dashColor: UIColor.Record.schedulingDash, width: UIScreen.main.bounds.width - 10, height: 60, cornerRadius: 9)
+        let dashLayer = SupportingMethods.shared.makeDashLayer(dashColor: UIColor.Record.schedulingDash, width: UIScreen.main.bounds.width - 30, height: 60, cornerRadius: 9)
         view.layer.addSublayer(dashLayer)
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -78,8 +78,8 @@ extension RecordSchedulingCell: EssentialCellHeaderMethods {
         NSLayoutConstraint.activate([
             self.addScheduleView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
             self.addScheduleView.heightAnchor.constraint(equalToConstant: 60),
-            self.addScheduleView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 5),
-            self.addScheduleView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -5)
+            self.addScheduleView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 15),
+            self.addScheduleView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -15)
         ])
         
         // addScheduleImageView

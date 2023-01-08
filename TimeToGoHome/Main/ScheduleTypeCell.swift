@@ -141,8 +141,8 @@ extension ScheduleTypeCell {
         NSLayoutConstraint.activate([
             self.scheduleView.topAnchor.constraint(equalTo: self.baseView.topAnchor),
             self.scheduleView.bottomAnchor.constraint(equalTo: self.baseView.bottomAnchor, constant: -10),
-            self.scheduleView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 5),
-            self.scheduleView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -5)
+            self.scheduleView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 10),
+            self.scheduleView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -10)
         ])
         
         // Time type label layout
@@ -152,12 +152,12 @@ extension ScheduleTypeCell {
             self.timeTypeLabelTopAnchor,
             self.timeTypeLabel.centerYAnchor.constraint(lessThanOrEqualTo: self.scheduleView.centerYAnchor),
             self.timeTypeLabel.leadingAnchor.constraint(equalTo: self.scheduleTypeLabel.trailingAnchor, constant: 5),
-            self.timeTypeLabel.trailingAnchor.constraint(equalTo: self.scheduleView.trailingAnchor, constant: -30)
+            self.timeTypeLabel.trailingAnchor.constraint(equalTo: self.scheduleView.trailingAnchor, constant: -25)
         ])
         
         // Remove schedule button layout
         NSLayoutConstraint.activate([
-            self.removeScheduleButton.leadingAnchor.constraint(equalTo: self.scheduleView.leadingAnchor, constant: 30),
+            self.removeScheduleButton.leadingAnchor.constraint(equalTo: self.scheduleView.leadingAnchor, constant: 25),
             self.removeScheduleButton.centerYAnchor.constraint(equalTo: self.scheduleView.centerYAnchor)
         ])
         
