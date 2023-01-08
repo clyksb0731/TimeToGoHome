@@ -1032,7 +1032,7 @@ extension SettingNormalWorkTypeViewController: EssentialViewMethods {
         ])
         
         // Attendance time bar marking view layout
-        self.morningAttendaceTimeBarMarkingViewConstraint = self.morningAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.morningAttendanceTimeBarView.leadingAnchor, constant: 105) // 12 + 46.5 + 46.5
+        self.morningAttendaceTimeBarMarkingViewConstraint = self.morningAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.morningAttendanceTimeBarView.leadingAnchor, constant: 105) // 12 + 93
         NSLayoutConstraint.activate([
             self.morningAttendanceTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.morningAttendanceTimeBarView.centerYAnchor),
             self.morningAttendanceTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),
@@ -1092,7 +1092,7 @@ extension SettingNormalWorkTypeViewController: EssentialViewMethods {
         ])
         
         // Leaving time bar marking view layout
-        self.morningLeavingTimeBarMarkingViewConstraint = self.leavingTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.leavingTimeBarView.leadingAnchor, constant: 105) // 12 + 46.5 + 46.5
+        self.morningLeavingTimeBarMarkingViewConstraint = self.leavingTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.leavingTimeBarView.leadingAnchor, constant: 105) // 12 + 93
         NSLayoutConstraint.activate([
             self.leavingTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.leavingTimeBarView.centerYAnchor),
             self.leavingTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),

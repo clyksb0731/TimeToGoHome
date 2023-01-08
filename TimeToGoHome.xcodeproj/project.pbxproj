@@ -203,6 +203,15 @@
 			path = MenuCover;
 			sourceTree = "<group>";
 		};
+		CA95E144296ADE6000F95FF9 /* SettingWorkType */ = {
+			isa = PBXGroup;
+			children = (
+				CA7696FA296A6DD500F36A1D /* SettingStaggeredWorkViewController.swift */,
+				CA7696FE296A980A00F36A1D /* SettingNormalWorkTypeViewController.swift */,
+			);
+			path = SettingWorkType;
+			sourceTree = "<group>";
+		};
 		CAB9AD642926701E006AB951 /* InitialSetting */ = {
 			isa = PBXGroup;
 			children = (
@@ -285,8 +294,7 @@
 				CA9211B02968037000E0F288 /* SettingSubCell.swift */,
 				CAB9AD6D2926765F006AB951 /* SettingHeaderView.swift */,
 				CAF5E49829650E0A00038290 /* YSBlueSwitch.swift */,
-				CA7696FA296A6DD500F36A1D /* SettingStaggeredWorkViewController.swift */,
-				CA7696FE296A980A00F36A1D /* SettingNormalWorkTypeViewController.swift */,
+				CA95E144296ADE6000F95FF9 /* SettingWorkType */,
 			);
 			path = Setting;
 			sourceTree = "<group>";

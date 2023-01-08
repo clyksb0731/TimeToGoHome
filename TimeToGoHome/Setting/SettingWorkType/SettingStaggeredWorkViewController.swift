@@ -970,8 +970,8 @@ class SettingStaggeredWorkViewController: UIViewController {
     var afternoonLatestAttendaceAreaCenterXAnchorConstraint: NSLayoutConstraint!
     var afternoonLatestAttendaceTimeBarMarkingViewConstraint: NSLayoutConstraint!
     
-    var previousAfternoonEarliestAttendaceTimeBarMarkingViewConstraintConstant: CGFloat = 12 + 23.25
-    var previousAfternoonLatestAttendaceTimeBarMarkingViewConstraintConstant: CGFloat = 12 + 93
+    var previousAfternoonEarliestAttendaceTimeBarMarkingViewConstraintConstant: CGFloat = 35.25 // 12 + 23.25
+    var previousAfternoonLatestAttendaceTimeBarMarkingViewConstraintConstant: CGFloat = 105 // 12 + 93
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -1350,7 +1350,7 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
         ])
         
         // Morning earliest attendance time bar marking view layout
-        self.morningEarliestAttendaceTimeBarMarkingViewConstraint = self.morningEarliestAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.morningEarliestAttendanceTimeBarView.leadingAnchor, constant: 12 + 46.5)
+        self.morningEarliestAttendaceTimeBarMarkingViewConstraint = self.morningEarliestAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.morningEarliestAttendanceTimeBarView.leadingAnchor, constant: 58.5) // 12 + 46.5
         NSLayoutConstraint.activate([
             self.morningEarliestAttendanceTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.morningEarliestAttendanceTimeBarView.centerYAnchor),
             self.morningEarliestAttendanceTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),
@@ -1406,7 +1406,7 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
         NSLayoutConstraint.activate([
             self.morningLatestAttendanceTimeBarFirstPointView.centerYAnchor.constraint(equalTo: self.morningLatestAttendanceTimeBarView.centerYAnchor),
             self.morningLatestAttendanceTimeBarFirstPointView.heightAnchor.constraint(equalToConstant: 6),
-            self.morningLatestAttendanceTimeBarFirstPointView.centerXAnchor.constraint(equalTo: self.morningLatestAttendanceTimeBarView.leadingAnchor, constant: 12 + 46.5),
+            self.morningLatestAttendanceTimeBarFirstPointView.centerXAnchor.constraint(equalTo: self.morningLatestAttendanceTimeBarView.leadingAnchor, constant: 58.5), // 12 + 46.5
             self.morningLatestAttendanceTimeBarFirstPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
@@ -1459,7 +1459,7 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
         ])
         
         // Morning latest attendance time bar marking view layout
-        self.morningLatestAttendaceTimeBarMarkingViewConstraint = self.morningLatestAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.morningLatestAttendanceTimeBarView.leadingAnchor, constant: 12 + 139.5) // 12 + 46.5 + 46.5 + 46.5
+        self.morningLatestAttendaceTimeBarMarkingViewConstraint = self.morningLatestAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.morningLatestAttendanceTimeBarView.leadingAnchor, constant: 151.5) // 12 + 139.5
         NSLayoutConstraint.activate([
             self.morningLatestAttendanceTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.morningLatestAttendanceTimeBarView.centerYAnchor),
             self.morningLatestAttendanceTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),
@@ -1583,7 +1583,7 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
         ])
         
         // Lunch time area view layout
-        self.lunchTimeAreaCenterXAnchorConstraint = self.lunchTimeAreaView.centerXAnchor.constraint(equalTo: self.lunchTimeTimeBarView.leadingAnchor, constant: 12 + 46.5 + 23.25)
+        self.lunchTimeAreaCenterXAnchorConstraint = self.lunchTimeAreaView.centerXAnchor.constraint(equalTo: self.lunchTimeTimeBarView.leadingAnchor, constant: 81.75) // 12 + 46.5 + 23.25
         NSLayoutConstraint.activate([
             self.lunchTimeAreaView.centerYAnchor.constraint(equalTo: self.lunchTimeTimeBarView.centerYAnchor),
             self.lunchTimeAreaView.heightAnchor.constraint(equalToConstant: 24),
@@ -1592,7 +1592,7 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
         ])
         
         // Lunch time time bar marking view layout
-        self.lunchTimeTimeBarMarkingViewConstraint = self.lunchTimeTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.lunchTimeTimeBarView.leadingAnchor, constant: 12 + 46.5)
+        self.lunchTimeTimeBarMarkingViewConstraint = self.lunchTimeTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.lunchTimeTimeBarView.leadingAnchor, constant: 58.5) // 12 + 46.5
         NSLayoutConstraint.activate([
             self.lunchTimeTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.lunchTimeTimeBarView.centerYAnchor),
             self.lunchTimeTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),
@@ -1753,7 +1753,7 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
         ])
         
         // Afternoon earliest attendance area view layout
-        self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint = self.afternoonEarliestAttendanceAreaView.centerXAnchor.constraint(equalTo: self.afternoonEarliestAttendanceTimeBarView.leadingAnchor, constant: 12 + 46.5 + 23.25)
+        self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint = self.afternoonEarliestAttendanceAreaView.centerXAnchor.constraint(equalTo: self.afternoonEarliestAttendanceTimeBarView.leadingAnchor, constant: 81.75) // 12 + 46.5 + 23.25
         NSLayoutConstraint.activate([
             self.afternoonEarliestAttendanceAreaView.centerYAnchor.constraint(equalTo: self.afternoonEarliestAttendanceTimeBarView.centerYAnchor),
             self.afternoonEarliestAttendanceAreaView.heightAnchor.constraint(equalToConstant: 24),
@@ -1762,7 +1762,7 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
         ])
         
         // Afternoon earliest attendance time bar marking view layout
-        self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint = self.afternoonEarliestAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.afternoonEarliestAttendanceTimeBarView.leadingAnchor, constant: 12 + 23.25)
+        self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint = self.afternoonEarliestAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.afternoonEarliestAttendanceTimeBarView.leadingAnchor, constant: 35.25) // 12 + 23.25
         NSLayoutConstraint.activate([
             self.afternoonEarliestAttendanceTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.afternoonEarliestAttendanceTimeBarView.centerYAnchor),
             self.afternoonEarliestAttendanceTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),
@@ -1895,7 +1895,7 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
         ])
         
         // Afternoon latest attendace area area view layout
-        self.afternoonLatestAttendaceAreaCenterXAnchorConstraint = self.afternoonLatestAttendanceAreaView.centerXAnchor.constraint(equalTo: self.afternoonLatestAttendanceTimeBarView.leadingAnchor, constant: 12 + 23.25)
+        self.afternoonLatestAttendaceAreaCenterXAnchorConstraint = self.afternoonLatestAttendanceAreaView.centerXAnchor.constraint(equalTo: self.afternoonLatestAttendanceTimeBarView.leadingAnchor, constant: 35.25) // 12 + 23.25
         NSLayoutConstraint.activate([
             self.afternoonLatestAttendanceAreaView.centerYAnchor.constraint(equalTo: self.afternoonLatestAttendanceTimeBarView.centerYAnchor),
             self.afternoonLatestAttendanceAreaView.heightAnchor.constraint(equalToConstant: 24),
@@ -1904,7 +1904,7 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
         ])
         
         // Afternoon latest attendance time bar marking view layout
-        self.afternoonLatestAttendaceTimeBarMarkingViewConstraint = self.afternoonLatestAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.afternoonLatestAttendanceTimeBarView.leadingAnchor, constant: 12 + 93) // 12 + 46.5 + 46.5 + 46.5
+        self.afternoonLatestAttendaceTimeBarMarkingViewConstraint = self.afternoonLatestAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.afternoonLatestAttendanceTimeBarView.leadingAnchor, constant: 105) // 12 + 93
         NSLayoutConstraint.activate([
             self.afternoonLatestAttendanceTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.afternoonLatestAttendanceTimeBarView.centerYAnchor),
             self.afternoonLatestAttendanceTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),
@@ -3063,7 +3063,7 @@ extension SettingStaggeredWorkViewController {
             self.locateMarkingBarViewFor(.afternoonEarliest(point))
             
         } else {
-            let aheadPointOfAfternoonEarliestAttendaceArea = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 23.25 - 23.25/2
+            let aheadPointOfAfternoonEarliestAttendaceArea = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 34.875 // - 23.25 - 23.25/2
             let endOfPointOfAfternoonEarliestAttendaceArea = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant + 23.25
             
             if point.x <= aheadPointOfAfternoonEarliestAttendaceArea ||
@@ -3107,7 +3107,7 @@ extension SettingStaggeredWorkViewController {
             self.locateMarkingBarViewFor(.afternoonLatest(point))
             
         } else {
-            let aheadPointOfAfternoonLatestAttendaceArea = self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant - 23.25 - 23.25/2
+            let aheadPointOfAfternoonLatestAttendaceArea = self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant - 34.875 // - 23.25 - 23.25/2
             let endOfPointOfAfternoonLatestAttendaceArea = self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant + 23.25
             
             if point.x <= aheadPointOfAfternoonLatestAttendaceArea ||
