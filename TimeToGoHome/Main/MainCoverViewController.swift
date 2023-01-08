@@ -299,7 +299,7 @@ extension MainCoverViewController {
                case .afternoon(let workType) = schedule.afternoon, case .work = workType {
                 
                 
-                let morningStartingWorkTimeValueRange = ReferenceValues.initialSetting[InitialSetting.morningStartingworkTimeValueRange.rawValue] as! [String:Double]
+                let morningStartingWorkTimeValueRange = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValueRange.rawValue] as! [String:Double]
                 
                 let morningEarliestTimeValue = morningStartingWorkTimeValueRange["earliestTime"]!
                 let morningLatestTime = morningStartingWorkTimeValueRange["latestTime"]!
@@ -315,7 +315,7 @@ extension MainCoverViewController {
                 }
                 
             } else if case .morning(let workType) = schedule.morning, case .work = workType {
-                let morningStartingWorkTimeValueRange = ReferenceValues.initialSetting[InitialSetting.morningStartingworkTimeValueRange.rawValue] as! [String:Double]
+                let morningStartingWorkTimeValueRange = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValueRange.rawValue] as! [String:Double]
                 
                 let morningEarliestTimeValue = morningStartingWorkTimeValueRange[TimeRange.earliestTime.rawValue]!
                 let morningLatestTime = morningStartingWorkTimeValueRange[TimeRange.latestTime.rawValue]!
@@ -331,7 +331,7 @@ extension MainCoverViewController {
                 }
                 
             } else if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
-                let afternoonStartingWorkTimeValueRage = ReferenceValues.initialSetting[InitialSetting.afternoonStartingworkTimeValueRange.rawValue] as! [String:Double]
+                let afternoonStartingWorkTimeValueRage = ReferenceValues.initialSetting[InitialSetting.afternoonStartingWorkTimeValueRange.rawValue] as! [String:Double]
                 
                 let afternoonEarliestTimeValue = afternoonStartingWorkTimeValueRage[TimeRange.earliestTime.rawValue]!
                 let afternoonLatestTime = afternoonStartingWorkTimeValueRage[TimeRange.latestTime.rawValue]!
@@ -661,7 +661,7 @@ extension MainCoverViewController {
     
     @objc func datePicker(_ datePicker: UIDatePicker) {
         guard let lunchTimeValue = ReferenceValues.initialSetting[InitialSetting.lunchTimeValue.rawValue] as? Double,
-              let afternoonStartingWorkTimeValueRage = ReferenceValues.initialSetting[InitialSetting.afternoonStartingworkTimeValueRange.rawValue] as? [String:Double] else {
+              let afternoonStartingWorkTimeValueRage = ReferenceValues.initialSetting[InitialSetting.afternoonStartingWorkTimeValueRange.rawValue] as? [String:Double] else {
             return
         }
         

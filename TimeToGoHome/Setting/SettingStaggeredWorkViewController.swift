@@ -1,38 +1,19 @@
 //
-//  StaggeredWorkTypeViewController.swift
+//  SettingStaggeredWorkViewController.swift
 //  TimeToGoHome
 //
-//  Created by Yongseok Choi on 2022/04/04.
+//  Created by Yongseok Choi on 2023/01/08.
 //
 
 import UIKit
 
-enum StaggeredMarkingViewType {
-    case morningEarliest(CGPoint)
-    case morningLatest(CGPoint)
-    case lunchTime(CGPoint)
-    case afternoonEarliest(CGPoint)
-    case afternoonLatest(CGPoint)
-}
-
-enum WorkType: String {
-    case staggered
-    case normal
-}
-
-enum TimeRange: String {
-    case earliestTime
-    case latestTime
-}
-
-class StaggeredWorkTypeViewController: UIViewController {
+class SettingStaggeredWorkViewController: UIViewController {
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.tag = 1
-        scrollView.delegate = self
         scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
-        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width, height: 674)
+        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width, height: 543 + 20)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
         return scrollView
@@ -43,28 +24,6 @@ class StaggeredWorkTypeViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
-    }()
-    
-    lazy var dismissButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "dismissButtonImage"), for: .normal)
-        button.addTarget(self, action: #selector(dismiss(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        return button
-    }()
-    
-    lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "근무 형태"
-        label.textAlignment = .left
-        label.adjustsFontSizeToFitWidth = true
-        label.minimumScaleFactor = 0.5
-        label.textColor = UIColor.useRGB(red: 109, green: 114, blue: 120, alpha: 0.4)
-        label.font = UIFont.systemFont(ofSize: 50, weight: .bold)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        return label
     }()
     
     lazy var staggeredTypeButton: UIButton = {
@@ -1000,33 +959,6 @@ class StaggeredWorkTypeViewController: UIViewController {
         return view
     }()
     
-    
-    lazy var nextButtonView: UIView = {
-        let view = UIView()
-        view.layer.useSketchShadow(color: .black, alpha: 1, x: 0, y: 1, blur: 4, spread: 0)
-        view.backgroundColor = .Buttons.initialActiveBottom
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
-    }()
-    
-    lazy var nextButtonImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "nextSelectedImage"))
-        
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        return imageView
-    }()
-    
-    lazy var nextButton: UIButton = {
-        let button = UIButton()
-        button.isEnabled = true
-        button.addTarget(self, action: #selector(nextButton(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        return button
-    }()
-    
     var workType: WorkType = .staggered
     
     var morningEarliestAttendaceTimeBarMarkingViewConstraint: NSLayoutConstraint!
@@ -1045,7 +977,7 @@ class StaggeredWorkTypeViewController: UIViewController {
         super.viewDidLoad()
 
         self.setViewFoundation()
-        self.initializeViews()
+        self.initializeObjects()
         self.setTargets()
         self.setGestures()
         self.setDelegates()
@@ -1057,10 +989,7 @@ class StaggeredWorkTypeViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-    }
-    
-    override func viewDidLayoutSubviews() {
-        self.nextButtonView.layer.shadowOpacity = self.scrollView.contentSize.height - self.scrollView.frame.height > self.scrollView.contentOffset.y ? 1 : 0
+        self.determineInitialValues()
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -1076,21 +1005,41 @@ class StaggeredWorkTypeViewController: UIViewController {
     }
     
     deinit {
-            print("----------------------------------- StaggeredWorkTypeViewController disposed -----------------------------------")
+            print("----------------------------------- SettingStaggeredWorkViewController disposed -----------------------------------")
     }
 }
 
 // MARK: - Extension for essential methods
-extension StaggeredWorkTypeViewController {
+extension SettingStaggeredWorkViewController: EssentialViewMethods {
     // Set view foundation
     func setViewFoundation() {
         self.view.backgroundColor = .white
+        
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithDefaultBackground()
+        navigationBarAppearance.backgroundColor = .white
+        navigationBarAppearance.titleTextAttributes = [
+            .foregroundColor : UIColor.black,
+            .font : UIFont.systemFont(ofSize: 17, weight: .semibold)
+        ]
+        
+        self.navigationController?.navigationBar.scrollEdgeAppearance = navigationBarAppearance
+        self.navigationController?.navigationBar.standardAppearance = navigationBarAppearance
+        self.navigationController?.navigationBar.compactAppearance = navigationBarAppearance
+        
+        self.navigationController?.setNavigationBarHidden(false, animated: true);
+        
+        self.navigationItem.title = "근무 형태"
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(leftBarButtonItem(_:)))
+        self.navigationItem.leftBarButtonItem?.tintColor = .black
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(rightBarButtonItem(_:)))
+        self.navigationItem.rightBarButtonItem?.tintColor = .black
         
         self.tabBarController?.tabBar.isHidden = true
     }
     
     // Initialize views
-    func initializeViews() {
+    func initializeObjects() {
         
     }
     
@@ -1118,7 +1067,6 @@ extension StaggeredWorkTypeViewController {
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
             self.scrollView,
-            self.nextButtonView
         ], to: self.view)
         
         SupportingMethods.shared.addSubviews([
@@ -1126,8 +1074,6 @@ extension StaggeredWorkTypeViewController {
         ], to: self.scrollView)
         
         SupportingMethods.shared.addSubviews([
-            self.dismissButton,
-            self.titleLabel,
             self.staggeredTypeButton,
             self.normalTypeButton,
             self.momentLabel,
@@ -1243,12 +1189,6 @@ extension StaggeredWorkTypeViewController {
             self.afternoonLatestAttendanceAreaView,
             self.afternoonLatestAttendanceTimeBarMarkingView
         ], to: self.afternoonLatestAttendanceTimeBarView)
-        
-        
-        SupportingMethods.shared.addSubviews([
-            self.nextButtonImageView,
-            self.nextButton
-        ], to: self.nextButtonView)
     }
     
     // Set layouts
@@ -1258,7 +1198,7 @@ extension StaggeredWorkTypeViewController {
         // Scroll view layout
         NSLayoutConstraint.activate([
             self.scrollView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-            self.scrollView.bottomAnchor.constraint(equalTo: self.nextButtonView.topAnchor),
+            self.scrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
             self.scrollView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             self.scrollView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
         ])
@@ -1271,25 +1211,9 @@ extension StaggeredWorkTypeViewController {
             self.contentView.widthAnchor.constraint(equalTo: self.scrollView.widthAnchor)
         ])
         
-        // Dismiss button layout
-        NSLayoutConstraint.activate([
-            self.dismissButton.topAnchor.constraint(equalTo: self.contentView.topAnchor),
-            self.dismissButton.heightAnchor.constraint(equalToConstant: 44),
-            self.dismissButton.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -5),
-            self.dismissButton.widthAnchor.constraint(equalToConstant: 44)
-        ])
-        
-        // Title label layout
-        NSLayoutConstraint.activate([
-            self.titleLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 44),
-            self.titleLabel.heightAnchor.constraint(equalToConstant: 55),
-            self.titleLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 16),
-            self.titleLabel.widthAnchor.constraint(equalToConstant: 191)
-        ])
-        
         // Staggered type button layout
         NSLayoutConstraint.activate([
-            self.staggeredTypeButton.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 32),
+            self.staggeredTypeButton.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 30),
             self.staggeredTypeButton.heightAnchor.constraint(equalToConstant: 92),
             self.staggeredTypeButton.trailingAnchor.constraint(equalTo: self.contentView.centerXAnchor, constant: -50),
             self.staggeredTypeButton.widthAnchor.constraint(equalToConstant: 92)
@@ -1987,36 +1911,36 @@ extension StaggeredWorkTypeViewController {
             self.afternoonLatestAttendaceTimeBarMarkingViewConstraint,
             self.afternoonLatestAttendanceTimeBarMarkingView.widthAnchor.constraint(equalToConstant: 18)
         ])
-        
-        // Next button view layout
-        NSLayoutConstraint.activate([
-            self.nextButtonView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            self.nextButtonView.heightAnchor.constraint(equalToConstant: UIWindow().safeAreaInsets.bottom + 60),
-            self.nextButtonView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.nextButtonView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
-        ])
-        
-        // Next button label layout
-        NSLayoutConstraint.activate([
-            self.nextButtonImageView.topAnchor.constraint(equalTo: self.nextButtonView.topAnchor, constant: 20.5),
-            self.nextButtonImageView.heightAnchor.constraint(equalToConstant: 19),
-            self.nextButtonImageView.centerXAnchor.constraint(equalTo: self.nextButtonView.centerXAnchor),
-            self.nextButtonImageView.widthAnchor.constraint(equalToConstant: 27)
-        ])
-        
-        // Next button layout
-        NSLayoutConstraint.activate([
-            self.nextButton.topAnchor.constraint(equalTo: self.nextButtonView.topAnchor),
-            self.nextButton.bottomAnchor.constraint(equalTo: self.nextButtonView.bottomAnchor),
-            self.nextButton.leadingAnchor.constraint(equalTo: self.nextButtonView.leadingAnchor),
-            self.nextButton.trailingAnchor.constraint(equalTo: self.nextButtonView.trailingAnchor)
-        ])
     }
 }
 
 // MARK: - Extension for methods added
-extension StaggeredWorkTypeViewController {
-    func locateMarkingBarViewFor(_ type: StaggeredMarkingViewType) {
+extension SettingStaggeredWorkViewController {
+    func determineInitialValues() {
+        // Morning attendance
+        let morningStartingWorkTimeValueRange = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValueRange.rawValue] as! [String:Double]
+        let morningEarliestTimeValue = morningStartingWorkTimeValueRange[TimeRange.earliestTime.rawValue]!
+        let morningLatestTime = morningStartingWorkTimeValueRange[TimeRange.latestTime.rawValue]!
+        self.locateMarkingBarViewFor(.morningEarliest(self.determineMorningAttendancePoint(morningEarliestTimeValue)!), isInitialization: true)
+        self.locateMarkingBarViewFor(.morningLatest(self.determineMorningAttendancePoint(morningLatestTime)!), isInitialization: true)
+        
+        // Lunch time
+        let lunchTimeValue = ReferenceValues.initialSetting[InitialSetting.lunchTimeValue.rawValue] as! Double
+        self.locateMarkingBarViewFor(.lunchTime(self.determineLunchPoint(lunchTimeValue)!), isInitialization: true)
+        let isIgnoredLunchTimeForHalfVacation = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as! Bool
+        self.ignoringLunchTimeButton.isSelected = isIgnoredLunchTimeForHalfVacation
+        self.afternoonEarliestAttendanceAreaView.isHidden = isIgnoredLunchTimeForHalfVacation
+        self.afternoonLatestAttendanceAreaView.isHidden = isIgnoredLunchTimeForHalfVacation
+        
+        // Afternoon attendance
+        let afternoonStartingWorkTimeValueRange = ReferenceValues.initialSetting[InitialSetting.afternoonStartingWorkTimeValueRange.rawValue] as! [String:Double]
+        let afternoonEarliestTimeValue = afternoonStartingWorkTimeValueRange[TimeRange.earliestTime.rawValue]!
+        let afternoonLatestTime = afternoonStartingWorkTimeValueRange[TimeRange.latestTime.rawValue]!
+        self.locateMarkingBarViewFor(.afternoonEarliest(self.determineAfternoonEarliestAttendacePoint(afternoonEarliestTimeValue)!), isInitialization: true)
+        self.locateMarkingBarViewFor(.afternoonLatest(self.determineAfternoonLatestAttendacePoint(afternoonLatestTime)!), isInitialization: true)
+    }
+    
+    func locateMarkingBarViewFor(_ type: StaggeredMarkingViewType, isInitialization: Bool = false) {
         switch type {
         case .morningEarliest(let point): // MARK: morningEarliest
             if point.x <= 23.625 { // 12 + 23.25/2
@@ -2053,7 +1977,7 @@ extension StaggeredWorkTypeViewController {
                 if success {
                     self.morningEarliestAttendanceTimeBarView.isUserInteractionEnabled = true
                     self.morningLatestAttendanceTimeBarView.isUserInteractionEnabled = true
-                    self.nextButton.isUserInteractionEnabled = true
+                    self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = true
                 }
             }
             
@@ -2094,7 +2018,7 @@ extension StaggeredWorkTypeViewController {
                 if success {
                     self.morningLatestAttendanceTimeBarView.isUserInteractionEnabled = true
                     self.morningEarliestAttendanceTimeBarView.isUserInteractionEnabled = true
-                    self.nextButton.isUserInteractionEnabled = true
+                    self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = true
                 }
             }
             
@@ -2133,7 +2057,7 @@ extension StaggeredWorkTypeViewController {
             } completion: { success in
                 if success {
                     self.lunchTimeTimeBarView.isUserInteractionEnabled = true
-                    self.nextButton.isUserInteractionEnabled = true
+                    self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = true
                     
                     self.previousAfternoonEarliestAttendaceTimeBarMarkingViewConstraintConstant = self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant
                     self.previousAfternoonLatestAttendaceTimeBarMarkingViewConstraintConstant = self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant
@@ -2206,7 +2130,7 @@ extension StaggeredWorkTypeViewController {
             } completion: { success in
                 if success {
                     self.afternoonEarliestAttendanceTimeBarView.isUserInteractionEnabled = true
-                    self.nextButton.isUserInteractionEnabled = true
+                    self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = true
                     
                     self.previousAfternoonEarliestAttendaceTimeBarMarkingViewConstraintConstant = self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant
                 }
@@ -2284,7 +2208,7 @@ extension StaggeredWorkTypeViewController {
             } completion: { success in
                 if success {
                     self.afternoonLatestAttendanceTimeBarView.isUserInteractionEnabled = true
-                    self.nextButton.isUserInteractionEnabled = true
+                    self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = true
                     
                     self.previousAfternoonLatestAttendaceTimeBarMarkingViewConstraintConstant = self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant
                 }
@@ -2293,7 +2217,9 @@ extension StaggeredWorkTypeViewController {
             self.showMomentLabelFor(.afternoonLatest(CGPoint(x:self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant, y:point.y)), withAnimation: true)
         }
         
-        UIDevice.softHaptic()
+        if !isInitialization {
+            UIDevice.softHaptic()
+        }
     }
     
     func moveMarkingBarViewTo(_ type: StaggeredMarkingViewType) {
@@ -2688,6 +2614,40 @@ extension StaggeredWorkTypeViewController {
         }
     }
     
+    func determineMorningAttendancePoint(_ timeValue: Double) -> CGPoint? {
+        switch timeValue {
+        case 7.0:
+            return CGPoint(x: 12, y: 0)
+            
+        case 7.5:
+            return CGPoint(x: 35.25, y: 0)
+            
+        case 8.0:
+            return CGPoint(x: 58.5, y: 0)
+            
+        case 8.5:
+            return CGPoint(x: 81.75, y: 0)
+            
+        case 9.0:
+            return CGPoint(x: 105, y: 0)
+            
+        case 9.5:
+            return CGPoint(x: 128.25, y: 0)
+            
+        case 10.0:
+            return CGPoint(x: 151.5, y: 0)
+            
+        case 10.5:
+            return CGPoint(x: 174.75, y: 0)
+            
+        case 11.0:
+            return CGPoint(x: 198, y: 0)
+            
+        default:
+            return nil
+        }
+    }
+    
     func getLunchTimeValue(_ from: CGFloat) -> Double? {
         switch from {
         case 12:
@@ -2710,6 +2670,34 @@ extension StaggeredWorkTypeViewController {
             
         case 151.5:
             return 14.0
+            
+        default:
+            return nil
+        }
+    }
+    
+    func determineLunchPoint(_ timeValue: Double) -> CGPoint? {
+        switch timeValue {
+        case 11.0:
+            return CGPoint(x: 12, y: 0)
+            
+        case 11.5:
+            return CGPoint(x: 35.25, y: 0)
+            
+        case 12.0:
+            return CGPoint(x: 58.5, y: 0)
+            
+        case 12.5:
+            return CGPoint(x: 81.75, y: 0)
+            
+        case 13.0:
+            return CGPoint(x: 105, y: 0)
+            
+        case 13.5:
+            return CGPoint(x: 128.25, y: 0)
+            
+        case 14.0:
+            return CGPoint(x: 151.5, y: 0)
             
         default:
             return nil
@@ -2750,6 +2738,40 @@ extension StaggeredWorkTypeViewController {
         }
     }
     
+    func determineAfternoonEarliestAttendacePoint(_ timeValue: Double) -> CGPoint? {
+        switch timeValue {
+        case 11.0:
+            return CGPoint(x: 12, y: 0)
+            
+        case 11.5:
+            return CGPoint(x: 35.25, y: 0)
+            
+        case 12.0:
+            return CGPoint(x: 58.5, y: 0)
+            
+        case 12.5:
+            return CGPoint(x: 81.75, y: 0)
+            
+        case 13.0:
+            return CGPoint(x: 105, y: 0)
+            
+        case 13.5:
+            return CGPoint(x: 128.25, y: 0)
+            
+        case 14.0:
+            return CGPoint(x: 151.5, y: 0)
+            
+        case 14.5:
+            return CGPoint(x: 174.75, y: 0)
+            
+        case 15.0:
+            return CGPoint(x: 198, y: 0)
+            
+        default:
+            return nil
+        }
+    }
+    
     func getAfternoonLatestAttendaceTimeValue(_ from: CGFloat) -> Double? {
         switch from {
         case 12:
@@ -2783,12 +2805,85 @@ extension StaggeredWorkTypeViewController {
             return nil
         }
     }
+    
+    func determineAfternoonLatestAttendacePoint(_ timeValue: Double) -> CGPoint? {
+        switch timeValue {
+        case 12.0:
+            return CGPoint(x: 12, y: 0)
+            
+        case 12.5:
+            return CGPoint(x: 35.25, y: 0)
+            
+        case 13.0:
+            return CGPoint(x: 58.5, y: 0)
+            
+        case 13.5:
+            return CGPoint(x: 81.75, y: 0)
+            
+        case 14.0:
+            return CGPoint(x: 105, y: 0)
+            
+        case 14.5:
+            return CGPoint(x: 128.25, y: 0)
+            
+        case 15.0:
+            return CGPoint(x: 151.5, y: 0)
+            
+        case 15.5:
+            return CGPoint(x: 174.75, y: 0)
+            
+        case 16.0:
+            return CGPoint(x: 198, y: 0)
+            
+        default:
+            return nil
+        }
+    }
 }
 
 // MARK: - Extension for Selector methods
-extension StaggeredWorkTypeViewController {
-    @objc func dismiss(_ sender: UIButton) {
-        self.dismiss(animated: true)
+extension SettingStaggeredWorkViewController {
+    @objc func leftBarButtonItem(_ sender: UIBarButtonItem) {
+        self.tabBarController?.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
+        guard let morningAttendanceTimeRange = self.determineMorningAttendanceTimeValue(),
+              let lunchTime = self.determineLunchTimeValue(),
+              let afternoonAttendanceTimeRange = self.determineAfternoonAttendanceTimeValue() else {
+                  return
+        }
+        
+        print("Work type is staggered work type")
+        print("Morning Attendance Time Range: \(morningAttendanceTimeRange.earliestTime) ~ \(morningAttendanceTimeRange.latestTime)")
+        print("Lunch Time: \(lunchTime)")
+        print("Is ignore lunch time for half vacation: \(self.ignoringLunchTimeButton.isSelected ? "Yes" : "No")")
+        print("Afternoon Attendance Time Range: \(afternoonAttendanceTimeRange.earliestTime) ~ \(afternoonAttendanceTimeRange.latestTime)")
+        
+        // Work type
+        ReferenceValues.initialSetting.updateValue(WorkType.staggered.rawValue, forKey: InitialSetting.workType.rawValue)
+        
+        // Morning attendance time range
+        ReferenceValues.initialSetting.updateValue(
+            [TimeRange.earliestTime.rawValue:morningAttendanceTimeRange.earliestTime,
+             TimeRange.latestTime.rawValue:morningAttendanceTimeRange.latestTime], forKey: InitialSetting.morningStartingWorkTimeValueRange.rawValue)
+        
+        // Lunch time
+        ReferenceValues.initialSetting.updateValue(lunchTime, forKey: InitialSetting.lunchTimeValue.rawValue)
+        
+        // Afternoon attendance time
+        ReferenceValues.initialSetting.updateValue(
+            [TimeRange.earliestTime.rawValue:afternoonAttendanceTimeRange.earliestTime,
+             TimeRange.latestTime.rawValue:afternoonAttendanceTimeRange.latestTime], forKey: InitialSetting.afternoonStartingWorkTimeValueRange.rawValue)
+        
+        // Is ignore lunch time for half vacation
+        ReferenceValues.initialSetting.updateValue(self.ignoringLunchTimeButton.isSelected, forKey: InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue)
+        
+        // Update initialSetting
+        SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+        
+        // Pop view controller
+        self.tabBarController?.navigationController?.popViewController(animated: true)
     }
     
     @objc func workTypeButtons(_ sender: UIButton) {
@@ -2821,7 +2916,7 @@ extension StaggeredWorkTypeViewController {
             // Prevent touching
             self.afternoonEarliestAttendanceTimeBarView.isUserInteractionEnabled = false
             self.afternoonLatestAttendanceTimeBarView.isUserInteractionEnabled = false
-            self.nextButton.isUserInteractionEnabled = false
+            self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = false
             
             let aheadPointOfAfternoonEarliestAttendaceArea = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 23.25
             let endOfPointOfAfternoonEarliestAttendaceArea = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant + 23.25
@@ -2850,7 +2945,7 @@ extension StaggeredWorkTypeViewController {
                 if success {
                     self.afternoonEarliestAttendanceTimeBarView.isUserInteractionEnabled = true
                     self.afternoonLatestAttendanceTimeBarView.isUserInteractionEnabled = true
-                    self.nextButton.isUserInteractionEnabled = true
+                    self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = true
                     
                     self.previousAfternoonEarliestAttendaceTimeBarMarkingViewConstraintConstant = self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant
                     self.previousAfternoonLatestAttendaceTimeBarMarkingViewConstraintConstant = self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant
@@ -2865,7 +2960,7 @@ extension StaggeredWorkTypeViewController {
         
         self.morningEarliestAttendanceTimeBarView.isUserInteractionEnabled = false
         self.morningLatestAttendanceTimeBarView.isUserInteractionEnabled = false
-        self.nextButton.isUserInteractionEnabled = false
+        self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = false
         
         self.locateMarkingBarViewFor(.morningEarliest(point))
         //self.showMomentLabelFor(.morningEarliest(point), withAnimation: true)
@@ -2899,7 +2994,7 @@ extension StaggeredWorkTypeViewController {
         
         self.morningLatestAttendanceTimeBarView.isUserInteractionEnabled = false
         self.morningEarliestAttendanceTimeBarView.isUserInteractionEnabled = false
-        self.nextButton.isUserInteractionEnabled = false
+        self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = false
         
         self.locateMarkingBarViewFor(.morningLatest(point))
         //self.showMomentLabelFor(.morningLatest(point), withAnimation: true)
@@ -2932,7 +3027,7 @@ extension StaggeredWorkTypeViewController {
         //print("lunchTimeTimeBarView point: \(point)")
         
         self.lunchTimeTimeBarView.isUserInteractionEnabled = false
-        self.nextButton.isUserInteractionEnabled = false
+        self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = false
         
         self.locateMarkingBarViewFor(.lunchTime(point))
         //self.showMomentLabelFor(.lunchTime(point), withAnimation: true)
@@ -2974,7 +3069,7 @@ extension StaggeredWorkTypeViewController {
             if point.x <= aheadPointOfAfternoonEarliestAttendaceArea ||
                 point.x >= endOfPointOfAfternoonEarliestAttendaceArea {
                 self.afternoonEarliestAttendanceTimeBarView.isUserInteractionEnabled = false
-                self.nextButton.isUserInteractionEnabled = false
+                self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = false
                 
                 self.locateMarkingBarViewFor(.afternoonEarliest(point))
                 //self.showMomentLabelFor(.afternoonEarliest(point), withAnimation: true)
@@ -3018,7 +3113,7 @@ extension StaggeredWorkTypeViewController {
             if point.x <= aheadPointOfAfternoonLatestAttendaceArea ||
                 point.x >= endOfPointOfAfternoonLatestAttendaceArea {
                 self.afternoonLatestAttendanceTimeBarView.isUserInteractionEnabled = false
-                self.nextButton.isUserInteractionEnabled = false
+                self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = false
                 
                 self.locateMarkingBarViewFor(.afternoonLatest(point))
                 //self.showMomentLabelFor(.afternoonLatest(point), withAnimation: true)
@@ -3045,55 +3140,6 @@ extension StaggeredWorkTypeViewController {
         if (gesture.state == .ended) {
             self.showMomentLabelFor(.afternoonLatest(point), withAnimation: false)
             self.locateMarkingBarViewFor(.afternoonLatest(point))
-        }
-    }
-    
-    @objc func nextButton(_ sender: UIButton) {
-        guard let morningAttendanceTimeRange = self.determineMorningAttendanceTimeValue(),
-              let lunchTime = self.determineLunchTimeValue(),
-              let afternoonAttendanceTimeRange = self.determineAfternoonAttendanceTimeValue() else {
-                  return
-        }
-        
-        print("Work type is staggered work type")
-        print("Morning Attendance Time Range: \(morningAttendanceTimeRange.earliestTime) ~ \(morningAttendanceTimeRange.latestTime)")
-        print("Lunch Time: \(lunchTime)")
-        print("Is ignore lunch time for half vacation: \(self.ignoringLunchTimeButton.isSelected ? "Yes" : "No")")
-        print("Afternoon Attendance Time Range: \(afternoonAttendanceTimeRange.earliestTime) ~ \(afternoonAttendanceTimeRange.latestTime)")
-        
-        // Work type
-        ReferenceValues.initialSetting.updateValue(WorkType.staggered.rawValue, forKey: InitialSetting.workType.rawValue)
-        
-        // Morning attendance time range
-        ReferenceValues.initialSetting.updateValue(
-            [TimeRange.earliestTime.rawValue:morningAttendanceTimeRange.earliestTime,
-             TimeRange.latestTime.rawValue:morningAttendanceTimeRange.latestTime], forKey: InitialSetting.morningStartingWorkTimeValueRange.rawValue)
-        
-        // Lunch time
-        ReferenceValues.initialSetting.updateValue(lunchTime, forKey: InitialSetting.lunchTimeValue.rawValue)
-        
-        // Afternoon attendance time
-        ReferenceValues.initialSetting.updateValue(
-            [TimeRange.earliestTime.rawValue:afternoonAttendanceTimeRange.earliestTime,
-             TimeRange.latestTime.rawValue:afternoonAttendanceTimeRange.latestTime], forKey: InitialSetting.afternoonStartingWorkTimeValueRange.rawValue)
-        
-        // Is ignore lunch time for half vacation
-        ReferenceValues.initialSetting.updateValue(self.ignoringLunchTimeButton.isSelected, forKey: InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue)
-        
-        // Day Off VC
-        let dayOffVC = DayOffViewController()
-        dayOffVC.modalPresentationStyle = .fullScreen
-
-        self.present(dayOffVC, animated: true, completion: nil)
-    }
-}
-
-// MARK: - Extension for UIScrollViewDelegate
-extension StaggeredWorkTypeViewController: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.tag == 1 {
-            self.nextButtonView.layer.shadowOpacity =
-            scrollView.contentSize.height - scrollView.frame.height > scrollView.contentOffset.y ? 1 : 0
         }
     }
 }

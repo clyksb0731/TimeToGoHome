@@ -32,6 +32,8 @@
 		CA5327092907BAB0003D66A9 /* CustomizedNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA5327082907BAB0003D66A9 /* CustomizedNavigationController.swift */; };
 		CA612DEC292D13BD00547AC2 /* WorkRecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA612DEB292D13BD00547AC2 /* WorkRecordViewController.swift */; };
 		CA6D12FB2910215300835CB6 /* CustomizedTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6D12FA2910215300835CB6 /* CustomizedTabBarController.swift */; };
+		CA7696FB296A6DD500F36A1D /* SettingStaggeredWorkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7696FA296A6DD500F36A1D /* SettingStaggeredWorkViewController.swift */; };
+		CA7696FF296A980A00F36A1D /* SettingNormalWorkTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA7696FE296A980A00F36A1D /* SettingNormalWorkTypeViewController.swift */; };
 		CA79A8E627D85550000F58E2 /* TemplateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA79A8E527D85550000F58E2 /* TemplateCell.swift */; };
 		CA8ED6A5295203F30026478A /* MenuLargeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8ED6A4295203F30026478A /* MenuLargeCell.swift */; };
 		CA9211B12968037000E0F288 /* SettingSubCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9211B02968037000E0F288 /* SettingSubCell.swift */; };
@@ -101,6 +103,8 @@
 		CA5327082907BAB0003D66A9 /* CustomizedNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizedNavigationController.swift; sourceTree = "<group>"; };
 		CA612DEB292D13BD00547AC2 /* WorkRecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkRecordViewController.swift; sourceTree = "<group>"; };
 		CA6D12FA2910215300835CB6 /* CustomizedTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizedTabBarController.swift; sourceTree = "<group>"; };
+		CA7696FA296A6DD500F36A1D /* SettingStaggeredWorkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingStaggeredWorkViewController.swift; sourceTree = "<group>"; };
+		CA7696FE296A980A00F36A1D /* SettingNormalWorkTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingNormalWorkTypeViewController.swift; sourceTree = "<group>"; };
 		CA79A8E527D85550000F58E2 /* TemplateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateCell.swift; sourceTree = "<group>"; };
 		CA8ED6A4295203F30026478A /* MenuLargeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuLargeCell.swift; sourceTree = "<group>"; };
 		CA9211B02968037000E0F288 /* SettingSubCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingSubCell.swift; sourceTree = "<group>"; };
@@ -281,6 +285,8 @@
 				CA9211B02968037000E0F288 /* SettingSubCell.swift */,
 				CAB9AD6D2926765F006AB951 /* SettingHeaderView.swift */,
 				CAF5E49829650E0A00038290 /* YSBlueSwitch.swift */,
+				CA7696FA296A6DD500F36A1D /* SettingStaggeredWorkViewController.swift */,
+				CA7696FE296A980A00F36A1D /* SettingNormalWorkTypeViewController.swift */,
 			);
 			path = Setting;
 			sourceTree = "<group>";
@@ -483,6 +489,7 @@
 				CAFD580027DACDFD0027811C /* ScheduleTypeCell.swift in Sources */,
 				CAB7CF442750CD01005C9232 /* CompanyDetailedAddressViewController.swift in Sources */,
 				CAB7CF352750C084005C9232 /* CompanyLocationViewController.swift in Sources */,
+				CA7696FB296A6DD500F36A1D /* SettingStaggeredWorkViewController.swift in Sources */,
 				CAB9AD6E2926765F006AB951 /* SettingHeaderView.swift in Sources */,
 				CAF5E49929650E0A00038290 /* YSBlueSwitch.swift in Sources */,
 				CAB6C93B27FA9AAC00B67F1A /* NormalWorkTypeViewController.swift in Sources */,
@@ -502,6 +509,7 @@
 				CA12806C27D1A64800CAFCE8 /* WorkScheduleModel.swift in Sources */,
 				CABD62932928F96F004F3C4F /* MenuCoverViewController.swift in Sources */,
 				CAFEF7CF2839117200DE5BA9 /* ReamDB.swift in Sources */,
+				CA7696FF296A980A00F36A1D /* SettingNormalWorkTypeViewController.swift in Sources */,
 				CA79A8E627D85550000F58E2 /* TemplateCell.swift in Sources */,
 				CAB7CF2D2750B280005C9232 /* ReferenceValues.swift in Sources */,
 			);

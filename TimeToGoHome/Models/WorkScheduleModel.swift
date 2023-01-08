@@ -349,7 +349,7 @@ extension WorkScheduleModel {
                     self.startingWorkTime = calendar.date(from: todayDateComponents)
                     
                 } else if schedule.afternoon == WorkTimeType.work.rawValue {
-                    guard let startingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.afternoonStartingworkTimeValue.rawValue] as? Double else {
+                    guard let startingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.afternoonStartingWorkTimeValue.rawValue] as? Double else {
                         return
                     }
                     

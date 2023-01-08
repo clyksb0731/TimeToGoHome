@@ -33,10 +33,10 @@ enum InitialSetting: String {
     
     // 근무 정보
     case workType // 근무형태
-    case morningStartingworkTimeValueRange // 출근시간범위 (빠른/늦은)
+    case morningStartingWorkTimeValueRange // 출근시간범위 (빠른/늦은)
     case morningStartingWorkTimeValue // 출근시간 (그냥 출근시간)
-    case afternoonStartingworkTimeValueRange // 오후 출근시간범위 (빠른/늦은)
-    case afternoonStartingworkTimeValue // 오후 출근시간 (그냥 오후 출근시간)
+    case afternoonStartingWorkTimeValueRange // 오후 출근시간범위 (빠른/늦은)
+    case afternoonStartingWorkTimeValue // 오후 출근시간 (그냥 오후 출근시간)
     case lunchTimeValue // 점심시간
     case isIgnoredLunchTimeForHalfVacation // 반차 시 점심시간 무시 여부
     
@@ -555,10 +555,12 @@ extension SupportingMethods {
         }
     }
     
-    func makeStartingWorkTimePush(_ startingWorkTime: Date,
-                                  success: (() -> ())? = nil,
+    func makeStartingWorkTimePush(success: (() -> ())? = nil,
                                   failure: (() -> ())? = nil) {
-        guard let holidays = ReferenceValues.initialSetting[InitialSetting.regularHolidays.rawValue] as? [Int] else {
+        guard let startingWorkTime =
+                SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Date,
+                let holidays =
+                ReferenceValues.initialSetting[InitialSetting.regularHolidays.rawValue] as? [Int] else {
             print("Do not add push for starting work time.")
             
             failure?()
@@ -613,7 +615,9 @@ extension SupportingMethods {
                                         failure: (() -> ())? = nil) {
         self.removeTodayFinishingWorkTimePush()
         
-        guard let finishingWorkTimes = SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? [Int], !finishingWorkTimes.isEmpty, let schedule = schedule,
+        guard let finishingWorkTimes =
+                SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? [Int],
+                !finishingWorkTimes.isEmpty, let schedule = schedule,
         let regulartime = schedule.finishingRegularWorkTimeSecondsSinceReferenceDate else {
             print("Do not add push for finishing work time.")
             
@@ -707,6 +711,13 @@ extension SupportingMethods {
 }
 
 // MARK: - Other Extensions
+// MARK: Decimal
+extension Decimal {
+    var doubleValue: Double {
+        return NSDecimalNumber(decimal: self).doubleValue
+    }
+}
+
 // MARK: UIDevice haptics
 extension UIDevice {
     // MARK: Make Haptic Effect

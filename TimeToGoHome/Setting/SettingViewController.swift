@@ -750,7 +750,7 @@ extension SettingViewController {
             settingSubCell.switchButton.isOn = isEnable
             settingSubCell.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
             
-            SupportingMethods.shared.makeStartingWorkTimePush(self.datePicker.date)
+            SupportingMethods.shared.makeStartingWorkTimePush()
             
         case .finishingWorkTime:
             self.determineFinishingWorkTimes()
@@ -882,7 +882,21 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         if indexPath.section == 1 && indexPath.row == 0 {
+            let staggeredWorkTypeNaviVC = CustomizedNavigationController(rootViewController: SettingStaggeredWorkViewController())
+            let normalWorkTypeNaviVC = CustomizedNavigationController(rootViewController: SettingNormalWorkTypeViewController())
+            let workTypeTabBarVC = CustomizedTabBarController()
+            workTypeTabBarVC.viewControllers = [staggeredWorkTypeNaviVC, normalWorkTypeNaviVC]
             
+            let workType = WorkType(rawValue:ReferenceValues.initialSetting[InitialSetting.workType.rawValue] as! String)!
+            switch workType {
+            case .staggered:
+                workTypeTabBarVC.selectedIndex = 0
+                
+            case .normal:
+                workTypeTabBarVC.selectedIndex = 1
+            }
+            
+            self.navigationController?.pushViewController(workTypeTabBarVC, animated: true)
         }
         
         if indexPath.section == 1 && indexPath.row == 1 {
