@@ -602,11 +602,25 @@ extension SupportingMethods {
             ReferenceValues.Identifier.Push.startingWorkTimeOnSat
             
             let dateComponents = DateComponents(hour: calendarDateComponents.hour!, minute: calendarDateComponents.minute!, second: calendarDateComponents.second!, weekday: workDay)
-            self.makePushNotificationsWithDateComponents(dateComponents, repeats: true, title: "출근 시간 설정", body: "출근 시간을 설정하세요.", sound: .default, identifier: identifier) {
-                success?()
+            
+            let workType = WorkType(rawValue: ReferenceValues.initialSetting[InitialSetting.workType.rawValue] as! String)!
+            
+            switch workType {
+            case .staggered:
+                self.makePushNotificationsWithDateComponents(dateComponents, repeats: true, title: "출근 시간 설정", body: "출근 시간을 설정하세요.", sound: .default, identifier: identifier) {
+                    success?()
+                    
+                } failure: {
+                    failure?()
+                }
                 
-            } failure: {
-                failure?()
+            case .normal:
+                self.makePushNotificationsWithDateComponents(dateComponents, repeats: true, title: "스케쥴 확인", body: "앱을 열어 오늘 스케쥴을 확인하세요.", sound: .default, identifier: identifier) {
+                    success?()
+                    
+                } failure: {
+                    failure?()
+                }
             }
         }
     }

@@ -240,12 +240,15 @@ class SettingViewController: UIViewController {
     
     var popUpViewType: SettingPopUpType = .startingWorkTime {
         didSet {
+            let workType = WorkType(rawValue: ReferenceValues.initialSetting[InitialSetting.workType.rawValue] as! String)!
             switch self.popUpViewType {
             case .startingWorkTime:
+                self.popUpPanelTitleLabel.text = workType == .staggered ? "출근 시간 설정 알림" : "스케쥴 확인 알림"
                 self.datePicker.isHidden = false
                 self.popUpPanelButtonsView.isHidden = true
                 
             case .finishingWorkTime:
+                self.popUpPanelTitleLabel.text = "업무 종료 알림"
                 self.datePicker.isHidden = true
                 self.popUpPanelButtonsView.isHidden = false
             }
