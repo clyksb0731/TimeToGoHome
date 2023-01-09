@@ -88,7 +88,16 @@ struct WorkScheduleModel {
             self.determineFinishingRegularWorkTime()
         }
     }
-    private(set) var finishingRegularWorkTimeSecondsSinceReferenceDate: Int?
+    private(set) var finishingRegularWorkTimeSecondsSinceReferenceDate: Int? {
+        didSet {
+            if self.finishingRegularWorkTimeSecondsSinceReferenceDate != nil {
+                SupportingMethods.shared.determineTodayFinishingWorkTimePush(self)
+                
+            } else {
+                SupportingMethods.shared.removeTodayFinishingWorkTimePush()
+            }
+        }
+    }
     private(set) var overtime: ScheduleType? {
         didSet {
             if self.overtime == nil {
@@ -107,7 +116,11 @@ struct WorkScheduleModel {
             }
         }
     }
-    private(set) var overtimeSecondsSincReferenceDate: Int = 0
+    private(set) var overtimeSecondsSincReferenceDate: Int = 0 {
+        didSet {
+            SupportingMethods.shared.determineTodayFinishingWorkTimePush(self)
+        }
+    }
     
     var dateOfFinishedSchedule: Date? = {
         if let dateOfFinishedSchedule = SupportingMethods.shared.useAppSetting(for: .dateForFinishedSchedule) as? Date {
@@ -397,7 +410,7 @@ extension WorkScheduleModel {
             
             companyModel.applySchedule(schedule)
             
-            SupportingMethods.shared.makeTodayFinishingWorkTimePush(self)
+            SupportingMethods.shared.determineTodayFinishingWorkTimePush(self)
             
             var vacation: Vacation!
             if morningWorkType == .vacation && afternoonWorkType == .vacation {

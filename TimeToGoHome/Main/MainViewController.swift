@@ -840,7 +840,7 @@ extension MainViewController {
 // MARK: - Extension for methods added
 extension MainViewController {
     func determineToday() {
-        SupportingMethods.shared.makeTodayFinishingWorkTimePush(self.schedule)
+        SupportingMethods.shared.determineTodayFinishingWorkTimePush(self.schedule)
         
         self.todayTimeValue = self.determineTodayTimeValue()
         self.tomorrowTimeValue = self.todayTimeValue + 86400

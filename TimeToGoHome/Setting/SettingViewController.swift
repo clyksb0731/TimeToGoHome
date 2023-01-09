@@ -656,7 +656,7 @@ extension SettingViewController {
                         let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 3, section: 0)) as! SettingSubCell
                         settingSubCell.itemTextLabel.alpha = 1
                         
-                        SupportingMethods.shared.makeCurrentCompanyLocationPush()
+                        SupportingMethods.shared.determineCurrentCompanyLocationPush()
                         
                     }), cancelAction: UIAlertAction(title: "아니오", style: .cancel, handler: { action in
                         let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 3, section: 0)) as! SettingSubCell
@@ -750,7 +750,7 @@ extension SettingViewController {
             settingSubCell.switchButton.isOn = isEnable
             settingSubCell.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
             
-            SupportingMethods.shared.makeStartingWorkTimePush()
+            SupportingMethods.shared.determineStartingWorkTimePush()
             
         case .finishingWorkTime:
             self.determineFinishingWorkTimes()
@@ -762,7 +762,7 @@ extension SettingViewController {
             settingSubCell.switchButton.isOn = isEnable
             settingSubCell.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
             
-            SupportingMethods.shared.makeTodayFinishingWorkTimePush(self.mainVC?.schedule)
+            SupportingMethods.shared.determineTodayFinishingWorkTimePush(self.mainVC?.schedule)
         }
         
         self.coverView.isHidden = true

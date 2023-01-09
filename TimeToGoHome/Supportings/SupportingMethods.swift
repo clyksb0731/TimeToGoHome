@@ -555,7 +555,7 @@ extension SupportingMethods {
         }
     }
     
-    func makeStartingWorkTimePush(success: (() -> ())? = nil,
+    func determineStartingWorkTimePush(success: (() -> ())? = nil,
                                   failure: (() -> ())? = nil) {
         guard let startingWorkTime =
                 SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Date,
@@ -610,7 +610,7 @@ extension SupportingMethods {
         ])
     }
     
-    func makeTodayFinishingWorkTimePush(_ schedule: WorkScheduleModel?,
+    func determineTodayFinishingWorkTimePush(_ schedule: WorkScheduleModel?,
                                         success: (() -> ())? = nil,
                                         failure: (() -> ())? = nil) {
         self.removeTodayFinishingWorkTimePush()
@@ -677,7 +677,7 @@ extension SupportingMethods {
         ])
     }
     
-    func makeCurrentCompanyLocationPush(success: (() -> ())? = nil,
+    func determineCurrentCompanyLocationPush(success: (() -> ())? = nil,
                                         failure: (() -> ())? = nil) {
         let center = CLLocationCoordinate2D(latitude: ReferenceValues.initialSetting[InitialSetting.companyLatitude.rawValue] as! Double, longitude: ReferenceValues.initialSetting[InitialSetting.companyLongitude.rawValue] as! Double)
         let region = CLCircularRegion(center: center, radius: 50, identifier: ReferenceValues.Identifier.Location.companyLocation)
