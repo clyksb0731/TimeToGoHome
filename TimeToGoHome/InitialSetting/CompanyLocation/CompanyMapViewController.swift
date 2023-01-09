@@ -57,7 +57,7 @@ class CompanyMapViewController: UIViewController {
         self.setPointAnnotation(center: self.initializeCenter().center, title: self.initializeCenter().address)
         self.setRegion(center: self.initializeCenter().center)
         
-        SupportingMethods.shared.makeInstantViewWithText("지도를 길게 눌러서 변경하세요.", duration: 3.5, on: self, withPosition: .top)
+        SupportingMethods.shared.makeInstantViewWithText("지도를 길게 눌러서 변경하세요.", duration: 3.5, on: self, withPosition: .top(constant: 30))
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -224,7 +224,7 @@ extension CompanyMapViewController {
                 }
                 
             } else {
-                let alertVC = UIAlertController(title: "오류", message: "선택한 위치의 주소를 알 수 없습니다.", preferredStyle: .alert)
+                let alertVC = UIAlertController(title: "주소 찾기 실패", message: "선택한 위치의 주소를 알 수 없습니다.", preferredStyle: .alert)
                 let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
                 alertVC.addAction(okAction)
                 
@@ -234,6 +234,8 @@ extension CompanyMapViewController {
             }
             
         } failure: {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "오류", andMessage: "주소 찾기에 실패했습니다.")
+            
             SupportingMethods.shared.turnCoverView(.off, on: self.view)
         }
     }

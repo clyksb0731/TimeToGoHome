@@ -218,13 +218,13 @@
 			path = SettingWorkType;
 			sourceTree = "<group>";
 		};
-		CA95E149296ADFA100F95FF9 /* SettingCompanyMap */ = {
+		CA95E149296ADFA100F95FF9 /* SettingCompanyLocation */ = {
 			isa = PBXGroup;
 			children = (
 				CA95E145296ADF4700F95FF9 /* SettingCompanyMapViewController.swift */,
 				CA95E147296ADF9D00F95FF9 /* SettingCompanyAddressCell.swift */,
 			);
-			path = SettingCompanyMap;
+			path = SettingCompanyLocation;
 			sourceTree = "<group>";
 		};
 		CAB9AD642926701E006AB951 /* InitialSetting */ = {
@@ -310,7 +310,7 @@
 				CAB9AD6D2926765F006AB951 /* SettingHeaderView.swift */,
 				CAF5E49829650E0A00038290 /* YSBlueSwitch.swift */,
 				CA95E144296ADE6000F95FF9 /* SettingWorkType */,
-				CA95E149296ADFA100F95FF9 /* SettingCompanyMap */,
+				CA95E149296ADFA100F95FF9 /* SettingCompanyLocation */,
 				CA95E14A296ADFCE00F95FF9 /* SettingHolidaysViewController.swift */,
 			);
 			path = Setting;

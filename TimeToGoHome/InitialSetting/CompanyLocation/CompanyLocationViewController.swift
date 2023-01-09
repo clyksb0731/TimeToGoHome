@@ -364,10 +364,12 @@ extension CompanyLocationViewController {
             }
             
         } failure: {
-            self.noResultTextLabel.isHidden = false
+            self.noResultTextLabel.isHidden = true
             
             self.addresses = []
             self.addressTableView.reloadData()
+            
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "오류", andMessage: "검색에 실패했습니다.")
             
             SupportingMethods.shared.turnCoverView(.off, on: self.view)
         }
@@ -519,7 +521,7 @@ extension CompanyLocationViewController: UITextFieldDelegate {
         
         if textField.text != "" &&
             textField.text?.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-            self.searchAddress(self.searchTextField.text!)
+            self.searchAddress(textField.text!)
             
         } else {
             self.noResultTextLabel.isHidden = false

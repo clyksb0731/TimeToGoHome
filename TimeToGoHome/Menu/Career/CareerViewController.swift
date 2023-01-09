@@ -53,7 +53,7 @@ class CareerViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        SupportingMethods.shared.makeInstantViewWithText("길게 눌러 수정할 수 있습니다.", duration: 2.5, on: self, withPosition: .bottom)
+        SupportingMethods.shared.makeInstantViewWithText("길게 눌러 수정할 수 있습니다.", duration: 2.5, on: self, withPosition: .bottom(constant: -30))
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {

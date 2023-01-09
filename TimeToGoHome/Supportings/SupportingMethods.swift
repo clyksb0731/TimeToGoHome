@@ -134,8 +134,8 @@ extension SupportingMethods {
     
     // MARK: Instant view
     enum InstantMessagePosition {
-        case top
-        case bottom
+        case top(constant: CGFloat)
+        case bottom(constant: CGFloat)
     }
     
     func makeInstantViewWithText(_ text: String, duration: TimeInterval, on vc: UIViewController, withPosition position: InstantMessagePosition) {
@@ -154,6 +154,8 @@ extension SupportingMethods {
             label.textAlignment = .center
             label.font = .systemFont(ofSize: 17, weight: .bold)
             label.textColor = .white
+            label.adjustsFontSizeToFitWidth = true
+            label.minimumScaleFactor = 0.5
             label.translatesAutoresizingMaskIntoConstraints = false
             
             return label
@@ -162,23 +164,32 @@ extension SupportingMethods {
         alertView.addSubview(alertLabel)
         vc.view.addSubview(alertView)
         
+        let alertViewWidthAnchor = alertView.widthAnchor.constraint(greaterThanOrEqualToConstant: 50)
+        alertViewWidthAnchor.priority = UILayoutPriority(750)
+        let alertViewLeadingAnchor = alertView.leadingAnchor.constraint(greaterThanOrEqualTo: vc.view.leadingAnchor, constant: 16)
+        alertViewLeadingAnchor.priority = UILayoutPriority(1000)
+        let alertViewTrailingAnchor = alertView.trailingAnchor.constraint(lessThanOrEqualTo: vc.view.trailingAnchor, constant: -16)
+        alertViewTrailingAnchor.priority = UILayoutPriority(1000)
+        
+        NSLayoutConstraint.activate([
+            alertView.heightAnchor.constraint(equalToConstant: 40),
+            alertView.centerXAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.centerXAnchor),
+            alertViewWidthAnchor,
+            alertViewLeadingAnchor,
+            alertViewTrailingAnchor
+        ])
+        
         switch position {
-        case .top:
+        case .top(let constant):
             // alertView
             NSLayoutConstraint.activate([
-                alertView.topAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.topAnchor, constant: 30),
-                alertView.heightAnchor.constraint(equalToConstant: 40),
-                alertView.centerXAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.centerXAnchor),
-                alertView.widthAnchor.constraint(greaterThanOrEqualToConstant: 50)
+                alertView.topAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.topAnchor, constant: constant)
             ])
             
-        case .bottom:
+        case .bottom(let constant):
             // alertView
             NSLayoutConstraint.activate([
-                alertView.bottomAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
-                alertView.heightAnchor.constraint(equalToConstant: 40),
-                alertView.centerXAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.centerXAnchor),
-                alertView.widthAnchor.constraint(greaterThanOrEqualToConstant: 50)
+                alertView.bottomAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.bottomAnchor, constant: constant)
             ])
         }
         
