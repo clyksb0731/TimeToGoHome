@@ -22,8 +22,10 @@ class SettingCompanyMapViewController: UIViewController {
     
     lazy var searchBarView: UIView = {
         let view = UIView()
-        view.backgroundColor = .useRGB(red: 251, green: 251, blue: 251, alpha: 0.75)
+        view.backgroundColor = .useRGB(red: 255, green: 255, blue: 255, alpha: 0.75)
         view.layer.cornerRadius = 10
+        view.layer.borderColor = UIColor.gray.cgColor
+        view.layer.borderWidth = 0.5
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -83,8 +85,8 @@ class SettingCompanyMapViewController: UIViewController {
     lazy var closeTableViewButton: UIButton = {
         let button = UIButton()
         button.setTitle("닫기", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        button.setTitleColor(.black, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 21, weight: .regular)
+        button.setTitleColor(.useRGB(red: 0, green: 122, blue: 255), for: .normal)
         button.addTarget(self, action: #selector(closeTableViewButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
@@ -95,7 +97,7 @@ class SettingCompanyMapViewController: UIViewController {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 30, weight: .bold)
         label.textAlignment = .center
-        label.textColor = UIColor.useRGB(red: 238, green: 238, blue: 238, alpha: 0.8)
+        label.textColor = UIColor.useRGB(red: 238, green: 238, blue: 238)
         label.text = "검색 결과 없음"
         label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -111,7 +113,7 @@ class SettingCompanyMapViewController: UIViewController {
         tableView.keyboardDismissMode = .onDrag
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.contentInset.bottom = 20
+        //tableView.contentInset.bottom = 20
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         return tableView
@@ -273,31 +275,32 @@ extension SettingCompanyMapViewController: EssentialViewMethods {
         // tableCoverView
         NSLayoutConstraint.activate([
             self.tableCoverView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-            self.tableCoverView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+            self.tableCoverView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
             self.tableCoverView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             self.tableCoverView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
         ])
         
         // tableBaseView
         NSLayoutConstraint.activate([
-            self.tableBaseView.centerYAnchor.constraint(equalTo: self.tableCoverView.centerYAnchor),
-            self.tableBaseView.heightAnchor.constraint(equalToConstant: 270),
-            self.tableBaseView.leadingAnchor.constraint(equalTo: self.tableCoverView.leadingAnchor, constant: 16),
-            self.tableBaseView.trailingAnchor.constraint(equalTo: self.tableCoverView.trailingAnchor, constant: -16)
+            self.tableBaseView.topAnchor.constraint(equalTo: self.tableCoverView.centerYAnchor, constant: -74),
+            self.tableBaseView.bottomAnchor.constraint(equalTo: self.tableCoverView.bottomAnchor, constant: 20),
+            self.tableBaseView.leadingAnchor.constraint(equalTo: self.tableCoverView.leadingAnchor),
+            self.tableBaseView.trailingAnchor.constraint(equalTo: self.tableCoverView.trailingAnchor)
         ])
         
         // tableViewTitleLabel
         NSLayoutConstraint.activate([
-            self.tableViewTitleLabel.topAnchor.constraint(equalTo: self.tableBaseView.topAnchor, constant: 24),
-            self.tableViewTitleLabel.heightAnchor.constraint(equalToConstant: 22),
-            self.tableViewTitleLabel.centerXAnchor.constraint(equalTo: self.tableBaseView.centerXAnchor)
+            self.tableViewTitleLabel.topAnchor.constraint(equalTo: self.tableBaseView.topAnchor, constant: 32),
+            self.tableViewTitleLabel.heightAnchor.constraint(equalToConstant: 25),
+            self.tableViewTitleLabel.leadingAnchor.constraint(equalTo: self.tableBaseView.leadingAnchor, constant: 32)
             
         ])
         
         // closeTableViewButton
         NSLayoutConstraint.activate([
-            self.closeTableViewButton.topAnchor.constraint(equalTo: self.tableBaseView.topAnchor, constant: 16),
-            self.closeTableViewButton.trailingAnchor.constraint(equalTo: self.tableBaseView.trailingAnchor, constant: -24)
+            self.closeTableViewButton.topAnchor.constraint(equalTo: self.tableBaseView.topAnchor, constant: 32),
+            self.closeTableViewButton.heightAnchor.constraint(equalToConstant: 25),
+            self.closeTableViewButton.trailingAnchor.constraint(equalTo: self.tableBaseView.trailingAnchor, constant: -32)
             
         ])
         
@@ -307,10 +310,10 @@ extension SettingCompanyMapViewController: EssentialViewMethods {
             self.noResultTextLabel.centerXAnchor.constraint(equalTo: self.tableBaseView.centerXAnchor)
         ])
         
-        //
+        // addressTableView
         NSLayoutConstraint.activate([
-            self.addressTableView.topAnchor.constraint(equalTo: self.tableViewTitleLabel.bottomAnchor, constant: 8),
-            self.addressTableView.bottomAnchor.constraint(equalTo: self.tableBaseView.bottomAnchor),
+            self.addressTableView.topAnchor.constraint(equalTo: self.tableViewTitleLabel.bottomAnchor, constant: 24),
+            self.addressTableView.bottomAnchor.constraint(equalTo: self.tableBaseView.bottomAnchor, constant: -20),
             self.addressTableView.leadingAnchor.constraint(equalTo: self.tableBaseView.leadingAnchor, constant: 20),
             self.addressTableView.trailingAnchor.constraint(equalTo: self.tableBaseView.trailingAnchor, constant: -20)
         ])
@@ -366,9 +369,11 @@ extension SettingCompanyMapViewController {
             DispatchQueue.main.async {
                 if self.searchedAddress.isEmpty {
                     self.noResultTextLabel.isHidden = false
+                    self.addressTableView.isHidden = true
                     
                 } else {
                     self.noResultTextLabel.isHidden = true
+                    self.addressTableView.isHidden = false
                 }
                 
                 SupportingMethods.shared.turnCoverView(.off, on: self.view)
@@ -376,6 +381,7 @@ extension SettingCompanyMapViewController {
             
         } failure: {
             self.noResultTextLabel.isHidden = true
+            self.addressTableView.isHidden = true
             
             self.searchedAddress = []
             self.addressTableView.reloadData()
@@ -482,6 +488,7 @@ extension SettingCompanyMapViewController {
         self.tableCoverView.isHidden = true
         
         self.noResultTextLabel.isHidden = true
+        self.addressTableView.isHidden = false
         self.searchedAddress = []
         self.addressTableView.reloadData()
     }
@@ -536,6 +543,7 @@ extension SettingCompanyMapViewController: UITextFieldDelegate {
             
         } else {
             self.noResultTextLabel.isHidden = false
+            self.addressTableView.isHidden = true
             
             self.searchedAddress = []
             self.addressTableView.reloadData()
