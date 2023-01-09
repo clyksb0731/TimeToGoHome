@@ -2407,15 +2407,26 @@ extension MainViewController {
         if (now >= self.tomorrowTimeValue) {
             //self.timer?.invalidate()
             
-            if self.isEditingMode {
-                if self.mainTimeCoverView.isHidden {
-                    if let presentedVC = self.presentedViewController, presentedVC is MainCoverViewController {
-                        self.dismiss(animated: false) {
-                            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "날이 바뀌어 메인화면으로 돌아왔습니다.")
-                        }
+            if let presentedVC = self.presentedViewController {
+                if self.isEditingMode {
+                    if let schedule = self.tempSchedule {
+                        self.schedule = schedule
                     }
                     
-                } else {
+                    self.mainTimeCoverView.isHidden = true
+                    self.isEditingMode = false
+                }
+                
+                self.dismiss(animated: !(presentedVC is MainCoverViewController)) {
+                    SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "날이 바뀌어 메인화면으로 돌아왔습니다.")
+                }
+                
+            } else {
+                if self.isEditingMode {
+                    if let schedule = self.tempSchedule {
+                        self.schedule = schedule
+                    }
+                    
                     self.mainTimeCoverView.isHidden = true
                     self.isEditingMode = false
                     
