@@ -1917,27 +1917,31 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
 // MARK: - Extension for methods added
 extension SettingStaggeredWorkViewController {
     func determineInitialValues() {
-        // Morning attendance
-        let morningStartingWorkTimeValueRange = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValueRange.rawValue] as! [String:Double]
-        let morningEarliestTimeValue = morningStartingWorkTimeValueRange[TimeRange.earliestTime.rawValue]!
-        let morningLatestTime = morningStartingWorkTimeValueRange[TimeRange.latestTime.rawValue]!
-        self.locateMarkingBarViewFor(.morningEarliest(self.determineMorningAttendancePoint(morningEarliestTimeValue)!), isInitialization: true)
-        self.locateMarkingBarViewFor(.morningLatest(self.determineMorningAttendancePoint(morningLatestTime)!), isInitialization: true)
+        let workType = WorkType(rawValue:ReferenceValues.initialSetting[InitialSetting.workType.rawValue] as! String)!
         
-        // Lunch time
-        let lunchTimeValue = ReferenceValues.initialSetting[InitialSetting.lunchTimeValue.rawValue] as! Double
-        self.locateMarkingBarViewFor(.lunchTime(self.determineLunchPoint(lunchTimeValue)!), isInitialization: true)
-        let isIgnoredLunchTimeForHalfVacation = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as! Bool
-        self.ignoringLunchTimeButton.isSelected = isIgnoredLunchTimeForHalfVacation
-        self.afternoonEarliestAttendanceAreaView.isHidden = isIgnoredLunchTimeForHalfVacation
-        self.afternoonLatestAttendanceAreaView.isHidden = isIgnoredLunchTimeForHalfVacation
-        
-        // Afternoon attendance
-        let afternoonStartingWorkTimeValueRange = ReferenceValues.initialSetting[InitialSetting.afternoonStartingWorkTimeValueRange.rawValue] as! [String:Double]
-        let afternoonEarliestTimeValue = afternoonStartingWorkTimeValueRange[TimeRange.earliestTime.rawValue]!
-        let afternoonLatestTime = afternoonStartingWorkTimeValueRange[TimeRange.latestTime.rawValue]!
-        self.locateMarkingBarViewFor(.afternoonEarliest(self.determineAfternoonEarliestAttendacePoint(afternoonEarliestTimeValue)!), isInitialization: true)
-        self.locateMarkingBarViewFor(.afternoonLatest(self.determineAfternoonLatestAttendacePoint(afternoonLatestTime)!), isInitialization: true)
+        if workType == .staggered {
+            // Morning attendance
+            let morningStartingWorkTimeValueRange = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValueRange.rawValue] as! [String:Double]
+            let morningEarliestTimeValue = morningStartingWorkTimeValueRange[TimeRange.earliestTime.rawValue]!
+            let morningLatestTime = morningStartingWorkTimeValueRange[TimeRange.latestTime.rawValue]!
+            self.locateMarkingBarViewFor(.morningEarliest(self.determineMorningAttendancePoint(morningEarliestTimeValue)!), isInitialization: true)
+            self.locateMarkingBarViewFor(.morningLatest(self.determineMorningAttendancePoint(morningLatestTime)!), isInitialization: true)
+            
+            // Lunch time
+            let lunchTimeValue = ReferenceValues.initialSetting[InitialSetting.lunchTimeValue.rawValue] as! Double
+            self.locateMarkingBarViewFor(.lunchTime(self.determineLunchPoint(lunchTimeValue)!), isInitialization: true)
+            let isIgnoredLunchTimeForHalfVacation = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as! Bool
+            self.ignoringLunchTimeButton.isSelected = isIgnoredLunchTimeForHalfVacation
+            self.afternoonEarliestAttendanceAreaView.isHidden = isIgnoredLunchTimeForHalfVacation
+            self.afternoonLatestAttendanceAreaView.isHidden = isIgnoredLunchTimeForHalfVacation
+            
+            // Afternoon attendance
+            let afternoonStartingWorkTimeValueRange = ReferenceValues.initialSetting[InitialSetting.afternoonStartingWorkTimeValueRange.rawValue] as! [String:Double]
+            let afternoonEarliestTimeValue = afternoonStartingWorkTimeValueRange[TimeRange.earliestTime.rawValue]!
+            let afternoonLatestTime = afternoonStartingWorkTimeValueRange[TimeRange.latestTime.rawValue]!
+            self.locateMarkingBarViewFor(.afternoonEarliest(self.determineAfternoonEarliestAttendacePoint(afternoonEarliestTimeValue)!), isInitialization: true)
+            self.locateMarkingBarViewFor(.afternoonLatest(self.determineAfternoonLatestAttendacePoint(afternoonLatestTime)!), isInitialization: true)
+        }
     }
     
     func locateMarkingBarViewFor(_ type: StaggeredMarkingViewType, isInitialization: Bool = false) {
@@ -2881,6 +2885,8 @@ extension SettingStaggeredWorkViewController {
         
         // Update initialSetting
         SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+        
+        SupportingMethods.shared.determineStartingWorkTimePush()
         
         // Pop view controller
         self.tabBarController?.navigationController?.popViewController(animated: true)

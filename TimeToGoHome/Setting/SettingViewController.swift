@@ -210,11 +210,13 @@ class SettingViewController: UIViewController {
     weak var mainVC: MainViewController?
     
     var settingArray: [(header: String, items:[(style: MenuSettingCellType, text: String)])] {
-        [
+        let workType = WorkType(rawValue: ReferenceValues.initialSetting[InitialSetting.workType.rawValue] as! String)!
+        
+        return [
             (header: "알림",
              items: SupportingMethods.shared.useAppSetting(for: .pushActivation) as? Bool == true ? [
                 (style: .switch(true), text: "알림 설정"),
-                (style: .switch(SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Date != nil), text: "ㄴ 출근 시간 설정 알림"),
+                (style: .switch(SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Date != nil), text: workType == .staggered ? "ㄴ 출근 시간 설정 알림" : "ㄴ 스케쥴 확인 알림"),
                 (style: .switch(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as? [Int] != nil && !(SupportingMethods.shared.useAppSetting(for: .alertFinishingWorkTime) as! [Int]).isEmpty), text: "ㄴ 업무 종료 알림"),
                 (style: .switch(SupportingMethods.shared.useAppSetting(for: .alertCompanyLocation) as? Bool == true), text: "ㄴ 근무지 근처 알림")
              ] : [
@@ -272,7 +274,7 @@ class SettingViewController: UIViewController {
         
         self.setViewFoundation()
         
-        //self.menuTableView.reloadData()
+        self.settingTableView.reloadData()
     }
     
 

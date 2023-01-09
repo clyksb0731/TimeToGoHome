@@ -682,6 +682,7 @@ class SettingNormalWorkTypeViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        self.determineInitialValues()
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -1334,15 +1335,19 @@ extension SettingNormalWorkTypeViewController: EssentialViewMethods {
 // MARK: - Extension for methods added
 extension SettingNormalWorkTypeViewController {
     func determineInitialValues() {
-        // Lunch time
-        let lunchTimeValue = ReferenceValues.initialSetting[InitialSetting.lunchTimeValue.rawValue] as! Double
-        self.locateMarkingBarViewFor(.lunchTime(self.determineLunchPoint(lunchTimeValue)!), isInitialization: true)
-        let isIgnoredLunchTimeForHalfVacation = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as! Bool
-        self.ignoringLunchTimeButton.isSelected = isIgnoredLunchTimeForHalfVacation
+        let workType = WorkType(rawValue:ReferenceValues.initialSetting[InitialSetting.workType.rawValue] as! String)!
         
-        // Morning attendance
-        let morningStartingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValue.rawValue] as! Double
-        self.locateMarkingBarViewFor(.attendance(self.determineLunchPoint(morningStartingWorkTimeValue)!), isInitialization: true)
+        if workType == .normal {
+            // Lunch time
+            let lunchTimeValue = ReferenceValues.initialSetting[InitialSetting.lunchTimeValue.rawValue] as! Double
+            self.locateMarkingBarViewFor(.lunchTime(self.determineLunchPoint(lunchTimeValue)!), isInitialization: true)
+            let isIgnoredLunchTimeForHalfVacation = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as! Bool
+            self.ignoringLunchTimeButton.isSelected = isIgnoredLunchTimeForHalfVacation
+            
+            // Morning attendance
+            let morningStartingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValue.rawValue] as! Double
+            self.locateMarkingBarViewFor(.attendance(self.determineMorningAttendacePoint(morningStartingWorkTimeValue)!), isInitialization: true)
+        }
     }
     
     func locateMarkingBarViewFor(_ type: NormalMarkingViewType, isInitialization: Bool = false) {
@@ -1843,6 +1848,8 @@ extension SettingNormalWorkTypeViewController {
         
         // Update initialSetting
         SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+        
+        SupportingMethods.shared.determineStartingWorkTimePush()
         
         // Pop view controller
         self.tabBarController?.navigationController?.popViewController(animated: true)
