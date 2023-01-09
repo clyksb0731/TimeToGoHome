@@ -908,7 +908,9 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         if indexPath.section == 2 && indexPath.row == 1 {
+            let holidaysVC = SettingHolidaysViewController()
             
+            self.navigationController?.pushViewController(holidaysVC, animated: true)
         }
     }
 }
