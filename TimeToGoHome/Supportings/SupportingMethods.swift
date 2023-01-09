@@ -557,6 +557,8 @@ extension SupportingMethods {
     
     func determineStartingWorkTimePush(success: (() -> ())? = nil,
                                   failure: (() -> ())? = nil) {
+        self.removeStartingWorkTimePush()
+        
         guard let startingWorkTime =
                 SupportingMethods.shared.useAppSetting(for: .alertSettingStartingWorkTime) as? Date,
                 let holidays =
@@ -679,7 +681,21 @@ extension SupportingMethods {
     
     func determineCurrentCompanyLocationPush(success: (() -> ())? = nil,
                                         failure: (() -> ())? = nil) {
-        let center = CLLocationCoordinate2D(latitude: ReferenceValues.initialSetting[InitialSetting.companyLatitude.rawValue] as! Double, longitude: ReferenceValues.initialSetting[InitialSetting.companyLongitude.rawValue] as! Double)
+        self.removeCurrentCompanyLocationPush()
+        
+        guard let latitude =
+                ReferenceValues.initialSetting[InitialSetting.companyLatitude.rawValue] as? Double,
+                let longitude =
+                ReferenceValues.initialSetting[InitialSetting.companyLongitude.rawValue] as? Double,
+                SupportingMethods.shared.useAppSetting(for: .alertCompanyLocation) as? Bool == true else {
+            print("Do not add push for company location")
+            
+            failure?()
+            
+            return
+        }
+        
+        let center = CLLocationCoordinate2D(latitude:latitude, longitude: longitude)
         let region = CLCircularRegion(center: center, radius: 50, identifier: ReferenceValues.Identifier.Location.companyLocation)
         region.notifyOnEntry = true
         region.notifyOnExit = false

@@ -650,6 +650,14 @@ extension SettingViewController {
             
             if sender.indexPath.row == 3 { // MARK: companyLocation
                 if sender.isOn {
+                    guard ReferenceValues.initialSetting[InitialSetting.companyLatitude.rawValue] as? Double != nil, ReferenceValues.initialSetting[InitialSetting.companyLongitude.rawValue] as? Double != nil else {
+                        sender.isOn = false
+                        
+                        SupportingMethods.shared.makeAlert(on: self, withTitle: "근무지 필요", andMessage: "근무지 정보가 없습니다. 근무지를 설정해 주세요.")
+                        
+                        return
+                    }
+                    
                     SupportingMethods.shared.makeAlert(on: self, withTitle: "알림 생성", andMessage: "근무지 근처에서 알림을 띄울까요? (이동 위치에 따라 반복될 수 있습니다.)", okAction: UIAlertAction(title: "예", style: .default, handler: { action in
                         SupportingMethods.shared.setAppSetting(with: true, for: .alertCompanyLocation)
                         
@@ -659,9 +667,7 @@ extension SettingViewController {
                         SupportingMethods.shared.determineCurrentCompanyLocationPush()
                         
                     }), cancelAction: UIAlertAction(title: "아니오", style: .cancel, handler: { action in
-                        let settingSubCell = self.settingTableView.cellForRow(at: IndexPath(row: 3, section: 0)) as! SettingSubCell
-                        settingSubCell.switchButton.isOn = SupportingMethods.shared.useAppSetting(for: .alertCompanyLocation) as? Bool == true
-                        settingSubCell.itemTextLabel.alpha = SupportingMethods.shared.useAppSetting(for: .alertCompanyLocation) as? Bool == true ? 1 : 0.5
+                        sender.isOn = false
                     }), completion: nil)
                     
                 } else {
@@ -681,6 +687,9 @@ extension SettingViewController {
     
     @objc func firstButton(_ sender: UIButton) {
         sender.isSelected.toggle()
+        
+        UIDevice.lightHaptic()
+        
         sender.backgroundColor = sender.isSelected ?
             .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
         sender.layer.borderColor = sender.isSelected ?
@@ -692,6 +701,9 @@ extension SettingViewController {
     
     @objc func secondButton(_ sender: UIButton) {
         sender.isSelected.toggle()
+        
+        UIDevice.lightHaptic()
+        
         sender.backgroundColor = sender.isSelected ?
             .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
         sender.layer.borderColor = sender.isSelected ?
@@ -703,6 +715,9 @@ extension SettingViewController {
     
     @objc func thirdButton(_ sender: UIButton) {
         sender.isSelected.toggle()
+        
+        UIDevice.lightHaptic()
+        
         sender.backgroundColor = sender.isSelected ?
             .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
         sender.layer.borderColor = sender.isSelected ?
@@ -714,6 +729,9 @@ extension SettingViewController {
     
     @objc func fourthButton(_ sender: UIButton) {
         sender.isSelected.toggle()
+        
+        UIDevice.lightHaptic()
+        
         sender.backgroundColor = sender.isSelected ?
             .useRGB(red: 145, green: 218, blue: 255) : .useRGB(red: 216, green: 216, blue: 216)
         sender.layer.borderColor = sender.isSelected ?
