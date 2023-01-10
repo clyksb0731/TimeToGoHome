@@ -22,6 +22,44 @@ class MainViewController: UIViewController {
         case fullHoliday
     }
     
+    lazy var topTitleView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var menuButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "menuBarButton"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.addTarget(self, action: #selector(menuButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 22, weight: .bold)
+        label.text = "오늘의 일정"
+        
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var settingButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "settingBarButton"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.addTarget(self, action: #selector(settingButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     lazy var mainTimeView: UIView = {
         let view = UIView()
         view.backgroundColor = .black
@@ -493,6 +531,7 @@ extension MainViewController {
         // Backgroud color
         self.view.backgroundColor = .white
         
+        /*
         // Navigation item appearance
         let navigationBarAppearance = UINavigationBarAppearance()
         navigationBarAppearance.configureWithTransparentBackground()
@@ -514,6 +553,7 @@ extension MainViewController {
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "settingBarButton"), style: .plain, target: self, action: #selector(settingBarButtonItem(_:)))
         self.navigationItem.rightBarButtonItem?.tintColor = .black
+         */
     }
     
     // Initialize views
@@ -539,12 +579,19 @@ extension MainViewController {
     // Set subviews
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
+            self.topTitleView,
             self.mainTimeView,
             self.scheduleTableView,
             self.changeScheduleDescriptionLabel,
             self.scheduleButtonView,
             self.leavingDateCoverView
         ], to: self.view)
+        
+        SupportingMethods.shared.addSubviews([
+            self.menuButton,
+            self.titleLabel,
+            self.settingButton
+        ], to: self.topTitleView)
         
         SupportingMethods.shared.addSubviews([
             self.remainingTimeButtonView,
@@ -592,9 +639,39 @@ extension MainViewController {
     func setLayouts() {
         let safeArea = self.view.safeAreaLayoutGuide
         
+        // topTitleView
+        NSLayoutConstraint.activate([
+            self.topTitleView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            self.topTitleView.heightAnchor.constraint(equalToConstant: 52),
+            self.topTitleView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
+            self.topTitleView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10)
+        ])
+        
+        // menuButton
+        NSLayoutConstraint.activate([
+            self.menuButton.centerYAnchor.constraint(equalTo: self.topTitleView.centerYAnchor),
+            self.menuButton.heightAnchor.constraint(equalToConstant: 44),
+            self.menuButton.leadingAnchor.constraint(equalTo: self.topTitleView.leadingAnchor),
+            self.menuButton.widthAnchor.constraint(equalToConstant: 44)
+        ])
+        
+        // titleLabel
+        NSLayoutConstraint.activate([
+            self.titleLabel.centerYAnchor.constraint(equalTo: self.topTitleView.centerYAnchor),
+            self.titleLabel.centerXAnchor.constraint(equalTo: self.topTitleView.centerXAnchor)
+        ])
+        
+        // settingButton
+        NSLayoutConstraint.activate([
+            self.settingButton.centerYAnchor.constraint(equalTo: self.topTitleView.centerYAnchor),
+            self.settingButton.heightAnchor.constraint(equalToConstant: 44),
+            self.settingButton.trailingAnchor.constraint(equalTo: self.topTitleView.trailingAnchor),
+            self.settingButton.widthAnchor.constraint(equalToConstant: 44)
+        ])
+        
         // Main time view layout
         NSLayoutConstraint.activate([
-            self.mainTimeView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            self.mainTimeView.topAnchor.constraint(equalTo: self.topTitleView.bottomAnchor),
             self.mainTimeView.heightAnchor.constraint(equalToConstant: 180),
             self.mainTimeView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
             self.mainTimeView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10)
@@ -829,7 +906,7 @@ extension MainViewController {
         
         // leavingDateCoverView
         NSLayoutConstraint.activate([
-            self.leavingDateCoverView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            self.leavingDateCoverView.topAnchor.constraint(equalTo: self.topTitleView.bottomAnchor),
             self.leavingDateCoverView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
             self.leavingDateCoverView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             self.leavingDateCoverView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
@@ -2385,6 +2462,22 @@ extension MainViewController {
 
 // MARK: - Extension for Selector methods
 extension MainViewController {
+    @objc func menuButton(_ sender: UIButton) {
+        let menuVC = MenuViewController()
+        menuVC.mainVC = self
+        let menuNaviVC = CustomizedNavigationController(rootViewController: menuVC)
+        
+        self.present(menuNaviVC, animated: true, completion: nil)
+    }
+    
+    @objc func settingButton(_ sender: UIButton) {
+        let settingVC = SettingViewController()
+        settingVC.mainVC = self
+        let settingNaviVC = CustomizedNavigationController(rootViewController: settingVC)
+        
+        self.present(settingNaviVC, animated: true, completion: nil)
+    }
+    
     @objc func menuBarButtonItem(_ sender: UIBarButtonItem) {
         let menuVC = MenuViewController()
         menuVC.mainVC = self

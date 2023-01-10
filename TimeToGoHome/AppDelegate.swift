@@ -60,7 +60,8 @@ extension AppDelegate {
         if !ReferenceValues.initialSetting.isEmpty {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let mainVC = storyboard.instantiateInitialViewController() as! MainViewController
-            self.window?.rootViewController = CustomizedNavigationController(rootViewController: mainVC)
+            self.window?.rootViewController = mainVC
+            //self.window?.rootViewController = CustomizedNavigationController(rootViewController: mainVC)
             
         } else {
             let initialVC = InitialViewController()
