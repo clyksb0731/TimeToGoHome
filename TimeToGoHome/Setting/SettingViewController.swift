@@ -233,7 +233,7 @@ class SettingViewController: UIViewController {
             
             (header: "휴무",
              items: [
-                (style: .openVC, text: "연차"),
+                (style: .openVC, text: "연차 휴가"),
                 (style: .openVC, text: "휴무일")
              ]
             ),
@@ -936,7 +936,9 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         if indexPath.section == 2 && indexPath.row == 0 {
+            let numberOfPaidHolidaysVC = SettingNumberOfPaidHolidaysViewController()
             
+            self.navigationController?.pushViewController(numberOfPaidHolidaysVC, animated: true)
         }
         
         if indexPath.section == 2 && indexPath.row == 1 {
