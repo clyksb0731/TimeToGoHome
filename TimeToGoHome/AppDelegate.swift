@@ -13,21 +13,24 @@ import CoreLocation
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var bgTaskId: UIBackgroundTaskIdentifier = .invalid
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        /*
         LocationManager.shared.addDelegate(self)
         
         if let _ = launchOptions?[.location] {
             LocationManager.shared.startUpdateLocation()
         }
+        */
         
         self.initiateUserNotification()
         
-        self.registerBGTasks()
+        //self.registerBGTasks()
         
         // FIXME: to test
-        self.checkData()
+        //self.checkData()
         //self.makeTempAppSetting()
         
         // determine root view controller
@@ -37,6 +40,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
+        print("applicationWillEnterForeground")
+        
+        if self.bgTaskId != .invalid {
+            application.endBackgroundTask(self.bgTaskId)
+            self.bgTaskId = .invalid
+        }
+        
         UNUserNotificationCenter.current().getNotificationSettings { setting in
             if setting.authorizationStatus != .authorized {
                 DispatchQueue.main.async {
@@ -47,7 +57,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
-        self.scheduleBGTasks()
+        print("applicationDidEnterBackground")
+        
+        //self.scheduleBGTasks()
+        
+        self.bgTaskId = application.beginBackgroundTask(expirationHandler: {
+            print("This app is going to be suspended soon")
+            
+            if self.bgTaskId != .invalid {
+                application.endBackgroundTask(self.bgTaskId)
+                self.bgTaskId = .invalid
+            }
+        })
     }
 }
 
@@ -108,6 +129,7 @@ extension AppDelegate {
         }
     }
     
+    /*
     // FIXME: To check data saved temporarily
     func checkData() {
         let dateFormatter = DateFormatter()
@@ -146,6 +168,7 @@ extension AppDelegate {
         }
         
     }
+     */
 }
 
 // MARK: - Extension for Remote Notification
@@ -163,6 +186,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
 // MARK: - Extension for Background Task
 extension AppDelegate {
+    /*
     func registerBGTasks() {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: "updateCompanyRegion", using: nil) { (task) in
             self.handleAppRefresh(task: task as! BGAppRefreshTask)
@@ -210,8 +234,10 @@ extension AppDelegate {
     func handleAppProcessing(task: BGProcessingTask) {
         task.setTaskCompleted(success: true)
     }
+     */
 }
 
+/*
 // MARK: - Extension for LocationManagerDelegate
 extension AppDelegate: LocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
@@ -272,6 +298,7 @@ extension AppDelegate: LocationManagerDelegate {
         }
     }
 }
+*/
 
 // FIXME: - Temp Extension
 extension AppDelegate {

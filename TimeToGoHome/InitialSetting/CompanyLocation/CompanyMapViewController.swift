@@ -53,6 +53,7 @@ class CompanyMapViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        self.mapView.delegate = self
         self.mapView.removeAnnotations(self.mapView.annotations)
         self.setPointAnnotation(center: self.initializeCenter().center, title: self.initializeCenter().address)
         self.setRegion(center: self.initializeCenter().center)
@@ -63,7 +64,7 @@ class CompanyMapViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        print("MapView Height: \(self.mapView.frame.height)")
+        //print("MapView Height: \(self.mapView.frame.height)")
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -118,7 +119,7 @@ extension CompanyMapViewController {
     
     // Set delegates
     func setDelegates() {
-        self.mapView.delegate = self
+        
     }
     
     // Set notificationCenters
@@ -253,6 +254,8 @@ extension CompanyMapViewController {
         }
         
         let detailCompanyAddressVC = CompanyDetailedAddressViewController(selectedCenter: selectedCenter, selectedAddress: selectedAddress)
+        
+        self.mapView.delegate = nil
         
         self.navigationController?.pushViewController(detailCompanyAddressVC, animated: true)
     }

@@ -214,7 +214,7 @@ extension CompanyLocationViewController {
     
     // Set delegates
     func setDelegates() {
-        LocationManager.shared.addDelegate(self)
+        //LocationManager.shared.addDelegate(self)
         
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         
@@ -379,7 +379,7 @@ extension CompanyLocationViewController {
 // MARK: - Extension for Selector methods
 extension CompanyLocationViewController {
     @objc func dismissButton(_ sender: UIButton) {
-        LocationManager.shared.removeDelegate(self)
+        //LocationManager.shared.removeDelegate(self)
         
         self.dismiss(animated: true, completion: nil)
         
@@ -493,6 +493,7 @@ extension CompanyLocationViewController: UIGestureRecognizerDelegate {
     }
 }
 
+/*
 // MARK: - Extension for LocationManagerDelegate
 extension CompanyLocationViewController: LocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -507,6 +508,7 @@ extension CompanyLocationViewController: LocationManagerDelegate {
 //
 //    }
 }
+*/
 
 // MARK: - Extension for UITextFieldDelegate
 extension CompanyLocationViewController: UITextFieldDelegate {

@@ -36,14 +36,14 @@ extension LocationManager {
             if self.locationManager.authorizationStatus != .authorizedAlways &&
                 self.locationManager.authorizationStatus != .authorizedWhenInUse {
                 
-                self.locationManager.requestAlwaysAuthorization()
+                self.locationManager.requestWhenInUseAuthorization()
             }
             
         } else {
             if CLLocationManager.authorizationStatus() != .authorizedAlways &&
                 CLLocationManager.authorizationStatus() != .authorizedWhenInUse {
                 
-                self.locationManager.requestAlwaysAuthorization()
+                self.locationManager.requestWhenInUseAuthorization()
             }
         }
     }
