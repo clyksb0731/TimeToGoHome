@@ -662,8 +662,9 @@ class MenuCoverViewController: UIViewController {
     
     lazy var cancelApplyCareerButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "x.circle", withConfiguration: UIImage.SymbolConfiguration(scale: .large)), for: .normal)
-        button.tintColor = .useRGB(red: 61, green: 61, blue: 61, alpha: 0.5)
+        button.setImage(UIImage(named: "declineMarkButton"), for: .normal)
+        //button.setImage(UIImage(systemName: "x.circle", withConfiguration: UIImage.SymbolConfiguration(scale: .large)), for: .normal)
+        //button.tintColor = .useRGB(red: 61, green: 61, blue: 61, alpha: 0.5)
         button.imageView?.contentMode = .scaleAspectFit
         button.addTarget(self, action: #selector(cancelApplyCareerButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -673,8 +674,9 @@ class MenuCoverViewController: UIViewController {
     
     lazy var applyCareerButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "checkmark.circle", withConfiguration: UIImage.SymbolConfiguration(scale: .large)), for: .normal)
-        button.tintColor = .useRGB(red: 61, green: 61, blue: 61, alpha: 0.5)
+        button.setImage(UIImage(named: "confirmMarkButton"), for: .normal)
+        //button.setImage(UIImage(systemName: "checkmark.circle", withConfiguration: UIImage.SymbolConfiguration(scale: .large)), for: .normal)
+        //button.tintColor = .useRGB(red: 61, green: 61, blue: 61, alpha: 0.5)
         button.imageView?.contentMode = .scaleAspectFit
         button.addTarget(self, action: #selector(applyCareerButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
