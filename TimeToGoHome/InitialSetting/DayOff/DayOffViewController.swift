@@ -1507,6 +1507,7 @@ extension DayOffViewController {
         self.completeInitialSettings()
         
         let mainVC = MainViewController()
+        mainVC.modalPresentationStyle = .fullScreen
         // let mainNaviVC = CustomizedNavigationController(rootViewController: mainVC)
         
 //        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
