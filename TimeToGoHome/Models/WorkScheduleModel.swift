@@ -69,6 +69,9 @@ struct WorkScheduleModel {
             
             self.startingWorkTimeSecondsSinceReferenceDate =  Int(startingWorkTime.timeIntervalSinceReferenceDate)
             self.determineFinishingRegularWorkTime()
+            
+            // MARK: After setting starting work time.
+            SupportingMethods.shared.determineTodayFinishingWorkTimePush(self)
         }
     }
     private(set) var startingWorkTimeSecondsSinceReferenceDate: Int?
@@ -88,16 +91,7 @@ struct WorkScheduleModel {
             self.determineFinishingRegularWorkTime()
         }
     }
-    private(set) var finishingRegularWorkTimeSecondsSinceReferenceDate: Int? {
-        didSet {
-            if self.finishingRegularWorkTimeSecondsSinceReferenceDate != nil {
-                SupportingMethods.shared.determineTodayFinishingWorkTimePush(self)
-                
-            } else {
-                SupportingMethods.shared.removeTodayFinishingWorkTimePush()
-            }
-        }
-    }
+    private(set) var finishingRegularWorkTimeSecondsSinceReferenceDate: Int?
     private(set) var overtime: ScheduleType? {
         didSet {
             if self.overtime == nil {
@@ -116,11 +110,7 @@ struct WorkScheduleModel {
             }
         }
     }
-    private(set) var overtimeSecondsSincReferenceDate: Int = 0 {
-        didSet {
-            SupportingMethods.shared.determineTodayFinishingWorkTimePush(self)
-        }
-    }
+    private(set) var overtimeSecondsSincReferenceDate: Int = 0
     
     var dateOfFinishedSchedule: Date? = {
         if let dateOfFinishedSchedule = SupportingMethods.shared.useAppSetting(for: .dateForFinishedSchedule) as? Date {
