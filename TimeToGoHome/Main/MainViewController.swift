@@ -2868,7 +2868,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                     
                 } else { // row 2
                     let cell = tableView.dequeueReusableCell(withIdentifier: "SchedulingCell") as! SchedulingCell
-                    cell.setCell(scheduleTypeText: "추가 일정", width: UIScreen.main.bounds.width - 10, height: ReferenceValues.Size.Schedule.overtimeScheduleHeight)
+                    cell.setCell(scheduleTypeText: "추가 일정", width: UIScreen.main.bounds.width - 20, height: ReferenceValues.Size.Schedule.overtimeScheduleHeight)
                     
                     return cell
                 }
@@ -2930,7 +2930,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             
         } else { // row 0
             let cell = tableView.dequeueReusableCell(withIdentifier: "SchedulingCell") as! SchedulingCell
-            cell.setCell(scheduleTypeText: "오전 일정", width: UIScreen.main.bounds.width - 10, height: ReferenceValues.Size.Schedule.normalScheduleHeight)
+            cell.setCell(scheduleTypeText: "오전 일정", width: UIScreen.main.bounds.width - 20, height: ReferenceValues.Size.Schedule.normalScheduleHeight)
             
             return cell
         }
