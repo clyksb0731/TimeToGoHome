@@ -234,7 +234,7 @@ class SettingViewController: UIViewController {
             (header: "휴무",
              items: [
                 (style: .openVC, text: "연차"),
-                (style: .openVC, text: "정기 휴일")
+                (style: .openVC, text: "휴무일")
              ]
             ),
         ]

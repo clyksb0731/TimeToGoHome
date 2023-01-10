@@ -169,7 +169,7 @@ extension SettingHolidaysViewController: EssentialViewMethods {
         
         self.navigationController?.setNavigationBarHidden(false, animated: true);
         
-        self.navigationItem.title = "휴가 일정"
+        self.navigationItem.title = "휴무일"
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "backButtonItemImage"), style: .plain, target: self, action: #selector(leftBarButtonItem(_:)))
         self.navigationItem.leftBarButtonItem?.tintColor = .black
     }
