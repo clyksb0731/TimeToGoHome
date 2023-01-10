@@ -163,23 +163,23 @@ class MainCoverViewController: UIViewController {
         return datePicker
     }()
     
-    lazy var confirmButton: UIButton = {
-        let button = UIButton()
-        button.titleLabel?.font = .systemFont(ofSize: 21, weight: .semibold)
-        button.setTitle("확인", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.addTarget(self, action: #selector(confirmButton(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        return button
-    }()
-    
     lazy var declineButton: UIButton = {
         let button = UIButton()
         button.titleLabel?.font = .systemFont(ofSize: 21, weight: .semibold)
         button.setTitle("취소", for: .normal)
         button.setTitleColor(.blue, for: .normal)
         button.addTarget(self, action: #selector(declineButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var confirmButton: UIButton = {
+        let button = UIButton()
+        button.titleLabel?.font = .systemFont(ofSize: 21, weight: .semibold)
+        button.setTitle("확인", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.addTarget(self, action: #selector(confirmButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -399,8 +399,8 @@ extension MainCoverViewController {
         case .overtimeSchedule:
             SupportingMethods.shared.addSubviews([
                 self.datePicker,
-                self.confirmButton,
-                self.declineButton
+                self.declineButton,
+                self.confirmButton
             ], to: self.popUpPanelView)
             
         case .startingWorkTime:
@@ -414,8 +414,8 @@ extension MainCoverViewController {
             
             SupportingMethods.shared.addSubviews([
                 self.datePicker,
-                self.confirmButton,
-                self.declineButton
+                self.declineButton,
+                self.confirmButton
             ], to: self.popUpPanelView)
         }
     }
@@ -497,20 +497,20 @@ extension MainCoverViewController {
                 self.datePicker.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor, constant: -5)
             ])
             
-            // Starting work time confirm button layout
-            NSLayoutConstraint.activate([
-                self.confirmButton.topAnchor.constraint(equalTo: self.datePicker.bottomAnchor, constant: 10),
-                self.confirmButton.heightAnchor.constraint(equalToConstant: 35),
-                self.confirmButton.trailingAnchor.constraint(equalTo: self.popUpPanelView.centerXAnchor, constant: -5),
-                self.confirmButton.widthAnchor.constraint(equalToConstant: 97)
-            ])
-            
-            // Starting work time decline button layout layout
+            // Overtime decline button layout layout
             NSLayoutConstraint.activate([
                 self.declineButton.topAnchor.constraint(equalTo: self.datePicker.bottomAnchor, constant: 10),
                 self.declineButton.heightAnchor.constraint(equalToConstant: 35),
-                self.declineButton.leadingAnchor.constraint(equalTo: self.popUpPanelView.centerXAnchor, constant: 5),
+                self.declineButton.trailingAnchor.constraint(equalTo: self.popUpPanelView.centerXAnchor, constant: -5),
                 self.declineButton.widthAnchor.constraint(equalToConstant: 97)
+            ])
+            
+            // Overtime time confirm button layout
+            NSLayoutConstraint.activate([
+                self.confirmButton.topAnchor.constraint(equalTo: self.datePicker.bottomAnchor, constant: 10),
+                self.confirmButton.heightAnchor.constraint(equalToConstant: 35),
+                self.confirmButton.leadingAnchor.constraint(equalTo: self.popUpPanelView.centerXAnchor, constant: 5),
+                self.confirmButton.widthAnchor.constraint(equalToConstant: 97)
             ])
             
         case .startingWorkTime: // MARK: Starting worktime
@@ -533,20 +533,20 @@ extension MainCoverViewController {
                 self.datePicker.trailingAnchor.constraint(equalTo: self.popUpPanelView.trailingAnchor, constant: -5)
             ])
             
-            // Starting work time confirm button layout
-            NSLayoutConstraint.activate([
-                self.confirmButton.topAnchor.constraint(equalTo: self.datePicker.bottomAnchor, constant: 10),
-                self.confirmButton.heightAnchor.constraint(equalToConstant: 35),
-                self.confirmButton.trailingAnchor.constraint(equalTo: self.popUpPanelView.centerXAnchor, constant: -5),
-                self.confirmButton.widthAnchor.constraint(equalToConstant: 97)
-            ])
-            
             // Starting work time decline button layout layout
             NSLayoutConstraint.activate([
                 self.declineButton.topAnchor.constraint(equalTo: self.datePicker.bottomAnchor, constant: 10),
                 self.declineButton.heightAnchor.constraint(equalToConstant: 35),
-                self.declineButton.leadingAnchor.constraint(equalTo: self.popUpPanelView.centerXAnchor, constant: 5),
+                self.declineButton.trailingAnchor.constraint(equalTo: self.popUpPanelView.centerXAnchor, constant: -5),
                 self.declineButton.widthAnchor.constraint(equalToConstant: 97)
+            ])
+            
+            // Starting work time confirm button layout
+            NSLayoutConstraint.activate([
+                self.confirmButton.topAnchor.constraint(equalTo: self.datePicker.bottomAnchor, constant: 10),
+                self.confirmButton.heightAnchor.constraint(equalToConstant: 35),
+                self.confirmButton.leadingAnchor.constraint(equalTo: self.popUpPanelView.centerXAnchor, constant: 5),
+                self.confirmButton.widthAnchor.constraint(equalToConstant: 97)
             ])
         }
     }
