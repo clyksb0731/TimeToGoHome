@@ -7,8 +7,6 @@
 
 import UIKit
 import CoreLocation
-import Contacts
-import Alamofire
 
 class CompanyLocationViewController: UIViewController {
 
@@ -214,8 +212,6 @@ extension CompanyLocationViewController {
     
     // Set delegates
     func setDelegates() {
-        //LocationManager.shared.addDelegate(self)
-        
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         
         self.searchTextField.delegate = self
@@ -379,28 +375,7 @@ extension CompanyLocationViewController {
 // MARK: - Extension for Selector methods
 extension CompanyLocationViewController {
     @objc func dismissButton(_ sender: UIButton) {
-        //LocationManager.shared.removeDelegate(self)
-        
         self.dismiss(animated: true, completion: nil)
-        
-        // FIXME: to test
-        /*
-        if let monitoredRegion = LocationManager.shared.locationManager.monitoredRegions.first,
-           let circularRegion = monitoredRegion as? CLCircularRegion {
-            LocationManager.shared.stopMonitorRegion(circularRegion.center)
-            
-            let alertVC = UIAlertController(title: "Stop Monitoring", message: "latitude: \(circularRegion.center.latitude), longitude: \(circularRegion.center.longitude)", preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "확인", style: .default) { (action) in
-                self.dismiss(animated: true, completion: nil)
-            }
-            alertVC.addAction(okAction)
-            self.present(alertVC, animated: true, completion: nil)
-            
-        } else {
-            self.dismiss(animated: true, completion: nil)
-        }
-        UIApplication.shared.applicationIconBadgeNumber = 0
-         */
     }
     
     @objc func deleteSearchTextButton(_ sender: UIButton) {
@@ -458,25 +433,6 @@ extension CompanyLocationViewController {
         let detailCompanyAddressVC = CompanyDetailedAddressViewController(selectedCenter: center, selectedAddress: self.addresses[self.selectedLocationIndex!].addressName)
         
         self.navigationController?.pushViewController(detailCompanyAddressVC, animated: true)
-        
-        // FIXME: Temp code
-        /*
-        guard LocationManager.shared.locationManager.monitoredRegions.isEmpty else {
-            print("Specified region is being monitored.")
-
-            return
-        }
-
-        
-        if let companyCenter = LocationManager.shared.companyRegion?.center {
-            LocationManager.shared.startMonitorRegion(companyCenter)
-
-            let alertVC = UIAlertController(title: "Start Monitoring", message: "latitude: \(companyCenter.latitude), longitude: \(companyCenter.longitude)", preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
-            alertVC.addAction(okAction)
-            self.present(alertVC, animated: true, completion: nil)
-        }
-        */
     }
 }
 
@@ -492,23 +448,6 @@ extension CompanyLocationViewController: UIGestureRecognizerDelegate {
         return self.navigationController!.viewControllers.count > 1 ? true : false
     }
 }
-
-/*
-// MARK: - Extension for LocationManagerDelegate
-extension CompanyLocationViewController: LocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
-    }
-    
-//    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
-//
-//    }
-//
-//    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
-//
-//    }
-}
-*/
 
 // MARK: - Extension for UITextFieldDelegate
 extension CompanyLocationViewController: UITextFieldDelegate {
@@ -559,13 +498,9 @@ extension CompanyLocationViewController: UITableViewDelegate, UITableViewDataSou
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.searchTextField.resignFirstResponder()
         
-        if let latitude = Double(self.addresses[indexPath.row].latitude),
-           let longitude = Double(self.addresses[indexPath.row].longitude) {
+        if let _ = Double(self.addresses[indexPath.row].latitude),
+           let _ = Double(self.addresses[indexPath.row].longitude) {
             self.selectedLocationIndex = indexPath.row
-            
-            let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-            
-            LocationManager.shared.companyRegion = CLCircularRegion(center: center, radius: 5, identifier: "companyLocation")
             
             self.nextButton.isEnabled = true
             self.nextButtonView.backgroundColor = .Buttons.initialActiveBottom

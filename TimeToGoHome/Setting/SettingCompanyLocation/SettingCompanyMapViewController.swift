@@ -7,7 +7,6 @@
 
 import UIKit
 import MapKit
-import Alamofire
 
 class SettingCompanyMapViewController: UIViewController {
     
@@ -573,8 +572,6 @@ extension SettingCompanyMapViewController: UITableViewDelegate, UITableViewDataS
            let longitude = Double(self.searchedAddress[indexPath.row].longitude) {
             
             let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-            
-            //LocationManager.shared.companyRegion = CLCircularRegion(center: center, radius: 5, identifier: "companyLocation")
             
             self.setPointAnnotation(center: center, title: self.searchedAddress[indexPath.row].addressName)
             self.setRegion(center: center)
