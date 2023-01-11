@@ -42,7 +42,7 @@ enum InitialSetting: String {
     
     // 휴무 정보
     case regularHolidays // 정기 휴무 요일
-    case annualPaidHolidayType // 휴가기준 (회계연도/입사날짜)
+    case annualPaidHolidaysType // 휴가기준 (회계연도/입사날짜)
     case annualPaidHolidays // 연차 개수
 }
 

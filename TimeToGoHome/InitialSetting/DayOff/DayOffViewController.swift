@@ -169,7 +169,7 @@ class DayOffViewController: UIViewController {
         label.textColor = .useRGB(red: 197, green: 199, blue: 201)
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 20, weight: .bold)
-        label.text = "휴가 (\(VacationModel.annualPaidHolidaysType == .fiscalYear ? "회계연도" : "입사날짜"))"
+        label.text = "휴가 (\(self.annualPaidHolidaysType == .fiscalYear ? "회계연도" : "입사날짜"))"
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -365,7 +365,7 @@ class DayOffViewController: UIViewController {
         button.setImage(UIImage(named: "settingVacationNormalButton"), for: .normal)
         button.setImage(UIImage(named: "settingVacationSelectedButton"), for: .selected)
         button.addTarget(self, action: #selector(fiscalYearButton(_:)), for: .touchUpInside)
-        button.isSelected = self.annualVacationType == .fiscalYear
+        button.isSelected = self.annualPaidHolidaysType == .fiscalYear
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -387,7 +387,7 @@ class DayOffViewController: UIViewController {
         button.setImage(UIImage(named: "settingVacationNormalButton"), for: .normal)
         button.setImage(UIImage(named: "settingVacationSelectedButton"), for: .selected)
         button.addTarget(self, action: #selector(joiningDayButton(_:)), for: .touchUpInside)
-        button.isSelected = self.annualVacationType == .joiningDay
+        button.isSelected = self.annualPaidHolidaysType == .joiningDay
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -441,23 +441,23 @@ class DayOffViewController: UIViewController {
         return button
     }()
     
-    lazy var confirmButton: UIButton = {
-        let button = UIButton()
-        button.titleLabel?.font = .systemFont(ofSize: 21, weight: .semibold)
-        button.setTitle("확인", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.addTarget(self, action: #selector(confirmButton(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        return button
-    }()
-    
     lazy var declineButton: UIButton = {
         let button = UIButton()
         button.titleLabel?.font = .systemFont(ofSize: 21, weight: .semibold)
         button.setTitle("취소", for: .normal)
         button.setTitleColor(.blue, for: .normal)
         button.addTarget(self, action: #selector(declineButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var confirmButton: UIButton = {
+        let button = UIButton()
+        button.titleLabel?.font = .systemFont(ofSize: 21, weight: .semibold)
+        button.setTitle("확인", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.addTarget(self, action: #selector(confirmButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -505,16 +505,16 @@ class DayOffViewController: UIViewController {
     
     var vacations: Results<Vacation> = VacationModel.vacations
     
-    var annualVacationType: AnnualPaidHolidaysType = {
-        if let annualVacationType = ReferenceValues.initialSetting[InitialSetting.annualPaidHolidayType.rawValue] as? String,
-            let annualVacationType = AnnualPaidHolidaysType(rawValue: annualVacationType) {
-            return annualVacationType
+    var annualPaidHolidaysType: AnnualPaidHolidaysType = {
+        if let annualPaidHolidaysType = ReferenceValues.initialSetting[InitialSetting.annualPaidHolidaysType.rawValue] as? String,
+            let annualPaidHolidaysType = AnnualPaidHolidaysType(rawValue: annualPaidHolidaysType) {
+            return annualPaidHolidaysType
             
         } else {
             return .fiscalYear
         }
     }()
-    lazy var tempAnnualVacationType: AnnualPaidHolidaysType = self.annualVacationType
+    lazy var tempAnnualPaidHolidaysType: AnnualPaidHolidaysType = self.annualPaidHolidaysType
     
     var holidays: Set<Int> = {
         if let holidays = ReferenceValues.initialSetting[InitialSetting.regularHolidays.rawValue] as? [Int] {
@@ -693,8 +693,8 @@ extension DayOffViewController {
             self.settingTitleLabel,
             self.settingVacationButtonsView,
             self.settingNumberOfTotalVacationView,
+            self.declineButton,
             self.confirmButton,
-            self.declineButton
         ], to: self.settingVacationView)
         
         SupportingMethods.shared.addSubviews([
@@ -1030,20 +1030,20 @@ extension DayOffViewController {
             self.plusButton.widthAnchor.constraint(equalToConstant: 36)
         ])
         
-        // Starting work time confirm button layout
-        NSLayoutConstraint.activate([
-            self.confirmButton.topAnchor.constraint(equalTo: self.settingNumberOfTotalVacationView.bottomAnchor, constant: 59),
-            self.confirmButton.heightAnchor.constraint(equalToConstant: 35),
-            self.confirmButton.trailingAnchor.constraint(equalTo: self.settingVacationView.centerXAnchor, constant: -5),
-            self.confirmButton.widthAnchor.constraint(equalToConstant: 97)
-        ])
-        
-        // Starting work time decline button layout layout
+        // numberOfAnnualPaidHolidays decline button layout layout
         NSLayoutConstraint.activate([
             self.declineButton.topAnchor.constraint(equalTo: self.settingNumberOfTotalVacationView.bottomAnchor, constant: 59),
             self.declineButton.heightAnchor.constraint(equalToConstant: 35),
-            self.declineButton.leadingAnchor.constraint(equalTo: self.settingVacationView.centerXAnchor, constant: 5),
+            self.declineButton.trailingAnchor.constraint(equalTo: self.settingVacationView.centerXAnchor, constant: -5),
             self.declineButton.widthAnchor.constraint(equalToConstant: 97)
+        ])
+        
+        // numberOfAnnualPaidHolidays confirm button layout
+        NSLayoutConstraint.activate([
+            self.confirmButton.topAnchor.constraint(equalTo: self.settingNumberOfTotalVacationView.bottomAnchor, constant: 59),
+            self.confirmButton.heightAnchor.constraint(equalToConstant: 35),
+            self.confirmButton.leadingAnchor.constraint(equalTo: self.settingVacationView.centerXAnchor, constant: 5),
+            self.confirmButton.widthAnchor.constraint(equalToConstant: 97)
         ])
     }
 }
@@ -1055,7 +1055,7 @@ extension DayOffViewController {
         calendar.timeZone = .current
         let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
         
-        if self.annualVacationType == .fiscalYear {
+        if self.annualPaidHolidaysType == .fiscalYear {
             let yearMonthDayOfJoiningDate = SupportingMethods.shared.getYearMonthAndDayOf(ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
             let joiningDateFromYearMonthDay = SupportingMethods.shared.makeDateWithYear(yearMonthDayOfJoiningDate.year, month: yearMonthDayOfJoiningDate.month, andDay: yearMonthDayOfJoiningDate.day)
             
@@ -1150,6 +1150,8 @@ extension DayOffViewController {
     }
     
     func applyVacationsToLabel() {
+        self.numberOfVacationMarkLabel.text = "휴가 (\(self.annualPaidHolidaysType == .fiscalYear ? "회계연도" : "입사날짜"))"
+        
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         
@@ -1315,10 +1317,10 @@ extension DayOffViewController {
         self.tempNumberOfAnnualPaidHolidays = self.numberOfAnnualPaidHolidays
         self.numberOfAnnualPaidHolidaysLabel.text = "\(self.numberOfAnnualPaidHolidays)"
         
-        self.tempAnnualVacationType = self.annualVacationType
+        self.tempAnnualPaidHolidaysType = self.annualPaidHolidaysType
         
-        self.fiscalYearButton.isSelected = self.annualVacationType == .fiscalYear
-        self.joiningDayButton.isSelected = self.annualVacationType == .joiningDay
+        self.fiscalYearButton.isSelected = self.annualPaidHolidaysType == .fiscalYear
+        self.joiningDayButton.isSelected = self.annualPaidHolidaysType == .joiningDay
         
         self.coverView.isHidden = false
     }
@@ -1418,7 +1420,7 @@ extension DayOffViewController {
     @objc func fiscalYearButton(_ sender: UIButton) {
         UIDevice.softHaptic()
         
-        self.annualVacationType = .fiscalYear
+        self.annualPaidHolidaysType = .fiscalYear
         
         self.fiscalYearButton.isSelected = true
         self.joiningDayButton.isSelected = false
@@ -1427,7 +1429,7 @@ extension DayOffViewController {
     @objc func joiningDayButton(_ sender: UIButton) {
         UIDevice.softHaptic()
         
-        self.annualVacationType = .joiningDay
+        self.annualPaidHolidaysType = .joiningDay
         
         self.fiscalYearButton.isSelected = false
         self.joiningDayButton.isSelected = true
@@ -1454,7 +1456,7 @@ extension DayOffViewController {
     @objc func confirmButton(_ sender: UIButton) {
         self.coverView.isHidden = true
         
-        if self.annualVacationType != self.tempAnnualVacationType {
+        if self.annualPaidHolidaysType != self.tempAnnualPaidHolidaysType {
             SupportingMethods.shared.turnCoverView(.on, on: self.view)
             
             self.vacationScheduleDateRange = self.determineVacationScheduleDateRange()
@@ -1493,14 +1495,14 @@ extension DayOffViewController {
     }
     
     @objc func declineButton(_ sender: UIButton) {
-        self.annualVacationType = self.tempAnnualVacationType
+        self.annualPaidHolidaysType = self.tempAnnualPaidHolidaysType
         self.numberOfAnnualPaidHolidays = self.tempNumberOfAnnualPaidHolidays
         
         self.coverView.isHidden = true
     }
     
     @objc func startButton(_ sender: UIButton) {
-        ReferenceValues.initialSetting.updateValue(self.annualVacationType.rawValue, forKey: InitialSetting.annualPaidHolidayType.rawValue)
+        ReferenceValues.initialSetting.updateValue(self.annualPaidHolidaysType.rawValue, forKey: InitialSetting.annualPaidHolidaysType.rawValue)
         ReferenceValues.initialSetting.updateValue(self.numberOfAnnualPaidHolidays, forKey: InitialSetting.annualPaidHolidays.rawValue)
         ReferenceValues.initialSetting.updateValue(Array(self.holidays), forKey: InitialSetting.regularHolidays.rawValue)
         

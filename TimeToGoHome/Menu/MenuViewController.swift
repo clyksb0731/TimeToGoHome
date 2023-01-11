@@ -80,7 +80,6 @@ class MenuViewController: UIViewController {
             
             (header: "휴가",
              items: [
-                (menuStyle: .openVC, menuText: "휴가 설정"),
                 (menuStyle: .openVC, menuText: "휴가 일정")
              ]
             ),
@@ -358,12 +357,6 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         if indexPath.section == 1 && indexPath.row == 0 {
-            let numberOfPaidHolidaysVC = NumberOfPaidHolidaysViewController()
-            
-            self.navigationController?.pushViewController(numberOfPaidHolidaysVC, animated: true)
-        }
-        
-        if indexPath.section == 1 && indexPath.row == 1 {
             let vacationUsageVC = VacationUsageViewController()
             
             self.navigationController?.pushViewController(vacationUsageVC, animated: true)

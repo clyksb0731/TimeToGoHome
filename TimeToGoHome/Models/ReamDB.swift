@@ -401,18 +401,20 @@ struct VacationModel {
         }
     }
     
-    static var annualPaidHolidaysType: AnnualPaidHolidaysType = {
-        if let annualPaidHolidaysType = ReferenceValues.initialSetting[InitialSetting.annualPaidHolidayType.rawValue] as? String,
-            let annualPaidHolidaysType = AnnualPaidHolidaysType(rawValue: annualPaidHolidaysType) {
-            return annualPaidHolidaysType
-            
-        } else {
-            return .fiscalYear
-        }
-    }() {
-        didSet {
-            ReferenceValues.initialSetting.updateValue(self.annualPaidHolidaysType.rawValue, forKey: InitialSetting.annualPaidHolidayType.rawValue)
+    static var annualPaidHolidaysType: AnnualPaidHolidaysType {
+        set {
+            ReferenceValues.initialSetting.updateValue(newValue.rawValue, forKey: InitialSetting.annualPaidHolidaysType.rawValue)
             SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+        }
+        
+        get {
+            if let annualPaidHolidaysType = ReferenceValues.initialSetting[InitialSetting.annualPaidHolidaysType.rawValue] as? String,
+               let annualPaidHolidaysType = AnnualPaidHolidaysType(rawValue: annualPaidHolidaysType) {
+                return annualPaidHolidaysType
+                
+            } else {
+                return .fiscalYear
+            }
         }
     }
     
