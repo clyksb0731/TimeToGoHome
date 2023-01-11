@@ -601,7 +601,7 @@ extension SupportingMethods {
             workDay == 6 ? ReferenceValues.Identifier.Push.startingWorkTimeOnFri :
             ReferenceValues.Identifier.Push.startingWorkTimeOnSat
             
-            let dateComponents = DateComponents(hour: calendarDateComponents.hour!, minute: calendarDateComponents.minute!, second: calendarDateComponents.second!, weekday: workDay)
+            let dateComponents = DateComponents(hour: calendarDateComponents.hour!, minute: calendarDateComponents.minute!, second: 0, weekday: workDay)
             
             let workType = WorkType(rawValue: ReferenceValues.initialSetting[InitialSetting.workType.rawValue] as! String)!
             
