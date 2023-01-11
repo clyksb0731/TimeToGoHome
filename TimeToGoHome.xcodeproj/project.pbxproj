@@ -65,7 +65,6 @@
 		CABD62932928F96F004F3C4F /* MenuCoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABD62922928F96F004F3C4F /* MenuCoverViewController.swift */; };
 		CAC2625528367F0C0074A599 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = CAC2625428367F0C0074A599 /* Realm */; };
 		CAC2625728367F0C0074A599 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CAC2625628367F0C0074A599 /* RealmSwift */; };
-		CAD8E619293CC80C00E3E634 /* NumberOfPaidHolidaysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD8E618293CC80C00E3E634 /* NumberOfPaidHolidaysViewController.swift */; };
 		CAD8E61B293CC84800E3E634 /* VacationUsageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD8E61A293CC84800E3E634 /* VacationUsageViewController.swift */; };
 		CAD8E61D293CC87700E3E634 /* CalendarHeaderOfVacationUsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD8E61C293CC87700E3E634 /* CalendarHeaderOfVacationUsageView.swift */; };
 		CAD8E61F293CC89500E3E634 /* CalendarDayOfVacationUsageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD8E61E293CC89500E3E634 /* CalendarDayOfVacationUsageCell.swift */; };
@@ -137,7 +136,6 @@
 		CAB9AD6B29267647006AB951 /* SettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingCell.swift; sourceTree = "<group>"; };
 		CAB9AD6D2926765F006AB951 /* SettingHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingHeaderView.swift; sourceTree = "<group>"; };
 		CABD62922928F96F004F3C4F /* MenuCoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuCoverViewController.swift; sourceTree = "<group>"; };
-		CAD8E618293CC80C00E3E634 /* NumberOfPaidHolidaysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberOfPaidHolidaysViewController.swift; sourceTree = "<group>"; };
 		CAD8E61A293CC84800E3E634 /* VacationUsageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VacationUsageViewController.swift; sourceTree = "<group>"; };
 		CAD8E61C293CC87700E3E634 /* CalendarHeaderOfVacationUsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderOfVacationUsageView.swift; sourceTree = "<group>"; };
 		CAD8E61E293CC89500E3E634 /* CalendarDayOfVacationUsageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayOfVacationUsageCell.swift; sourceTree = "<group>"; };
@@ -296,7 +294,6 @@
 				CA8ED6A3295203AF0026478A /* MenuCover */,
 				CAD8E616293CC75900E3E634 /* WorkRecord */,
 				CAD8E624293CC91500E3E634 /* WorkStatistics */,
-				CAD8E621293CC8B200E3E634 /* NumberOfPaidHolidays */,
 				CAD8E620293CC89D00E3E634 /* VacationUsage */,
 				CAD8E625293CC96E00E3E634 /* Career */,
 			);
@@ -372,14 +369,6 @@
 				CAD8E61E293CC89500E3E634 /* CalendarDayOfVacationUsageCell.swift */,
 			);
 			path = VacationUsage;
-			sourceTree = "<group>";
-		};
-		CAD8E621293CC8B200E3E634 /* NumberOfPaidHolidays */ = {
-			isa = PBXGroup;
-			children = (
-				CAD8E618293CC80C00E3E634 /* NumberOfPaidHolidaysViewController.swift */,
-			);
-			path = NumberOfPaidHolidays;
 			sourceTree = "<group>";
 		};
 		CAD8E624293CC91500E3E634 /* WorkStatistics */ = {
@@ -482,7 +471,6 @@
 			files = (
 				CAF65F67296D250F00AD5C28 /* SettingNumberOfPaidHolidaysViewController.swift in Sources */,
 				CAB7CF372750C50F005C9232 /* CompanyAddressCell.swift in Sources */,
-				CAD8E619293CC80C00E3E634 /* NumberOfPaidHolidaysViewController.swift in Sources */,
 				CAB7CF332750B5C7005C9232 /* MainViewController.swift in Sources */,
 				CA95E148296ADF9D00F95FF9 /* SettingCompanyAddressCell.swift in Sources */,
 				CA14AE42293798E4001497DF /* CalendarDayOfScheduleRecordCell.swift in Sources */,
