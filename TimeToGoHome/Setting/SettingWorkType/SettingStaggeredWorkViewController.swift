@@ -1932,6 +1932,8 @@ extension SettingStaggeredWorkViewController {
             self.locateMarkingBarViewFor(.lunchTime(self.determineLunchPoint(lunchTimeValue)!), isInitialization: true)
             let isIgnoredLunchTimeForHalfVacation = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as! Bool
             self.ignoringLunchTimeButton.isSelected = isIgnoredLunchTimeForHalfVacation
+            self.ignoringLunchTimeMarkLabel.textColor = isIgnoredLunchTimeForHalfVacation ? .black : .useRGB(red: 221, green: 221, blue: 221)
+            
             self.afternoonEarliestAttendanceAreaView.isHidden = isIgnoredLunchTimeForHalfVacation
             self.afternoonLatestAttendanceAreaView.isHidden = isIgnoredLunchTimeForHalfVacation
             

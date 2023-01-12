@@ -1343,6 +1343,7 @@ extension SettingNormalWorkTypeViewController {
             self.locateMarkingBarViewFor(.lunchTime(self.determineLunchPoint(lunchTimeValue)!), isInitialization: true)
             let isIgnoredLunchTimeForHalfVacation = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as! Bool
             self.ignoringLunchTimeButton.isSelected = isIgnoredLunchTimeForHalfVacation
+            self.ignoringLunchTimeMarkLabel.textColor = isIgnoredLunchTimeForHalfVacation ? .black : .useRGB(red: 221, green: 221, blue: 221)
             
             // Morning attendance
             let morningStartingWorkTimeValue = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValue.rawValue] as! Double
