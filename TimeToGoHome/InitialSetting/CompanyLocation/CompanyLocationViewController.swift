@@ -314,7 +314,7 @@ extension CompanyLocationViewController {
         // Next button view layout
         NSLayoutConstraint.activate([
             self.nextButtonView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            self.nextButtonView.heightAnchor.constraint(equalToConstant: UIWindow().safeAreaInsets.bottom + 60),
+            self.nextButtonView.heightAnchor.constraint(equalToConstant: ReferenceValues.keyWindow.safeAreaInsets.bottom + 60),
             self.nextButtonView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             self.nextButtonView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
         ])

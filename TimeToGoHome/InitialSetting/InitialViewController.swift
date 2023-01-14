@@ -90,7 +90,7 @@ class InitialViewController: UIViewController {
     }()
     
 //    var companyNameToolbar: UIToolbar = {
-//        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 100)) // To avoid constraint issue
+//        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: ReferenceValues.keyWindow.screen.bounds.width, height: 100)) // To avoid constraint issue
 //        toolbar.barTintColor = .white
 //        let flexbar = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 //        let doneBarButton = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(resignTextFields(_:)))
@@ -673,7 +673,7 @@ extension InitialViewController {
         // Next button view layout
         NSLayoutConstraint.activate([
             self.nextButtonView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            self.nextButtonView.heightAnchor.constraint(equalToConstant: UIWindow().safeAreaInsets.bottom + 60),
+            self.nextButtonView.heightAnchor.constraint(equalToConstant: ReferenceValues.keyWindow.safeAreaInsets.bottom + 60),
             self.nextButtonView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             self.nextButtonView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
         ])

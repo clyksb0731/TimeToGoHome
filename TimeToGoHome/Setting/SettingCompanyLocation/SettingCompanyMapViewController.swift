@@ -145,7 +145,7 @@ class SettingCompanyMapViewController: UIViewController {
     }()
     
     var tableBaseViewTopAnchor: NSLayoutConstraint!
-    var tableBaseViewHeight: CGFloat = UIScreen.main.bounds.height / 2 + 74
+    var tableBaseViewHeight: CGFloat = ReferenceValues.keyWindow.screen.bounds.height / 2 + 74
     var isTableBaseViewMoving = false
     
     var searchedAddress: [KeywordResult.Document] = []

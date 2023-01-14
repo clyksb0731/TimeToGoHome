@@ -13,68 +13,62 @@ import CoreLocation
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    var bgTaskId: UIBackgroundTaskIdentifier = .invalid
+    //var bgTaskId: UIBackgroundTaskIdentifier = .invalid
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         self.initiateUserNotification()
         
-        // determine root view controller
-        self.determineRootVC()
-        
         return true
     }
     
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        print("applicationWillEnterForeground")
-        
-        if self.bgTaskId != .invalid {
-            application.endBackgroundTask(self.bgTaskId)
-            self.bgTaskId = .invalid
-        }
-        
-        UNUserNotificationCenter.current().getNotificationSettings { setting in
-            if setting.authorizationStatus != .authorized {
-                DispatchQueue.main.async {
-                    SupportingMethods.shared.turnOffAndRemoveLocalPush()
-                }
-            }
-        }
+    // MARK: UISceneSession Lifecycle
+
+    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        // Called when a new scene session is being created.
+        // Use this method to select a configuration to create the new scene with.
+        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+    }
+
+    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
+        // Called when the user discards a scene session.
+        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
+        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
     
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        print("applicationDidEnterBackground")
-        
-        self.bgTaskId = application.beginBackgroundTask(expirationHandler: {
-            print("This app is going to be suspended soon")
-            
-            if self.bgTaskId != .invalid {
-                application.endBackgroundTask(self.bgTaskId)
-                self.bgTaskId = .invalid
-            }
-        })
-    }
+//    func applicationWillEnterForeground(_ application: UIApplication) {
+//        print("applicationWillEnterForeground")
+//
+//        if self.bgTaskId != .invalid {
+//            application.endBackgroundTask(self.bgTaskId)
+//            self.bgTaskId = .invalid
+//        }
+//
+//        UNUserNotificationCenter.current().getNotificationSettings { setting in
+//            if setting.authorizationStatus != .authorized {
+//                DispatchQueue.main.async {
+//                    SupportingMethods.shared.turnOffAndRemoveLocalPush()
+//                }
+//            }
+//        }
+//    }
+//
+//    func applicationDidEnterBackground(_ application: UIApplication) {
+//        print("applicationDidEnterBackground")
+//
+//        self.bgTaskId = application.beginBackgroundTask(expirationHandler: {
+//            print("This app is going to be suspended soon")
+//
+//            if self.bgTaskId != .invalid {
+//                application.endBackgroundTask(self.bgTaskId)
+//                self.bgTaskId = .invalid
+//            }
+//        })
+//    }
 }
 
 // MARK: - Extension for Methods added
 extension AppDelegate {
-    // MARK: Determine root view controller
-    func determineRootVC() {
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        
-        if !ReferenceValues.initialSetting.isEmpty {
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let mainVC = storyboard.instantiateInitialViewController() as! MainViewController
-            self.window?.rootViewController = mainVC
-            
-        } else {
-            let initialVC = InitialViewController()
-            self.window?.rootViewController = initialVC
-        }
-        
-        self.window?.makeKeyAndVisible()
-    }
-    
     // MARK: Initiate UserNotification
     func initiateUserNotification() {
         let center = UNUserNotificationCenter.current()

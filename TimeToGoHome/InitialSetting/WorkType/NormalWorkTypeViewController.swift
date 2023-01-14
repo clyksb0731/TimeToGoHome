@@ -19,7 +19,7 @@ class NormalWorkTypeViewController: UIViewController {
         scrollView.delegate = self
         scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
-        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width, height: 674)
+        scrollView.contentSize = CGSize(width: ReferenceValues.keyWindow.screen.bounds.width, height: 674)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
         return scrollView
@@ -1394,7 +1394,7 @@ extension NormalWorkTypeViewController {
         // Next button view layout
         NSLayoutConstraint.activate([
             self.nextButtonView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            self.nextButtonView.heightAnchor.constraint(equalToConstant: UIWindow().safeAreaInsets.bottom + 60),
+            self.nextButtonView.heightAnchor.constraint(equalToConstant: ReferenceValues.keyWindow.safeAreaInsets.bottom + 60),
             self.nextButtonView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             self.nextButtonView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
         ])

@@ -21,7 +21,7 @@ class DayWorkRecordViewController: UIViewController {
         let view = UIView()
         view.backgroundColor = .Record.scheduling
         view.layer.cornerRadius = 9
-        let dashLayer = SupportingMethods.shared.makeDashLayer(dashColor: UIColor.Record.schedulingDash, width: UIScreen.main.bounds.width - 30, height: 60, cornerRadius: 9)
+        let dashLayer = SupportingMethods.shared.makeDashLayer(dashColor: UIColor.Record.schedulingDash, width: ReferenceValues.keyWindow.screen.bounds.width - 30, height: 60, cornerRadius: 9)
         view.layer.addSublayer(dashLayer)
         view.translatesAutoresizingMaskIntoConstraints = false
         

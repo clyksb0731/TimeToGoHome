@@ -21,7 +21,7 @@ class DayOffViewController: UIViewController {
         scrollView.delegate = self
         scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
-        scrollView.contentSize = CGSize(width: UIScreen.main.bounds.width,
+        scrollView.contentSize = CGSize(width: ReferenceValues.keyWindow.screen.bounds.width,
                                         height: 428 - 27 + 21 + 45 * 6) // 6: number of month's weeks
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -913,7 +913,7 @@ extension DayOffViewController {
         // startButtonView layout
         NSLayoutConstraint.activate([
             self.startButtonView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            self.startButtonView.heightAnchor.constraint(equalToConstant: UIWindow().safeAreaInsets.bottom + 60),
+            self.startButtonView.heightAnchor.constraint(equalToConstant: ReferenceValues.keyWindow.safeAreaInsets.bottom + 60),
             self.startButtonView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             self.startButtonView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)
         ])

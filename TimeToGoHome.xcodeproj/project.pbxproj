@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA011E9A2973396400E59649 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA011E992973396400E59649 /* SceneDelegate.swift */; };
 		CA12806C27D1A64800CAFCE8 /* WorkScheduleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA12806B27D1A64800CAFCE8 /* WorkScheduleModel.swift */; };
 		CA14AE42293798E4001497DF /* CalendarDayOfScheduleRecordCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA14AE41293798E4001497DF /* CalendarDayOfScheduleRecordCell.swift */; };
 		CA14AE442937A321001497DF /* CalendarHeaderOfScheduleRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA14AE432937A321001497DF /* CalendarHeaderOfScheduleRecordView.swift */; };
 		CA1592B127DF90E20021501D /* MainCoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1592B027DF90E20021501D /* MainCoverViewController.swift */; };
 		CA19EE8129477495004FB964 /* CareerHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA19EE8029477495004FB964 /* CareerHeaderView.swift */; };
 		CA226762274402D50035663D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA226761274402D50035663D /* AppDelegate.swift */; };
-		CA226769274402D50035663D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA226767274402D50035663D /* Main.storyboard */; };
 		CA22676B274402D60035663D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA22676A274402D60035663D /* Assets.xcassets */; };
 		CA22676E274402D60035663D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA22676C274402D60035663D /* LaunchScreen.storyboard */; };
 		CA4589E829334983003CA0EB /* CareerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4589E729334983003CA0EB /* CareerViewController.swift */; };
@@ -79,6 +79,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CA011E992973396400E59649 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		CA12806B27D1A64800CAFCE8 /* WorkScheduleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkScheduleModel.swift; sourceTree = "<group>"; };
 		CA14AE41293798E4001497DF /* CalendarDayOfScheduleRecordCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayOfScheduleRecordCell.swift; sourceTree = "<group>"; };
 		CA14AE432937A321001497DF /* CalendarHeaderOfScheduleRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderOfScheduleRecordView.swift; sourceTree = "<group>"; };
@@ -86,7 +87,6 @@
 		CA19EE8029477495004FB964 /* CareerHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareerHeaderView.swift; sourceTree = "<group>"; };
 		CA22675E274402D50035663D /* TimeToGoHome.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeToGoHome.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA226761274402D50035663D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		CA226768274402D50035663D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CA22676A274402D60035663D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA22676D274402D60035663D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CA22676F274402D60035663D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -183,6 +183,7 @@
 			isa = PBXGroup;
 			children = (
 				CA226761274402D50035663D /* AppDelegate.swift */,
+				CA011E992973396400E59649 /* SceneDelegate.swift */,
 				CAB9AD642926701E006AB951 /* InitialSetting */,
 				CAB9AD65292670E5006AB951 /* Main */,
 				CAB9AD69292671FE006AB951 /* Menu */,
@@ -191,7 +192,6 @@
 				CAB9AD70292678BC006AB951 /* Supportings */,
 				CAB7CF2E2750B2FE005C9232 /* TemplateViewController.swift */,
 				CA79A8E527D85550000F58E2 /* TemplateCell.swift */,
-				CA226767274402D50035663D /* Main.storyboard */,
 				CA22676A274402D60035663D /* Assets.xcassets */,
 				CA22676C274402D60035663D /* LaunchScreen.storyboard */,
 				CA22676F274402D60035663D /* Info.plist */,
@@ -458,7 +458,6 @@
 			files = (
 				CA22676E274402D60035663D /* LaunchScreen.storyboard in Resources */,
 				CA22676B274402D60035663D /* Assets.xcassets in Resources */,
-				CA226769274402D50035663D /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -524,6 +523,7 @@
 				CA226762274402D50035663D /* AppDelegate.swift in Sources */,
 				CAB6C93927FA9A9E00B67F1A /* StaggeredWorkTypeViewController.swift in Sources */,
 				CA5327092907BAB0003D66A9 /* CustomizedNavigationController.swift in Sources */,
+				CA011E9A2973396400E59649 /* SceneDelegate.swift in Sources */,
 				CAFA9F3627B3FCB00088003A /* WhiteButtonView.swift in Sources */,
 				CA12806C27D1A64800CAFCE8 /* WorkScheduleModel.swift in Sources */,
 				CABD62932928F96F004F3C4F /* MenuCoverViewController.swift in Sources */,
@@ -538,14 +538,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		CA226767274402D50035663D /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CA226768274402D50035663D /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		CA22676C274402D60035663D /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -688,8 +680,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -699,6 +690,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = clyksb0731.TimeToGoHome;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -720,8 +714,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -731,6 +724,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = clyksb0731.TimeToGoHome;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;

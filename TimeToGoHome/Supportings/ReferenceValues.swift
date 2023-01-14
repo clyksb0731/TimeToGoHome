@@ -10,6 +10,8 @@ import UIKit
 struct ReferenceValues {
     static let kakaoAuthKey: String = "KakaoAK fcc20fc42b0e0bba71cfae3b09107a38"
     
+    static weak var keyWindow: UIWindow!
+    
     static var initialSetting: [String:Any] = {
         if let initialSetting = SupportingMethods.shared.useAppSetting(for: .initialSetting) as? [String:Any] {
             return initialSetting
@@ -24,10 +26,10 @@ struct ReferenceValues {
 extension ReferenceValues {
     struct Size {
         struct Schedule {
-            static let normalScheduleHeight: CGFloat = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.27
-            static let overtimeScheduleHeight: CGFloat = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.17
+            static let normalScheduleHeight: CGFloat = (ReferenceValues.keyWindow.screen.bounds.height - (ReferenceValues.keyWindow.safeAreaInsets.top + 325 + ReferenceValues.keyWindow.safeAreaInsets.bottom)) * 0.27 // 44 + 180 + 75 + 26 + ReferenceValues.keyWindow.safeAreaInsets.bottom
+            static let overtimeScheduleHeight: CGFloat = (ReferenceValues.keyWindow.screen.bounds.height - (ReferenceValues.keyWindow.safeAreaInsets.top + 325 + ReferenceValues.keyWindow.safeAreaInsets.bottom)) * 0.17 // 44 + 180 + 75 + 26 + ReferenceValues.keyWindow.safeAreaInsets.bottom
             
-            static let changeScheduleDescriptionLabelHeight = (UIScreen.main.bounds.height - (UIWindow().safeAreaInsets.top + 44 + 180 + 75 + 26 + UIWindow().safeAreaInsets.bottom)) * 0.024
+            static let changeScheduleDescriptionLabelHeight = (ReferenceValues.keyWindow.screen.bounds.height - (ReferenceValues.keyWindow.safeAreaInsets.top + 325 + ReferenceValues.keyWindow.safeAreaInsets.bottom)) * 0.024 // 44 + 180 + 75 + 26 + ReferenceValues.keyWindow.safeAreaInsets.bottom
         }
         
         struct Record {
