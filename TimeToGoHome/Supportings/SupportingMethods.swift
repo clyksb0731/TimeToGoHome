@@ -138,7 +138,7 @@ extension SupportingMethods {
         case bottom(constant: CGFloat)
     }
     
-    func makeInstantViewWithText(_ text: String, duration: TimeInterval, on vc: UIViewController, withPosition position: InstantMessagePosition) {
+    func makeInstantViewWithText(_ text: String, duration: TimeInterval, on view: UIView, withPosition position: InstantMessagePosition) {
         let alertView: UIView = {
             let view = UIView()
             view.backgroundColor = .useRGB(red: 24, green: 163, blue: 240, alpha: 0.6)
@@ -162,18 +162,18 @@ extension SupportingMethods {
         }()
         
         alertView.addSubview(alertLabel)
-        vc.view.addSubview(alertView)
+        view.addSubview(alertView)
         
         let alertViewWidthAnchor = alertView.widthAnchor.constraint(greaterThanOrEqualToConstant: 50)
         alertViewWidthAnchor.priority = UILayoutPriority(750)
-        let alertViewLeadingAnchor = alertView.leadingAnchor.constraint(greaterThanOrEqualTo: vc.view.leadingAnchor, constant: 16)
+        let alertViewLeadingAnchor = alertView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 16)
         alertViewLeadingAnchor.priority = UILayoutPriority(1000)
-        let alertViewTrailingAnchor = alertView.trailingAnchor.constraint(lessThanOrEqualTo: vc.view.trailingAnchor, constant: -16)
+        let alertViewTrailingAnchor = alertView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -16)
         alertViewTrailingAnchor.priority = UILayoutPriority(1000)
         
         NSLayoutConstraint.activate([
             alertView.heightAnchor.constraint(equalToConstant: 40),
-            alertView.centerXAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.centerXAnchor),
+            alertView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             alertViewWidthAnchor,
             alertViewLeadingAnchor,
             alertViewTrailingAnchor
@@ -183,13 +183,13 @@ extension SupportingMethods {
         case .top(let constant):
             // alertView
             NSLayoutConstraint.activate([
-                alertView.topAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.topAnchor, constant: constant)
+                alertView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: constant)
             ])
             
         case .bottom(let constant):
             // alertView
             NSLayoutConstraint.activate([
-                alertView.bottomAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.bottomAnchor, constant: constant)
+                alertView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: constant)
             ])
         }
         

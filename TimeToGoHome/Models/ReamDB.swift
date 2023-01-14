@@ -46,6 +46,16 @@ struct CompanyModel {
         }
     }
     
+    func setCompanyLocation(address: String?, latitude: Double?, longitude: Double?) {
+        let realm = try! Realm()
+        
+        try! realm.write {
+            self.company?.address = address
+            self.company?.latitude = latitude
+            self.company?.longitude = longitude
+        }
+    }
+    
     func setLeavingDate(_ date: Date?) {
         let realm = try! Realm()
         

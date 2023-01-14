@@ -10,6 +10,11 @@ import MapKit
 
 class SettingCompanyMapViewController: UIViewController {
     
+    enum TableBaseViewMovingType {
+        case top
+        case bottom
+    }
+    
     lazy var mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.showsUserLocation = true
@@ -17,6 +22,17 @@ class SettingCompanyMapViewController: UIViewController {
         mapView.translatesAutoresizingMaskIntoConstraints = false
         
         return mapView
+    }()
+    
+    lazy var mapCoverView: UIView = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(mapCoverViewTapGesture(_:)))
+        
+        let view = UIView()
+        view.addGestureRecognizer(tapGesture)
+        view.isHidden = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
     }()
     
     lazy var searchBarView: UIView = {
@@ -53,7 +69,7 @@ class SettingCompanyMapViewController: UIViewController {
         return button
     }()
     
-    lazy var tableCoverView: UIView = {
+    lazy var tableBaseView: UIView = {
         let view = UIView()
         view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -61,7 +77,7 @@ class SettingCompanyMapViewController: UIViewController {
         return view
     }()
     
-    lazy var tableBaseView: UIView = {
+    lazy var tableBaseUpperRoundView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
         view.layer.cornerRadius = 20
@@ -71,9 +87,30 @@ class SettingCompanyMapViewController: UIViewController {
         return view
     }()
     
+    lazy var topMovingIndicatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 202, green: 202, blue: 202)
+        view.layer.cornerRadius = 2.5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var tableBaseLowerView: UIView = {
+        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(tableBaseViewSwipeGesture(_:)))
+        swipeGesture.direction = .down
+        
+        let view = UIView()
+        view.backgroundColor = .white
+        view.addGestureRecognizer(swipeGesture)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
     lazy var tableViewTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 21, weight: .bold)
+        label.font = UIFont.systemFont(ofSize: 24, weight: .bold)
         label.textColor = .black
         label.text = "검색 결과"
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -81,22 +118,11 @@ class SettingCompanyMapViewController: UIViewController {
         return label
     }()
     
-    lazy var closeTableViewButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("닫기", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 21, weight: .regular)
-        button.setTitleColor(.useRGB(red: 0, green: 122, blue: 255), for: .normal)
-        button.addTarget(self, action: #selector(closeTableViewButton(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        return button
-    }()
-    
     lazy var noResultTextLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 30, weight: .bold)
         label.textAlignment = .center
-        label.textColor = UIColor.useRGB(red: 238, green: 238, blue: 238)
+        label.textColor = UIColor.useRGB(red: 191, green: 191, blue: 191)
         label.text = "검색 결과 없음"
         label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -118,7 +144,11 @@ class SettingCompanyMapViewController: UIViewController {
         return tableView
     }()
     
-    var searchedAddress: [CompanyAddress.Document] = []
+    var tableBaseViewTopAnchor: NSLayoutConstraint!
+    var tableBaseViewHeight: CGFloat = UIScreen.main.bounds.height / 2 + 74
+    var isTableBaseViewMoving = false
+    
+    var searchedAddress: [KeywordResult.Document] = []
     
     var currentLocation: CLLocationCoordinate2D!
     var address: (addressName: String, latitude: Double, longitude: Double)?
@@ -148,7 +178,7 @@ class SettingCompanyMapViewController: UIViewController {
             self.setRegion(center: initializeCenter.center)
         }
         
-        SupportingMethods.shared.makeInstantViewWithText("지도를 길게 누르거나 검색해서 근무지를 설정하세요.", duration: 3.5, on: self, withPosition: .bottom(constant: -30))
+        SupportingMethods.shared.makeInstantViewWithText("지도를 길게 누르거나 검색해서 근무지를 설정하세요.", duration: 3.5, on: self.mapView, withPosition: .bottom(constant: -30))
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -215,9 +245,10 @@ extension SettingCompanyMapViewController: EssentialViewMethods {
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
             self.mapView,
+            self.mapCoverView,
             self.searchBarView,
             self.currentLocationButton,
-            self.tableCoverView
+            self.tableBaseView
         ], to: self.view)
         
         SupportingMethods.shared.addSubviews([
@@ -225,15 +256,19 @@ extension SettingCompanyMapViewController: EssentialViewMethods {
         ], to: self.searchBarView)
         
         SupportingMethods.shared.addSubviews([
-            self.tableBaseView
-        ], to: self.tableCoverView)
+            self.tableBaseUpperRoundView,
+            self.tableBaseLowerView
+        ], to: self.tableBaseView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.topMovingIndicatorView
+        ], to: self.tableBaseUpperRoundView)
         
         SupportingMethods.shared.addSubviews([
             self.tableViewTitleLabel,
-            self.closeTableViewButton,
             self.noResultTextLabel,
             self.addressTableView
-        ], to: self.tableBaseView)
+        ], to: self.tableBaseLowerView)
     }
     
     func setLayouts() {
@@ -245,6 +280,14 @@ extension SettingCompanyMapViewController: EssentialViewMethods {
             self.mapView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
             self.mapView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             self.mapView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+        ])
+        
+        // mapCoverView
+        NSLayoutConstraint.activate([
+            self.mapCoverView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            self.mapCoverView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            self.mapCoverView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            self.mapCoverView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
         ])
         
         // searchBarView
@@ -271,50 +314,60 @@ extension SettingCompanyMapViewController: EssentialViewMethods {
             self.currentLocationButton.widthAnchor.constraint(equalToConstant: 46)
         ])
         
-        // tableCoverView
+        // tableBaseView
+        self.tableBaseViewTopAnchor = self.tableBaseView.topAnchor.constraint(equalTo: self.view.bottomAnchor)
+        let tableBaseViewHeightAnchor = self.tableBaseView.heightAnchor.constraint(equalToConstant: self.tableBaseViewHeight)
         NSLayoutConstraint.activate([
-            self.tableCoverView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-            self.tableCoverView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            self.tableCoverView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.tableCoverView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+            self.tableBaseViewTopAnchor,
+            tableBaseViewHeightAnchor,
+            self.tableBaseView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            self.tableBaseView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
         ])
         
-        // tableBaseView
+        // tableBaseUpperRoundView
         NSLayoutConstraint.activate([
-            self.tableBaseView.topAnchor.constraint(equalTo: self.tableCoverView.centerYAnchor, constant: -74),
-            self.tableBaseView.bottomAnchor.constraint(equalTo: self.tableCoverView.bottomAnchor, constant: 20),
-            self.tableBaseView.leadingAnchor.constraint(equalTo: self.tableCoverView.leadingAnchor),
-            self.tableBaseView.trailingAnchor.constraint(equalTo: self.tableCoverView.trailingAnchor)
+            self.tableBaseUpperRoundView.topAnchor.constraint(equalTo: self.tableBaseView.topAnchor),
+            self.tableBaseUpperRoundView.heightAnchor.constraint(equalToConstant: 100),
+            self.tableBaseUpperRoundView.leadingAnchor.constraint(equalTo: self.tableBaseView.leadingAnchor),
+            self.tableBaseUpperRoundView.trailingAnchor.constraint(equalTo: self.tableBaseView.trailingAnchor)
+        ])
+        
+        // topMovingIndicatorView
+        NSLayoutConstraint.activate([
+            self.topMovingIndicatorView.topAnchor.constraint(equalTo: self.tableBaseUpperRoundView.topAnchor, constant: 14),
+            self.topMovingIndicatorView.heightAnchor.constraint(equalToConstant: 5),
+            self.topMovingIndicatorView.centerXAnchor.constraint(equalTo: self.tableBaseUpperRoundView.centerXAnchor),
+            self.topMovingIndicatorView.widthAnchor.constraint(equalToConstant: 80)
+        ])
+        
+        // tableBaseLowerView
+        NSLayoutConstraint.activate([
+            self.tableBaseLowerView.topAnchor.constraint(equalTo: self.tableBaseUpperRoundView.topAnchor, constant: 20),
+            self.tableBaseLowerView.bottomAnchor.constraint(equalTo: self.tableBaseView.bottomAnchor),
+            self.tableBaseLowerView.leadingAnchor.constraint(equalTo: self.tableBaseView.leadingAnchor),
+            self.tableBaseLowerView.trailingAnchor.constraint(equalTo: self.tableBaseView.trailingAnchor)
         ])
         
         // tableViewTitleLabel
         NSLayoutConstraint.activate([
-            self.tableViewTitleLabel.topAnchor.constraint(equalTo: self.tableBaseView.topAnchor, constant: 32),
+            self.tableViewTitleLabel.topAnchor.constraint(equalTo: self.tableBaseLowerView.topAnchor, constant: 29),
             self.tableViewTitleLabel.heightAnchor.constraint(equalToConstant: 25),
-            self.tableViewTitleLabel.leadingAnchor.constraint(equalTo: self.tableBaseView.leadingAnchor, constant: 32)
-            
-        ])
-        
-        // closeTableViewButton
-        NSLayoutConstraint.activate([
-            self.closeTableViewButton.topAnchor.constraint(equalTo: self.tableBaseView.topAnchor, constant: 32),
-            self.closeTableViewButton.heightAnchor.constraint(equalToConstant: 25),
-            self.closeTableViewButton.trailingAnchor.constraint(equalTo: self.tableBaseView.trailingAnchor, constant: -32)
+            self.tableViewTitleLabel.leadingAnchor.constraint(equalTo: self.tableBaseLowerView.leadingAnchor, constant: 32)
             
         ])
         
         // noResultTextLabel
         NSLayoutConstraint.activate([
-            self.noResultTextLabel.centerYAnchor.constraint(equalTo: self.tableBaseView.centerYAnchor),
-            self.noResultTextLabel.centerXAnchor.constraint(equalTo: self.tableBaseView.centerXAnchor)
+            self.noResultTextLabel.centerYAnchor.constraint(equalTo: self.tableBaseLowerView.centerYAnchor),
+            self.noResultTextLabel.centerXAnchor.constraint(equalTo: self.tableBaseLowerView.centerXAnchor)
         ])
         
         // addressTableView
         NSLayoutConstraint.activate([
             self.addressTableView.topAnchor.constraint(equalTo: self.tableViewTitleLabel.bottomAnchor, constant: 24),
-            self.addressTableView.bottomAnchor.constraint(equalTo: self.tableBaseView.bottomAnchor, constant: -20),
-            self.addressTableView.leadingAnchor.constraint(equalTo: self.tableBaseView.leadingAnchor, constant: 20),
-            self.addressTableView.trailingAnchor.constraint(equalTo: self.tableBaseView.trailingAnchor, constant: -20)
+            self.addressTableView.bottomAnchor.constraint(equalTo: self.tableBaseLowerView.bottomAnchor),
+            self.addressTableView.leadingAnchor.constraint(equalTo: self.tableBaseLowerView.leadingAnchor, constant: 20),
+            self.addressTableView.trailingAnchor.constraint(equalTo: self.tableBaseLowerView.trailingAnchor, constant: -20)
         ])
     }
 }
@@ -358,10 +411,13 @@ extension SettingCompanyMapViewController {
     
     func searchAddress(_ text: String) {
         SupportingMethods.shared.turnCoverView(.on, on: self.view)
-        self.companyLocationModel.searchAddressWithTextReqeust(text) { companyAddress in
-            print("Company Address Count: \(companyAddress.documents.count)")
+        
+        self.moveTableBaseViewToTop(movingType: .top)
+        
+        self.companyLocationModel.findKeywordWithTextRequest(text, page: 1) { kewordResult in
+            print("Keyword result count: \(kewordResult.documents.count)")
             
-            self.searchedAddress = companyAddress.documents
+            self.searchedAddress = kewordResult.documents
             
             self.addressTableView.reloadData()
             
@@ -389,10 +445,45 @@ extension SettingCompanyMapViewController {
             
             SupportingMethods.shared.turnCoverView(.off, on: self.view)
         }
+        
+//        self.companyLocationModel.searchAddressWithTextReqeust(text) { companyAddress in
+//            print("Company Address Count: \(companyAddress.documents.count)")
+//
+//            self.searchedAddress = companyAddress.documents
+//
+//            self.addressTableView.reloadData()
+//
+//            DispatchQueue.main.async {
+//                if self.searchedAddress.isEmpty {
+//                    self.noResultTextLabel.isHidden = false
+//                    self.addressTableView.isHidden = true
+//
+//                } else {
+//                    self.noResultTextLabel.isHidden = true
+//                    self.addressTableView.isHidden = false
+//                }
+//
+//                SupportingMethods.shared.turnCoverView(.off, on: self.view)
+//            }
+//
+//        } failure: {
+//            self.noResultTextLabel.isHidden = true
+//            self.addressTableView.isHidden = true
+//
+//            self.searchedAddress = []
+//            self.addressTableView.reloadData()
+//
+//            SupportingMethods.shared.makeAlert(on: self, withTitle: "오류", andMessage: "검색에 실패했습니다.")
+//
+//            SupportingMethods.shared.turnCoverView(.off, on: self.view)
+//        }
     }
     
     func findAddressWithCenter(_ center: CLLocationCoordinate2D) {
         SupportingMethods.shared.turnCoverView(.on, on: self.view)
+        
+        self.moveTableBaseViewToTop(movingType: .top)
+        
         self.companyLocationModel.findAddressWithCenterRequest(latitude: String(center.latitude), longitude: String(center.longitude)) { companyMap in
             if let jibeonAddress = companyMap.documents.first?.address?.addressName,
                let roadAddress = companyMap.documents.first?.roadAddress?.addressName {
@@ -444,6 +535,42 @@ extension SettingCompanyMapViewController {
             SupportingMethods.shared.turnCoverView(.off, on: self.view)
         }
     }
+    
+    func moveTableBaseViewToTop(movingType: TableBaseViewMovingType) {
+        guard !self.isTableBaseViewMoving else {
+            return
+        }
+        
+        self.isTableBaseViewMoving = true
+        
+        DispatchQueue.main.async {
+            switch movingType {
+            case .top:
+                self.tableBaseViewTopAnchor.constant = -self.tableBaseViewHeight
+                self.mapCoverView.isHidden = false
+                
+            case .bottom:
+                self.tableBaseViewTopAnchor.constant = 0
+                self.mapCoverView.isHidden = true
+            }
+            
+            UIView.animate(withDuration: 0.25) {
+                self.view.layoutIfNeeded()
+                
+            } completion: { isFinished in
+                self.isTableBaseViewMoving = !isFinished
+                
+                if case .bottom = movingType {
+                    self.tableBaseView.isHidden = true
+                    
+                    self.noResultTextLabel.isHidden = true
+                    self.addressTableView.isHidden = false
+                    self.searchedAddress = []
+                    self.addressTableView.reloadData()
+                }
+            }
+        }
+    }
 }
 
 // MARK: - Extension for Selector methods
@@ -458,9 +585,9 @@ extension SettingCompanyMapViewController {
         }
         
         let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
-        companyModel.company?.address = selectedAddress
-        companyModel.company?.latitude = selectedCenter.latitude
-        companyModel.company?.longitude = selectedCenter.longitude
+        companyModel.setCompanyLocation(address: selectedAddress,
+                                        latitude: selectedCenter.latitude,
+                                        longitude: selectedCenter.longitude)
         
         ReferenceValues.initialSetting.updateValue(selectedAddress, forKey: InitialSetting.companyAddress.rawValue)
         ReferenceValues.initialSetting.updateValue(selectedCenter.latitude, forKey: InitialSetting.companyLatitude.rawValue)
@@ -478,22 +605,17 @@ extension SettingCompanyMapViewController {
             return
         }
         
+        self.moveTableBaseViewToTop(movingType: .bottom)
+        
         let region = MKCoordinateRegion(center: currentLocation, latitudinalMeters: 300, longitudinalMeters: 300)
         
         self.mapView.setRegion(region, animated: true)
     }
     
-    @objc func closeTableViewButton(_ sender: UIButton) {
-        self.tableCoverView.isHidden = true
-        
-        self.noResultTextLabel.isHidden = true
-        self.addressTableView.isHidden = false
-        self.searchedAddress = []
-        self.addressTableView.reloadData()
-    }
-    
     @objc func longPressGesture(_ gesture: UILongPressGestureRecognizer) {
         if gesture.state == .began {
+            self.moveTableBaseViewToTop(movingType: .bottom)
+            
             let gesturedPoint = gesture.location(in: self.mapView)
             let newCenter = self.mapView.convert(gesturedPoint, toCoordinateFrom: self.mapView)
             self.searchBarTextField.resignFirstResponder()
@@ -502,6 +624,14 @@ extension SettingCompanyMapViewController {
             
             UIDevice.lightHaptic()
         }
+    }
+    
+    @objc func mapCoverViewTapGesture(_ gesture: UITapGestureRecognizer) {
+        self.moveTableBaseViewToTop(movingType: .bottom)
+    }
+    
+    @objc func tableBaseViewSwipeGesture(_ gesture: UISwipeGestureRecognizer) {
+        self.moveTableBaseViewToTop(movingType: .bottom)
     }
 }
 
@@ -534,13 +664,15 @@ extension SettingCompanyMapViewController: MKMapViewDelegate {
 extension SettingCompanyMapViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        self.tableCoverView.isHidden = false
+        self.tableBaseView.isHidden = false
         
         if textField.text != "" &&
             textField.text?.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
             self.searchAddress(textField.text!)
             
         } else {
+            self.moveTableBaseViewToTop(movingType: .top)
+            
             self.noResultTextLabel.isHidden = false
             self.addressTableView.isHidden = true
             
@@ -549,6 +681,10 @@ extension SettingCompanyMapViewController: UITextFieldDelegate {
         }
         
         return true
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        self.moveTableBaseViewToTop(movingType: .bottom)
     }
 }
 
@@ -568,11 +704,14 @@ extension SettingCompanyMapViewController: UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        self.moveTableBaseViewToTop(movingType: .bottom)
+        
         if let latitude = Double(self.searchedAddress[indexPath.row].latitude),
            let longitude = Double(self.searchedAddress[indexPath.row].longitude) {
             
             let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
             
+            self.mapView.removeAnnotations(self.mapView.annotations)
             self.setPointAnnotation(center: center, title: self.searchedAddress[indexPath.row].addressName)
             self.setRegion(center: center)
         }

@@ -106,7 +106,7 @@ class CompanyLocationViewController: UIViewController {
         return button
     }()
     
-    var addresses: [CompanyAddress.Document] = []
+    var addresses: [KeywordResult.Document] = []
     
     var companyLocationModel: CompanyLocationModel = CompanyLocationModel()
     
@@ -341,10 +341,10 @@ extension CompanyLocationViewController {
 extension CompanyLocationViewController {
     func searchAddress(_ text: String) {
         SupportingMethods.shared.turnCoverView(.on, on: self.view)
-        self.companyLocationModel.searchAddressWithTextReqeust(text) { companyAddress in
-            print("Company Address Count: \(companyAddress.documents.count)")
+        self.companyLocationModel.findKeywordWithTextRequest(text, page: 1) { keywordResult in
+            print("Keyword result count: \(keywordResult.documents.count)")
             
-            self.addresses = companyAddress.documents
+            self.addresses = keywordResult.documents
             
             self.addressTableView.reloadData()
             
@@ -369,6 +369,35 @@ extension CompanyLocationViewController {
             
             SupportingMethods.shared.turnCoverView(.off, on: self.view)
         }
+        
+//        self.companyLocationModel.searchAddressWithTextReqeust(text) { companyAddress in
+//            print("Company Address Count: \(companyAddress.documents.count)")
+//
+//            self.addresses = companyAddress.documents
+//
+//            self.addressTableView.reloadData()
+//
+//            DispatchQueue.main.async {
+//                if self.addresses.isEmpty {
+//                    self.noResultTextLabel.isHidden = false
+//
+//                } else {
+//                    self.noResultTextLabel.isHidden = true
+//                }
+//
+//                SupportingMethods.shared.turnCoverView(.off, on: self.view)
+//            }
+//
+//        } failure: {
+//            self.noResultTextLabel.isHidden = true
+//
+//            self.addresses = []
+//            self.addressTableView.reloadData()
+//
+//            SupportingMethods.shared.makeAlert(on: self, withTitle: "오류", andMessage: "검색에 실패했습니다.")
+//
+//            SupportingMethods.shared.turnCoverView(.off, on: self.view)
+//        }
     }
 }
 

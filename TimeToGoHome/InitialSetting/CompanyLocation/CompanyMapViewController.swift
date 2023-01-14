@@ -31,7 +31,7 @@ class CompanyMapViewController: UIViewController {
     
     var currentLocation: CLLocationCoordinate2D!
     
-    var address: CompanyAddress.Document!
+    var address: KeywordResult.Document!
     var selectedCenter: CLLocationCoordinate2D?
     var selectedAddress: String?
     
@@ -58,7 +58,7 @@ class CompanyMapViewController: UIViewController {
         self.setPointAnnotation(center: self.initializeCenter().center, title: self.initializeCenter().address)
         self.setRegion(center: self.initializeCenter().center)
         
-        SupportingMethods.shared.makeInstantViewWithText("지도를 길게 눌러서 변경하세요.", duration: 3.5, on: self, withPosition: .top(constant: 30))
+        SupportingMethods.shared.makeInstantViewWithText("지도를 길게 눌러서 변경하세요.", duration: 3.5, on: self.mapView, withPosition: .bottom(constant: 30))
     }
     
     override func viewDidAppear(_ animated: Bool) {
