@@ -9,10 +9,19 @@ import UIKit
 
 class SettingCompanyAddressCell: UITableViewCell {
     
-    lazy var addressLabel: UILabel = {
+    lazy var placeNameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.font = .systemFont(ofSize: 17, weight: .bold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var subAddressLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 15, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -64,7 +73,8 @@ extension SettingCompanyAddressCell: EssentialCellHeaderMethods {
     
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
-            self.addressLabel,
+            self.placeNameLabel,
+            self.subAddressLabel,
             self.bottomLine
         ], to: self)
     }
@@ -74,10 +84,20 @@ extension SettingCompanyAddressCell: EssentialCellHeaderMethods {
         
         // addressLabel
         NSLayoutConstraint.activate([
-            self.addressLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 11),
-            self.addressLabel.heightAnchor.constraint(equalToConstant: 22),
-            self.addressLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.addressLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+            self.placeNameLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 8),
+            self.placeNameLabel.heightAnchor.constraint(equalToConstant: 22),
+            self.placeNameLabel.bottomAnchor.constraint(equalTo: safeArea.centerYAnchor),
+            self.placeNameLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
+            self.placeNameLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+        ])
+        
+        // subAddressLabel
+        NSLayoutConstraint.activate([
+            self.subAddressLabel.topAnchor.constraint(equalTo: safeArea.centerYAnchor),
+            self.subAddressLabel.heightAnchor.constraint(equalToConstant: 22),
+            self.subAddressLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -8),
+            self.subAddressLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10),
+            self.subAddressLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
         ])
         
         // bottomLine
@@ -92,7 +112,8 @@ extension SettingCompanyAddressCell: EssentialCellHeaderMethods {
 
 // MARK: - Extension for methods added
 extension SettingCompanyAddressCell {
-    func setCell(_ address: String) {
-        self.addressLabel.text = address
+    func setCell(_ placeName: String, address: String) {
+        self.placeNameLabel.text = placeName
+        self.subAddressLabel.text = address
     }
 }

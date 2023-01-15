@@ -8,12 +8,23 @@
 import UIKit
 
 class CompanyAddressCell: UITableViewCell {
-    // FIXME: need font scale / multi-line
-    var addressLabel: UILabel = {
+    
+    var placeNameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
         label.textColor = UIColor.useRGB(red: 0, green: 0, blue: 0)
-        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        label.font = UIFont.systemFont(ofSize: 17, weight: .bold)
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    var subAddressLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .left
+        label.textColor = UIColor.useRGB(red: 0, green: 0, blue: 0)
+        label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -102,7 +113,8 @@ extension CompanyAddressCell {
     // Set subviews
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
-            self.addressLabel,
+            self.placeNameLabel,
+            self.subAddressLabel,
             self.addressMapButton,
             self.bottomLineView
         ], to: self)
@@ -112,13 +124,22 @@ extension CompanyAddressCell {
     func setLayouts() {
         let safeArea = self.safeAreaLayoutGuide
         
-        // Address label layout
+        // placeNameLabel
         NSLayoutConstraint.activate([
-            self.addressLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 19),
-            self.addressLabel.heightAnchor.constraint(equalToConstant: 22),
-            self.addressLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -19),
-            self.addressLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
-            self.addressLabel.trailingAnchor.constraint(equalTo: self.addressMapButton.leadingAnchor, constant: -5)
+            self.placeNameLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 8),
+            self.placeNameLabel.bottomAnchor.constraint(equalTo: safeArea.centerYAnchor),
+            self.placeNameLabel.heightAnchor.constraint(equalToConstant: 22),
+            self.placeNameLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
+            self.placeNameLabel.trailingAnchor.constraint(equalTo: self.addressMapButton.leadingAnchor, constant: -5)
+        ])
+        
+        // subAddressLabel
+        NSLayoutConstraint.activate([
+            self.subAddressLabel.topAnchor.constraint(equalTo: safeArea.centerYAnchor),
+            self.subAddressLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -8),
+            self.subAddressLabel.heightAnchor.constraint(equalToConstant: 22),
+            self.subAddressLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
+            self.subAddressLabel.trailingAnchor.constraint(equalTo: self.addressMapButton.leadingAnchor, constant: -5)
         ])
         
         // Address map button layout
@@ -141,8 +162,9 @@ extension CompanyAddressCell {
 
 // MARK: - Methods added
 extension CompanyAddressCell {
-    func setCell(_ address: String, isSelected: Bool, tag: Int) {
-        self.addressLabel.text = address
+    func setCell(_ placeName: String, address: String, isSelected: Bool, tag: Int) {
+        self.placeNameLabel.text = placeName
+        self.subAddressLabel.text = address
         self.addressMapButton.isSelected = isSelected
         self.addressMapButton.tag = tag
     }

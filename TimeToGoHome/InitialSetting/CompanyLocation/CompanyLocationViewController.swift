@@ -75,7 +75,7 @@ class CompanyLocationViewController: UIViewController {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 30, weight: .bold)
         label.textAlignment = .center
-        label.textColor = UIColor.useRGB(red: 238, green: 238, blue: 238, alpha: 0.8)
+        label.textColor = UIColor.useRGB(red: 191, green: 191, blue: 191)
         label.isHidden = true
         label.text = "검색 결과 없음"
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -110,6 +110,7 @@ class CompanyLocationViewController: UIViewController {
     
     var companyLocationModel: CompanyLocationModel = CompanyLocationModel()
     
+    var currentPage: Int = 1
     var selectedLocationIndex: Int?
     
     override func viewDidLoad() {
@@ -341,7 +342,7 @@ extension CompanyLocationViewController {
 extension CompanyLocationViewController {
     func searchAddress(_ text: String) {
         SupportingMethods.shared.turnCoverView(.on, on: self.view)
-        self.companyLocationModel.findKeywordWithTextRequest(text, page: 1) { keywordResult in
+        self.companyLocationModel.findKeywordWithTextRequest(text, page: self.currentPage) { keywordResult in
             print("Keyword result count: \(keywordResult.documents.count)")
             
             self.addresses = keywordResult.documents
@@ -514,7 +515,16 @@ extension CompanyLocationViewController: UITableViewDelegate, UITableViewDataSou
         let cell = tableView.dequeueReusableCell(withIdentifier: "CompanyAddressCell", for: indexPath) as! CompanyAddressCell
         
         cell.setCell(
-            self.addresses[indexPath.row].addressName,
+            self.addresses[indexPath.row].placeName == "" ?
+            self.addresses[indexPath.row].roadAddressName == "" ? self.addresses[indexPath.row].addressName :
+            self.addresses[indexPath.row].roadAddressName : self.addresses[indexPath.row].placeName,
+            
+            address: self.addresses[indexPath.row].placeName == "" ?
+            self.addresses[indexPath.row].roadAddressName == "" ? "(도로명 주소 없음)" :
+            self.addresses[indexPath.row].addressName :
+            self.addresses[indexPath.row].roadAddressName == "" ? self.addresses[indexPath.row].addressName :
+            self.addresses[indexPath.row].roadAddressName,
+            
             isSelected: self.selectedLocationIndex == indexPath.row,
             tag: indexPath.row
         )

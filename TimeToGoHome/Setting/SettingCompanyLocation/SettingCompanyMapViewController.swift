@@ -696,7 +696,17 @@ extension SettingCompanyMapViewController: UITableViewDelegate, UITableViewDataS
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SettingCompanyAddressCell", for: indexPath) as! SettingCompanyAddressCell
-        cell.setCell(self.searchedAddress[indexPath.row].addressName)
+        cell.setCell(
+            self.searchedAddress[indexPath.row].placeName == "" ?
+            self.searchedAddress[indexPath.row].roadAddressName == "" ? self.searchedAddress[indexPath.row].addressName :
+            self.searchedAddress[indexPath.row].roadAddressName : self.searchedAddress[indexPath.row].placeName,
+            
+            address: self.searchedAddress[indexPath.row].placeName == "" ?
+            self.searchedAddress[indexPath.row].roadAddressName == "" ? "(도로명 주소 없음)" :
+            self.searchedAddress[indexPath.row].addressName :
+            self.searchedAddress[indexPath.row].roadAddressName == "" ? self.searchedAddress[indexPath.row].addressName :
+            self.searchedAddress[indexPath.row].roadAddressName
+        )
         
         return cell
     }

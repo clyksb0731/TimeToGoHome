@@ -94,6 +94,14 @@ struct CompanyLocationModel {
     }
 }
 
+struct SearchedAddress {
+    let placeMark: String?
+    let jibeonAddress: String?
+    let roadAddress: String?
+    let latitude: Double?
+    let longitude: Double?
+}
+
 struct KeywordResult: Codable {
     let meta: Meta
     let documents: [Document]
