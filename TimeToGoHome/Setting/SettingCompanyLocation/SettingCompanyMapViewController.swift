@@ -148,7 +148,7 @@ class SettingCompanyMapViewController: UIViewController {
     var tableBaseViewHeight: CGFloat = ReferenceValues.keyWindow.screen.bounds.height / 2 + 74
     var isTableBaseViewMoving = false
     
-    var searchedAddress: [KeywordResult.Document] = []
+    //var searchedAddress: [KeywordResult.Document] = []
     
     var currentLocation: CLLocationCoordinate2D!
     var address: (addressName: String, latitude: Double, longitude: Double)?
@@ -414,15 +414,11 @@ extension SettingCompanyMapViewController {
         
         self.moveTableBaseViewToTop(movingType: .top)
         
-        self.companyLocationModel.findKeywordWithTextRequest(text, page: 1) { kewordResult in
-            print("Keyword result count: \(kewordResult.documents.count)")
-            
-            self.searchedAddress = kewordResult.documents
-            
+        self.companyLocationModel.searchAddressWithText(text) {
             self.addressTableView.reloadData()
             
             DispatchQueue.main.async {
-                if self.searchedAddress.isEmpty {
+                if self.companyLocationModel.searchedAddress.address.isEmpty {
                     self.noResultTextLabel.isHidden = false
                     self.addressTableView.isHidden = true
                     
@@ -438,45 +434,13 @@ extension SettingCompanyMapViewController {
             self.noResultTextLabel.isHidden = true
             self.addressTableView.isHidden = true
             
-            self.searchedAddress = []
+            self.companyLocationModel.initializeModel()
             self.addressTableView.reloadData()
             
             SupportingMethods.shared.makeAlert(on: self, withTitle: "오류", andMessage: "검색에 실패했습니다.")
             
             SupportingMethods.shared.turnCoverView(.off, on: self.view)
         }
-        
-//        self.companyLocationModel.searchAddressWithTextReqeust(text) { companyAddress in
-//            print("Company Address Count: \(companyAddress.documents.count)")
-//
-//            self.searchedAddress = companyAddress.documents
-//
-//            self.addressTableView.reloadData()
-//
-//            DispatchQueue.main.async {
-//                if self.searchedAddress.isEmpty {
-//                    self.noResultTextLabel.isHidden = false
-//                    self.addressTableView.isHidden = true
-//
-//                } else {
-//                    self.noResultTextLabel.isHidden = true
-//                    self.addressTableView.isHidden = false
-//                }
-//
-//                SupportingMethods.shared.turnCoverView(.off, on: self.view)
-//            }
-//
-//        } failure: {
-//            self.noResultTextLabel.isHidden = true
-//            self.addressTableView.isHidden = true
-//
-//            self.searchedAddress = []
-//            self.addressTableView.reloadData()
-//
-//            SupportingMethods.shared.makeAlert(on: self, withTitle: "오류", andMessage: "검색에 실패했습니다.")
-//
-//            SupportingMethods.shared.turnCoverView(.off, on: self.view)
-//        }
     }
     
     func findAddressWithCenter(_ center: CLLocationCoordinate2D) {
@@ -490,7 +454,7 @@ extension SettingCompanyMapViewController {
                 let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: jibeonAddress, road: roadAddress)) {
                     self.mapView.removeAnnotations(self.mapView.annotations)
                     
-                    self.setPointAnnotation(center: center, title: jibeonAddress)
+                    self.setPointAnnotation(center: center, title: roadAddress)
                 }
 
                 self.present(alertVC, animated: false) {
@@ -565,7 +529,8 @@ extension SettingCompanyMapViewController {
                     
                     self.noResultTextLabel.isHidden = true
                     self.addressTableView.isHidden = false
-                    self.searchedAddress = []
+                    
+                    self.companyLocationModel.initializeModel()
                     self.addressTableView.reloadData()
                 }
             }
@@ -664,6 +629,9 @@ extension SettingCompanyMapViewController: MKMapViewDelegate {
 extension SettingCompanyMapViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+        
+        self.companyLocationModel.initializeModel()
+        
         self.tableBaseView.isHidden = false
         
         if textField.text != "" &&
@@ -676,7 +644,6 @@ extension SettingCompanyMapViewController: UITextFieldDelegate {
             self.noResultTextLabel.isHidden = false
             self.addressTableView.isHidden = true
             
-            self.searchedAddress = []
             self.addressTableView.reloadData()
         }
         
@@ -691,22 +658,41 @@ extension SettingCompanyMapViewController: UITextFieldDelegate {
 // MARK: - Extension for UITableViewDelegate, UITableViewDataSource
 extension SettingCompanyMapViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.searchedAddress.count
+        return self.companyLocationModel.searchedAddress.address.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SettingCompanyAddressCell", for: indexPath) as! SettingCompanyAddressCell
         cell.setCell(
-            self.searchedAddress[indexPath.row].placeName == "" ?
-            self.searchedAddress[indexPath.row].roadAddressName == "" ? self.searchedAddress[indexPath.row].addressName :
-            self.searchedAddress[indexPath.row].roadAddressName : self.searchedAddress[indexPath.row].placeName,
-            
-            address: self.searchedAddress[indexPath.row].placeName == "" ?
-            self.searchedAddress[indexPath.row].roadAddressName == "" ? "(도로명 주소 없음)" :
-            self.searchedAddress[indexPath.row].addressName :
-            self.searchedAddress[indexPath.row].roadAddressName == "" ? self.searchedAddress[indexPath.row].addressName :
-            self.searchedAddress[indexPath.row].roadAddressName
+            self.companyLocationModel.searchedAddress.address[indexPath.row].placeName == nil ?
+            self.companyLocationModel.searchedAddress.address[indexPath.row].roadAddress == nil ?
+            self.companyLocationModel.searchedAddress.address[indexPath.row].jibeonAddress :
+                self.companyLocationModel.searchedAddress.address[indexPath.row].roadAddress :
+                self.companyLocationModel.searchedAddress.address[indexPath.row].placeName,
+             
+             address: self.companyLocationModel.searchedAddress.address[indexPath.row].placeName == nil ?
+             self.companyLocationModel.searchedAddress.address[indexPath.row].roadAddress == nil ? "(도로명 주소 없음)" :
+             self.companyLocationModel.searchedAddress.address[indexPath.row].jibeonAddress :
+             self.companyLocationModel.searchedAddress.address[indexPath.row].roadAddress == nil ? self.companyLocationModel.searchedAddress.address[indexPath.row].jibeonAddress :
+             self.companyLocationModel.searchedAddress.address[indexPath.row].roadAddress
         )
+        
+        if indexPath.row == self.companyLocationModel.searchedAddress.address.count - 1,
+           !self.companyLocationModel.searchedAddress.isEnd {
+            SupportingMethods.shared.turnCoverView(.on, on: self.view)
+            
+            self.companyLocationModel.searchingPage += 1
+            self.companyLocationModel.searchAddressWithText(self.searchBarTextField.text!) {
+                tableView.reloadData()
+                
+                DispatchQueue.main.async {
+                    SupportingMethods.shared.turnCoverView(.off, on: self.view)
+                }
+                
+            } failure: {
+                SupportingMethods.shared.turnCoverView(.off, on: self.view)
+            }
+        }
         
         return cell
     }
@@ -716,13 +702,13 @@ extension SettingCompanyMapViewController: UITableViewDelegate, UITableViewDataS
         
         self.moveTableBaseViewToTop(movingType: .bottom)
         
-        if let latitude = Double(self.searchedAddress[indexPath.row].latitude),
-           let longitude = Double(self.searchedAddress[indexPath.row].longitude) {
+        if let latitude = Double(self.companyLocationModel.searchedAddress.address[indexPath.row].latitude),
+           let longitude = Double(self.companyLocationModel.searchedAddress.address[indexPath.row].longitude) {
             
             let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
             
             self.mapView.removeAnnotations(self.mapView.annotations)
-            self.setPointAnnotation(center: center, title: self.searchedAddress[indexPath.row].addressName)
+            self.setPointAnnotation(center: center, title: self.companyLocationModel.searchedAddress.address[indexPath.row].roadAddress ?? self.companyLocationModel.searchedAddress.address[indexPath.row].jibeonAddress!)
             self.setRegion(center: center)
         }
     }

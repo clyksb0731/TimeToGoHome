@@ -162,7 +162,7 @@ extension CompanyAddressCell {
 
 // MARK: - Methods added
 extension CompanyAddressCell {
-    func setCell(_ placeName: String, address: String, isSelected: Bool, tag: Int) {
+    func setCell(_ placeName: String?, address: String?, isSelected: Bool, tag: Int) {
         self.placeNameLabel.text = placeName
         self.subAddressLabel.text = address
         self.addressMapButton.isSelected = isSelected

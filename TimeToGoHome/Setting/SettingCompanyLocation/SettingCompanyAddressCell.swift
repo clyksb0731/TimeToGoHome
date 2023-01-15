@@ -21,7 +21,7 @@ class SettingCompanyAddressCell: UITableViewCell {
     lazy var subAddressLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = .systemFont(ofSize: 15, weight: .bold)
+        label.font = .systemFont(ofSize: 15, weight: .regular)
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -112,7 +112,7 @@ extension SettingCompanyAddressCell: EssentialCellHeaderMethods {
 
 // MARK: - Extension for methods added
 extension SettingCompanyAddressCell {
-    func setCell(_ placeName: String, address: String) {
+    func setCell(_ placeName: String?, address: String?) {
         self.placeNameLabel.text = placeName
         self.subAddressLabel.text = address
     }

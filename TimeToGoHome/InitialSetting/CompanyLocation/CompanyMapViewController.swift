@@ -31,7 +31,7 @@ class CompanyMapViewController: UIViewController {
     
     var currentLocation: CLLocationCoordinate2D!
     
-    var address: KeywordResult.Document!
+    var address: SearchedAddress.Address!
     var selectedCenter: CLLocationCoordinate2D?
     var selectedAddress: String?
     
@@ -168,7 +168,7 @@ extension CompanyMapViewController {
         } else {
             let center = CLLocationCoordinate2D(latitude: Double(self.address.latitude)!, longitude: Double(self.address.longitude)!)
             
-            return (center, self.address.addressName)
+            return (center, self.address.placeName ?? self.address.roadAddress ?? self.address.jibeonAddress!)
         }
     }
     
@@ -195,7 +195,7 @@ extension CompanyMapViewController {
                 let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: jibeonAddress, road: roadAddress)) {
                     self.mapView.removeAnnotations(self.mapView.annotations)
                     
-                    self.setPointAnnotation(center: center, title: jibeonAddress)
+                    self.setPointAnnotation(center: center, title: roadAddress)
                 }
 
                 self.present(alertVC, animated: false) {

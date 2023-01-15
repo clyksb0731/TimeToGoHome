@@ -8,12 +8,21 @@
 import Foundation
 import Alamofire
 
-struct CompanyLocationModel {
+enum SearchingAddressType {
+    case keyword
+    case address
+}
+
+class CompanyLocationModel {
     private(set) var findKeywordWithTextRequest: DataRequest?
     private(set) var searchAddressWithTextReqeust: DataRequest?
     private(set) var findAddressWithCenterRequest: DataRequest?
     
-    mutating func findKeywordWithTextRequest(_ text: String, page: Int, success: ((KeywordResult) -> ())?, failure: (() -> ())?) {
+    private(set) var searchedAddress: SearchedAddress = SearchedAddress()
+    var searchingType: SearchingAddressType = .keyword
+    var searchingPage: Int = 1
+    
+    private func findKeywordWithTextRequest(_ text: String, page: Int, success: ((KeywordResult) -> ())?, failure: (() -> ())?) {
         let url = "https://dapi.kakao.com/v2/local/search/keyword.json"
         
         let headers: HTTPHeaders = [
@@ -40,7 +49,7 @@ struct CompanyLocationModel {
         }
     }
     
-    mutating func searchAddressWithTextReqeust(_ text: String, success: ((CompanyAddress) -> ())?, failure: (() -> ())?) {
+    private func searchAddressWithTextReqeust(_ text: String, page: Int, success: ((CompanyAddress) -> ())?, failure: (() -> ())?) {
         let url = "https://dapi.kakao.com/v2/local/search/address.json"
         
         let headers: HTTPHeaders = [
@@ -52,7 +61,7 @@ struct CompanyLocationModel {
             "analyze":"similar",
             // similar: 입력한 건물명과 일부만 매칭될 경우에도 확장된 검색 결과 제공, 미지정 시 similar가 적용됨
             // exact: 주소의 정확한 건물명이 입력된 주소패턴일 경우에 한해, 입력한 건물명과 정확히 일치하는 검색 결과 제공
-            "page":1, // 결과 페이지 번호: 1~45 사이의 값 (기본값: 1)
+            "page":page, // 결과 페이지 번호: 1~45 사이의 값 (기본값: 1)
             "size":20 // 한페이지에 보여질 문서의 개수: 1~30 사이의 값(기본값: 10)
         ]
         
@@ -71,7 +80,7 @@ struct CompanyLocationModel {
         }
     }
     
-    mutating func findAddressWithCenterRequest(latitude: String, longitude: String, success: ((CompanyMap) -> ())?, failure: (() -> ())?) {
+    func findAddressWithCenterRequest(latitude: String, longitude: String, success: ((CompanyMap) -> ())?, failure: (() -> ())?) {
         let url = "https://dapi.kakao.com/v2/local/geo/coord2address.json"
         
         let headers: HTTPHeaders = [
@@ -92,14 +101,92 @@ struct CompanyLocationModel {
             }
         }
     }
+    
+    func initializeModel() {
+        self.searchedAddress = SearchedAddress()
+        self.searchingType = .keyword
+        self.searchingPage = 1
+    }
+    
+    func searchAddressWithText(_ text: String, success: (() -> ())?, failure: (() -> ())?) {
+        switch self.searchingType {
+        case .keyword:
+            self.findKeywordWithTextRequest(text, page: self.searchingPage) { keywordResult in
+                if !keywordResult.documents.isEmpty {
+                    self.searchedAddress = self.convertKeywordResultDocument(keywordResult, into: self.searchedAddress)
+                    success?()
+                    
+                } else {
+                    self.searchingType = .address
+                    self.searchAddressWithTextReqeust(text, page: self.searchingPage) { companyAddress in
+                        self.searchedAddress = self.convertCompanyAddressDocument(companyAddress, into: self.searchedAddress)
+                        success?()
+                        
+                    } failure: {
+                        failure?()
+                    }
+                }
+                
+            } failure: {
+                failure?()
+            }
+            
+        case .address:
+            self.searchAddressWithTextReqeust(text, page: self.searchingPage) { companyAddress in
+                self.searchedAddress = self.convertCompanyAddressDocument(companyAddress, into: self.searchedAddress)
+                success?()
+                
+            } failure: {
+                failure?()
+            }
+        }
+    }
+    
+    func convertKeywordResultDocument(_ keywordResult: KeywordResult, into searchedAddress: SearchedAddress) -> SearchedAddress {
+        var searchedAddress: SearchedAddress = searchedAddress
+        searchedAddress.isEnd = keywordResult.meta.isEnd
+        
+        for document in keywordResult.documents {
+            let address = SearchedAddress.Address(placeName: document.placeName == "" ? nil : document.placeName,
+                                                  jibeonAddress: document.addressName == "" ? nil : document.addressName,
+                                                  roadAddress: document.roadAddressName == "" ? nil : document.roadAddressName,
+                                                  latitude: document.latitude,
+                                                  longitude: document.longitude)
+            searchedAddress.address.append(address)
+        }
+        
+        return searchedAddress
+    }
+    
+    func convertCompanyAddressDocument(_ companyAddress: CompanyAddress, into searchedAddress: SearchedAddress) -> SearchedAddress {
+        var searchedAddress: SearchedAddress = searchedAddress
+        searchedAddress.isEnd = companyAddress.meta.isEnd
+        
+        for document in companyAddress.documents {
+            let address = SearchedAddress.Address(placeName: nil,
+                                                  jibeonAddress: document.address?.addressName,
+                                                  roadAddress: document.roadAddress?.addressName,
+                                                  latitude: document.latitude,
+                                                  longitude: document.longitude)
+            
+            searchedAddress.address.append(address)
+        }
+        
+        return searchedAddress
+    }
 }
 
 struct SearchedAddress {
-    let placeMark: String?
-    let jibeonAddress: String?
-    let roadAddress: String?
-    let latitude: Double?
-    let longitude: Double?
+    var isEnd: Bool = true
+    var address: [Address] = []
+    
+    struct Address {
+        let placeName: String?
+        let jibeonAddress: String?
+        let roadAddress: String?
+        let latitude: String
+        let longitude: String
+    }
 }
 
 struct KeywordResult: Codable {
