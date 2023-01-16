@@ -16,7 +16,7 @@ class SettingHolidaysViewController: UIViewController {
         return view
     }()
     
-    lazy var firstSettingMarkLabel: UILabel = {
+    lazy var publicHolidaySettingMarkLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
         label.font = .systemFont(ofSize: 17, weight: .regular)
@@ -26,9 +26,9 @@ class SettingHolidaysViewController: UIViewController {
         return label
     }()
     
-    lazy var firstSettingSwitch: YSBlueSwitch = {
-        let switchButton = YSBlueSwitch()
-        switchButton.addTarget(self, action: #selector(firstSettingSwitch(_:)), for: .valueChanged)
+    lazy var publicHolidaySettingSwitch: YSBlueSwitch = {
+        let switchButton = YSBlueSwitch(!PublicHolidayModel.publicHolidays.isEmpty)
+        switchButton.addTarget(self, action: #selector(publicHolidaySettingSwitch(_:)), for: .valueChanged)
         switchButton.translatesAutoresizingMaskIntoConstraints = false
         
         return switchButton
@@ -42,7 +42,7 @@ class SettingHolidaysViewController: UIViewController {
         return view
     }()
     
-    lazy var secondSettingMarkLabel: UILabel = {
+    lazy var regularHolidaySettingMarkLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
         label.font = .systemFont(ofSize: 17, weight: .regular)
@@ -130,8 +130,11 @@ class SettingHolidaysViewController: UIViewController {
         return buttonView
     }()
     
+    let publicHolidayModel = PublicHolidayModel()
+    
     var holidays: Set<Int> = {
         return Set(ReferenceValues.initialSetting[InitialSetting.regularHolidays.rawValue] as! [Int])
+        
     }() {
         didSet {
             ReferenceValues.initialSetting.updateValue(Array(holidays), forKey: InitialSetting.regularHolidays.rawValue)
@@ -193,13 +196,13 @@ extension SettingHolidaysViewController: EssentialViewMethods {
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
             self.firstSettingView,
-            self.secondSettingMarkLabel,
+            self.regularHolidaySettingMarkLabel,
             self.dayButtonsView
         ], to: self.view)
         
         SupportingMethods.shared.addSubviews([
-            self.firstSettingMarkLabel,
-            self.firstSettingSwitch,
+            self.publicHolidaySettingMarkLabel,
+            self.publicHolidaySettingSwitch,
             self.firstSettingBottomLine
         ], to: self.firstSettingView)
         
@@ -225,16 +228,18 @@ extension SettingHolidaysViewController: EssentialViewMethods {
             self.firstSettingView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
         ])
         
-        // firstSettingMarkLabel
+        // publicHolidaySettingMarkLabel
         NSLayoutConstraint.activate([
-            self.firstSettingMarkLabel.centerYAnchor.constraint(equalTo: self.firstSettingView.centerYAnchor),
-            self.firstSettingMarkLabel.leadingAnchor.constraint(equalTo: self.firstSettingView.leadingAnchor, constant: 20)
+            self.publicHolidaySettingMarkLabel.centerYAnchor.constraint(equalTo: self.firstSettingView.centerYAnchor),
+            self.publicHolidaySettingMarkLabel.leadingAnchor.constraint(equalTo: self.firstSettingView.leadingAnchor, constant: 20)
         ])
         
-        // firstSettingSwitch
+        // publicHolidaySettingSwitch
         NSLayoutConstraint.activate([
-            self.firstSettingSwitch.centerYAnchor.constraint(equalTo: self.firstSettingView.centerYAnchor),
-            self.firstSettingSwitch.trailingAnchor.constraint(equalTo: self.firstSettingView.trailingAnchor, constant: -24)
+            self.publicHolidaySettingSwitch.centerYAnchor.constraint(equalTo: safeArea.topAnchor, constant: 25),
+            //self.publicHolidaySettingSwitch.heightAnchor.constraint(equalToConstant: 44),
+            self.publicHolidaySettingSwitch.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -24),
+            //self.publicHolidaySettingSwitch.widthAnchor.constraint(equalToConstant: 28)
         ])
         
         // firstSettingBottomLine
@@ -245,16 +250,16 @@ extension SettingHolidaysViewController: EssentialViewMethods {
             self.firstSettingBottomLine.trailingAnchor.constraint(equalTo: self.firstSettingView.trailingAnchor)
         ])
         
-        // secondSettingMarkLabel
+        // regularHolidaySettingMarkLabel
         NSLayoutConstraint.activate([
-            self.secondSettingMarkLabel.topAnchor.constraint(equalTo: self.firstSettingView.bottomAnchor, constant: 13),
-            self.secondSettingMarkLabel.heightAnchor.constraint(equalToConstant: 21),
-            self.secondSettingMarkLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20)
+            self.regularHolidaySettingMarkLabel.topAnchor.constraint(equalTo: self.firstSettingView.bottomAnchor, constant: 13),
+            self.regularHolidaySettingMarkLabel.heightAnchor.constraint(equalToConstant: 21),
+            self.regularHolidaySettingMarkLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20)
         ])
         
         // dayButtonsView
         NSLayoutConstraint.activate([
-            self.dayButtonsView.topAnchor.constraint(equalTo: self.secondSettingMarkLabel.bottomAnchor, constant: 18),
+            self.dayButtonsView.topAnchor.constraint(equalTo: self.regularHolidaySettingMarkLabel.bottomAnchor, constant: 18),
             self.dayButtonsView.heightAnchor.constraint(equalToConstant: 36),
             self.dayButtonsView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
             self.dayButtonsView.widthAnchor.constraint(equalToConstant: 302)
@@ -306,11 +311,7 @@ extension SettingHolidaysViewController: EssentialViewMethods {
 
 // MARK: - Extension for methods added
 extension SettingHolidaysViewController {
-    func applyKoreanHolidays(success: (() -> ())? = nil, failure: (() -> ())? = nil) {
-        success?()
-        //
-        failure?()
-    }
+    
 }
 
 // MARK: - Extension for selector methods
@@ -319,16 +320,37 @@ extension SettingHolidaysViewController {
         self.navigationController?.popViewController(animated: true)
     }
     
-    @objc func firstSettingSwitch(_ sender: YSBlueSwitch) {
-        print("First setting switch is \(sender.isOn ? "On" : "Off")")
+    @objc func publicHolidaySettingSwitch(_ sender: YSBlueSwitch) {
+        print("publicHolidaySettingSwitch is \(sender.isOn ? "On" : "Off")")
         
-        SupportingMethods.shared.turnCoverView(.on, on: self.view)
-        self.applyKoreanHolidays {
-            SupportingMethods.shared.turnCoverView(.off, on: self.view)
+        if sender.isOn {
+            SupportingMethods.shared.turnCoverView(.on, on: self.view)
+            let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(Date())
             
-        } failure: {
-            SupportingMethods.shared.turnCoverView(.off, on: self.view)
+            self.publicHolidayModel.publicHolidayRequest(forYear: yearMonthDay.year) {
+                self.publicHolidaySettingSwitch.isOn = !PublicHolidayModel.publicHolidays.isEmpty
+                
+                SupportingMethods.shared.turnCoverView(.off, on: self.view)
+                
+            } failure: {
+                self.publicHolidaySettingSwitch.isOn = !PublicHolidayModel.publicHolidays.isEmpty
+                
+                SupportingMethods.shared.turnCoverView(.off, on: self.view)
+            }
+            
+        } else {
+            PublicHolidayModel.publicHolidays = []
+            self.publicHolidaySettingSwitch.isOn = !PublicHolidayModel.publicHolidays.isEmpty
         }
+        
+        
+//        SupportingMethods.shared.turnCoverView(.on, on: self.view)
+//        self.applyKoreanHolidays {
+//            SupportingMethods.shared.turnCoverView(.off, on: self.view)
+//
+//        } failure: {
+//            SupportingMethods.shared.turnCoverView(.off, on: self.view)
+//        }
     }
     
     @objc func holidayButtons(_ sender: UIButton) {

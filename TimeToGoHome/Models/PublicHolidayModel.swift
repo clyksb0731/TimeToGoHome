@@ -20,7 +20,7 @@ class PublicHolidayModel: NSObject {
     private var failedToParse: (() -> ())?
     
     private var tempPublicHolidays: [PublicHoliday] = []
-    private(set) var publicHolidays: [PublicHoliday] = {
+    static var publicHolidays: [PublicHoliday] = {
         guard let publicHolidays = SupportingMethods.shared.useAppSetting(for: .publicHolidays) as? [[String:Any]] else {
             return []
         }
@@ -55,6 +55,8 @@ class PublicHolidayModel: NSObject {
         didSet {
             if !self.isItem, let dateId = Int(self.dateId) , self.dateName != "" {
                 let publicHoliday = PublicHoliday(dateId: dateId, dateName: self.dateName)
+                self.dateId = ""
+                self.dateName = ""
                 
                 self.tempPublicHolidays.append(publicHoliday)
             }
@@ -66,13 +68,12 @@ class PublicHolidayModel: NSObject {
     private var dateId: String = ""
     private var dateName: String = ""
     
-    func publicHolidayRequest(forYear: Int, success: (() -> ())?, failure: (() -> ())?) {
+    func publicHolidayRequest(forYear year: Int, success: (() -> ())?, failure: (() -> ())?) {
         let url = "http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo"
-        let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(Date())
         
         let parameters: Parameters = [
-            "solYear":yearMonthDay.year, // 해당 년
-            //"solMonth":String(format: "%02d", yearMonthDay.month), // 해당 월
+            "solYear":year, // 해당 년
+            //"solMonth":String(format: "%02d", monthValue), // 해당 월
             "numOfRows":30,
             "ServiceKey":ReferenceValues.dataGoKrKey
         ]
@@ -96,13 +97,18 @@ class PublicHolidayModel: NSObject {
     func parseXml(_ xmlData: Data, success: (() -> ())?, failure: (() -> ())?) {
         let xmlParser = XMLParser(data: xmlData)
         xmlParser.delegate = self
+        
         self.succeededInParsing = success
         self.failedToParse = failure
         
         DispatchQueue.global().async {
             if !xmlParser.parse() {
                 DispatchQueue.main.async {
+                    PublicHolidayModel.publicHolidays = []
+                    self.tempPublicHolidays = []
+                    
                     self.failedToParse?()
+                    self.failedToParse = nil
                 }
             }
         }
@@ -125,7 +131,7 @@ extension PublicHolidayModel: XMLParserDelegate {
     }
     
     func parser(_ parser: XMLParser, foundCharacters string: String) {
-        print(string.trimmingCharacters(in: .whitespacesAndNewlines))
+        //print(string.trimmingCharacters(in: .whitespacesAndNewlines))
         
         if self.isItem {
             switch self.currentTag {
@@ -136,13 +142,23 @@ extension PublicHolidayModel: XMLParserDelegate {
                 self.dateName += string.trimmingCharacters(in: .whitespacesAndNewlines)
                 
             case .none:
-                print("Nothing happens.")
+                print("Parsing pointless XML")
             }
         }
     }
     
+    func parser(_ parser: XMLParser, parseErrorOccurred parseError: Error) {
+        print("parseErrorOccurred: \(parseError.localizedDescription)")
+        
+        PublicHolidayModel.publicHolidays = []
+        self.tempPublicHolidays = []
+        
+        self.failedToParse?()
+        self.failedToParse = nil
+    }
+    
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
-        print("\\\(elementName)")
+        //print("\\\(elementName)")
         if elementName == "item" {
             self.isItem = false
         }
@@ -157,14 +173,23 @@ extension PublicHolidayModel: XMLParserDelegate {
     }
     
     func parserDidEndDocument(_ parser: XMLParser) {
-        print("parserDidEndDocument")
+        print("parserDidEndDocument: \(self.tempPublicHolidays)")
         
         DispatchQueue.main.async {
-            self.publicHolidays = self.tempPublicHolidays
-            self.tempPublicHolidays = []
-            
-            self.succeededInParsing?()
-            self.succeededInParsing = nil
+            if self.tempPublicHolidays.count < 13 { // About number of public holidays
+                PublicHolidayModel.publicHolidays = []
+                self.tempPublicHolidays = []
+                
+                self.failedToParse?()
+                self.failedToParse = nil
+                
+            } else {
+                PublicHolidayModel.publicHolidays = self.tempPublicHolidays
+                self.tempPublicHolidays = []
+                
+                self.succeededInParsing?()
+                self.succeededInParsing = nil
+            }
         }
     }
 }
