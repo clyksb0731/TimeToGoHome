@@ -332,7 +332,7 @@ class InitialViewController: UIViewController {
     }
     
     deinit {
-        print("----------------------------------- InitialSettingDateViewController disposed -----------------------------------")
+        print("----------------------------------- InitialViewController disposed -----------------------------------")
     }
 }
 
