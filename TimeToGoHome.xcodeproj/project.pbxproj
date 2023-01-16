@@ -44,6 +44,7 @@
 		CAA3B24D2801758200FFF892 /* CalendarHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */; };
 		CAA3B24F28018ED600FFF892 /* VacationButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24E28018ED600FFF892 /* VacationButtonView.swift */; };
 		CAA65B1327E50899000ECC40 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = CAA65B1227E50899000ECC40 /* Alamofire */; };
+		CAB661532974D71800F01500 /* PublicHolidayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB661522974D71800F01500 /* PublicHolidayModel.swift */; };
 		CAB6C93927FA9A9E00B67F1A /* StaggeredWorkTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6C93827FA9A9E00B67F1A /* StaggeredWorkTypeViewController.swift */; };
 		CAB6C93B27FA9AAC00B67F1A /* NormalWorkTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6C93A27FA9AAC00B67F1A /* NormalWorkTypeViewController.swift */; };
 		CAB6C93D27FA9C4800B67F1A /* DayOffViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6C93C27FA9C4800B67F1A /* DayOffViewController.swift */; };
@@ -117,6 +118,7 @@
 		CAA3B24A2801755D00FFF892 /* CalendarDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayCell.swift; sourceTree = "<group>"; };
 		CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderView.swift; sourceTree = "<group>"; };
 		CAA3B24E28018ED600FFF892 /* VacationButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VacationButtonView.swift; sourceTree = "<group>"; };
+		CAB661522974D71800F01500 /* PublicHolidayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicHolidayModel.swift; sourceTree = "<group>"; };
 		CAB6C93827FA9A9E00B67F1A /* StaggeredWorkTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaggeredWorkTypeViewController.swift; sourceTree = "<group>"; };
 		CAB6C93A27FA9AAC00B67F1A /* NormalWorkTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalWorkTypeViewController.swift; sourceTree = "<group>"; };
 		CAB6C93C27FA9C4800B67F1A /* DayOffViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayOffViewController.swift; sourceTree = "<group>"; };
@@ -324,6 +326,7 @@
 				CAB7CF412750CBFD005C9232 /* CompanyLocationModel.swift */,
 				CAFEF7CE2839117200DE5BA9 /* ReamDB.swift */,
 				CA4EC68F2936463A0079CFBE /* WorkScheduleRecordModel.swift */,
+				CAB661522974D71800F01500 /* PublicHolidayModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -496,6 +499,7 @@
 				CAD8E61B293CC84800E3E634 /* VacationUsageViewController.swift in Sources */,
 				CA4589F02933B396003CA0EB /* WorkRecordModel.swift in Sources */,
 				CAD8E61D293CC87700E3E634 /* CalendarHeaderOfVacationUsageView.swift in Sources */,
+				CAB661532974D71800F01500 /* PublicHolidayModel.swift in Sources */,
 				CAA3B24D2801758200FFF892 /* CalendarHeaderView.swift in Sources */,
 				CA47B0F92924BAE700D3D8F7 /* MenuCell.swift in Sources */,
 				CAB7CF312750B5B9005C9232 /* InitialViewController.swift in Sources */,

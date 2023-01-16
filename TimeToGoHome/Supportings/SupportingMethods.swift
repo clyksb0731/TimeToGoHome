@@ -20,6 +20,7 @@ enum PListVariable: String {
     case alertSettingStartingWorkTime
     case alertFinishingWorkTime
     case alertCompanyLocation
+    case publicHolidays
 }
 
 enum InitialSetting: String {

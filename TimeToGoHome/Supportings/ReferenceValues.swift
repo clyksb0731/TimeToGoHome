@@ -9,6 +9,7 @@ import UIKit
 
 struct ReferenceValues {
     static let kakaoAuthKey: String = "KakaoAK fcc20fc42b0e0bba71cfae3b09107a38"
+    static let dataGoKrKey: String = "0QXt5ziBfkOV7lQFGKAVFuBO8O5YX+Hx0VUu8GauZVX1iJfsZosGtcz/QApzO1/5vmw+GtAz26cVw9nm8Q8LjQ=="
     
     static weak var keyWindow: UIWindow!
     
