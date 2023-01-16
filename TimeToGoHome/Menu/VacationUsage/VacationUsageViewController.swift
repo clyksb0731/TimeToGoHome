@@ -615,7 +615,10 @@ extension VacationUsageViewController: UICollectionViewDelegate, UICollectionVie
             let dateOfDay = SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, andDay: day)
             
             let isEnable = (dateOfDay >= self.vacationScheduleDateRange.startDate &&
-                            dateOfDay <= self.vacationScheduleDateRange.endDate) && !(self.holidays.contains(SupportingMethods.shared.getWeekdayOfDate(dateOfDay)))
+                            dateOfDay <= self.vacationScheduleDateRange.endDate) && !(self.holidays.contains(SupportingMethods.shared.getWeekdayOfDate(dateOfDay))) &&
+            !PublicHolidayModel.publicHolidays.contains {
+                $0.dateId == Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: dateOfDay))
+            }
             
             let vacation = VacationModel(date: dateOfDay).vacation
             
@@ -644,7 +647,8 @@ extension VacationUsageViewController: UICollectionViewDelegate, UICollectionVie
         let day = indexPath.item - (SupportingMethods.shared.getFirstWeekdayFor(self.targetYearMonthDate) - 2)
         let dateOfDay = SupportingMethods.shared.makeDateWithYear(SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year, month: SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month, andDay: day)
         
-        guard (dateOfDay >= self.vacationScheduleDateRange.startDate && dateOfDay <= self.vacationScheduleDateRange.endDate) && !(self.holidays.contains(SupportingMethods.shared.getWeekdayOfDate(dateOfDay))) else {
+        guard (dateOfDay >= self.vacationScheduleDateRange.startDate && dateOfDay <= self.vacationScheduleDateRange.endDate) && !(self.holidays.contains(SupportingMethods.shared.getWeekdayOfDate(dateOfDay))) &&
+        !PublicHolidayModel.publicHolidays.contains(where: { $0.dateId == Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: dateOfDay)) }) else {
             return
         }
         

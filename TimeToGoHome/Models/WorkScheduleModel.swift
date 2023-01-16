@@ -188,7 +188,7 @@ extension WorkScheduleModel {
                 
             } else {
                 let holidays = ReferenceValues.initialSetting[InitialSetting.regularHolidays.rawValue] as! [Int]
-                if holidays.contains(SupportingMethods.shared.getWeekdayOfDate(self.date)) {
+                if holidays.contains(SupportingMethods.shared.getWeekdayOfDate(self.date)) || PublicHolidayModel.publicHolidays.contains(where: { $0.dateId == Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: self.date)) }) {
                     self.morning = .morning(.holiday)
                     self.afternoon = .afternoon(.holiday)
                     
