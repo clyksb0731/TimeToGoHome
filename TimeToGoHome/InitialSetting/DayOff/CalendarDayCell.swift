@@ -105,7 +105,7 @@ class CalendarDayCell: UICollectionViewCell {
         return label
     }()
     
-    lazy private var bottomLineView: UIView = {
+    lazy var bottomLineView: UIView = {
         let view = UIView()
         view.backgroundColor = .Calendar.selectedDayBottomLine
         view.isHidden = true
@@ -225,6 +225,9 @@ extension CalendarDayCell {
             self.date = date
             
             self.dayLabel.text = "\(day)"
+            self.dayLabel.textColor = isEnable ? .black : .useRGB(red: 185, green: 185, blue: 185)
+            self.dayLabel.font = isSelected ?
+            .systemFont(ofSize: 18, weight: .heavy) : .systemFont(ofSize: 18, weight: .medium)
             
             if let vacationType = vacationType {
                 switch vacationType {
@@ -254,8 +257,6 @@ extension CalendarDayCell {
                 self.afternoonVacationShapeView.isHidden = true
                 self.fullDayVacationShapeView.isHidden = true
             }
-            
-            self.dayLabel.textColor = isEnable ? .black : .useRGB(red: 185, green: 185, blue: 185)
             
             self.todayMarkLabel.isHidden = !isToday
             

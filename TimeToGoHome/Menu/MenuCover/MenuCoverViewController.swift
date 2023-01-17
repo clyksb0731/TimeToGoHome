@@ -2111,6 +2111,7 @@ extension MenuCoverViewController: UICollectionViewDelegate, UICollectionViewDat
         // MARK: Because not necessary to change day after selecting another day.
         let item = collectionView.cellForItem(at: indexPath) as! CalendarDayOfScheduleRecordCell
         item.bottomLineView.isHidden = false
+        item.dayLabel.font = .systemFont(ofSize: 18, weight: .heavy)
         
         DispatchQueue.main.async {
             let recordedSchedule: WorkScheduleRecordModel = {

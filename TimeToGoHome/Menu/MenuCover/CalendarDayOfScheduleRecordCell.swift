@@ -64,6 +64,7 @@ class CalendarDayOfScheduleRecordCell: UICollectionViewCell {
     lazy var bottomLineView: UIView = {
         let view = UIView()
         view.backgroundColor = .Calendar.selectedDayBottomLine
+        view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -188,6 +189,8 @@ extension CalendarDayOfScheduleRecordCell {
             
             self.dayLabel.text = String(yearMonthDay.day)
             self.dayLabel.textColor = isEnable ? .black : .useRGB(red: 185, green: 185, blue: 185)
+            self.dayLabel.font = isSelected ?
+                .systemFont(ofSize: 18, weight: .heavy) : .systemFont(ofSize: 18, weight: .medium)
             
             if isToday {
                 self.todayMarkLabel.isHidden = false

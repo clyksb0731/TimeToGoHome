@@ -162,6 +162,7 @@ class VacationUsageViewController: UIViewController {
     }()
     
     var selectedIndexOfYearMonthAndDay: (year: Int, month: Int, day: Int)?
+    var selectedIndexPath: IndexPath?
     
     lazy var vacationScheduleDateRange: (startDate: Date, endDate: Date) = {
         return VacationModel.determineVacationScheduleDateRange()
@@ -375,6 +376,7 @@ extension VacationUsageViewController {
         }
         
         self.selectedIndexOfYearMonthAndDay = nil
+        self.selectedIndexPath = nil
         
         let initialYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
         var year = initialYearMonth.year
@@ -412,6 +414,7 @@ extension VacationUsageViewController {
         }
         
         self.selectedIndexOfYearMonthAndDay = nil
+        self.selectedIndexPath = nil
         
         let initialYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
         
@@ -462,6 +465,7 @@ extension VacationUsageViewController {
         
         /*
         self.selectedIndexOfYearMonthAndDay = nil
+        self.selectedIndexPath = nil
         
         let initialYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
         var year = initialYearMonth.year
@@ -500,6 +504,7 @@ extension VacationUsageViewController {
         
         /*
         self.selectedIndexOfYearMonthAndDay = nil
+        self.selectedIndexPath = nil
         
         let initialYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate)
         
@@ -659,6 +664,7 @@ extension VacationUsageViewController: UICollectionViewDelegate, UICollectionVie
                                                okAction: UIAlertAction(title: "확인", style: .default, handler: nil))
             
             self.selectedIndexOfYearMonthAndDay = nil
+            self.selectedIndexPath = nil
             
             self.morningVacationButtonView.isEnable = false
             self.afternoonVacationButtonView.isEnable = false
@@ -667,9 +673,20 @@ extension VacationUsageViewController: UICollectionViewDelegate, UICollectionVie
             self.afternoonVacationButtonView.isSelected = false
             
         } else {
+            if let previousIndexPath = self.selectedIndexPath {
+                let item = collectionView.cellForItem(at: previousIndexPath) as! CalendarDayOfVacationUsageCell
+                item.bottomLineView.isHidden = true
+                item.dayLabel.font = .systemFont(ofSize: 18, weight: .medium)
+            }
+            
             self.selectedIndexOfYearMonthAndDay = (SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).year,
                                                    SupportingMethods.shared.getYearMonthAndDayOf(self.targetYearMonthDate).month,
                                                    day)
+            self.selectedIndexPath = indexPath
+            
+            let item = collectionView.cellForItem(at: indexPath) as! CalendarDayOfVacationUsageCell
+            item.bottomLineView.isHidden = false
+            item.dayLabel.font = .systemFont(ofSize: 18, weight: .heavy)
             
             self.morningVacationButtonView.isEnable = true
             self.afternoonVacationButtonView.isEnable = true
@@ -699,6 +716,6 @@ extension VacationUsageViewController: UICollectionViewDelegate, UICollectionVie
             }
         }
         
-        collectionView.reloadData()
+        //collectionView.reloadData()
     }
 }

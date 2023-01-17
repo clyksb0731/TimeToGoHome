@@ -122,12 +122,12 @@ class CalendarDayOfVacationUsageCell: UICollectionViewCell {
         return label
     }()
     
-    lazy private var bottomLineView: UIView = {
+    lazy var bottomLineView: UIView = {
         let view = UIView()
         view.backgroundColor = .Calendar.selectedDayBottomLine
         view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false
-        
+
         return view
     }()
     
@@ -247,7 +247,7 @@ extension CalendarDayOfVacationUsageCell {
         
         // bottomLineView layout
         NSLayoutConstraint.activate([
-            self.bottomLineView.topAnchor.constraint(equalTo: self.todayMarkLabel.bottomAnchor),
+            self.bottomLineView.topAnchor.constraint(equalTo: self.dayLabel.bottomAnchor, constant: 6),
             self.bottomLineView.heightAnchor.constraint(equalToConstant: 3),
             self.bottomLineView.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor),
             self.bottomLineView.widthAnchor.constraint(equalToConstant: 27)
@@ -270,7 +270,10 @@ extension CalendarDayOfVacationUsageCell {
             
             self.dayLabel.text = "\(day)"
             self.dayLabel.textColor = isEnable ? .black : .useRGB(red: 185, green: 185, blue: 185)
+            self.dayLabel.font = isSelected ?
+                .systemFont(ofSize: 18, weight: .heavy) : .systemFont(ofSize: 18, weight: .medium)
             
+            // vacation area
             if let vacationType = vacationType {
                 switch vacationType {
                 case .none:
@@ -300,6 +303,7 @@ extension CalendarDayOfVacationUsageCell {
                 self.fullDayVacationShapeView.isHidden = true
             }
             
+            // today & schedule points area
             if isToday {
                 self.todayMarkLabel.isHidden = false
                 
