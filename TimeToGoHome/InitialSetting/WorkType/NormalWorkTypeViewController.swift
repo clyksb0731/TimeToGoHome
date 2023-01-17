@@ -1094,7 +1094,7 @@ extension NormalWorkTypeViewController {
         ])
         
         // Attendance time bar marking view layout
-        self.morningAttendaceTimeBarMarkingViewConstraint = self.morningAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.morningAttendanceTimeBarView.leadingAnchor, constant: 12 + 93) // 12 + 46.5 + 46.5
+        self.morningAttendaceTimeBarMarkingViewConstraint = self.morningAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.morningAttendanceTimeBarView.leadingAnchor, constant: 105) // 12 + 93
         NSLayoutConstraint.activate([
             self.morningAttendanceTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.morningAttendanceTimeBarView.centerYAnchor),
             self.morningAttendanceTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),
@@ -1154,7 +1154,7 @@ extension NormalWorkTypeViewController {
         ])
         
         // Leaving time bar marking view layout
-        self.morningLeavingTimeBarMarkingViewConstraint = self.leavingTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.leavingTimeBarView.leadingAnchor, constant: 12 + 93) // 12 + 46.5 + 46.5
+        self.morningLeavingTimeBarMarkingViewConstraint = self.leavingTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.leavingTimeBarView.leadingAnchor, constant: 105) // 12 + 93
         NSLayoutConstraint.activate([
             self.leavingTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.leavingTimeBarView.centerYAnchor),
             self.leavingTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),
@@ -1278,7 +1278,7 @@ extension NormalWorkTypeViewController {
         ])
         
         // Lunch time area view layout
-        self.lunchTimeAreaCenterXAnchorConstraint = self.lunchTimeAreaView.centerXAnchor.constraint(equalTo: self.lunchTimeTimeBarView.leadingAnchor, constant: 12 + 46.5 + 23.25)
+        self.lunchTimeAreaCenterXAnchorConstraint = self.lunchTimeAreaView.centerXAnchor.constraint(equalTo: self.lunchTimeTimeBarView.leadingAnchor, constant: 81.75) // 12 + 46.5 + 23.25
         NSLayoutConstraint.activate([
             self.lunchTimeAreaView.centerYAnchor.constraint(equalTo: self.lunchTimeTimeBarView.centerYAnchor),
             self.lunchTimeAreaView.heightAnchor.constraint(equalToConstant: 24),
@@ -1287,7 +1287,7 @@ extension NormalWorkTypeViewController {
         ])
         
         // Lunch time time bar marking view layout
-        self.lunchTimeTimeBarMarkingViewConstraint = self.lunchTimeTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.lunchTimeTimeBarView.leadingAnchor, constant: 12 + 46.5)
+        self.lunchTimeTimeBarMarkingViewConstraint = self.lunchTimeTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.lunchTimeTimeBarView.leadingAnchor, constant: 58.5) // 12 + 46.5
         NSLayoutConstraint.activate([
             self.lunchTimeTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.lunchTimeTimeBarView.centerYAnchor),
             self.lunchTimeTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),
@@ -1383,7 +1383,7 @@ extension NormalWorkTypeViewController {
         ])
         
         // Attendance time bar marking view layout
-        self.afternoonAttendaceTimeBarMarkingViewConstraint = self.afternoonAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.leadingAnchor, constant: 12 + 37.2*3) // 12 + 37.2 * 3
+        self.afternoonAttendaceTimeBarMarkingViewConstraint = self.afternoonAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.leadingAnchor, constant: 123.6) // 12 + 37.2*3
         NSLayoutConstraint.activate([
             self.afternoonAttendanceTimeBarMarkingView.centerYAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.centerYAnchor),
             self.afternoonAttendanceTimeBarMarkingView.heightAnchor.constraint(equalToConstant: 18),
@@ -1534,8 +1534,8 @@ extension NormalWorkTypeViewController {
     }
     
     func determineAfternoonAttendanceTimeMarkingCenterX() {
-        let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 12+23.25*8])!
-        let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 23.25*2])!
+        let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 198])! // 12+23.25*8
+        let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 46.5])! // 23.25*2
         
         if self.ignoringLunchTimeButton.isSelected {
             self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(8-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
@@ -1804,7 +1804,7 @@ extension NormalWorkTypeViewController {
         if sender.isSelected {
             self.ignoringLunchTimeMarkLabel.textColor = .black
             
-            let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 12+23.25*8])!
+            let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 198])! // 12+23.25*8
             //let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 23.25*2])!
             
             self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(8-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
@@ -1812,8 +1812,8 @@ extension NormalWorkTypeViewController {
         } else {
             self.ignoringLunchTimeMarkLabel.textColor = .useRGB(red: 221, green: 221, blue: 221)
             
-            let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 12+23.25*8])!
-            let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 23.25*2])!
+            let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 198])! // 12+23.25*8
+            let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 46.5])! // 23.25*2
             
             if workLeftCountAtMorning + toEndOfLunchTimeCount <= 10 {
                 self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(10-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
