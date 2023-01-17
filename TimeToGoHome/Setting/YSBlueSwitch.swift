@@ -22,6 +22,7 @@ class YSBlueSwitch: UIControl {
         let view = UIView()
         view.backgroundColor = .useRGB(red: 151, green: 151, blue: 151)
         view.layer.cornerRadius = 14
+        view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 0, blur: 3, spread: 0)
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
