@@ -1675,6 +1675,38 @@ extension NormalWorkTypeViewController {
     }
     
     func getMorningAttendaceTimeValue(_ from: CGFloat) -> Double? {
+        if from > 11.5 && from < 12.5 { // 12
+            return 7.0
+            
+        } else if from > 34.75 && from < 35.75 { // 35.25
+            return 7.5
+            
+        } else if from > 58.0 && from < 59.0 { // 58.5
+            return 8.0
+            
+        } else if from > 81.25 && from < 82.25 { // 81.75
+            return 8.5
+            
+        } else if from > 104.5 && from < 105.5 { // 105
+            return 9.0
+            
+        } else if from > 127.75 && from < 128.75 { // 128.25
+            return 9.5
+            
+        } else if from > 151.0 && from < 152.0 { // 151.5
+            return 10.0
+            
+        } else if from > 174.25 && from < 175.25 { // 174.75
+            return 10.5
+            
+        } else if from > 197.5 && from < 198.5 { // 198
+            return 11.0
+            
+        } else {
+            return nil
+        }
+        
+        /*
         switch from {
         case 12:
             return 7.0
@@ -1706,9 +1738,36 @@ extension NormalWorkTypeViewController {
         default:
             return nil
         }
+        */
     }
     
     func getLunchTimeValue(_ from: CGFloat) -> Double? {
+        if from > 11.5 && from < 12.5 { // 12
+            return 11.0
+            
+        } else if from > 34.75 && from < 35.75 { // 35.25
+            return 11.5
+            
+        } else if from > 58.0 && from < 59.0 { // 58.5
+            return 12.0
+            
+        } else if from > 81.25 && from < 82.25 { // 81.75
+            return 12.5
+            
+        } else if from > 104.5 && from < 105.5 { // 105
+            return 13.0
+            
+        } else if from > 127.75 && from < 128.75 { // 128.25
+            return 13.5
+            
+        } else if from > 151.0 && from < 152.0 { // 151.5
+            return 14.0
+            
+        } else {
+            return nil
+        }
+        
+        /*
         switch from {
         case 12:
             return 11.0
@@ -1734,9 +1793,48 @@ extension NormalWorkTypeViewController {
         default:
             return nil
         }
+        */
     }
     
     func getAfternoonAttendaceTimeValue(_ from: CGFloat) -> Double? {
+        if from > 11.5 && from < 12.5 { // 12
+            return 11.0
+            
+        } else if from > 30.1 && from < 31.1 { // 30.6
+            return 11.5
+            
+        } else if from > 48.7 && from < 49.7 { // 49.2
+            return 12.0
+            
+        } else if from > 67.3 && from < 68.3 { // 67.8
+            return 12.5
+            
+        } else if from > 85.9 && from < 86.9 { // 86.4
+            return 13.0
+            
+        } else if from > 104.5 && from < 105.5 { // 105
+            return 13.5
+            
+        } else if from > 123.1 && from < 124.1 { // 123.6
+            return 14.0
+            
+        } else if from > 141.7 && from < 142.7 { // 142.2
+            return 14.5
+            
+        } else if from > 160.3 && from < 161.3 { // 160.8
+            return 15.0
+            
+        } else if from > 178.9 && from < 179.9 { // 179.4
+            return 15.5
+            
+        } else if from > 197.5 && from < 198.5 { // 198
+            return 16.0
+            
+        } else {
+            return nil
+        }
+        
+        /*
         switch from {
         case 12:
             return 11.0
@@ -1774,6 +1872,7 @@ extension NormalWorkTypeViewController {
         default:
             return nil
         }
+        */
     }
 }
 
