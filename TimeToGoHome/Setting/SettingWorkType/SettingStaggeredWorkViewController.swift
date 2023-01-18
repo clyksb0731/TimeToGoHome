@@ -1987,7 +1987,9 @@ extension SettingStaggeredWorkViewController {
                 }
             }
             
-            self.showMomentLabelFor(.morningEarliest(CGPoint(x:self.morningEarliestAttendaceTimeBarMarkingViewConstraint.constant, y:point.y)), withAnimation: true)
+            if !isInitialization {
+                self.showMomentLabelFor(.morningEarliest(CGPoint(x:self.morningEarliestAttendaceTimeBarMarkingViewConstraint.constant, y:point.y)), withAnimation: true)
+            }
             
         case .morningLatest(let point): // MARK: morningLatest
             if point.x <= 70.125 { // 12 + 23.25*2 + 23.25/2
@@ -2028,7 +2030,9 @@ extension SettingStaggeredWorkViewController {
                 }
             }
             
-            self.showMomentLabelFor(.morningLatest(CGPoint(x:self.morningLatestAttendaceTimeBarMarkingViewConstraint.constant, y:point.y)), withAnimation: true)
+            if !isInitialization {
+                self.showMomentLabelFor(.morningLatest(CGPoint(x:self.morningLatestAttendaceTimeBarMarkingViewConstraint.constant, y:point.y)), withAnimation: true)
+            }
             
         case .lunchTime(let point): // MARK: lunchTime
             if point.x <= 23.625 { // 12 + 23.25/2
@@ -2070,7 +2074,9 @@ extension SettingStaggeredWorkViewController {
                 }
             }
             
-            self.showMomentLabelFor(.lunchTime(CGPoint(x:self.lunchTimeTimeBarMarkingViewConstraint.constant, y:point.y)), withAnimation: true)
+            if !isInitialization {
+                self.showMomentLabelFor(.lunchTime(CGPoint(x:self.lunchTimeTimeBarMarkingViewConstraint.constant, y:point.y)), withAnimation: true)
+            }
             
         case .afternoonEarliest(let point): // MARK: afternoonEarliest
             let aheadOfAfternoonEarliestAttendaceArea = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 23.25
@@ -2142,7 +2148,9 @@ extension SettingStaggeredWorkViewController {
                 }
             }
             
-            self.showMomentLabelFor(.afternoonEarliest(CGPoint(x:self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant, y:point.y)), withAnimation: true)
+            if !isInitialization {
+                self.showMomentLabelFor(.afternoonEarliest(CGPoint(x:self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant, y:point.y)), withAnimation: true)
+            }
             
         case .afternoonLatest(let point): // MARK: afternoonLatest
             let aheadOfAfternoonLatestAttendaceArea = self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant - 23.25
@@ -2220,7 +2228,9 @@ extension SettingStaggeredWorkViewController {
                 }
             }
             
-            self.showMomentLabelFor(.afternoonLatest(CGPoint(x:self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant, y:point.y)), withAnimation: true)
+            if !isInitialization {
+                self.showMomentLabelFor(.afternoonLatest(CGPoint(x:self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant, y:point.y)), withAnimation: true)
+            }
         }
         
         if !isInitialization {
