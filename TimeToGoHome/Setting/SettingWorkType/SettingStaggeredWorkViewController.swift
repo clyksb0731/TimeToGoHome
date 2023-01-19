@@ -959,7 +959,7 @@ class SettingStaggeredWorkViewController: UIViewController {
         return view
     }()
     
-    var workType: WorkType = .staggered
+    weak var mainVC: MainViewController?
     
     var morningEarliestAttendaceTimeBarMarkingViewConstraint: NSLayoutConstraint!
     var morningLatestAttendaceTimeBarMarkingViewConstraint: NSLayoutConstraint!
@@ -1917,9 +1917,7 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
 // MARK: - Extension for methods added
 extension SettingStaggeredWorkViewController {
     func determineInitialValues() {
-        let workType = WorkType(rawValue:ReferenceValues.initialSetting[InitialSetting.workType.rawValue] as! String)!
-        
-        if workType == .staggered {
+        if self.mainVC?.schedule.workType == .staggered {
             // Morning attendance
             let morningStartingWorkTimeValueRange = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValueRange.rawValue] as! [String:Double]
             let morningEarliestTimeValue = morningStartingWorkTimeValueRange[TimeRange.earliestTime.rawValue]!
@@ -2996,12 +2994,29 @@ extension SettingStaggeredWorkViewController {
                   return
         }
         
+        // MARK: Remove values
+        // Work type
+        ReferenceValues.initialSetting.removeValue(forKey: WorkType.normal.rawValue)
+        
+        // Morning attendance time range
+        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.morningStartingWorkTimeValue.rawValue)
+        
+        // Lunch time
+        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.lunchTimeValue.rawValue)
+        
+        // Afternoon attendance time
+        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.afternoonStartingWorkTimeValue.rawValue)
+        
+        // Is ignore lunch time for half vacation
+        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue)
+        
         print("Work type is staggered work type")
         print("Morning Attendance Time Range: \(morningAttendanceTimeRange.earliestTime) ~ \(morningAttendanceTimeRange.latestTime)")
         print("Lunch Time: \(lunchTime)")
         print("Is ignore lunch time for half vacation: \(self.ignoringLunchTimeButton.isSelected ? "Yes" : "No")")
         print("Afternoon Attendance Time Range: \(afternoonAttendanceTimeRange.earliestTime) ~ \(afternoonAttendanceTimeRange.latestTime)")
         
+        // MARK: Insert values
         // Work type
         ReferenceValues.initialSetting.updateValue(WorkType.staggered.rawValue, forKey: InitialSetting.workType.rawValue)
         
@@ -3024,7 +3039,7 @@ extension SettingStaggeredWorkViewController {
         // Update initialSetting
         SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
         
-        SupportingMethods.shared.determineStartingWorkTimePush()
+        self.mainVC?.schedule.refreshToday()
         
         // Pop view controller
         self.tabBarController?.navigationController?.popViewController(animated: true)

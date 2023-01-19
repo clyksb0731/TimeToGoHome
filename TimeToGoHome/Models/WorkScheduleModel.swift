@@ -64,13 +64,16 @@ struct WorkScheduleModel {
                 self.startingWorkTimeSecondsSinceReferenceDate = nil
                 self.determineFinishingRegularWorkTime()
                 
+                // To remove finishing work time push
+                SupportingMethods.shared.determineTodayFinishingWorkTimePush(self)
+                
                 return
             }
             
             self.startingWorkTimeSecondsSinceReferenceDate =  Int(startingWorkTime.timeIntervalSinceReferenceDate)
             self.determineFinishingRegularWorkTime()
             
-            // MARK: After setting starting work time.
+            // After setting starting work time.
             SupportingMethods.shared.determineTodayFinishingWorkTimePush(self)
         }
     }
@@ -252,14 +255,10 @@ extension WorkScheduleModel {
         }
     }
     
-    mutating func refreshToday(_ date: Date) { // FIXME: Refresh today for setting change.
-        self.date = date
-        
-        self.morning = nil
-        self.afternoon = nil
-        self.overtime = nil
-        
-        self.scheduling()
+    mutating func refreshToday() {
+        self.determineWorkType()
+        self.determineLunchTimeDate()
+        self.determineStartingWorkTimeDate()
     }
     
     mutating func updateStartingWorkTime(_ startingWorkTimeDate: Date? = nil) {

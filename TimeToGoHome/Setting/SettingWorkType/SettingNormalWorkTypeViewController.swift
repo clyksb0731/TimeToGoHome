@@ -658,7 +658,7 @@ class SettingNormalWorkTypeViewController: UIViewController {
         return view
     }()
     
-    var workType: WorkType = .staggered
+    weak var mainVC: MainViewController?
     
     var morningAttendaceTimeBarMarkingViewConstraint: NSLayoutConstraint!
     var morningLeavingTimeBarMarkingViewConstraint: NSLayoutConstraint!
@@ -1335,9 +1335,7 @@ extension SettingNormalWorkTypeViewController: EssentialViewMethods {
 // MARK: - Extension for methods added
 extension SettingNormalWorkTypeViewController {
     func determineInitialValues() {
-        let workType = WorkType(rawValue:ReferenceValues.initialSetting[InitialSetting.workType.rawValue] as! String)!
-        
-        if workType == .normal {
+        if self.mainVC?.schedule.workType == .normal {
             // Lunch time
             let lunchTimeValue = ReferenceValues.initialSetting[InitialSetting.lunchTimeValue.rawValue] as! Double
             self.locateMarkingBarViewFor(.lunchTime(self.determineLunchPoint(lunchTimeValue)!), isInitialization: true)
@@ -1925,12 +1923,29 @@ extension SettingNormalWorkTypeViewController {
                   return
         }
         
+        // MARK: Remove values
+        // Work type
+        ReferenceValues.initialSetting.removeValue(forKey: WorkType.staggered.rawValue)
+        
+        // Morning attendance time range
+        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.morningStartingWorkTimeValueRange.rawValue)
+        
+        // Lunch time
+        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.lunchTimeValue.rawValue)
+        
+        // Afternoon attendance time
+        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.afternoonStartingWorkTimeValueRange.rawValue)
+        
+        // Is ignore lunch time for half vacation
+        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue)
+        
         print("Work type is normal work type")
         print("Morning Attendance Time: \(morningAttendanceTime)")
         print("Lunch Time: \(lunchTime)")
         print("Is ignore lunch time for half vacation: \(self.ignoringLunchTimeButton.isSelected ? "Yes" : "No")")
         print("Afternoon Attendance Time: \(afternoonAttendanceTime)")
         
+        // MARK: Insert values
         // Work type
         ReferenceValues.initialSetting.updateValue(WorkType.normal.rawValue, forKey: InitialSetting.workType.rawValue)
         
@@ -1949,7 +1964,7 @@ extension SettingNormalWorkTypeViewController {
         // Update initialSetting
         SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
         
-        SupportingMethods.shared.determineStartingWorkTimePush()
+        self.mainVC?.schedule.refreshToday()
         
         // Pop view controller
         self.tabBarController?.navigationController?.popViewController(animated: true)

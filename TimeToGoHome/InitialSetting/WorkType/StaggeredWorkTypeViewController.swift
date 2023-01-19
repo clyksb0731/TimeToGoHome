@@ -1027,8 +1027,6 @@ class StaggeredWorkTypeViewController: UIViewController {
         return button
     }()
     
-    var workType: WorkType = .staggered
-    
     var morningEarliestAttendaceTimeBarMarkingViewConstraint: NSLayoutConstraint!
     var morningLatestAttendaceTimeBarMarkingViewConstraint: NSLayoutConstraint!
     var lunchTimeAreaCenterXAnchorConstraint: NSLayoutConstraint!

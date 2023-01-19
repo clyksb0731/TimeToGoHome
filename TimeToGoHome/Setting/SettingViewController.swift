@@ -905,21 +905,27 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         if indexPath.section == 1 && indexPath.row == 0 {
-            let staggeredWorkTypeNaviVC = CustomizedNavigationController(rootViewController: SettingStaggeredWorkViewController())
-            let normalWorkTypeNaviVC = CustomizedNavigationController(rootViewController: SettingNormalWorkTypeViewController())
+            let staggeredWorkTypeVC = SettingStaggeredWorkViewController()
+            staggeredWorkTypeVC.mainVC = self.mainVC
+            let staggeredWorkTypeNaviVC = CustomizedNavigationController(rootViewController: staggeredWorkTypeVC)
+            
+            let normalWorkTypeVC = SettingNormalWorkTypeViewController()
+            normalWorkTypeVC.mainVC = self.mainVC
+            let normalWorkTypeNaviVC = CustomizedNavigationController(rootViewController: normalWorkTypeVC)
             let workTypeTabBarVC = CustomizedTabBarController()
             workTypeTabBarVC.viewControllers = [staggeredWorkTypeNaviVC, normalWorkTypeNaviVC]
             
-            let workType = WorkType(rawValue:ReferenceValues.initialSetting[InitialSetting.workType.rawValue] as! String)!
-            switch workType {
-            case .staggered:
-                workTypeTabBarVC.selectedIndex = 0
+            if let workType = self.mainVC?.schedule.workType {
+                switch workType {
+                case .staggered:
+                    workTypeTabBarVC.selectedIndex = 0
+                    
+                case .normal:
+                    workTypeTabBarVC.selectedIndex = 1
+                }
                 
-            case .normal:
-                workTypeTabBarVC.selectedIndex = 1
+                self.navigationController?.pushViewController(workTypeTabBarVC, animated: true)
             }
-            
-            self.navigationController?.pushViewController(workTypeTabBarVC, animated: true)
         }
         
         if indexPath.section == 1 && indexPath.row == 1 {

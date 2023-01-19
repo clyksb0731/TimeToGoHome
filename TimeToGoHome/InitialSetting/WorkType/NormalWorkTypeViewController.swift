@@ -712,8 +712,6 @@ class NormalWorkTypeViewController: UIViewController {
         return button
     }()
     
-    var workType: WorkType = .staggered
-    
     var morningAttendaceTimeBarMarkingViewConstraint: NSLayoutConstraint!
     var morningLeavingTimeBarMarkingViewConstraint: NSLayoutConstraint!
     var lunchTimeAreaCenterXAnchorConstraint: NSLayoutConstraint!
