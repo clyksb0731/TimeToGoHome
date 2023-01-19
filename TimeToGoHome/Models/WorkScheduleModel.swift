@@ -388,7 +388,7 @@ extension WorkScheduleModel {
         self.lunchTime = calendar.date(from: todayDateComponents)
     }
     
-    func updateTodayIntoDB() {
+    func updateTodayIntoDB(_ isRequiredDeterminingFinishingWorkTimePush: Bool) {
         let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
         if case .morning(let morningWorkType) = self.morning, case .afternoon(let afternoonWorkType) = self.afternoon {
             let schedule = Schedule(date: self.date, morningType: morningWorkType, afternoonType: afternoonWorkType)
@@ -399,7 +399,9 @@ extension WorkScheduleModel {
             
             companyModel.applySchedule(schedule)
             
-            SupportingMethods.shared.determineTodayFinishingWorkTimePush(self)
+            if isRequiredDeterminingFinishingWorkTimePush {
+                SupportingMethods.shared.determineTodayFinishingWorkTimePush(self)
+            }
             
             var vacation: Vacation!
             if morningWorkType == .vacation && afternoonWorkType == .vacation {
