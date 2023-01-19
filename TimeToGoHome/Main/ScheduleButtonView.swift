@@ -1761,8 +1761,8 @@ extension ScheduleButtonView {
         }
         
         var timeScheduled = 0
-        if case .morning(let workType) = schedule.morning, case .work = workType,
-           case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+        if case .morning(let workTimeType) = schedule.morning, case .work = workTimeType,
+           case .afternoon(let workTimeType) = schedule.afternoon, case .work = workTimeType {
             // FIXME: App Setting of rest times as default
             timeScheduled = WorkScheduleModel.secondsOfWorkTime + WorkScheduleModel.secondsOfLunchTime + WorkScheduleModel.secondsOfWorkTime + 0 // launch + dinner time setting
             

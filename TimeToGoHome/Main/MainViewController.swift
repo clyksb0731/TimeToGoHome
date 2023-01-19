@@ -1016,8 +1016,8 @@ extension MainViewController {
         
         if schedule.count == 2 {
             if self.isEditingMode {
-                if case .afternoon(let workType) = schedule.afternoon {
-                    switch workType {
+                if case .afternoon(let workTimeType) = schedule.afternoon {
+                    switch workTimeType {
                     case .holiday:
                         self.scheduleTableViewHeightAnchor.constant = ReferenceValues.Size.Schedule.normalScheduleHeight * 2
                         
@@ -1054,8 +1054,8 @@ extension MainViewController {
         
         var remainingTimeSeconds: Int = 0
         
-        if case .morning(let workType) = self.schedule.morning, case .work = workType,
-           case .afternoon(let workType) = self.schedule.afternoon, case .work = workType {
+        if case .morning(let workTimeType) = self.schedule.morning, case .work = workTimeType,
+           case .afternoon(let workTimeType) = self.schedule.afternoon, case .work = workTimeType {
             if currentTimeSeconds < startingWorkTimeSeconds {
                 remainingTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
                 
@@ -1071,7 +1071,7 @@ extension MainViewController {
                 remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
             }
             
-        } else if case .morning(let workType) = self.schedule.morning, case .work = workType {
+        } else if case .morning(let workTimeType) = self.schedule.morning, case .work = workTimeType {
             if isIgnoredLunchTimeForHalfVacation {
                 //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
                 if currentTimeSeconds < startingWorkTimeSeconds {
@@ -1106,7 +1106,7 @@ extension MainViewController {
                 }
             }
             
-        } else if case .afternoon(let workType) = self.schedule.afternoon, case .work = workType {
+        } else if case .afternoon(let workTimeType) = self.schedule.afternoon, case .work = workTimeType {
             if isIgnoredLunchTimeForHalfVacation {
                 //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
                 if currentTimeSeconds < startingWorkTimeSeconds {
@@ -1177,8 +1177,8 @@ extension MainViewController {
         var progressTimeSeconds: Int = 0
         var maximumProgressTimeSeconds: Int = 0
         
-        if case .morning(let workType) = self.schedule.morning, case .work = workType,
-           case .afternoon(let workType) = self.schedule.afternoon, case .work = workType {
+        if case .morning(let workTimeType) = self.schedule.morning, case .work = workTimeType,
+           case .afternoon(let workTimeType) = self.schedule.afternoon, case .work = workTimeType {
             if currentTimeSeconds < startingWorkTimeSeconds {
                 progressTimeSeconds = 0
                 
@@ -1196,7 +1196,7 @@ extension MainViewController {
             
             maximumProgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
             
-        } else if case .morning(let workType) = self.schedule.morning, case .work = workType {
+        } else if case .morning(let workTimeType) = self.schedule.morning, case .work = workTimeType {
             if isIgnoredLunchTimeForHalfVacation {
                 //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
                 if currentTimeSeconds < startingWorkTimeSeconds {
@@ -1237,7 +1237,7 @@ extension MainViewController {
                 }
             }
             
-        } else if case .afternoon(let workType) = self.schedule.afternoon, case .work = workType {
+        } else if case .afternoon(let workTimeType) = self.schedule.afternoon, case .work = workTimeType {
             if isIgnoredLunchTimeForHalfVacation {
                 //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
                 if currentTimeSeconds < startingWorkTimeSeconds {
@@ -1315,8 +1315,8 @@ extension MainViewController {
         var progressTimeSeconds: Int = 0
         var maximumProgressTimeSeconds: Int = 0
         
-        if case .morning(let workType) = self.schedule.morning, case .work = workType,
-           case .afternoon(let workType) = self.schedule.afternoon, case .work = workType {
+        if case .morning(let workTimeType) = self.schedule.morning, case .work = workTimeType,
+           case .afternoon(let workTimeType) = self.schedule.afternoon, case .work = workTimeType {
             if currentTimeSeconds < startingWorkTimeSeconds {
                 progressTimeSeconds = 0
                 
@@ -1334,7 +1334,7 @@ extension MainViewController {
             
             maximumProgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
             
-        } else if case .morning(let workType) = self.schedule.morning, case .work = workType {
+        } else if case .morning(let workTimeType) = self.schedule.morning, case .work = workTimeType {
             if isIgnoredLunchTimeForHalfVacation {
                 //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
                 if currentTimeSeconds < startingWorkTimeSeconds {
@@ -1375,7 +1375,7 @@ extension MainViewController {
                 }
             }
             
-        } else if case .afternoon(let workType) = self.schedule.afternoon, case .work = workType {
+        } else if case .afternoon(let workTimeType) = self.schedule.afternoon, case .work = workTimeType {
             if isIgnoredLunchTimeForHalfVacation {
                 //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
                 if currentTimeSeconds < startingWorkTimeSeconds {
@@ -1447,7 +1447,7 @@ extension MainViewController {
                 self.scheduleButtonView.setScheduleButtonView(.noButton)
                 
             } else if schedule.count == 2 {
-                if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+                if case .afternoon(let workTimeType) = schedule.afternoon, case .work = workTimeType {
                     if self.mainTimeCoverView.isHidden { // 추가|제거 deactivated, after touching a kind of enable overtime
                         if schedule.finishingRegularWorkTimeSecondsSinceReferenceDate! >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
                             self.scheduleButtonView.setScheduleButtonView(.addOvertime)
@@ -1465,8 +1465,8 @@ extension MainViewController {
                 }
                 
             } else if schedule.count == 1 {
-                if case .morning(let workType) = schedule.morning {
-                    switch workType {
+                if case .morning(let workTimeType) = schedule.morning {
+                    switch workTimeType {
                     case .work:
                         self.scheduleButtonView.setScheduleButtonView(.threeSchedules(nil))
                         
@@ -1507,8 +1507,8 @@ extension MainViewController {
                     }
                     
                 } else { // 2
-                    if case .morning(let workType) = schedule.morning, case .work = workType,
-                       case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+                    if case .morning(let workTimeType) = schedule.morning, case .work = workTimeType,
+                       case .afternoon(let workTimeType) = schedule.afternoon, case .work = workTimeType {
                         if let regularWorkSeconds = schedule.finishingRegularWorkTimeSecondsSinceReferenceDate {
                             if regularWorkSeconds >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
                                 self.scheduleButtonView.setScheduleButtonView(.addOvertime)
@@ -1521,7 +1521,7 @@ extension MainViewController {
                             self.scheduleButtonView.setScheduleButtonView(.addOvertime)
                         }
                         
-                    } else if case .morning(let workType) = schedule.morning, case .work = workType {
+                    } else if case .morning(let workTimeType) = schedule.morning, case .work = workTimeType {
                         if let regularWorkSeconds = schedule.finishingRegularWorkTimeSecondsSinceReferenceDate {
                             if regularWorkSeconds >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
                                 self.scheduleButtonView.setScheduleButtonView(.noButton)
@@ -1534,7 +1534,7 @@ extension MainViewController {
                             self.scheduleButtonView.setScheduleButtonView(.noButton)
                         }
                         
-                    } else if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+                    } else if case .afternoon(let workTimeType) = schedule.afternoon, case .work = workTimeType {
                         if let regularWorkSeconds = schedule.finishingRegularWorkTimeSecondsSinceReferenceDate {
                             if regularWorkSeconds >= SupportingMethods.getCurrentTimeSeconds() { // before overtime
                                 self.scheduleButtonView.setScheduleButtonView(.addOvertime)
@@ -1581,11 +1581,11 @@ extension MainViewController {
     }
     
     func determineRegularSchedule(_ schedule: WorkScheduleModel) -> RegularScheduleType? {
-        if case .morning(let workType) = schedule.morning {
-            switch workType {
+        if case .morning(let workTimeType) = schedule.morning {
+            switch workTimeType {
             case .work:
-                if case .afternoon(let workType) = schedule.afternoon {
-                    switch workType {
+                if case .afternoon(let workTimeType) = schedule.afternoon {
+                    switch workTimeType {
                     case .work:
                         return .fullWork
                         
@@ -1601,8 +1601,8 @@ extension MainViewController {
                 }
                 
             case .vacation:
-                if case .afternoon(let workType) = schedule.afternoon {
-                    switch workType {
+                if case .afternoon(let workTimeType) = schedule.afternoon {
+                    switch workTimeType {
                     case .work:
                         return .afternoonWork
                         
@@ -1618,8 +1618,8 @@ extension MainViewController {
                 }
                 
             case .holiday:
-                if case .afternoon(let workType) = schedule.afternoon {
-                    switch workType {
+                if case .afternoon(let workTimeType) = schedule.afternoon {
+                    switch workTimeType {
                     case .work:
                         return .afternoonWork
                         
@@ -2441,15 +2441,15 @@ extension MainViewController {
     }
     
     func checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(insertNormalSchedule: ScheduleType, schedule: WorkScheduleModel) -> Bool {
-        if case .morning(let workType) = insertNormalSchedule, workType == .vacation {
-            if case .morning(let scheduleWorkType) = schedule.morning, scheduleWorkType != .vacation {
+        if case .morning(let workTimeType) = insertNormalSchedule, workTimeType == .vacation {
+            if case .morning(let workTimeType) = schedule.morning, workTimeType != .vacation {
                 if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
                     return true
                 }
             }
         }
-        if case .afternoon(let workType) = insertNormalSchedule, workType == .vacation {
-            if case .afternoon(let scheduleWorkType) = schedule.afternoon, scheduleWorkType != .vacation {
+        if case .afternoon(let workTimeType) = insertNormalSchedule, workTimeType == .vacation {
+            if case .afternoon(let workTimeType) = schedule.afternoon, workTimeType != .vacation {
                 if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
                     return true
                 }
@@ -2703,8 +2703,8 @@ extension MainViewController {
                     print("Long Pressed for morning")
                     if self.schedule.overtime == nil {
                         var buttonType: NormalButtonType = .allButton
-                        if case .afternoon(let workType) = self.schedule.afternoon {
-                            switch workType {
+                        if case .afternoon(let workTimeType) = self.schedule.afternoon {
+                            switch workTimeType {
                             case .work:
                                 buttonType = .allButton
                                 
@@ -2729,8 +2729,8 @@ extension MainViewController {
                     print("Long Pressed for afternoon")
                     if self.schedule.overtime == nil {
                         var buttonType: NormalButtonType = .allButton
-                        if case .morning(let workType) = self.schedule.morning {
-                            switch workType {
+                        if case .morning(let workTimeType) = self.schedule.morning {
+                            switch workTimeType {
                             case .work:
                                 buttonType = .allButton
                                 
@@ -2787,8 +2787,8 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             
         } else if self.schedule.count == 2 {
             if self.isEditingMode {
-                if case .afternoon(let workType) = self.schedule.afternoon {
-                    switch workType {
+                if case .afternoon(let workTimeType) = self.schedule.afternoon {
+                    switch workTimeType {
                     case .holiday:
                         return 2
                         
@@ -2941,9 +2941,9 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 extension MainViewController: ScheduleButtonViewDelegate {
     func scheduleButtonView(_ scheduleButtonView: ScheduleButtonView, of type: ScheduleButtonViewType) {
         switch type {
-        case .threeSchedules(let workType): // MARK: threeSchedules
-            if let workType = workType {
-                switch workType {
+        case .threeSchedules(let threeScheduleType): // MARK: threeSchedules
+            if let threeScheduleType = threeScheduleType {
+                switch threeScheduleType {
                 case .work:
                     print("threeSchedules work")
                     self.schedule.addSchedule(WorkScheduleModel.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with: WorkTimeType.work))
@@ -2962,9 +2962,9 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 self.determineTableAndButtonTypeOfSchedule()
             }
             
-        case .twoScheduleForVacation(let workType): // MARK: twoScheduleForVacation
-            if let workType = workType {
-                switch workType {
+        case .twoScheduleForVacation(let twoScheduleForVacationType): // MARK: twoScheduleForVacation
+            if let twoScheduleForVacationType = twoScheduleForVacationType {
+                switch twoScheduleForVacationType {
                 case .work:
                     print("twoScheduleForVacation work")
                     self.schedule.addSchedule(WorkScheduleModel.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.work))
@@ -2979,9 +2979,9 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 self.determineTableAndButtonTypeOfSchedule()
             }
             
-        case .twoScheduleForHoliday(let workType): // MARK: twoScheduleForHoliday
-            if let workType = workType {
-                switch workType {
+        case .twoScheduleForHoliday(let twoScheduleForHolidayType): // MARK: twoScheduleForHoliday
+            if let twoScheduleForHolidayType = twoScheduleForHolidayType {
+                switch twoScheduleForHolidayType {
                 case .work:
                     print("twoScheduleForHoliday work")
                     self.schedule.addSchedule(WorkScheduleModel.makeNewScheduleBasedOnCountOfSchedule(self.schedule, with:WorkTimeType.work))

@@ -295,8 +295,8 @@ extension MainCoverViewController {
         }
         
         if case .startingWorkTime(let schedule) = self.mainCoverType {
-            if case .morning(let workType) = schedule.morning, case .work = workType,
-               case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+            if case .morning(let workTimeType) = schedule.morning, case .work = workTimeType,
+               case .afternoon(let workTimeType) = schedule.afternoon, case .work = workTimeType {
                 
                 
                 let morningStartingWorkTimeValueRange = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValueRange.rawValue] as! [String:Double]
@@ -314,7 +314,7 @@ extension MainCoverViewController {
                     self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)!
                 }
                 
-            } else if case .morning(let workType) = schedule.morning, case .work = workType {
+            } else if case .morning(let workTimeType) = schedule.morning, case .work = workTimeType {
                 let morningStartingWorkTimeValueRange = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValueRange.rawValue] as! [String:Double]
                 
                 let morningEarliestTimeValue = morningStartingWorkTimeValueRange[TimeRange.earliestTime.rawValue]!
@@ -330,7 +330,7 @@ extension MainCoverViewController {
                     self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)!
                 }
                 
-            } else if case .afternoon(let workType) = schedule.afternoon, case .work = workType {
+            } else if case .afternoon(let workTimeType) = schedule.afternoon, case .work = workTimeType {
                 let afternoonStartingWorkTimeValueRage = ReferenceValues.initialSetting[InitialSetting.afternoonStartingWorkTimeValueRange.rawValue] as! [String:Double]
                 
                 let afternoonEarliestTimeValue = afternoonStartingWorkTimeValueRage[TimeRange.earliestTime.rawValue]!

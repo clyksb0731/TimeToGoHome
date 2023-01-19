@@ -362,15 +362,15 @@ extension DayWorkRecordViewController {
         
         if thisRecordScheduleDateId >= startDateIdOfVacation && thisRecordScheduleDateId <= endDateIdOfVacation {
             // Calculate annualPaidHolidays and vacation hold before inserting schedule.
-            if case .morning(let workType) = scheduleType,
-                workType == .vacation,
+            if case .morning(let workTimeType) = scheduleType,
+               workTimeType == .vacation,
                 recordedSchedule.morning != .vacation {
                 if numberOfVacationsHold + 0.5 > numberOfAnnualPaidHolidays {
                     return true
                 }
             }
-            if case .afternoon(let workType) = scheduleType,
-                workType == .vacation,
+            if case .afternoon(let workTimeType) = scheduleType,
+               workTimeType == .vacation,
                 recordedSchedule.afternoon != .vacation {
                 if numberOfVacationsHold + 0.5 > numberOfAnnualPaidHolidays {
                     return true

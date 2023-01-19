@@ -178,11 +178,11 @@ extension ScheduleTypeCell {
         self.tag = tag
         self.removeScheduleButton.tag = tag
         
-        if tag == 1, case .morning(let workType) = schedule.morning {
+        if tag == 1, case .morning(let workTimeType) = schedule.morning {
             self.timeTypeLabel.text = "오전"
             self.removeScheduleButton.isHidden = !isEditingMode
             
-            switch workType {
+            switch workTimeType {
             case .holiday:
                 self.scheduleView.backgroundColor = .Schedule.holiday
                 self.timeTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
@@ -206,11 +206,11 @@ extension ScheduleTypeCell {
             }
         }
         
-        if tag == 2, case .afternoon(let workType) = schedule.afternoon {
+        if tag == 2, case .afternoon(let workTimeType) = schedule.afternoon {
             self.timeTypeLabel.text = "오후"
             self.removeScheduleButton.isHidden = !isEditingMode
             
-            switch workType {
+            switch workTimeType {
             case .holiday:
                 self.scheduleView.backgroundColor = .Schedule.holiday
                 self.timeTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
