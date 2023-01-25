@@ -1094,16 +1094,29 @@ extension MainViewController {
                 // FIXME: Need to re-calculate proper time relation and other main mode as well.
                 } else { // self.lunchTimeSecondsSinceReferenceDate < startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
                     //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
-                    if currentTimeSeconds < atLunchTimeSeconds {
+                    if currentTimeSeconds < startingWorkTimeSeconds {
+                        remainingTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+                        
+                    } else if currentTimeSeconds >= startingWorkTimeSeconds && currentTimeSeconds < atLunchTimeSeconds {
                         remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - WorkScheduleModel.secondsOfLunchTime
                         
-                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
-                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
-                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - lunchTimeSecondsLeft
+                    } else if currentTimeSeconds >= atLunchTimeSeconds && currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                        remainingTimeSeconds = endingTimeSeconds - (atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime)
                         
                     } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
                         remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
                     }
+                    
+//                    if currentTimeSeconds < atLunchTimeSeconds {
+//                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+//
+//                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
+//                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+//                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - lunchTimeSecondsLeft
+//
+//                    } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
+//                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
+//                    }
                 }
             }
             
