@@ -1100,7 +1100,7 @@ extension MainViewController {
                         remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - WorkScheduleModel.secondsOfLunchTime
                         
                     } else if currentTimeSeconds >= atLunchTimeSeconds && currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
-                        remainingTimeSeconds = endingTimeSeconds - (atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime)
+                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - lunchTimeSecondsLeft //endingTimeSeconds - (atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime)
                         
                     } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
                         remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
@@ -1455,11 +1455,11 @@ extension MainViewController {
                 } else { // startingWorkTimeSeconds < self.lunchTimeSecondsSinceReferenceDate
                     //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
                     if currentTimeSeconds < atLunchTimeSeconds {
-                        progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
                         
                     } else if currentTimeSeconds >= atLunchTimeSeconds &&
                                 currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
-                        progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds - lunchTimeSecondsPassed
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - lunchTimeSecondsPassed
                         
                     } else {
                         progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
