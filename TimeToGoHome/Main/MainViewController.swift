@@ -1091,7 +1091,6 @@ extension MainViewController {
                         remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
                     }
                 
-                // FIXME: Need to re-calculate proper time relation and other main mode as well.
                 } else { // self.lunchTimeSecondsSinceReferenceDate < startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
                     //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
                     if currentTimeSeconds < startingWorkTimeSeconds {
@@ -1236,16 +1235,30 @@ extension MainViewController {
                     
                 } else { // self.lunchTimeSecondsSinceReferenceDate < startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
                     //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
-                    if currentTimeSeconds < atLunchTimeSeconds {
+                    if currentTimeSeconds < startingWorkTimeSeconds {
+                        progressTimeSeconds = 0
+                        
+                    } else if currentTimeSeconds >= startingWorkTimeSeconds && currentTimeSeconds < atLunchTimeSeconds {
                         progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
                         
-                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
-                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                    } else if currentTimeSeconds >= atLunchTimeSeconds && currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
                         progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - lunchTimeSecondsPassed
                         
                     } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
                         progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
                     }
+                    
+                    
+//                    if currentTimeSeconds < atLunchTimeSeconds {
+//                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+//
+//                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
+//                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+//                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - lunchTimeSecondsPassed
+//
+//                    } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
+//                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+//                    }
                     
                     maximumProgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
                 }
@@ -1336,11 +1349,11 @@ extension MainViewController {
                 
             } else if currentTimeSeconds >= startingWorkTimeSeconds &&
                         currentTimeSeconds < atLunchTimeSeconds {
-                progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds
+                progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
                 
             } else if currentTimeSeconds >= atLunchTimeSeconds &&
                         currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
-                progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds - lunchTimeSecondsPassed
+                progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - lunchTimeSecondsPassed
                 
             } else if currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
                 progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
@@ -1374,16 +1387,30 @@ extension MainViewController {
                     
                 } else { // self.lunchTimeSecondsSinceReferenceDate < startingWorkTimeSeconds + type(of: self).secondsOfWorkTime
                     //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
-                    if currentTimeSeconds < atLunchTimeSeconds {
-                        progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds
+                    if currentTimeSeconds < startingWorkTimeSeconds {
+                        progressTimeSeconds = 0
                         
-                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
-                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
-                        progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds - lunchTimeSecondsPassed
+                    } else if currentTimeSeconds >= startingWorkTimeSeconds && currentTimeSeconds < atLunchTimeSeconds {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
+                        
+                    } else if currentTimeSeconds >= atLunchTimeSeconds && currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - lunchTimeSecondsPassed
                         
                     } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
                         progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
                     }
+                    
+                    
+//                    if currentTimeSeconds < atLunchTimeSeconds {
+//                        progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds
+//
+//                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
+//                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+//                        progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds - lunchTimeSecondsPassed
+//
+//                    } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
+//                        progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+//                    }
                     
                     maximumProgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
                 }
