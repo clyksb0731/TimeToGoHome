@@ -2359,7 +2359,7 @@ extension SettingNormalWorkTypeViewController {
         //print("attendanceTimeBarMarkingView point: \(point)")
         
         if (gesture.state == .began) {
-            self.morningAttendanceTimeBarView.isUserInteractionEnabled = false
+            //self.morningAttendanceTimeBarView.isUserInteractionEnabled = false
             
             self.moveMarkingBarViewTo(.attendance(point))
             self.showMomentLabelFor(.attendance(point), withAnimation: false)
@@ -2392,7 +2392,7 @@ extension SettingNormalWorkTypeViewController {
         //print("lunchTimeTimeBarMarkingView point: \(point)")
         
         if (gesture.state == .began) {
-            self.lunchTimeTimeBarView.isUserInteractionEnabled = false
+            //self.lunchTimeTimeBarView.isUserInteractionEnabled = false
             
             self.moveMarkingBarViewTo(.lunchTime(point))
             self.showMomentLabelFor(.lunchTime(point), withAnimation: false)
@@ -2425,7 +2425,7 @@ extension SettingNormalWorkTypeViewController {
         //print("lunchTimeTimeBarMarkingView point: \(point)")
         
         if (gesture.state == .began) {
-            self.afternoonAttendanceTimeBarView.isUserInteractionEnabled = false
+            //self.afternoonAttendanceTimeBarView.isUserInteractionEnabled = false
             
             self.moveMarkingBarViewTo(.afternoonAttendance(point))
             self.showMomentLabelFor(.afternoonAttendance(point), withAnimation: false)
