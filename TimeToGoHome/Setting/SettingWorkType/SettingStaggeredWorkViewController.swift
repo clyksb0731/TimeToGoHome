@@ -552,16 +552,6 @@ class SettingStaggeredWorkViewController: UIViewController {
         return view
     }()
     
-//    lazy var ignoringLunchTimeButton: UIButton = {
-//        let button = UIButton()
-//        button.setImage(UIImage(named: "ignoringLunchTimeButtonNormalImage"), for: .normal)
-//        button.setImage(UIImage(named: "ignoringLunchTimeButtonSelectedImage"), for: .selected)
-//        button.addTarget(self, action: #selector(ignoringLunchTimeButton(_:)), for: .touchUpInside)
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        return button
-//    }()
-    
     lazy var ignoringLunchTimeMarkLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
@@ -761,15 +751,6 @@ class SettingStaggeredWorkViewController: UIViewController {
         return view
     }()
     
-//    lazy var afternoonEarliestAttendanceAreaView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = UIColor.useRGB(red: 187, green: 187, blue: 187, alpha: 0.5)
-//        view.layer.cornerRadius = 12
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//
-//        return view
-//    }()
-    
     lazy var afternoonEarliestAttendanceTimeBarMarkingView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.useRGB(red: 110, green: 228, blue: 159)
@@ -945,15 +926,6 @@ class SettingStaggeredWorkViewController: UIViewController {
         return view
     }()
     
-//    lazy var afternoonLatestAttendanceAreaView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = UIColor.useRGB(red: 187, green: 187, blue: 187, alpha: 0.5)
-//        view.layer.cornerRadius = 12
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//
-//        return view
-//    }()
-    
     lazy var afternoonLatestAttendanceTimeBarMarkingView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.useRGB(red: 110, green: 228, blue: 159)
@@ -973,13 +945,8 @@ class SettingStaggeredWorkViewController: UIViewController {
     var morningLatestAttendaceTimeBarMarkingViewConstraint: NSLayoutConstraint!
     var lunchTimeAreaCenterXAnchorConstraint: NSLayoutConstraint!
     var lunchTimeTimeBarMarkingViewConstraint: NSLayoutConstraint!
-    //var afternoonEarliestAttendaceAreaCenterXAnchorConstraint: NSLayoutConstraint!
     var afternoonEarliestAttendaceTimeBarMarkingViewConstraint: NSLayoutConstraint!
-    //var afternoonLatestAttendaceAreaCenterXAnchorConstraint: NSLayoutConstraint!
     var afternoonLatestAttendaceTimeBarMarkingViewConstraint: NSLayoutConstraint!
-    
-    //var previousAfternoonEarliestAttendaceTimeBarMarkingViewConstraintConstant: CGFloat = 35.25 // 12 + 23.25
-    //var previousAfternoonLatestAttendaceTimeBarMarkingViewConstraintConstant: CGFloat = 105 // 12 + 93
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -1180,7 +1147,6 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
             self.afternoonEarliestAttendanceTimeBarFourthPointView,
             self.afternoonEarliestAttendanceTimeBarFourthHalfPointView,
             self.afternoonEarliestAttendanceTimeBarFifthPointView,
-            //self.afternoonEarliestAttendanceAreaView,
             self.afternoonEarliestAttendanceTimeBarMarkingView
         ], to: self.afternoonEarliestAttendanceTimeBarView)
         
@@ -1194,7 +1160,6 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
             self.afternoonLatestAttendanceTimeBarFourthPointView,
             self.afternoonLatestAttendanceTimeBarFourthHalfPointView,
             self.afternoonLatestAttendanceTimeBarFifthPointView,
-            //self.afternoonLatestAttendanceAreaView,
             self.afternoonLatestAttendanceTimeBarMarkingView
         ], to: self.afternoonLatestAttendanceTimeBarView)
     }
@@ -1608,14 +1573,6 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
             self.lunchTimeTimeBarMarkingView.widthAnchor.constraint(equalToConstant: 18)
         ])
         
-//        // Ignoring lunch time button layout
-//        NSLayoutConstraint.activate([
-//            self.ignoringLunchTimeButton.topAnchor.constraint(equalTo: self.lunchTimeTimeBarView.bottomAnchor, constant: 10),
-//            self.ignoringLunchTimeButton.heightAnchor.constraint(equalToConstant: 18),
-//            self.ignoringLunchTimeButton.leadingAnchor.constraint(equalTo: self.lunchTimeTimeBarView.leadingAnchor),
-//            self.ignoringLunchTimeButton.widthAnchor.constraint(equalToConstant: 18)
-//        ])
-        
         // Ignoring lunch time mark label layout
         NSLayoutConstraint.activate([
             self.ignoringLunchTimeMarkLabel.centerYAnchor.constraint(equalTo: ignoreLunchSwitch.centerYAnchor),
@@ -1766,15 +1723,6 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
             self.afternoonEarliestAttendanceTimeBarFifthPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
-//        // Afternoon earliest attendance area view layout
-//        self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint = self.afternoonEarliestAttendanceAreaView.centerXAnchor.constraint(equalTo: self.afternoonEarliestAttendanceTimeBarView.leadingAnchor, constant: 81.75) // 12 + 46.5 + 23.25
-//        NSLayoutConstraint.activate([
-//            self.afternoonEarliestAttendanceAreaView.centerYAnchor.constraint(equalTo: self.afternoonEarliestAttendanceTimeBarView.centerYAnchor),
-//            self.afternoonEarliestAttendanceAreaView.heightAnchor.constraint(equalToConstant: 24),
-//            self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint,
-//            self.afternoonEarliestAttendanceAreaView.widthAnchor.constraint(equalToConstant: 46.5)
-//        ])
-        
         // Afternoon earliest attendance time bar marking view layout
         self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint = self.afternoonEarliestAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.afternoonEarliestAttendanceTimeBarView.leadingAnchor, constant: 35.25) // 12 + 23.25
         NSLayoutConstraint.activate([
@@ -1908,15 +1856,6 @@ extension SettingStaggeredWorkViewController: EssentialViewMethods {
             self.afternoonLatestAttendanceTimeBarFifthPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
-//        // Afternoon latest attendace area area view layout
-//        self.afternoonLatestAttendaceAreaCenterXAnchorConstraint = self.afternoonLatestAttendanceAreaView.centerXAnchor.constraint(equalTo: self.afternoonLatestAttendanceTimeBarView.leadingAnchor, constant: 35.25) // 12 + 23.25
-//        NSLayoutConstraint.activate([
-//            self.afternoonLatestAttendanceAreaView.centerYAnchor.constraint(equalTo: self.afternoonLatestAttendanceTimeBarView.centerYAnchor),
-//            self.afternoonLatestAttendanceAreaView.heightAnchor.constraint(equalToConstant: 24),
-//            self.afternoonLatestAttendaceAreaCenterXAnchorConstraint,
-//            self.afternoonLatestAttendanceAreaView.widthAnchor.constraint(equalToConstant: 46.5)
-//        ])
-        
         // Afternoon latest attendance time bar marking view layout
         self.afternoonLatestAttendaceTimeBarMarkingViewConstraint = self.afternoonLatestAttendanceTimeBarMarkingView.centerXAnchor.constraint(equalTo: self.afternoonLatestAttendanceTimeBarView.leadingAnchor, constant: 105) // 12 + 93
         NSLayoutConstraint.activate([
@@ -1942,10 +1881,6 @@ extension SettingStaggeredWorkViewController {
             // Lunch time
             let lunchTimeValue = ReferenceValues.initialSetting[InitialSetting.lunchTimeValue.rawValue] as! Double
             self.locateMarkingBarViewFor(.lunchTime(self.determineLunchPoint(lunchTimeValue)!), isInitialization: true)
-           
-            
-//            self.afternoonEarliestAttendanceAreaView.isHidden = isIgnoredLunchTimeForHalfVacation
-//            self.afternoonLatestAttendanceAreaView.isHidden = isIgnoredLunchTimeForHalfVacation
             
             // Afternoon attendance
             let afternoonStartingWorkTimeValueRange = ReferenceValues.initialSetting[InitialSetting.afternoonStartingWorkTimeValueRange.rawValue] as! [String:Double]
@@ -2078,9 +2013,6 @@ extension SettingStaggeredWorkViewController {
                 if success {
                     self.lunchTimeTimeBarView.isUserInteractionEnabled = true
                     self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = true
-                    
-//                    self.previousAfternoonEarliestAttendaceTimeBarMarkingViewConstraintConstant = self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant
-//                    self.previousAfternoonLatestAttendaceTimeBarMarkingViewConstraintConstant = self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant
                 }
             }
             
@@ -2089,9 +2021,6 @@ extension SettingStaggeredWorkViewController {
             }
             
         case .afternoonEarliest(let point): // MARK: afternoonEarliest
-//            let aheadOfAfternoonEarliestAttendaceArea = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 23.25
-//            let endOfAfternoonEarliestAttendaceArea = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant + 23.25
-            
             if point.x <= 23.625 { // 12 + 23.25/2
                 self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant = 12 // (11:00)
                 
@@ -2124,31 +2053,6 @@ extension SettingStaggeredWorkViewController {
                 self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant = self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant - 23.25
             }
             
-//            if self.ignoringLunchTimeButton.isSelected {
-//                if self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant - self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant > 23.25 {
-//                    self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant = self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant - 23.25
-//                }
-//
-//            } else {
-//                // After afternoonEarliest pan gesture
-//                self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant = self.determinePointOfMovedMarkingViewCenterPoint(self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant, outOf: [aheadOfAfternoonEarliestAttendaceArea, endOfAfternoonEarliestAttendaceArea], about: self.previousAfternoonEarliestAttendaceTimeBarMarkingViewConstraintConstant)!
-//
-//                // After afternoonEarliest tap gesture
-//                if self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant - self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant > 23.25 {
-//
-//                    let tempAfternoonLatestAttendaceAreaCenterXAnchorConstraintConstant = self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant - 23.25
-//
-//                    if tempAfternoonLatestAttendaceAreaCenterXAnchorConstraintConstant >= self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant - 23.25 &&
-//                        tempAfternoonLatestAttendaceAreaCenterXAnchorConstraintConstant < self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant + 23.25 {
-//
-//                        self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant = self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant + 23.25
-//
-//                    } else {
-//                        self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant = self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant - 23.25
-//                    }
-//                }
-//            }
-            
             UIView.animate(withDuration: 0.2) {
                 self.afternoonEarliestAttendanceTimeBarView.layoutIfNeeded()
                 self.afternoonLatestAttendanceTimeBarView.layoutIfNeeded()
@@ -2158,8 +2062,6 @@ extension SettingStaggeredWorkViewController {
                     self.afternoonEarliestAttendanceTimeBarView.isUserInteractionEnabled = true
                     self.afternoonLatestAttendanceTimeBarView.isUserInteractionEnabled = true
                     self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = true
-                    
-                    //self.previousAfternoonEarliestAttendaceTimeBarMarkingViewConstraintConstant = self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant
                 }
             }
             
@@ -2168,9 +2070,6 @@ extension SettingStaggeredWorkViewController {
             }
             
         case .afternoonLatest(let point): // MARK: afternoonLatest
-//            let aheadOfAfternoonLatestAttendaceArea = self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant - 23.25
-//            let endOfAfternoonLatestAttendaceArea = self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant + 23.25
-            
             if point.x <= 23.625 { // 12 + 23.25/2
                 self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant = 12 // (12:00)
                 
@@ -2203,37 +2102,6 @@ extension SettingStaggeredWorkViewController {
                 self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant = self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant + 23.25
             }
             
-//            if self.ignoringLunchTimeButton.isSelected {
-//                if self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant - self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant > 23.25 {
-//                    self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant = self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant + 23.25
-//                }
-//
-//            } else {
-//                // After afternoonLatest pan gesture
-//                self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant = self.determinePointOfMovedMarkingViewCenterPoint(self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant, outOf: [aheadOfAfternoonLatestAttendaceArea, endOfAfternoonLatestAttendaceArea], about: self.previousAfternoonLatestAttendaceTimeBarMarkingViewConstraintConstant)!
-//
-//                // After afternoonLatest tap gesture
-//                if self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant - self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant > 23.25 {
-//
-//                    let tempAfternoonEarliestAttendaceTimeBarMarkingViewConstraintConstant = self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant + 23.25
-//
-//                    if tempAfternoonEarliestAttendaceTimeBarMarkingViewConstraintConstant < self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant + 23.25 &&
-//                        tempAfternoonEarliestAttendaceTimeBarMarkingViewConstraintConstant >= self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 23.25 {
-//
-//                        if self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 23.25*2 < 12 {
-//                            self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant += 23.25
-//                            self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant = self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant + 23.25
-//
-//                        } else {
-//                            self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 23.25*2
-//                        }
-//
-//                    } else {
-//                        self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant = self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant + 23.25
-//                    }
-//                }
-//            }
-            
             UIView.animate(withDuration: 0.2) {
                 self.afternoonLatestAttendanceTimeBarView.layoutIfNeeded()
                 self.afternoonEarliestAttendanceTimeBarView.layoutIfNeeded()
@@ -2243,8 +2111,6 @@ extension SettingStaggeredWorkViewController {
                     self.afternoonEarliestAttendanceTimeBarView.isUserInteractionEnabled = true
                     self.afternoonLatestAttendanceTimeBarView.isUserInteractionEnabled = true
                     self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = true
-                    
-                    //self.previousAfternoonLatestAttendaceTimeBarMarkingViewConstraintConstant = self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant
                 }
             }
             
@@ -2289,41 +2155,9 @@ extension SettingStaggeredWorkViewController {
     
     func determineLunchTimeArea(_ at: CGFloat) {
         self.lunchTimeAreaCenterXAnchorConstraint.constant = at + 23.25
-        
-//        if self.ignoringLunchTimeButton.isSelected {
-//            self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant = at + 23.25
-//            self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant = at + 23.25 - 46.5
-//            
-//        } else {
-//            let previousAfternoonEarliestAttendanceBarMarkingCenterXPoint = self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant
-//            var previousAfternoonLatestAttendanceBarMarkingCenterXPoint = self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant
-//            let previousAtLunchTimePointOfAfternoonEarliestAttendaceArea = afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 23.25
-//            let previousAtLunchTimePointOfAfternoonLatestAttendaceArea = afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant - 23.25
-//            
-//            self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant = at + 23.25
-//            self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant = at + 23.25 - 46.5
-//            
-//            let currentAfternoonEarliestAttendaceAreaPoints = [
-//                afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 23.25,
-//                afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant + 23.25
-//                ]
-//                                                                
-//            let currentAfternoonLatestAttendaceAreaPoints = [
-//                afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant - 23.25,
-//                afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant + 23.25
-//                ]
-//            
-//            self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant =
-//            self.determinePointOfStandingMarkingViewCenterPoint(previousAfternoonEarliestAttendanceBarMarkingCenterXPoint, outOf: currentAfternoonEarliestAttendaceAreaPoints, in: [12,198], from: previousAtLunchTimePointOfAfternoonEarliestAttendaceArea)!
-//            
-//            if self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant - self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant > 23.25 {
-//                previousAfternoonLatestAttendanceBarMarkingCenterXPoint = self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant - 23.25
-//            }
-//            
-//            self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant = self.determinePointOfStandingMarkingViewCenterPoint(previousAfternoonLatestAttendanceBarMarkingCenterXPoint, outOf: currentAfternoonLatestAttendaceAreaPoints, in: [12,198], from: previousAtLunchTimePointOfAfternoonLatestAttendaceArea)!
-//        }
     }
     
+    /*
     func determinePointOfStandingMarkingViewCenterPoint(_ markingViewCenterPoint: CGFloat, outOf lunchTimeAreaViewPoints: [CGFloat], in barViewPoints: [CGFloat], from previousAtLunchPoint: CGFloat) -> CGFloat? {
         guard lunchTimeAreaViewPoints.count == 2 && barViewPoints.count == 2 else {
             return nil
@@ -2376,6 +2210,7 @@ extension SettingStaggeredWorkViewController {
             return markingViewCenterPoint
         }
     }
+    */
     
     func showMomentLabelFor(_ type: StaggeredMarkingViewType, withAnimation animation: Bool) {
         self.momentLabel.layer.removeAllAnimations()
@@ -3077,64 +2912,6 @@ extension SettingStaggeredWorkViewController {
         }
     }
     
-//    @objc func ignoringLunchTimeButton(_ sender: UIButton) {
-//        UIDevice.lightHaptic()
-//        
-//        sender.isSelected.toggle()
-//        
-//        if sender.isSelected {
-//            self.ignoringLunchTimeMarkLabel.textColor = .black
-//            
-//            self.afternoonEarliestAttendanceAreaView.isHidden = true
-//            self.afternoonLatestAttendanceAreaView.isHidden = true
-//            
-//        } else {
-//            self.ignoringLunchTimeMarkLabel.textColor = .useRGB(red: 221, green: 221, blue: 221)
-//            
-//            self.afternoonEarliestAttendanceAreaView.isHidden = false
-//            self.afternoonLatestAttendanceAreaView.isHidden = false
-//            
-//            // Prevent touching
-//            self.afternoonEarliestAttendanceTimeBarView.isUserInteractionEnabled = false
-//            self.afternoonLatestAttendanceTimeBarView.isUserInteractionEnabled = false
-//            self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = false
-//            
-//            let aheadPointOfAfternoonEarliestAttendaceArea = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 23.25
-//            let endOfPointOfAfternoonEarliestAttendaceArea = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant + 23.25
-//            
-//            let aheadPointOfAfternoonLatestAttendaceArea = self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant - 23.25
-//            let endOfPointOfAfternoonLatestAttendaceArea = self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant + 23.25
-//            
-//            if self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant >= aheadPointOfAfternoonEarliestAttendaceArea && self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant < endOfPointOfAfternoonEarliestAttendaceArea {
-//                self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant = endOfPointOfAfternoonEarliestAttendaceArea
-//            }
-//            
-//            if self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant >= aheadPointOfAfternoonLatestAttendaceArea &&
-//                self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant < endOfPointOfAfternoonLatestAttendaceArea {
-//                self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant = endOfPointOfAfternoonLatestAttendaceArea
-//            }
-//            
-//            if self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant - self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant > 23.25 {
-//                self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant = self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant - 23.25
-//            }
-//            
-//            UIView.animate(withDuration: 0.2) {
-//                self.afternoonEarliestAttendanceTimeBarView.layoutIfNeeded()
-//                self.afternoonLatestAttendanceTimeBarView.layoutIfNeeded()
-//                
-//            } completion: { success in
-//                if success {
-//                    self.afternoonEarliestAttendanceTimeBarView.isUserInteractionEnabled = true
-//                    self.afternoonLatestAttendanceTimeBarView.isUserInteractionEnabled = true
-//                    self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = true
-//                    
-//                    self.previousAfternoonEarliestAttendaceTimeBarMarkingViewConstraintConstant = self.afternoonEarliestAttendaceTimeBarMarkingViewConstraint.constant
-//                    self.previousAfternoonLatestAttendaceTimeBarMarkingViewConstraintConstant = self.afternoonLatestAttendaceTimeBarMarkingViewConstraint.constant
-//                }
-//            }
-//        }
-//    }
-    
     @objc func ignoreLunchSwitch(_ sender: YSBlueSwitch) {
         self.ignoringLunchTimeMarkLabel.textColor = sender.isOn ? .black : .useRGB(red: 221, green: 221, blue: 221)
     }
@@ -3223,8 +3000,6 @@ extension SettingStaggeredWorkViewController {
         //print("lunchTimeTimeBarMarkingView point: \(point)")
         
         if (gesture.state == .began) {
-            //self.lunchTimeTimeBarView.isUserInteractionEnabled = false
-            
             self.moveMarkingBarViewTo(.lunchTime(point))
             self.showMomentLabelFor(.lunchTime(point), withAnimation: false)
         }
@@ -3249,23 +3024,6 @@ extension SettingStaggeredWorkViewController {
         self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = false
         
         self.locateMarkingBarViewFor(.afternoonEarliest(point))
-        
-//        if self.ignoringLunchTimeButton.isSelected {
-//            self.locateMarkingBarViewFor(.afternoonEarliest(point))
-//
-//        } else {
-//            let aheadPointOfAfternoonEarliestAttendaceArea = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant - 34.875 // - 23.25 - 23.25/2
-//            let endOfPointOfAfternoonEarliestAttendaceArea = self.afternoonEarliestAttendaceAreaCenterXAnchorConstraint.constant + 23.25
-//
-//            if point.x <= aheadPointOfAfternoonEarliestAttendaceArea ||
-//                point.x >= endOfPointOfAfternoonEarliestAttendaceArea {
-//                self.afternoonEarliestAttendanceTimeBarView.isUserInteractionEnabled = false
-//                self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = false
-//
-//                self.locateMarkingBarViewFor(.afternoonEarliest(point))
-//                //self.showMomentLabelFor(.afternoonEarliest(point), withAnimation: true)
-//            }
-//        }
     }
     
     @objc func afternoonEarliestAttendanceTimeBarMarkingViewPanGesture(_ gesture: UIGestureRecognizer) {
@@ -3299,23 +3057,6 @@ extension SettingStaggeredWorkViewController {
         self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = false
         
         self.locateMarkingBarViewFor(.afternoonLatest(point))
-        
-//        if self.ignoringLunchTimeButton.isSelected {
-//            self.locateMarkingBarViewFor(.afternoonLatest(point))
-//
-//        } else {
-//            let aheadPointOfAfternoonLatestAttendaceArea = self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant - 34.875 // - 23.25 - 23.25/2
-//            let endOfPointOfAfternoonLatestAttendaceArea = self.afternoonLatestAttendaceAreaCenterXAnchorConstraint.constant + 23.25
-//
-//            if point.x <= aheadPointOfAfternoonLatestAttendaceArea ||
-//                point.x >= endOfPointOfAfternoonLatestAttendaceArea {
-//                self.afternoonLatestAttendanceTimeBarView.isUserInteractionEnabled = false
-//                self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = false
-//
-//                self.locateMarkingBarViewFor(.afternoonLatest(point))
-//                //self.showMomentLabelFor(.afternoonLatest(point), withAnimation: true)
-//            }
-//        }
     }
     
     @objc func afternoonLatestAttendanceTimeBarMarkingViewPanGesture(_ gesture: UIGestureRecognizer) {
