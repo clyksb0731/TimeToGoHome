@@ -10,6 +10,7 @@ import UIKit
 enum NormalMarkingViewType {
     case attendance(CGPoint)
     case lunchTime(CGPoint)
+    case afternoonAttendance(CGPoint)
 }
 
 class NormalWorkTypeViewController: UIViewController {
@@ -549,15 +550,15 @@ class NormalWorkTypeViewController: UIViewController {
         return view
     }()
     
-    lazy var ignoringLunchTimeButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "ignoringLunchTimeButtonNormalImage"), for: .normal)
-        button.setImage(UIImage(named: "ignoringLunchTimeButtonSelectedImage"), for: .selected)
-        button.addTarget(self, action: #selector(ignoringLunchTimeButton(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        return button
-    }()
+//    lazy var ignoringLunchTimeButton: UIButton = {
+//        let button = UIButton()
+//        button.setImage(UIImage(named: "ignoringLunchTimeButtonNormalImage"), for: .normal)
+//        button.setImage(UIImage(named: "ignoringLunchTimeButtonSelectedImage"), for: .selected)
+//        button.addTarget(self, action: #selector(ignoringLunchTimeButton(_:)), for: .touchUpInside)
+//        button.translatesAutoresizingMaskIntoConstraints = false
+//
+//        return button
+//    }()
     
     lazy var ignoringLunchTimeMarkLabel: UILabel = {
         let label = UILabel()
@@ -568,6 +569,14 @@ class NormalWorkTypeViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
+    }()
+    
+    lazy var ignoreLunchSwitch: YSBlueSwitch = {
+        let switchButton = YSBlueSwitch()
+        switchButton.addTarget(self, action: #selector(ignoreLunchSwitch(_:)), for: .valueChanged)
+        switchButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        return switchButton
     }()
     
     lazy var afternoonLabel: UILabel = {
@@ -673,6 +682,108 @@ class NormalWorkTypeViewController: UIViewController {
         view.layer.cornerRadius = 12
         view.translatesAutoresizingMaskIntoConstraints = false
         
+        let afternoonAttendanceTimeBarViewTapGesture = UITapGestureRecognizer(target: self, action: #selector(afternoonAttendanceTimeBarViewTapGesture(_:)))
+        view.addGestureRecognizer(afternoonAttendanceTimeBarViewTapGesture)
+        
+        return view
+    }()
+    
+    lazy var afternoonAttendanceTimeBarFirstPointView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 110, green: 228, blue: 159)
+        view.layer.cornerRadius = 3
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var afternoonAttendanceTimeBarFirstHalfPointView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 110, green: 228, blue: 159)
+        view.layer.cornerRadius = 1.5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var afternoonAttendanceTimeBarSecondPointView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 110, green: 228, blue: 159)
+        view.layer.cornerRadius = 3
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var afternoonAttendanceTimeBarSecondHalfPointView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 110, green: 228, blue: 159)
+        view.layer.cornerRadius = 1.5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var afternoonAttendanceTimeBarThirdPointView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 110, green: 228, blue: 159)
+        view.layer.cornerRadius = 3
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var afternoonAttendanceTimeBarThirdHalfPointView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 110, green: 228, blue: 159)
+        view.layer.cornerRadius = 1.5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var afternoonAttendanceTimeBarFourthPointView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 110, green: 228, blue: 159)
+        view.layer.cornerRadius = 3
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var afternoonAttendanceTimeBarFourthHalfPointView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 110, green: 228, blue: 159)
+        view.layer.cornerRadius = 1.5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var afternoonAttendanceTimeBarFifthPointView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 110, green: 228, blue: 159)
+        view.layer.cornerRadius = 3
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var afternoonAttendanceTimeBarFifthHalfPointView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 110, green: 228, blue: 159)
+        view.layer.cornerRadius = 1.5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var afternoonAttendanceTimeBarSixthPointView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 110, green: 228, blue: 159)
+        view.layer.cornerRadius = 3
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
         return view
     }()
     
@@ -682,6 +793,9 @@ class NormalWorkTypeViewController: UIViewController {
         view.layer.cornerRadius = 9
         view.layer.useSketchShadow(color: .black, alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
         view.translatesAutoresizingMaskIntoConstraints = false
+        
+        let afternoonAttendanceTimeBarMarkingViewPanGesture = UIPanGestureRecognizer(target: self, action: #selector(afternoonAttendanceTimeBarMarkingViewPanGesture(_:)))
+        view.addGestureRecognizer(afternoonAttendanceTimeBarMarkingViewPanGesture)
         
         return view
     }()
@@ -857,8 +971,8 @@ extension NormalWorkTypeViewController {
             self.lunchTime14Label,
             self.lunchTime15Label,
             self.lunchTimeTimeBarView,
-            self.ignoringLunchTimeButton,
-            self.ignoringLunchTimeMarkLabel
+            self.ignoringLunchTimeMarkLabel,
+            self.ignoreLunchSwitch
         ], to: self.lunchTimeView)
         
         SupportingMethods.shared.addSubviews([
@@ -885,6 +999,17 @@ extension NormalWorkTypeViewController {
         ], to: self.afternoonTimeView)
         
         SupportingMethods.shared.addSubviews([
+            self.afternoonAttendanceTimeBarFirstPointView,
+            self.afternoonAttendanceTimeBarFirstHalfPointView,
+            self.afternoonAttendanceTimeBarSecondPointView,
+            self.afternoonAttendanceTimeBarSecondHalfPointView,
+            self.afternoonAttendanceTimeBarThirdPointView,
+            self.afternoonAttendanceTimeBarThirdHalfPointView,
+            self.afternoonAttendanceTimeBarFourthPointView,
+            self.afternoonAttendanceTimeBarFourthHalfPointView,
+            self.afternoonAttendanceTimeBarFifthPointView,
+            self.afternoonAttendanceTimeBarFifthHalfPointView,
+            self.afternoonAttendanceTimeBarSixthPointView,
             self.afternoonAttendanceTimeBarMarkingView
         ], to: self.afternoonAttendanceTimeBarView)
         
@@ -1163,14 +1288,14 @@ extension NormalWorkTypeViewController {
         // MARK: Lunch time view layout
         NSLayoutConstraint.activate([
             self.lunchTimeView.topAnchor.constraint(equalTo: self.morningTimeView.bottomAnchor, constant: 32),
-            self.lunchTimeView.heightAnchor.constraint(equalToConstant: 65),
+            self.lunchTimeView.heightAnchor.constraint(equalToConstant: 81),
             self.lunchTimeView.leadingAnchor.constraint(equalTo: self.morningTimeView.leadingAnchor),
             self.lunchTimeView.trailingAnchor.constraint(equalTo: self.morningTimeView.trailingAnchor)
         ])
         
         // Lunch time mark label layout
         NSLayoutConstraint.activate([
-            self.lunchTimeMarkLabel.topAnchor.constraint(equalTo: self.lunchTimeView.topAnchor, constant: 10),
+            self.lunchTimeMarkLabel.centerYAnchor.constraint(equalTo: self.lunchTimeTimeBarView.centerYAnchor),
             self.lunchTimeMarkLabel.heightAnchor.constraint(equalToConstant: 24),
             self.lunchTimeMarkLabel.leadingAnchor.constraint(equalTo: self.lunchTimeView.leadingAnchor),
             self.lunchTimeMarkLabel.trailingAnchor.constraint(equalTo: self.lunchTimeTimeBarView.leadingAnchor, constant: -5)
@@ -1178,7 +1303,7 @@ extension NormalWorkTypeViewController {
         
         // Lunch time time bar view layout
         NSLayoutConstraint.activate([
-            self.lunchTimeTimeBarView.centerYAnchor.constraint(equalTo: self.lunchTimeMarkLabel.centerYAnchor),
+            self.lunchTimeTimeBarView.topAnchor.constraint(equalTo: self.lunchTimeView.topAnchor, constant: 13),
             self.lunchTimeTimeBarView.heightAnchor.constraint(equalToConstant: 24),
             self.lunchTimeTimeBarView.trailingAnchor.constraint(equalTo: self.lunchTimeView.trailingAnchor),
             self.lunchTimeTimeBarView.widthAnchor.constraint(equalToConstant: 210)
@@ -1293,19 +1418,25 @@ extension NormalWorkTypeViewController {
             self.lunchTimeTimeBarMarkingView.widthAnchor.constraint(equalToConstant: 18)
         ])
         
-        // Ignoring lunch time button layout
-        NSLayoutConstraint.activate([
-            self.ignoringLunchTimeButton.topAnchor.constraint(equalTo: self.lunchTimeTimeBarView.bottomAnchor, constant: 10),
-            self.ignoringLunchTimeButton.heightAnchor.constraint(equalToConstant: 18),
-            self.ignoringLunchTimeButton.leadingAnchor.constraint(equalTo: self.lunchTimeTimeBarView.leadingAnchor),
-            self.ignoringLunchTimeButton.widthAnchor.constraint(equalToConstant: 18)
-        ])
+//        // Ignoring lunch time button layout
+//        NSLayoutConstraint.activate([
+//            self.ignoringLunchTimeButton.topAnchor.constraint(equalTo: self.lunchTimeTimeBarView.bottomAnchor, constant: 10),
+//            self.ignoringLunchTimeButton.heightAnchor.constraint(equalToConstant: 18),
+//            self.ignoringLunchTimeButton.leadingAnchor.constraint(equalTo: self.lunchTimeTimeBarView.leadingAnchor),
+//            self.ignoringLunchTimeButton.widthAnchor.constraint(equalToConstant: 18)
+//        ])
         
         // Ignoring lunch time mark label layout
         NSLayoutConstraint.activate([
-            self.ignoringLunchTimeMarkLabel.centerYAnchor.constraint(equalTo: self.ignoringLunchTimeButton.centerYAnchor),
-            self.ignoringLunchTimeMarkLabel.leadingAnchor.constraint(equalTo: self.ignoringLunchTimeButton.trailingAnchor, constant: 5),
+            self.ignoringLunchTimeMarkLabel.centerYAnchor.constraint(equalTo: self.ignoreLunchSwitch.centerYAnchor),
+            self.ignoringLunchTimeMarkLabel.trailingAnchor.constraint(equalTo: self.ignoreLunchSwitch.leadingAnchor, constant: -16),
             self.ignoringLunchTimeMarkLabel.widthAnchor.constraint(equalToConstant: 123)
+        ])
+        
+        // ignoreLunchSwitch
+        NSLayoutConstraint.activate([
+            self.ignoreLunchSwitch.topAnchor.constraint(equalTo: self.lunchTimeTimeBarView.bottomAnchor, constant: 16),
+            self.ignoreLunchSwitch.trailingAnchor.constraint(equalTo: self.lunchTimeView.trailingAnchor)
         ])
         
         // Afternoon label layout
@@ -1316,7 +1447,7 @@ extension NormalWorkTypeViewController {
         
         // MARK: Afternoon time view layout
         NSLayoutConstraint.activate([
-            self.afternoonTimeView.topAnchor.constraint(equalTo: self.lunchTimeView.bottomAnchor, constant: 53),
+            self.afternoonTimeView.topAnchor.constraint(equalTo: self.lunchTimeView.bottomAnchor, constant: 61),
             self.afternoonTimeView.heightAnchor.constraint(equalToConstant: 37),
             self.afternoonTimeView.leadingAnchor.constraint(equalTo: self.morningTimeView.leadingAnchor),
             self.afternoonTimeView.trailingAnchor.constraint(equalTo: self.morningTimeView.trailingAnchor)
@@ -1324,7 +1455,7 @@ extension NormalWorkTypeViewController {
         
         // Attendance mark label layout
         NSLayoutConstraint.activate([
-            self.afternoonAttendanceMarkLabel.topAnchor.constraint(equalTo: self.afternoonTimeView.topAnchor, constant: 10),
+            self.afternoonAttendanceMarkLabel.centerYAnchor.constraint(equalTo: self.afternoonTimeView.centerYAnchor),
             self.afternoonAttendanceMarkLabel.heightAnchor.constraint(equalToConstant: 24),
             self.afternoonAttendanceMarkLabel.leadingAnchor.constraint(equalTo: self.afternoonTimeView.leadingAnchor),
             self.afternoonAttendanceMarkLabel.trailingAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.leadingAnchor, constant: -5)
@@ -1332,7 +1463,7 @@ extension NormalWorkTypeViewController {
         
         // Attendance time bar view layout
         NSLayoutConstraint.activate([
-            self.afternoonAttendanceTimeBarView.centerYAnchor.constraint(equalTo: self.afternoonAttendanceMarkLabel.centerYAnchor),
+            self.afternoonAttendanceTimeBarView.topAnchor.constraint(equalTo: self.afternoonTimeView.topAnchor, constant: 13),
             self.afternoonAttendanceTimeBarView.heightAnchor.constraint(equalToConstant: 24),
             self.afternoonAttendanceTimeBarView.trailingAnchor.constraint(equalTo: self.afternoonTimeView.trailingAnchor),
             self.afternoonAttendanceTimeBarView.widthAnchor.constraint(equalToConstant: 210)
@@ -1378,6 +1509,94 @@ extension NormalWorkTypeViewController {
             self.afternoonAttendance16Label.bottomAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.topAnchor),
             self.afternoonAttendance16Label.heightAnchor.constraint(equalToConstant: 10),
             self.afternoonAttendance16Label.centerXAnchor.constraint(equalTo: self.afternoonAttendance15Label.centerXAnchor, constant: 37.2)
+        ])
+        
+        // afternoonAttendanceTimeBarFirstPointView
+        NSLayoutConstraint.activate([
+            self.afternoonAttendanceTimeBarFirstPointView.centerYAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.centerYAnchor),
+            self.afternoonAttendanceTimeBarFirstPointView.heightAnchor.constraint(equalToConstant: 6),
+            self.afternoonAttendanceTimeBarFirstPointView.centerXAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.leadingAnchor, constant: 12),
+            self.afternoonAttendanceTimeBarFirstPointView.widthAnchor.constraint(equalToConstant: 6)
+        ])
+        
+        // afternoonAttendanceTimeBarFirstHalfPointView
+        NSLayoutConstraint.activate([
+            self.afternoonAttendanceTimeBarFirstHalfPointView.centerYAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.centerYAnchor),
+            self.afternoonAttendanceTimeBarFirstHalfPointView.heightAnchor.constraint(equalToConstant: 3),
+            self.afternoonAttendanceTimeBarFirstHalfPointView.centerXAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarFirstPointView.centerXAnchor, constant: 18.6),
+            self.afternoonAttendanceTimeBarFirstHalfPointView.widthAnchor.constraint(equalToConstant: 3)
+        ])
+        
+        // afternoonAttendanceTimeBarSecondPointView
+        NSLayoutConstraint.activate([
+            self.afternoonAttendanceTimeBarSecondPointView.centerYAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.centerYAnchor),
+            self.afternoonAttendanceTimeBarSecondPointView.heightAnchor.constraint(equalToConstant: 6),
+            self.afternoonAttendanceTimeBarSecondPointView.centerXAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarFirstHalfPointView.centerXAnchor, constant: 18.6),
+            self.afternoonAttendanceTimeBarSecondPointView.widthAnchor.constraint(equalToConstant: 6)
+        ])
+        
+        // afternoonAttendanceTimeBarSecondHalfPointView
+        NSLayoutConstraint.activate([
+            self.afternoonAttendanceTimeBarSecondHalfPointView.centerYAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.centerYAnchor),
+            self.afternoonAttendanceTimeBarSecondHalfPointView.heightAnchor.constraint(equalToConstant: 3),
+            self.afternoonAttendanceTimeBarSecondHalfPointView.centerXAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarSecondPointView.centerXAnchor, constant: 18.6),
+            self.afternoonAttendanceTimeBarSecondHalfPointView.widthAnchor.constraint(equalToConstant: 3)
+        ])
+        
+        // afternoonAttendanceTimeBarThirdPointView
+        NSLayoutConstraint.activate([
+            self.afternoonAttendanceTimeBarThirdPointView.centerYAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.centerYAnchor),
+            self.afternoonAttendanceTimeBarThirdPointView.heightAnchor.constraint(equalToConstant: 6),
+            self.afternoonAttendanceTimeBarThirdPointView.centerXAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarSecondHalfPointView.centerXAnchor, constant: 18.6),
+            self.afternoonAttendanceTimeBarThirdPointView.widthAnchor.constraint(equalToConstant: 6)
+        ])
+        
+        // afternoonAttendanceTimeBarThirdHalfPointView
+        NSLayoutConstraint.activate([
+            self.afternoonAttendanceTimeBarThirdHalfPointView.centerYAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.centerYAnchor),
+            self.afternoonAttendanceTimeBarThirdHalfPointView.heightAnchor.constraint(equalToConstant: 3),
+            self.afternoonAttendanceTimeBarThirdHalfPointView.centerXAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarThirdPointView.centerXAnchor, constant: 18.6),
+            self.afternoonAttendanceTimeBarThirdHalfPointView.widthAnchor.constraint(equalToConstant: 3)
+        ])
+        
+        // afternoonAttendanceTimeBarFourthPointView
+        NSLayoutConstraint.activate([
+            self.afternoonAttendanceTimeBarFourthPointView.centerYAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.centerYAnchor),
+            self.afternoonAttendanceTimeBarFourthPointView.heightAnchor.constraint(equalToConstant: 6),
+            self.afternoonAttendanceTimeBarFourthPointView.centerXAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarThirdHalfPointView.centerXAnchor, constant: 18.6),
+            self.afternoonAttendanceTimeBarFourthPointView.widthAnchor.constraint(equalToConstant: 6)
+        ])
+        
+        // afternoonAttendanceTimeBarFourthHalfPointView
+        NSLayoutConstraint.activate([
+            self.afternoonAttendanceTimeBarFourthHalfPointView.centerYAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.centerYAnchor),
+            self.afternoonAttendanceTimeBarFourthHalfPointView.heightAnchor.constraint(equalToConstant: 3),
+            self.afternoonAttendanceTimeBarFourthHalfPointView.centerXAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarFourthPointView.centerXAnchor, constant: 18.6),
+            self.afternoonAttendanceTimeBarFourthHalfPointView.widthAnchor.constraint(equalToConstant: 3)
+        ])
+        
+        // afternoonAttendanceTimeBarFifthPointView
+        NSLayoutConstraint.activate([
+            self.afternoonAttendanceTimeBarFifthPointView.centerYAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.centerYAnchor),
+            self.afternoonAttendanceTimeBarFifthPointView.heightAnchor.constraint(equalToConstant: 6),
+            self.afternoonAttendanceTimeBarFifthPointView.centerXAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarFourthHalfPointView.centerXAnchor, constant: 18.6),
+            self.afternoonAttendanceTimeBarFifthPointView.widthAnchor.constraint(equalToConstant: 6)
+        ])
+        
+        // afternoonAttendanceTimeBarFifthHalfPointView
+        NSLayoutConstraint.activate([
+            self.afternoonAttendanceTimeBarFifthHalfPointView.centerYAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.centerYAnchor),
+            self.afternoonAttendanceTimeBarFifthHalfPointView.heightAnchor.constraint(equalToConstant: 3),
+            self.afternoonAttendanceTimeBarFifthHalfPointView.centerXAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarFifthPointView.centerXAnchor, constant: 18.6),
+            self.afternoonAttendanceTimeBarFifthHalfPointView.widthAnchor.constraint(equalToConstant: 3)
+        ])
+        
+        // afternoonAttendanceTimeBarSixthPointView
+        NSLayoutConstraint.activate([
+            self.afternoonAttendanceTimeBarSixthPointView.centerYAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarView.centerYAnchor),
+            self.afternoonAttendanceTimeBarSixthPointView.heightAnchor.constraint(equalToConstant: 6),
+            self.afternoonAttendanceTimeBarSixthPointView.centerXAnchor.constraint(equalTo: self.afternoonAttendanceTimeBarFifthHalfPointView.centerXAnchor, constant: 18.6),
+            self.afternoonAttendanceTimeBarSixthPointView.widthAnchor.constraint(equalToConstant: 6)
         ])
         
         // Attendance time bar marking view layout
@@ -1457,12 +1676,12 @@ extension NormalWorkTypeViewController {
                 self.morningLeavingTimeBarMarkingViewConstraint.constant = 198 // 12 + 23.25*8 (20:00)
             }
             
-            self.determineAfternoonAttendanceTimeMarkingCenterX()
+            //self.determineAfternoonAttendanceTimeMarkingCenterX()
             
             UIView.animate(withDuration: 0.2) {
                 self.morningAttendanceTimeBarView.layoutIfNeeded()
                 self.leavingTimeBarView.layoutIfNeeded()
-                self.afternoonAttendanceTimeBarView.layoutIfNeeded()
+                //self.afternoonAttendanceTimeBarView.layoutIfNeeded()
                 
             } completion: { success in
                 if success {
@@ -1498,12 +1717,57 @@ extension NormalWorkTypeViewController {
             
             UIView.animate(withDuration: 0.2) {
                 self.lunchTimeTimeBarView.layoutIfNeeded()
-                self.afternoonAttendanceTimeBarView.layoutIfNeeded()
+                //self.afternoonAttendanceTimeBarView.layoutIfNeeded()
                 
             } completion: { success in
                 if success {
                     self.lunchTimeTimeBarView.isUserInteractionEnabled = true
                     self.nextButton.isUserInteractionEnabled = true
+                }
+            }
+            
+        case .afternoonAttendance(let point):
+            if point.x <= 21.3 { // 12 + 18.6/2
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 12 // (11:00)
+                
+            } else if point.x > 21.3 && point.x <= 39.9 { // 12 + 18.6 + 18.6/2
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 30.6 // 12 + 18.6 (11:30)
+                
+            } else if point.x > 39.9 && point.x <= 58.5 { // 12 + 18.6*2 + 18.6/2
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 49.2 // 12 + 18.6*2 (12:00)
+                
+            } else if point.x > 58.5 && point.x <= 77.1 { // 12 + 18.6*3 + 18.6/2
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 67.8 // 12 + 18.6*3 (12:30)
+                
+            } else if point.x > 77.1 && point.x <= 95.7 { // 12 + 18.6*4 + 18.6/2
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 86.4 // 12 + 18.6*4 (13:00)
+                
+            } else if point.x > 95.7 && point.x <= 114.3 { // 12 + 18.6*5 + 18.6/2
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 105 // 12 + 18.6*5 (13:30)
+                
+            } else if point.x > 114.3 && point.x <= 132.9 { // 12 + 18.6*6 + 18.6/2
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 123.6 // 12 + 18.6*6 (14:00)
+                
+            } else if point.x > 132.9 && point.x <= 151.5 { // 12 + 18.6*7 + 18.6/2
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 142.2 // 12 + 18.6*7 (14:30)
+                
+            } else if point.x > 151.5 && point.x <= 170.1 { // 12 + 18.6*8 + 18.6/2
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 160.8 // 12 + 18.6*8 (15:00)
+                
+            } else if point.x > 170.1 && point.x <= 188.7 { // 12 + 18.6*9 + 18.6/2
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 179.4 // 12 + 18.6*9 (15:30)
+                
+            } else {
+                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = 198 // 12 + 18.6*10 (16:00)
+            }
+            
+            UIView.animate(withDuration: 0.2) {
+                self.afternoonAttendanceTimeBarView.layoutIfNeeded()
+                
+            } completion: { success in
+                if success {
+                    self.afternoonAttendanceTimeBarView.isUserInteractionEnabled = true
+                    self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = true
                 }
             }
         }
@@ -1522,31 +1786,36 @@ extension NormalWorkTypeViewController {
             self.lunchTimeTimeBarMarkingViewConstraint.constant = point.x < 12 ?
             12 : point.x > 151.5 ?
             151.5 : point.x
+            
+        case .afternoonAttendance(let point):
+            self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = point.x < 12 ?
+            12 : point.x > 198 ?
+            198 : point.x
         }
     }
     
     func determineLunchTimeArea(_ at: CGFloat) {
         self.lunchTimeAreaCenterXAnchorConstraint.constant = at + 23.25
         
-        self.determineAfternoonAttendanceTimeMarkingCenterX()
+        //self.determineAfternoonAttendanceTimeMarkingCenterX()
     }
     
-    func determineAfternoonAttendanceTimeMarkingCenterX() {
-        let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 198])! // 12+23.25*8
-        let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 46.5])! // 23.25*2
-        
-        if self.ignoringLunchTimeButton.isSelected {
-            self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(8-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
-            
-        } else {
-            if workLeftCountAtMorning + toEndOfLunchTimeCount <= 10 {
-                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(10-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
-                
-            } else {
-                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(8-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
-            }
-        }
-    }
+//    func determineAfternoonAttendanceTimeMarkingCenterX() {
+//        let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 198])! // 12+23.25*8
+//        let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 46.5])! // 23.25*2
+//
+//        if self.ignoringLunchTimeButton.isSelected {
+//            self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(8-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
+//
+//        } else {
+//            if workLeftCountAtMorning + toEndOfLunchTimeCount <= 10 {
+//                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(10-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
+//
+//            } else {
+//                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(8-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
+//            }
+//        }
+//    }
     
     func countForWidth(_ width: CGFloat, in range: [CGFloat]) -> Int? {
         guard range.count == 2 else {
@@ -1644,6 +1913,57 @@ extension NormalWorkTypeViewController {
                 
             } else { // > 10 + 23.25*5 + 23.25/2
                 self.momentLabel.text = "14:00" // (14:00)
+            }
+            
+        case .afternoonAttendance(let point):
+            self.momentLabel.backgroundColor = .useRGB(red: 176, green: 255, blue: 186, alpha: 0.5)
+            self.momentLabel.alpha = 1
+            self.momentLabel.isHidden = false
+            
+            if animation {
+                UIView.animate(withDuration: 1.0) {
+                    self.momentLabel.alpha = 0
+                    
+                } completion: { finished in
+                    if finished {
+                        self.momentLabel.isHidden = true
+                        self.momentLabel.alpha = 1
+                    }
+                }
+            }
+            
+            if point.x <= 21.3 { // 12 + 18.6/2
+                self.momentLabel.text = "11:00" // (11:00)
+                
+            } else if point.x > 21.3 && point.x <= 39.9 { // 12 + 18.6 + 18.6/2
+                self.momentLabel.text = "11:30" // (11:30)
+                
+            } else if point.x > 39.9 && point.x <= 58.5 { // 12 + 18.6*2 + 18.6/2
+                self.momentLabel.text = "12:00" // (12:00)
+                
+            } else if point.x > 58.5 && point.x <= 77.1 { // 12 + 18.6*3 + 18.6/2
+                self.momentLabel.text = "12:30" // (12:30)
+                
+            } else if point.x > 77.1 && point.x <= 95.7 { // 12 + 18.6*4 + 18.6/2
+                self.momentLabel.text = "13:00" // (13:00)
+                
+            } else if point.x > 95.7 && point.x <= 114.3 { // 12 + 18.6*5 + 18.6/2
+                self.momentLabel.text = "13:30" // (13:30)
+                
+            } else if point.x > 114.3 && point.x <= 132.9 { // 12 + 18.6*6 + 18.6/2
+                self.momentLabel.text = "14:00" // (14:00)
+                
+            } else if point.x > 132.9 && point.x <= 151.5 { // 12 + 18.6*7 + 18.6/2
+                self.momentLabel.text = "14:30" // (14:30)
+                
+            } else if point.x > 151.5 && point.x <= 170.1 { // 12 + 18.6*8 + 18.6/2
+                self.momentLabel.text = "15:00" // (15:00)
+                
+            } else if point.x > 170.1 && point.x <= 188.7 { // 12 + 18.6*9 + 18.6/2
+                self.momentLabel.text = "15:30" // (15:30)
+                
+            } else {
+                self.momentLabel.text = "16:00" // (16:00)
             }
         }
     }
@@ -1890,43 +2210,47 @@ extension NormalWorkTypeViewController {
         }
     }
     
-    @objc func ignoringLunchTimeButton(_ sender: UIButton) {
-        UIDevice.lightHaptic()
-        
-        sender.isSelected.toggle()
-        
-        self.lunchTimeTimeBarView.isUserInteractionEnabled = false
-        self.nextButton.isUserInteractionEnabled = false
-        
-        if sender.isSelected {
-            self.ignoringLunchTimeMarkLabel.textColor = .black
-            
-            let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 198])! // 12+23.25*8
-            //let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 23.25*2])!
-            
-            self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(8-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
-            
-        } else {
-            self.ignoringLunchTimeMarkLabel.textColor = .useRGB(red: 221, green: 221, blue: 221)
-            
-            let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 198])! // 12+23.25*8
-            let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 46.5])! // 23.25*2
-            
-            if workLeftCountAtMorning + toEndOfLunchTimeCount <= 10 {
-                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(10-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
-            }
-        }
-        
-        UIView.animate(withDuration: 0.2) {
-            self.lunchTimeTimeBarView.layoutIfNeeded()
-            self.afternoonAttendanceTimeBarView.layoutIfNeeded()
-            
-        } completion: { success in
-            if success {
-                self.lunchTimeTimeBarView.isUserInteractionEnabled = true
-                self.nextButton.isUserInteractionEnabled = true
-            }
-        }
+//    @objc func ignoringLunchTimeButton(_ sender: UIButton) {
+//        UIDevice.lightHaptic()
+//
+//        sender.isSelected.toggle()
+//
+//        self.lunchTimeTimeBarView.isUserInteractionEnabled = false
+//        self.nextButton.isUserInteractionEnabled = false
+//
+//        if sender.isSelected {
+//            self.ignoringLunchTimeMarkLabel.textColor = .black
+//
+//            let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 198])! // 12+23.25*8
+//            //let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 23.25*2])!
+//
+//            self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(8-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
+//
+//        } else {
+//            self.ignoringLunchTimeMarkLabel.textColor = .useRGB(red: 221, green: 221, blue: 221)
+//
+//            let workLeftCountAtMorning = self.countForWidth(23.25, in: [self.morningAttendaceTimeBarMarkingViewConstraint.constant, 198])! // 12+23.25*8
+//            let toEndOfLunchTimeCount = self.countForWidth(23.25, in: [12, self.lunchTimeTimeBarMarkingViewConstraint.constant + 46.5])! // 23.25*2
+//
+//            if workLeftCountAtMorning + toEndOfLunchTimeCount <= 10 {
+//                self.afternoonAttendaceTimeBarMarkingViewConstraint.constant = (trunc((12 + 18.6*CGFloat(10-workLeftCountAtMorning))*10))/10 // (210-12*2)/10
+//            }
+//        }
+//
+//        UIView.animate(withDuration: 0.2) {
+//            self.lunchTimeTimeBarView.layoutIfNeeded()
+//            self.afternoonAttendanceTimeBarView.layoutIfNeeded()
+//
+//        } completion: { success in
+//            if success {
+//                self.lunchTimeTimeBarView.isUserInteractionEnabled = true
+//                self.nextButton.isUserInteractionEnabled = true
+//            }
+//        }
+//    }
+    
+    @objc func ignoreLunchSwitch(_ sender: YSBlueSwitch) {
+        self.ignoringLunchTimeMarkLabel.textColor = sender.isOn ? .black : .useRGB(red: 221, green: 221, blue: 221)
     }
     
     @objc func attendanceTimeBarViewTapGesture(_ gesture: UIGestureRecognizer) {
@@ -1945,6 +2269,8 @@ extension NormalWorkTypeViewController {
         //print("attendanceTimeBarMarkingView point: \(point)")
         
         if (gesture.state == .began) {
+            self.morningAttendanceTimeBarView.isUserInteractionEnabled = false
+            
             self.moveMarkingBarViewTo(.attendance(point))
             self.showMomentLabelFor(.attendance(point), withAnimation: false)
         }
@@ -1993,6 +2319,39 @@ extension NormalWorkTypeViewController {
         }
     }
     
+    @objc func afternoonAttendanceTimeBarViewTapGesture(_ gesture: UIGestureRecognizer) {
+        let point = gesture.location(in: gesture.view)
+        //print("lunchTimeTimeBarView point: \(point)")
+        
+        self.afternoonAttendanceTimeBarView.isUserInteractionEnabled = false
+        self.tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = false
+        
+        self.locateMarkingBarViewFor(.afternoonAttendance(point))
+        self.showMomentLabelFor(.afternoonAttendance(point), withAnimation: true)
+    }
+    
+    @objc func afternoonAttendanceTimeBarMarkingViewPanGesture(_ gesture: UIGestureRecognizer) {
+        let point = gesture.location(in: gesture.view?.superview)
+        //print("lunchTimeTimeBarMarkingView point: \(point)")
+        
+        if (gesture.state == .began) {
+            self.afternoonAttendanceTimeBarView.isUserInteractionEnabled = false
+            
+            self.moveMarkingBarViewTo(.afternoonAttendance(point))
+            self.showMomentLabelFor(.afternoonAttendance(point), withAnimation: false)
+        }
+        
+        if (gesture.state == .changed) {
+            self.moveMarkingBarViewTo(.afternoonAttendance(point))
+            self.showMomentLabelFor(.afternoonAttendance(point), withAnimation: false)
+        }
+        
+        if (gesture.state == .ended) {
+            self.locateMarkingBarViewFor(.afternoonAttendance(point))
+            self.showMomentLabelFor(.afternoonAttendance(point), withAnimation: true)
+        }
+    }
+    
     @objc func nextButton(_ sender: UIButton) {
         guard let morningAttendanceTime = self.determineMorningAttendanceTimeValue(),
               let lunchTime = self.determineLunchTimeValue(),
@@ -2003,7 +2362,7 @@ extension NormalWorkTypeViewController {
         print("Work type is normal work type")
         print("Morning Attendance Time: \(morningAttendanceTime)")
         print("Lunch Time: \(lunchTime)")
-        print("Is ignore lunch time for half vacation: \(self.ignoringLunchTimeButton.isSelected ? "Yes" : "No")")
+        print("Is ignore lunch time for half vacation: \(self.ignoreLunchSwitch.isOn ? "Yes" : "No")")
         print("Afternoon Attendance Time: \(afternoonAttendanceTime)")
         
         // Work type
@@ -2019,7 +2378,7 @@ extension NormalWorkTypeViewController {
         ReferenceValues.initialSetting.updateValue(afternoonAttendanceTime, forKey: InitialSetting.afternoonStartingWorkTimeValue.rawValue)
         
         // Is ignore lunch time for half vacation
-        ReferenceValues.initialSetting.updateValue(self.ignoringLunchTimeButton.isSelected, forKey: InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue)
+        ReferenceValues.initialSetting.updateValue(self.ignoreLunchSwitch.isOn, forKey: InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue)
         
         // Day Off VC
         let dayOffVC = DayOffViewController()
