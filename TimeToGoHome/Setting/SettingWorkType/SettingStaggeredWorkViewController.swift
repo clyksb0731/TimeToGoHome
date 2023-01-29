@@ -13,7 +13,7 @@ class SettingStaggeredWorkViewController: UIViewController {
         scrollView.tag = 1
         scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
-        scrollView.contentSize = CGSize(width: ReferenceValues.keyWindow.screen.bounds.width, height: 668 + 20)
+        scrollView.contentSize = CGSize(width: ReferenceValues.keyWindow.screen.bounds.width, height: 567 + 20)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
         return scrollView

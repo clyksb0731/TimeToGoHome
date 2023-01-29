@@ -20,7 +20,7 @@ class NormalWorkTypeViewController: UIViewController {
         scrollView.delegate = self
         scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
-        scrollView.contentSize = CGSize(width: ReferenceValues.keyWindow.screen.bounds.width, height: 674)
+        scrollView.contentSize = CGSize(width: ReferenceValues.keyWindow.screen.bounds.width, height: 615 + 20)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
         return scrollView

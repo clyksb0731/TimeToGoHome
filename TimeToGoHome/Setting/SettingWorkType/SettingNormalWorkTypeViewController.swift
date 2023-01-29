@@ -13,7 +13,7 @@ class SettingNormalWorkTypeViewController: UIViewController {
         scrollView.tag = 1
         scrollView.bounces = false
         scrollView.showsVerticalScrollIndicator = false
-        scrollView.contentSize = CGSize(width: ReferenceValues.keyWindow.screen.bounds.width, height: 614 + 20)
+        scrollView.contentSize = CGSize(width: ReferenceValues.keyWindow.screen.bounds.width, height: 514 + 20)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
         return scrollView
