@@ -364,17 +364,7 @@ class MainViewController: UIViewController {
     }()
     
     lazy var ignoreLunchBaseView: UIView = {
-        var isHalfDay = false
-        if case .morning(let morningWorkTimeType) = self.schedule.morning,
-           case .afternoon(let afternoonWorkTimeType) = self.schedule.afternoon {
-            if (morningWorkTimeType == .work && afternoonWorkTimeType != .work) ||
-                (morningWorkTimeType != .work && afternoonWorkTimeType == .work) {
-                isHalfDay = true
-            }
-        }
-        
         let view = UIView()
-        view.isHidden = !isHalfDay
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -384,7 +374,7 @@ class MainViewController: UIViewController {
         let label = UILabel()
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 14, weight: .bold)
-        label.textColor = self.schedule.isIgnoringLunchTime ? .black : .useRGB(red: 221, green: 221, blue: 221)
+        label.textColor = .useRGB(red: 221, green: 221, blue: 221)
         label.text = "점심시간 무시 (오늘)"
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -392,7 +382,7 @@ class MainViewController: UIViewController {
     }()
     
     lazy var ignoreLunchSwitch: YSBlueSwitch = {
-        let switchButton = YSBlueSwitch(self.schedule.isIgnoringLunchTime)
+        let switchButton = YSBlueSwitch()
         switchButton.addTarget(self, action: #selector(ignoreLunchSwitch(_:)), for: .valueChanged)
         switchButton.translatesAutoresizingMaskIntoConstraints = false
         
@@ -954,16 +944,7 @@ extension MainViewController {
         ])
         
         // Schedule table view layout
-        var isHalfDay = false
-        if case .morning(let morningWorkTimeType) = self.schedule.morning,
-           case .afternoon(let afternoonWorkTimeType) = self.schedule.afternoon {
-            if (morningWorkTimeType == .work && afternoonWorkTimeType != .work) ||
-                (morningWorkTimeType != .work && afternoonWorkTimeType == .work) {
-                isHalfDay = true
-            }
-        }
-        
-        self.scheduleTableViewTopAnchor = self.scheduleTableView.topAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: isHalfDay ? 40 : 10)
+        self.scheduleTableViewTopAnchor = self.scheduleTableView.topAnchor.constraint(equalTo: self.mainTimeView.bottomAnchor, constant: 10)
         self.scheduleTableViewHeightAnchor = self.scheduleTableView.heightAnchor.constraint(equalToConstant: 2 * ReferenceValues.Size.Schedule.normalScheduleHeight + ReferenceValues.Size.Schedule.overtimeScheduleHeight)
         NSLayoutConstraint.activate([
             self.scheduleTableViewTopAnchor,
@@ -2615,7 +2596,7 @@ extension MainViewController {
     
     func determineIgnoreComponents() {
         self.ignoreLunchDescriptionLabel.textColor = self.schedule.isIgnoringLunchTime ? .black : .useRGB(red: 221, green: 221, blue: 221)
-        self.ignoreLunchSwitch.isOn = self.schedule.isIgnoringLunchTime
+        self.ignoreLunchSwitch.setOn(self.schedule.isIgnoringLunchTime, animated: false)
         self.determineIfHalfDay()
     }
     
@@ -2640,7 +2621,7 @@ extension MainViewController {
         self.scheduleTableViewTopAnchor.constant = isOn ? 40 : 10
         
         if animationMode {
-            UIView.animate(withDuration: 0.07) {
+            UIView.animate(withDuration: 0.1) {
                 self.view.layoutIfNeeded()
                 
             } completion: { isFinished in
