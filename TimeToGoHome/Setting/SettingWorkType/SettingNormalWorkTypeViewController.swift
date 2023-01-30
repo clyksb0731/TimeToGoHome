@@ -535,7 +535,7 @@ class SettingNormalWorkTypeViewController: UIViewController {
         let label = UILabel()
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 14, weight: .bold)
-        label.textColor = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as? Bool == true ? .black : .useRGB(red: 221, green: 221, blue: 221)
+        label.textColor = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeOfNormalWorkType.rawValue] as? Bool == true ? .black : .useRGB(red: 221, green: 221, blue: 221)
         label.text = "반차 시 점심시간 무시"
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -543,7 +543,7 @@ class SettingNormalWorkTypeViewController: UIViewController {
     }()
     
     lazy var ignoreLunchSwitch: YSBlueSwitch = {
-        let switchButton = YSBlueSwitch(ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as? Bool == true)
+        let switchButton = YSBlueSwitch(ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeOfNormalWorkType.rawValue] as? Bool == true)
         switchButton.addTarget(self, action: #selector(ignoreLunchSwitch(_:)), for: .valueChanged)
         switchButton.translatesAutoresizingMaskIntoConstraints = false
         
@@ -2257,7 +2257,7 @@ extension SettingNormalWorkTypeViewController {
         ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.afternoonStartingWorkTimeValueRange.rawValue)
         
         // Is ignore lunch time for half vacation
-        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue)
+        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.isIgnoredLunchTimeOfNormalWorkType.rawValue)
         
         print("Work type is normal work type")
         print("Morning Attendance Time: \(morningAttendanceTime)")
@@ -2279,7 +2279,7 @@ extension SettingNormalWorkTypeViewController {
         ReferenceValues.initialSetting.updateValue(afternoonAttendanceTime, forKey: InitialSetting.afternoonStartingWorkTimeValue.rawValue)
         
         // Is ignore lunch time for half vacation
-        ReferenceValues.initialSetting.updateValue(self.ignoreLunchSwitch.isOn, forKey: InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue)
+        ReferenceValues.initialSetting.updateValue(self.ignoreLunchSwitch.isOn, forKey: InitialSetting.isIgnoredLunchTimeOfNormalWorkType.rawValue)
         
         // Update initialSetting
         SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)

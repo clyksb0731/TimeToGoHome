@@ -556,7 +556,7 @@ class SettingStaggeredWorkViewController: UIViewController {
         let label = UILabel()
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 14, weight: .bold)
-        label.textColor = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as? Bool == true ? .black : .useRGB(red: 221, green: 221, blue: 221)
+        label.textColor = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeOfStaggeredWorkType.rawValue] as? Bool == true ? .black : .useRGB(red: 221, green: 221, blue: 221)
         label.text = "반차 시 점심시간 무시"
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -564,7 +564,7 @@ class SettingStaggeredWorkViewController: UIViewController {
     }()
     
     lazy var ignoreLunchSwitch: YSBlueSwitch = {
-        let switchButton = YSBlueSwitch(ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as? Bool == true)
+        let switchButton = YSBlueSwitch(ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeOfStaggeredWorkType.rawValue] as? Bool == true)
         switchButton.addTarget(self, action: #selector(ignoreLunchSwitch(_:)), for: .valueChanged)
         switchButton.translatesAutoresizingMaskIntoConstraints = false
         
@@ -2865,7 +2865,7 @@ extension SettingStaggeredWorkViewController {
         ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.afternoonStartingWorkTimeValue.rawValue)
         
         // Is ignore lunch time for half vacation
-        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue)
+        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.isIgnoredLunchTimeOfStaggeredWorkType.rawValue)
         
         print("Work type is staggered work type")
         print("Morning Attendance Time Range: \(morningAttendanceTimeRange.earliestTime) ~ \(morningAttendanceTimeRange.latestTime)")
@@ -2891,7 +2891,7 @@ extension SettingStaggeredWorkViewController {
              TimeRange.latestTime.rawValue:afternoonAttendanceTimeRange.latestTime], forKey: InitialSetting.afternoonStartingWorkTimeValueRange.rawValue)
         
         // Is ignore lunch time for half vacation
-        ReferenceValues.initialSetting.updateValue(self.ignoreLunchSwitch.isOn, forKey: InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue)
+        ReferenceValues.initialSetting.updateValue(self.ignoreLunchSwitch.isOn, forKey: InitialSetting.isIgnoredLunchTimeOfStaggeredWorkType.rawValue)
         
         // Update initialSetting
         SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)

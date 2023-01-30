@@ -2987,7 +2987,7 @@ extension StaggeredWorkTypeViewController {
              TimeRange.latestTime.rawValue:afternoonAttendanceTimeRange.latestTime], forKey: InitialSetting.afternoonStartingWorkTimeValueRange.rawValue)
         
         // Is ignore lunch time for half vacation
-        ReferenceValues.initialSetting.updateValue(self.ignoreLunchSwitch.isOn, forKey: InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue)
+        ReferenceValues.initialSetting.updateValue(self.ignoreLunchSwitch.isOn, forKey: InitialSetting.isIgnoredLunchTimeOfStaggeredWorkType.rawValue)
         
         // Day Off VC
         let dayOffVC = DayOffViewController()

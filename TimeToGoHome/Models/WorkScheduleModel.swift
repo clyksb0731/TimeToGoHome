@@ -152,7 +152,11 @@ struct WorkScheduleModel {
             return isIgnoredLunchTime
             
         } else {
-            return ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as? Bool == true
+            if let workType = ReferenceValues.initialSetting[InitialSetting.workType.rawValue] as? String, workType == WorkType.staggered.rawValue {
+                return ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeOfStaggeredWorkType.rawValue] as? Bool == true
+            } else {
+                return ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeOfNormalWorkType.rawValue] as? Bool == true
+            }
         }
     }() {
         didSet {
@@ -576,7 +580,7 @@ extension WorkScheduleModel {
             return
         }
         
-        let isIgnoredLunchTimeForHalfVacation = ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as! Bool
+        let isIgnoredLunchTimeForHalfVacation = self.isIgnoringLunchTime
         
         if case .morning(let workType) = self.morning, case .work = workType,
            case .afternoon(let workType) = self.afternoon, case .work = workType {
