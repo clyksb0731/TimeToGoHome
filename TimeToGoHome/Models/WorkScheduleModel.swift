@@ -146,6 +146,21 @@ struct WorkScheduleModel {
         }
     }
     
+    var isIgnoringLunchTime: Bool = {
+        let dateId = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: Date())
+        if let ignoreLunchTimeValue = SupportingMethods.shared.useAppSetting(for: .isIgnoredLunchTimeToday) as? [String:Bool], let isIgnoredLunchTime = ignoreLunchTimeValue[dateId] {
+            return isIgnoredLunchTime
+            
+        } else {
+            return ReferenceValues.initialSetting[InitialSetting.isIgnoredLunchTimeForHalfVacation.rawValue] as? Bool == true
+        }
+    }() {
+        didSet {
+            let dateId = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: Date())
+            SupportingMethods.shared.setAppSetting(with: [dateId:self.isIgnoringLunchTime], for: .isIgnoredLunchTimeToday)
+        }
+    }
+    
     var isEditingMode: Bool = false
     
     init(date: Date) {
