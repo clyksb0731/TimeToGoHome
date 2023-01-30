@@ -32,10 +32,10 @@ class YSBlueSwitch: UIControl {
     
     var movableViewCenterXAnchor: NSLayoutConstraint!
     
-    var isAnimating: Bool = false
+    var isMoving: Bool = false
     var isOn: Bool {
         willSet {
-            self.isAnimating = true
+            self.isMoving = true
         }
         
         didSet {
@@ -54,7 +54,7 @@ class YSBlueSwitch: UIControl {
                 }
                 
             } completion: { finished in
-                self.isAnimating = false
+                self.isMoving = false
             }
         }
     }
@@ -99,35 +99,6 @@ class YSBlueSwitch: UIControl {
         ])
     }
     
-//    override init(frame: CGRect) {
-//        super.init(frame: frame)
-//
-//        if frame == .zero {
-//            NSLayoutConstraint.activate([
-//                self.heightAnchor.constraint(equalToConstant: 44),
-//                self.widthAnchor.constraint(equalToConstant: 28)
-//            ])
-//        }
-//
-//        // setSubviews
-//        self.addSubview(self.barView)
-//        self.addSubview(self.movableView)
-//
-//        // setLayouts
-//        self.movableViewCenterXAnchor = self.movableView.centerXAnchor.constraint(equalTo: self.barView.leadingAnchor, constant: 14)
-//        NSLayoutConstraint.activate([
-//            self.barView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-//            self.barView.heightAnchor.constraint(equalToConstant: 16),
-//            self.barView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-//            self.barView.widthAnchor.constraint(equalToConstant: 44),
-//
-//            self.movableView.centerYAnchor.constraint(equalTo: self.barView.centerYAnchor),
-//            self.movableView.heightAnchor.constraint(equalToConstant: 28),
-//            self.movableViewCenterXAnchor,
-//            self.movableView.widthAnchor.constraint(equalToConstant: 28)
-//        ])
-//    }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -135,12 +106,50 @@ class YSBlueSwitch: UIControl {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
 
-        if !self.isAnimating {
+        if !self.isMoving {
             self.isOn.toggle()
             
             UIDevice.lightHaptic()
 
             self.sendActions(for: .valueChanged)
+        }
+    }
+    
+    func setOn(_ on: Bool, animated: Bool) {
+        self.isMoving = true
+        
+        self.isOn = on
+        
+        self.movableViewCenterXAnchor.constant = on ? 30 : 14
+        
+        if animated {
+            UIView.animate(withDuration: 0.2) {
+                self.layoutIfNeeded()
+                
+                if on {
+                    self.barView.backgroundColor = .useRGB(red: 145, green: 218, blue: 255)
+                    self.movableView.backgroundColor = .useRGB(red: 25, green: 178, blue: 255)
+                    
+                } else {
+                    self.barView.backgroundColor = .useRGB(red: 216, green: 216, blue: 216)
+                    self.movableView.backgroundColor = .useRGB(red: 151, green: 151, blue: 151)
+                }
+                
+            } completion: { finished in
+                self.isMoving = false
+            }
+            
+        } else {
+            if on {
+                self.barView.backgroundColor = .useRGB(red: 145, green: 218, blue: 255)
+                self.movableView.backgroundColor = .useRGB(red: 25, green: 178, blue: 255)
+                
+            } else {
+                self.barView.backgroundColor = .useRGB(red: 216, green: 216, blue: 216)
+                self.movableView.backgroundColor = .useRGB(red: 151, green: 151, blue: 151)
+            }
+            
+            self.isMoving = false
         }
     }
 }
