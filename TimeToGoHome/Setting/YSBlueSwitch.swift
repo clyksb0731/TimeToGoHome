@@ -75,8 +75,8 @@ class YSBlueSwitch: UIControl {
         
         if frame == .zero {
             NSLayoutConstraint.activate([
-                self.heightAnchor.constraint(equalToConstant: 44),
-                self.widthAnchor.constraint(equalToConstant: 28)
+                self.heightAnchor.constraint(equalToConstant: 28),
+                self.widthAnchor.constraint(equalToConstant: 44)
             ])
         }
         
