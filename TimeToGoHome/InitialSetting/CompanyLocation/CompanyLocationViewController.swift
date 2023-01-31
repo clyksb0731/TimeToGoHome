@@ -34,7 +34,7 @@ class CompanyLocationViewController: UIViewController {
         textField.textAlignment = .left
         textField.textColor = UIColor.useRGB(red: 0, green: 0, blue: 0)
         textField.font = UIFont.systemFont(ofSize: 20, weight: .bold)
-        textField.placeholder = "주소를 검색하세요."
+        textField.placeholder = "장소를 검색하세요."
         textField.returnKeyType = .search
         //textField.textContentType = .fullStreetAddress
         textField.enablesReturnKeyAutomatically = true
@@ -83,6 +83,34 @@ class CompanyLocationViewController: UIViewController {
         return label
     }()
     
+    lazy var jumpButtonView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 20
+        view.backgroundColor = .Buttons.initialActiveBottom
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    var jumpButtonLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        label.textAlignment = .center
+        label.textColor = .white
+        label.text = "다음에 설정 〉"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var jumpButton: UIButton = {
+        let button = UIButton()
+        button.addTarget(self, action: #selector(jumpButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     var nextButtonView: UIView = {
         let view = UIView()
         view.backgroundColor = .Buttons.initialInactiveBottom
@@ -114,6 +142,8 @@ class CompanyLocationViewController: UIViewController {
     var currentPage: Int = 1
     var selectedLocationIndex: Int?
     
+    var jumpButtonBottomViewAnchor: NSLayoutConstraint!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -135,6 +165,10 @@ class CompanyLocationViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        if self.companyLocationModel.searchedAddress.address.isEmpty {
+            self.showJumpButton()
+        }
         
         // Location Manager authorization
         LocationManager.shared.requestAuthorization()
@@ -236,8 +270,14 @@ extension CompanyLocationViewController {
             self.deleteSearchTextButton,
             self.addressTableView,
             self.noResultTextLabel,
+            self.jumpButtonView,
             self.nextButtonView
         ], to: self.view)
+        
+        SupportingMethods.shared.addSubviews([
+            self.jumpButtonLabel,
+            self.jumpButton
+        ], to: self.jumpButtonView)
         
         SupportingMethods.shared.addSubviews([
             self.nextButtonImageView,
@@ -313,6 +353,21 @@ extension CompanyLocationViewController {
             self.noResultTextLabel.trailingAnchor.constraint(equalTo: self.addressTableView.trailingAnchor)
         ])
         
+        // jumpButtonView
+        self.jumpButtonBottomViewAnchor = self.jumpButtonView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor)
+        NSLayoutConstraint.activate([
+            self.jumpButtonBottomViewAnchor,
+            self.jumpButtonView.heightAnchor.constraint(equalToConstant: 40),
+            self.jumpButtonView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            self.jumpButtonView.widthAnchor.constraint(equalToConstant: 140)
+        ])
+        
+        // jumpButtonLabel
+        SupportingMethods.shared.makeConstraintsOf(self.jumpButtonLabel, sameAs: self.jumpButtonView)
+        
+        // jumpButton
+        SupportingMethods.shared.makeConstraintsOf(self.jumpButton, sameAs: self.jumpButtonView)
+        
         // Next button view layout
         NSLayoutConstraint.activate([
             self.nextButtonView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
@@ -350,8 +405,12 @@ extension CompanyLocationViewController {
                 if self.companyLocationModel.searchedAddress.address.isEmpty {
                     self.noResultTextLabel.isHidden = false
                     
+                    self.showJumpButton()
+                    
                 } else {
                     self.noResultTextLabel.isHidden = true
+                    
+                    self.hideJumpButton()
                 }
                 
                 SupportingMethods.shared.turnCoverView(.off, on: self.view)
@@ -363,10 +422,31 @@ extension CompanyLocationViewController {
             self.companyLocationModel.initializeModel()
             self.addressTableView.reloadData()
             
+            DispatchQueue.main.async {
+                self.showJumpButton()
+            }
+            
             SupportingMethods.shared.makeAlert(on: self, withTitle: "오류", andMessage: "검색에 실패했습니다.")
             
             SupportingMethods.shared.turnCoverView(.off, on: self.view)
         }
+    }
+    
+    func showJumpButton() {
+        self.jumpButtonView.isHidden = false
+        self.jumpButtonBottomViewAnchor.constant = -(60+8)
+        
+        UIView.animate(withDuration: 0.15) {
+            self.view.layoutIfNeeded()
+            
+        } completion: { isFinished in
+            
+        }
+    }
+    
+    func hideJumpButton() {
+        self.jumpButtonView.isHidden = true
+        self.jumpButtonBottomViewAnchor.constant = 0
     }
 }
 
@@ -377,7 +457,7 @@ extension CompanyLocationViewController {
     }
     
     @objc func deleteSearchTextButton(_ sender: UIButton) {
-        self.searchTextField.becomeFirstResponder()
+        //self.searchTextField.becomeFirstResponder()
         
         sender.isHidden = true
         self.searchTextField.text = ""
@@ -392,6 +472,10 @@ extension CompanyLocationViewController {
         
         self.companyLocationModel.initializeModel()
         self.addressTableView.reloadData()
+        
+        DispatchQueue.main.async {
+            self.showJumpButton()
+        }
     }
     
 //    @objc func searchButton(_ sender: UIButton) {
@@ -421,6 +505,18 @@ extension CompanyLocationViewController {
         } else {
             // If latitude & longitude are not valid
         }
+    }
+    
+    @objc func jumpButton(_ sender: UIButton) {
+        let staggeredWorkTypeVC = StaggeredWorkTypeViewController()
+        let normalWorkTypeVC = NormalWorkTypeViewController()
+        let tabBarVC = CustomizedTabBarController()
+        tabBarVC.viewControllers = [staggeredWorkTypeVC, normalWorkTypeVC]
+        tabBarVC.modalPresentationStyle = .fullScreen
+        
+        self.present(tabBarVC, animated: true, completion: nil)
+        
+        self.hideJumpButton()
     }
     
     @objc func nextButton(_ sender: UIButton) {
@@ -468,6 +564,10 @@ extension CompanyLocationViewController: UITextFieldDelegate {
             self.noResultTextLabel.isHidden = false
             
             self.addressTableView.reloadData()
+            
+            DispatchQueue.main.async {
+                self.showJumpButton()
+            }
         }
         
         return true

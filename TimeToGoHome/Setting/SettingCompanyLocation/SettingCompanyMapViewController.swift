@@ -52,7 +52,7 @@ class SettingCompanyMapViewController: UIViewController {
         textField.delegate = self
         textField.clearButtonMode = .whileEditing
         textField.returnKeyType = .search
-        textField.placeholder = "검색하세요."
+        textField.placeholder = "장소를 검색하세요."
         textField.translatesAutoresizingMaskIntoConstraints = false
         
         return textField
