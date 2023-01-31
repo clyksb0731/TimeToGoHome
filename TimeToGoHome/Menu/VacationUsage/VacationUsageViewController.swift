@@ -672,6 +672,8 @@ extension VacationUsageViewController: UICollectionViewDelegate, UICollectionVie
             self.morningVacationButtonView.isSelected = false
             self.afternoonVacationButtonView.isSelected = false
             
+            collectionView.reloadData()
+            
         } else {
             if let previousIndexPath = self.selectedIndexPath {
                 let item = collectionView.cellForItem(at: previousIndexPath) as! CalendarDayOfVacationUsageCell
@@ -715,7 +717,5 @@ extension VacationUsageViewController: UICollectionViewDelegate, UICollectionVie
                 self.afternoonVacationButtonView.isSelected = false
             }
         }
-        
-        //collectionView.reloadData()
     }
 }
