@@ -119,7 +119,7 @@ extension CalendarHeaderOfScheduleRecordView {
             self.sundayLabel.topAnchor.constraint(equalTo: safeArea.topAnchor),
             self.sundayLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
             self.sundayLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.sundayLabel.widthAnchor.constraint(equalToConstant: 45)
+            self.sundayLabel.widthAnchor.constraint(equalToConstant: 40)
         ])
         
         // mondayLabel layout
@@ -127,7 +127,7 @@ extension CalendarHeaderOfScheduleRecordView {
             self.mondayLabel.topAnchor.constraint(equalTo: safeArea.topAnchor),
             self.mondayLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
             self.mondayLabel.leadingAnchor.constraint(equalTo: sundayLabel.trailingAnchor),
-            self.mondayLabel.widthAnchor.constraint(equalToConstant: 45)
+            self.mondayLabel.widthAnchor.constraint(equalToConstant: 40)
         ])
         
         // tuesdayLabel layout
@@ -135,7 +135,7 @@ extension CalendarHeaderOfScheduleRecordView {
             self.tuesdayLabel.topAnchor.constraint(equalTo: safeArea.topAnchor),
             self.tuesdayLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
             self.tuesdayLabel.leadingAnchor.constraint(equalTo: mondayLabel.trailingAnchor),
-            self.tuesdayLabel.widthAnchor.constraint(equalToConstant: 45)
+            self.tuesdayLabel.widthAnchor.constraint(equalToConstant: 40)
         ])
         
         // wednesdayLabel layout
@@ -143,7 +143,7 @@ extension CalendarHeaderOfScheduleRecordView {
             self.wednesdayLabel.topAnchor.constraint(equalTo: safeArea.topAnchor),
             self.wednesdayLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
             self.wednesdayLabel.leadingAnchor.constraint(equalTo: tuesdayLabel.trailingAnchor),
-            self.wednesdayLabel.widthAnchor.constraint(equalToConstant: 45)
+            self.wednesdayLabel.widthAnchor.constraint(equalToConstant: 40)
         ])
         
         // thursdayLabel layout
@@ -151,7 +151,7 @@ extension CalendarHeaderOfScheduleRecordView {
             self.thursdayLabel.topAnchor.constraint(equalTo: safeArea.topAnchor),
             self.thursdayLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
             self.thursdayLabel.leadingAnchor.constraint(equalTo: wednesdayLabel.trailingAnchor),
-            self.thursdayLabel.widthAnchor.constraint(equalToConstant: 45)
+            self.thursdayLabel.widthAnchor.constraint(equalToConstant: 40)
         ])
         
         // fridayLabel layout
@@ -159,7 +159,7 @@ extension CalendarHeaderOfScheduleRecordView {
             self.fridayLabel.topAnchor.constraint(equalTo: safeArea.topAnchor),
             self.fridayLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
             self.fridayLabel.leadingAnchor.constraint(equalTo: thursdayLabel.trailingAnchor),
-            self.fridayLabel.widthAnchor.constraint(equalToConstant: 45)
+            self.fridayLabel.widthAnchor.constraint(equalToConstant: 40)
         ])
         
         // saturdayLabel layout
@@ -167,7 +167,7 @@ extension CalendarHeaderOfScheduleRecordView {
             self.saturdayLabel.topAnchor.constraint(equalTo: safeArea.topAnchor),
             self.saturdayLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
             self.saturdayLabel.leadingAnchor.constraint(equalTo: fridayLabel.trailingAnchor),
-            self.saturdayLabel.widthAnchor.constraint(equalToConstant: 45)
+            self.saturdayLabel.widthAnchor.constraint(equalToConstant: 40)
         ])
     }
 }

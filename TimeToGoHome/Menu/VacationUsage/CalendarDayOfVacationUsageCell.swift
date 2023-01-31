@@ -217,7 +217,7 @@ extension CalendarDayOfVacationUsageCell {
         NSLayoutConstraint.activate([
             self.morningPointView.centerYAnchor.constraint(equalTo: self.dayLabel.bottomAnchor, constant: 6),
             self.morningPointView.heightAnchor.constraint(equalToConstant: 4),
-            self.morningPointView.trailingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 15),
+            self.morningPointView.trailingAnchor.constraint(equalTo: self.baseView.centerXAnchor, constant: -4),
             self.morningPointView.widthAnchor.constraint(equalToConstant: 4)
         ])
         
@@ -233,7 +233,7 @@ extension CalendarDayOfVacationUsageCell {
         NSLayoutConstraint.activate([
             self.overtimePointView.centerYAnchor.constraint(equalTo: self.dayLabel.bottomAnchor, constant: 6),
             self.overtimePointView.heightAnchor.constraint(equalToConstant: 4),
-            self.overtimePointView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 30),
+            self.overtimePointView.leadingAnchor.constraint(equalTo: self.baseView.centerXAnchor, constant: 4),
             self.overtimePointView.widthAnchor.constraint(equalToConstant: 4)
         ])
         

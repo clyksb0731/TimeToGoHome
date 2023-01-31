@@ -601,6 +601,7 @@ class MenuCoverViewController: UIViewController {
         let view = UIView()
         view.backgroundColor = .white
         view.layer.cornerRadius = 20
+        view.clipsToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -667,10 +668,10 @@ class MenuCoverViewController: UIViewController {
     
     lazy var calendarCollectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.itemSize = CGSize(width: 45, height: 45)
+        flowLayout.itemSize = CGSize(width: 40, height: 45)
         flowLayout.minimumLineSpacing = 0
         flowLayout.minimumInteritemSpacing = 0
-        flowLayout.headerReferenceSize = CGSize(width: 315, height: 21)
+        flowLayout.headerReferenceSize = CGSize(width: 280, height: 21)
         flowLayout.footerReferenceSize = .zero
         
         //let collectionView = UICollectionView()
@@ -1391,14 +1392,14 @@ extension MenuCoverViewController: EssentialViewMethods {
             // calendarPopUpView
             NSLayoutConstraint.activate([
                 self.calendarPopUpView.centerYAnchor.constraint(equalTo: self.baseView.centerYAnchor),
-                self.calendarPopUpView.heightAnchor.constraint(equalToConstant: 93 + 21 + 45 * 6),
+                self.calendarPopUpView.heightAnchor.constraint(equalToConstant: 53 + 21 + 45 * 6),
                 self.calendarPopUpView.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor),
-                self.calendarPopUpView.widthAnchor.constraint(equalToConstant: 7 * 45)
+                self.calendarPopUpView.widthAnchor.constraint(equalToConstant: 310)
             ])
             
             // yearMonthButtonView
             NSLayoutConstraint.activate([
-                self.yearMonthButtonView.topAnchor.constraint(equalTo: self.calendarPopUpView.topAnchor, constant: 26),
+                self.yearMonthButtonView.topAnchor.constraint(equalTo: self.calendarPopUpView.topAnchor, constant: 16),
                 self.yearMonthButtonView.heightAnchor.constraint(equalToConstant: 21),
                 self.yearMonthButtonView.centerXAnchor.constraint(equalTo: self.calendarPopUpView.centerXAnchor),
                 self.yearMonthButtonView.widthAnchor.constraint(equalToConstant: 170)
@@ -1430,10 +1431,10 @@ extension MenuCoverViewController: EssentialViewMethods {
             
             // calendarBaseView
             NSLayoutConstraint.activate([
-                self.calendarBaseView.topAnchor.constraint(equalTo: self.yearMonthButtonView.bottomAnchor, constant: 26),
+                self.calendarBaseView.topAnchor.constraint(equalTo: self.yearMonthButtonView.bottomAnchor, constant: 16),
                 self.calendarBaseView.heightAnchor.constraint(equalToConstant: 21 + 45 * 6),
                 self.calendarBaseView.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor),
-                self.calendarBaseView.widthAnchor.constraint(equalToConstant: 7 * 45)
+                self.calendarBaseView.widthAnchor.constraint(equalToConstant: 7 * 40)
             ])
             
             // calendarCollectionView
