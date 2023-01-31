@@ -385,6 +385,10 @@ struct VacationModel {
         self.dateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: date))!
     }
     
+    init(dateId: Int) {
+        self.dateId = dateId
+    }
+    
     var vacation: Vacation? {
         get {
             let realm = try! Realm()

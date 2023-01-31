@@ -112,6 +112,8 @@ class DayWorkRecordViewController: UIViewController {
         self.isEditingMode = recordedSchedule.morning == nil
         
         super.init(nibName: nil, bundle: nil)
+        
+        self.determineScheduleForVacation()
     }
     
     required init?(coder: NSCoder) {
@@ -150,7 +152,9 @@ extension DayWorkRecordViewController: EssentialViewMethods {
         
         let recordScheduleDate: Date! = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.recordedSchedule.dateId))
         self.navigationItem.title = SupportingMethods.shared.makeDateFormatter("yyyy년 M월 d일").string(from: recordScheduleDate)
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "backButtonItemImage"), style: .plain, target: self, action: #selector(leftBarButtonItem(_:)))
+        self.navigationItem.leftBarButtonItem = self.isEditingMode && self.recordedSchedule.morning != nil ?
+        UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(leftBarButtonItem(_:))) :
+        UIBarButtonItem(image: UIImage(named: "backButtonItemImage"), style: .plain, target: self, action: #selector(leftBarButtonItem(_:)))
         self.navigationItem.leftBarButtonItem?.tintColor = .black
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: self.isEditingMode ? "완료" : "추가/제거", style: .plain, target: self, action: #selector(rightBarButtonItem(_:)))
         self.navigationItem.rightBarButtonItem?.tintColor = .black
@@ -252,6 +256,35 @@ extension DayWorkRecordViewController: EssentialViewMethods {
 
 // MARK: - Extension for methods added
 extension DayWorkRecordViewController {
+    func determineScheduleForVacation() {
+        if let vacation = VacationModel(dateId: self.recordedSchedule.dateId).vacation {
+            let vacationType = VacationType(rawValue: vacation.vacationType)!
+            
+            switch vacationType {
+            case .none:
+                break;
+                
+            case .morning:
+                self.recordedSchedule.morning = .vacation
+                self.recordedSchedule.afternoon = .work
+                
+                self.tempRecordedSchedule = self.recordedSchedule
+                
+            case .afternoon:
+                self.recordedSchedule.morning = .work
+                self.recordedSchedule.afternoon = .vacation
+                
+                self.tempRecordedSchedule = self.recordedSchedule
+                
+            case .fullDay:
+                self.recordedSchedule.morning = .vacation
+                self.recordedSchedule.afternoon = .vacation
+                
+                self.tempRecordedSchedule = self.recordedSchedule
+            }
+        }
+    }
+    
     func determineTableView() {
         self.recordScheduleTableViewHeightAncor.constant = self.calculateTableViewHeight()
         self.recordScheduleTableView.reloadData()

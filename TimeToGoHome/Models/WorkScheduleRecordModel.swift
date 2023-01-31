@@ -40,21 +40,28 @@ struct WorkScheduleRecordModel {
             if morning == .holiday && afternoon == .holiday {
                 companyModel.removeScheduleAtDateId(self.dateId) // Remove full holiday from recorded schedules.
                 
+                print("Remove full holiday from recorded schedules.")
+                
             } else {
                 let date = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(self.dateId))!
                 let schedule = Schedule(date: date, morningType: morning, afternoonType: afternoon, overtime: self.overtime)
                 
                 companyModel.applySchedule(schedule)
                 
+                print("Apply schedule of work record.")
+                
                 var vacation: Vacation!
                 if morning == .vacation && afternoon == .vacation {
                     vacation = Vacation(date: date, vacationType: .fullDay)
+                    print("Apply full vacation.")
                     
                 } else if morning == .vacation {
                     vacation = Vacation(date: date, vacationType: .morning)
+                    print("Apply morning vacation.")
                     
                 } else if afternoon == .vacation {
                     vacation = Vacation(date: date, vacationType: .afternoon)
+                    print("Apply afternoon vacation.")
                     
                 } else {
                     vacation = Vacation(date: date, vacationType: .none)
