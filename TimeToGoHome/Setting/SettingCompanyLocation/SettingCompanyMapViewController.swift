@@ -410,9 +410,9 @@ extension SettingCompanyMapViewController {
     }
     
     func searchAddress(_ text: String) {
-        SupportingMethods.shared.turnCoverView(.on, on: self.view)
-        
         self.moveTableBaseViewToTop(movingType: .top)
+        
+        SupportingMethods.shared.turnCoverView(.on, on: self.view)
         
         self.companyLocationModel.searchAddressWithText(text) {
             self.addressTableView.reloadData()
@@ -507,32 +507,30 @@ extension SettingCompanyMapViewController {
         
         self.isTableBaseViewMoving = true
         
-        DispatchQueue.main.async {
-            switch movingType {
-            case .top:
-                self.tableBaseViewTopAnchor.constant = -self.tableBaseViewHeight
-                self.mapCoverView.isHidden = false
-                
-            case .bottom:
-                self.tableBaseViewTopAnchor.constant = 0
-                self.mapCoverView.isHidden = true
-            }
+        switch movingType {
+        case .top:
+            self.tableBaseViewTopAnchor.constant = -self.tableBaseViewHeight
+            self.mapCoverView.isHidden = false
             
-            UIView.animate(withDuration: 0.25) {
-                self.view.layoutIfNeeded()
+        case .bottom:
+            self.tableBaseViewTopAnchor.constant = 0
+            self.mapCoverView.isHidden = true
+        }
+        
+        UIView.animate(withDuration: 0.25) {
+            self.view.layoutIfNeeded()
+            
+        } completion: { isFinished in
+            self.isTableBaseViewMoving = !isFinished
+            
+            if case .bottom = movingType {
+                self.tableBaseView.isHidden = true
                 
-            } completion: { isFinished in
-                self.isTableBaseViewMoving = !isFinished
+                self.noResultTextLabel.isHidden = true
+                self.addressTableView.isHidden = false
                 
-                if case .bottom = movingType {
-                    self.tableBaseView.isHidden = true
-                    
-                    self.noResultTextLabel.isHidden = true
-                    self.addressTableView.isHidden = false
-                    
-                    self.companyLocationModel.initializeModel()
-                    self.addressTableView.reloadData()
-                }
+                self.companyLocationModel.initializeModel()
+                self.addressTableView.reloadData()
             }
         }
     }
