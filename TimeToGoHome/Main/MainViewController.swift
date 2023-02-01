@@ -535,6 +535,7 @@ class MainViewController: UIViewController {
         super.viewWillAppear(animated)
         
         self.setViewFoundation()
+        
         self.determineToday()
     }
     
@@ -990,20 +991,13 @@ extension MainViewController {
         if let leavingDate = ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date,
             let leavingDateId = Int(dateFormatter.string(from: leavingDate)),
            todayDateId > leavingDateId {
+            self.stopTimer() // This(self) view shouldn't work because new timer on new main view would work for new company.
+            
             self.leavingDateCoverView.isHidden = false
             
             self.navigationItem.rightBarButtonItem?.isEnabled = false
             SupportingMethods.shared.turnOffAndRemoveLocalPush()
-            
-            if self.presentedViewController is SettingViewController {
-                self.dismiss(animated: true)
-            }
-            
-            if let menuVC = self.presentedViewController as? MenuViewController {
-                menuVC.menuTableView.reloadData()
-            }
-            
-            self.stopTimer() // This(self) view shouldn't work because new timer on new main view would work for new company.
+            SupportingMethods.shared.setAppSetting(with: nil, for: .isIgnoredLunchTimeToday)
             
         } else {
             self.leavingDateCoverView.isHidden = true

@@ -269,7 +269,7 @@ extension WorkScheduleModel {
                     }
                 }
                 
-                self.determineStartingWorkTimeDate()
+                self.determineStartingWorkTimeDate() // For Determining starting work time when schedule isn't in DB or after leaving date
             }
         }
     }
@@ -310,6 +310,8 @@ extension WorkScheduleModel {
         if let leavingDate = ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date,
             let leavingDateId = Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: leavingDate)),
            todayDateId > leavingDateId {
+            SupportingMethods.shared.setAppSetting(with: nil, for: .timeDateForStartingTodayOfStaggeredSchedule)
+            
             self.startingWorkTime = nil
             
             return
