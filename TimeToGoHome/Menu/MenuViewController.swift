@@ -289,7 +289,9 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
                 let menuCell = tableView.dequeueReusableCell(withIdentifier: "MenuCell", for: indexPath) as! MenuCell
                 menuCell.setCell(self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
                              itemText: self.menuArray[indexPath.section].items[indexPath.row].menuText,
-                             isEnable: todayDateId <= leavingDateId || (indexPath.section == 2 && indexPath.row == 1))
+                             isEnable: todayDateId <= leavingDateId ||
+                                 (indexPath.section == 2 && indexPath.row == 0) ||
+                                 (indexPath.section == 2 && indexPath.row == 1))
                 
                 cell = menuCell
             }
