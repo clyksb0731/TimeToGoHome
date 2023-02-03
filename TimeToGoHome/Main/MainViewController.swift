@@ -1029,7 +1029,7 @@ extension MainViewController {
             self.startWorkingTimeButton.isEnabled = true
         }
         
-        self.editScheduleButton.setTitle("추가 | 제거", for: .normal)
+        self.editScheduleButton.setTitle(self.schedule.dateOfFinishedSchedule == nil ? "추가 | 제거" : "업무 재개", for: .normal)
         
         if self.schedule.startingWorkTime == nil {
             self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
