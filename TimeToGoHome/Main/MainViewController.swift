@@ -1003,13 +1003,6 @@ extension MainViewController {
             self.leavingDateCoverView.isHidden = true
         }
         
-        if case .normal = self.schedule.workType {
-            self.startWorkingTimeButton.isEnabled = false
-            
-        } else {
-            self.startWorkingTimeButton.isEnabled = true
-        }
-        
         self.todayRegularScheduleType = self.determineRegularSchedule(self.schedule)
         switch self.todayRegularScheduleType! {
         case .fullWork, .morningWork, .afternoonWork:
@@ -1029,11 +1022,14 @@ extension MainViewController {
             self.startWorkingTimeButton.isHidden = true
         }
         
-        self.determineTableAndButtonTypeOfSchedule()
-        
-        DispatchQueue.main.async {
-            self.determineIgnoreComponents()
+        if case .normal = self.schedule.workType {
+            self.startWorkingTimeButton.isEnabled = false
+            
+        } else {
+            self.startWorkingTimeButton.isEnabled = true
         }
+        
+        self.editScheduleButton.setTitle("추가 | 제거", for: .normal)
         
         if self.schedule.startingWorkTime == nil {
             self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
@@ -1047,6 +1043,12 @@ extension MainViewController {
             } else {
                 // No need to reset main time view values
             }
+        }
+        
+        self.determineTableAndButtonTypeOfSchedule()
+        
+        DispatchQueue.main.async {
+            self.determineIgnoreComponents()
         }
     }
     
