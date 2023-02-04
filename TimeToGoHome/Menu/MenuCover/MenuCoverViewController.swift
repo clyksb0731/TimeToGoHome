@@ -259,7 +259,7 @@ class MenuCoverViewController: UIViewController {
     lazy var companyNameTextField: UITextField = {
         let textField = UITextField()
         textField.textAlignment = .left
-        textField.font = .systemFont(ofSize: 16, weight: .regular)
+        textField.font = .systemFont(ofSize: 21, weight: .regular)
         textField.textColor = .black
         textField.placeholder = "회사 이름을 입력하세요."
         textField.clearButtonMode = .whileEditing
@@ -1102,22 +1102,22 @@ extension MenuCoverViewController: EssentialViewMethods {
             
             // companyNameMarkLabel
             NSLayoutConstraint.activate([
-                self.companyNameMarkLabel.topAnchor.constraint(equalTo: self.careerBaseView.topAnchor, constant: 21),
+                self.companyNameMarkLabel.topAnchor.constraint(equalTo: self.careerBaseView.topAnchor, constant: 24),
                 self.companyNameMarkLabel.heightAnchor.constraint(equalToConstant: 21),
-                self.companyNameMarkLabel.leadingAnchor.constraint(equalTo: self.careerBaseView.leadingAnchor, constant: 21)
+                self.companyNameMarkLabel.leadingAnchor.constraint(equalTo: self.careerBaseView.leadingAnchor, constant: 24)
             ])
             
             // companyNameTextField
             NSLayoutConstraint.activate([
                 self.companyNameTextField.bottomAnchor.constraint(equalTo: self.companyNameBottomLineView.topAnchor),
-                self.companyNameTextField.heightAnchor.constraint(equalToConstant: 21),
+                self.companyNameTextField.heightAnchor.constraint(equalToConstant: 24),
                 self.companyNameTextField.leadingAnchor.constraint(equalTo: self.companyNameBottomLineView.leadingAnchor, constant: 7),
                 self.companyNameTextField.trailingAnchor.constraint(equalTo: self.companyNameBottomLineView.trailingAnchor, constant: -5)
             ])
             
             // companyNameBottomLineView
             NSLayoutConstraint.activate([
-                self.companyNameBottomLineView.topAnchor.constraint(equalTo: self.companyNameMarkLabel.bottomAnchor, constant: 32),
+                self.companyNameBottomLineView.topAnchor.constraint(equalTo: self.companyNameMarkLabel.bottomAnchor, constant: 38),
                 self.companyNameBottomLineView.heightAnchor.constraint(equalToConstant: 2),
                 self.companyNameBottomLineView.leadingAnchor.constraint(equalTo: self.careerBaseView.leadingAnchor, constant: 20),
                 self.companyNameBottomLineView.trailingAnchor.constraint(equalTo: self.careerBaseView.trailingAnchor, constant: -23)
