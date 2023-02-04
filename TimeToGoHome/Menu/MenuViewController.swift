@@ -282,7 +282,7 @@ extension MenuViewController: EssentialViewMethods {
 
 // MARK: - Extension for methods added
 extension MenuViewController {
-    func foldMenu() {
+    func foldMenu(_ completion: (() -> ())? = nil) {
         self.movingView.isUserInteractionEnabled = false
         self.baseView.backgroundColor = .clear
         self.movingViewleadingAnchor.constant = -295
@@ -291,7 +291,9 @@ extension MenuViewController {
             self.view.layoutIfNeeded()
             
         } completion: { isFinished in
-            self.dismiss(animated: false)
+            self.dismiss(animated: false) {
+                completion?()
+            }
         }
     }
     

@@ -2660,23 +2660,7 @@ extension MainViewController {
         let now = SupportingMethods.getCurrentTimeSeconds()
         
         if (now >= self.tomorrowTimeValue) {
-            if self.navigationController!.viewControllers.count > 1 {
-                self.navigationController?.popToRootViewController(animated: true)
-                
-                DispatchQueue.main.async {
-                    if self.isEditingMode {
-                        if let schedule = self.tempSchedule {
-                            self.schedule = schedule
-                        }
-                        
-                        self.mainTimeCoverView.isHidden = true
-                        self.isEditingMode = false
-                    }
-                    
-                    SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "날이 바뀌어 메인화면으로 돌아왔습니다.")
-                }
-                
-            } else if let presentedVC = self.presentedViewController {
+            if let presentedVC = self.presentedViewController {
                 if self.isEditingMode {
                     if let schedule = self.tempSchedule {
                         self.schedule = schedule
@@ -2686,7 +2670,46 @@ extension MainViewController {
                     self.isEditingMode = false
                 }
                 
-                self.dismiss(animated: !(presentedVC is MainCoverViewController)) {
+                if let menuVC = presentedVC as? MenuViewController {
+                    if let menuPresentedVC = menuVC.presentedViewController {
+                        menuPresentedVC.dismiss(animated: false) {
+                            menuVC.foldMenu {
+                                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "날이 바뀌어 메인화면으로 돌아왔습니다.")
+                            }
+                        }
+                        
+                    } else {
+                        menuVC.foldMenu {
+                            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "날이 바뀌어 메인화면으로 돌아왔습니다.")
+                        }
+                    }
+                    
+                } else if let _ = presentedVC as? MenuCoverViewController {
+                    self.navigationController?.popToRootViewController(animated: true)
+                    
+                    self.dismiss(animated: false) {
+                        SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "날이 바뀌어 메인화면으로 돌아왔습니다.")
+                    }
+                    
+                } else {
+                    self.dismiss(animated: (presentedVC is SettingViewController)) {
+                        SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "날이 바뀌어 메인화면으로 돌아왔습니다.")
+                    }
+                }
+                
+            } else if self.navigationController!.viewControllers.count > 1 {
+                if self.isEditingMode {
+                    if let schedule = self.tempSchedule {
+                        self.schedule = schedule
+                    }
+                    
+                    self.mainTimeCoverView.isHidden = true
+                    self.isEditingMode = false
+                }
+                
+                self.navigationController?.popToRootViewController(animated: true)
+                
+                DispatchQueue.main.async {
                     SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "날이 바뀌어 메인화면으로 돌아왔습니다.")
                 }
                 
