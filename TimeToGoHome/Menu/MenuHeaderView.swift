@@ -11,19 +11,11 @@ class MenuHeaderView: UITableViewHeaderFooterView {
     
     lazy var categoryLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .useRGB(red: 60, green: 60, blue: 60, alpha: 0.6)
-        label.font = .systemFont(ofSize: 13, weight: .regular)
+        label.textColor = .useRGB(red: 120, green: 120, blue: 120)
+        label.font = .systemFont(ofSize: 16, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
-    }()
-    
-    lazy var bottomLineView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .useRGB(red: 60, green: 60, blue: 67, alpha: 0.29)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
     }()
 
     override init(reuseIdentifier: String?) {
@@ -44,7 +36,7 @@ class MenuHeaderView: UITableViewHeaderFooterView {
 // MARK: - Extension for essential methods
 extension MenuHeaderView: EssentialCellHeaderMethods {
     func setViewFoundation() {
-        self.layer.backgroundColor = UIColor.useRGB(red: 242, green: 242, blue: 247).cgColor
+        self.layer.backgroundColor = UIColor.white.cgColor
     }
     
     func initializeObjects() {
@@ -53,8 +45,7 @@ extension MenuHeaderView: EssentialCellHeaderMethods {
     
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
-            self.categoryLabel,
-            self.bottomLineView
+            self.categoryLabel
         ], to: self)
     }
     
@@ -63,18 +54,10 @@ extension MenuHeaderView: EssentialCellHeaderMethods {
         
         // categoryLabel
         NSLayoutConstraint.activate([
-            self.categoryLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 14),
-            self.categoryLabel.heightAnchor.constraint(equalToConstant: 18),
-            self.categoryLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -6),
+            self.categoryLabel.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            self.categoryLabel.heightAnchor.constraint(equalToConstant: 19),
+            self.categoryLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -8),
             self.categoryLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16)
-        ])
-        
-        // bottomLineView
-        NSLayoutConstraint.activate([
-            self.bottomLineView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
-            self.bottomLineView.heightAnchor.constraint(equalToConstant: 0.5),
-            self.bottomLineView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.bottomLineView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
         ])
     }
 }

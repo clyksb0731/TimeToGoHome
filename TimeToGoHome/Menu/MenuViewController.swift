@@ -9,21 +9,22 @@ import UIKit
 
 class MenuViewController: UIViewController {
     
-    lazy var topView: UIView = {
+    lazy var baseView: UIView = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(baseViewTapGesture(_:)))
+        
         let view = UIView()
-        view.backgroundColor = .white
+        view.addGestureRecognizer(tapGesture)
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
     
-    lazy var dismissButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "dismissButtonImage"), for: .normal)
-        button.addTarget(self, action: #selector(dismiss(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
+    lazy var movingView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.translatesAutoresizingMaskIntoConstraints = false
         
-        return button
+        return view
     }()
     
     lazy var menuMarkLabel: UILabel = {
@@ -37,12 +38,14 @@ class MenuViewController: UIViewController {
         return label
     }()
     
-    lazy var topViewBottomLineView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .useRGB(red: 60, green: 60, blue: 67, alpha: 0.29)
-        view.translatesAutoresizingMaskIntoConstraints = false
+    lazy var foldMenuButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "foldMenuButton"), for: .normal)
+        button.imageView?.contentMode = .center
+        button.addTarget(self, action: #selector(foldMenuButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
-        return view
+        return button
     }()
     
     lazy var menuTableView: UITableView = {
@@ -69,34 +72,52 @@ class MenuViewController: UIViewController {
         ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date
     }
     
-    var menuArray: [(header: String, items:[(menuStyle: MenuSettingCellType, menuText: String)])] {
+    var menuArray: [(header: String, items:[(menuStyle: MenuCellType, menuIconName: String, menuText: String)])] {
         [
             (header: "근무",
              items: [
-                (menuStyle: .openVC, menuText: "근무 내역"),
-                (menuStyle: .openVC, menuText: "근무 통계")
+                (menuStyle: .normal,
+                 menuIconName: ReferenceValues.ImageName.Menu.workRecord,
+                 menuText: "근무 내역"),
+                
+                (menuStyle: .normal,
+                 menuIconName: ReferenceValues.ImageName.Menu.workStatistics,
+                 menuText: "근무 통계")
              ]
             ),
             
             (header: "휴가",
              items: [
-                (menuStyle: .openVC, menuText: "휴가 일정")
+                (menuStyle: .normal,
+                 menuIconName: ReferenceValues.ImageName.Menu.vacationUsage,
+                 menuText: "휴가 일정")
              ]
             ),
             
             (header: "경력관리",
              items: [
-                (menuStyle: .label(SupportingMethods.shared.makeDateFormatter("yyyy.M.d").string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)), menuText: "입사일"),
-                (menuStyle: .openVC, menuText: "경력 사항"),
-                (menuStyle: .button(.withoutAnything), menuText: "퇴직 처리")
+                (menuStyle: .sideLabel(SupportingMethods.shared.makeDateFormatter("yyyy.M.d").string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)),
+                 menuIconName: ReferenceValues.ImageName.Menu.joiningDate,
+                 menuText: "입사일"),
+                
+                (menuStyle: .normal,
+                 menuIconName: ReferenceValues.ImageName.Menu.career,
+                 menuText: "경력 사항"),
+                
+                (menuStyle: .button(.withoutAnything),
+                 menuIconName: ReferenceValues.ImageName.Menu.leaveCompany,
+                 menuText: "퇴직 처리")
              ]
             )
         ]
     }
+    
+    var movingViewleadingAnchor: NSLayoutConstraint!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.setViewFoundation()
         self.initializeObjects()
         self.setDelegates()
         self.setGestures()
@@ -108,9 +129,13 @@ class MenuViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.setViewFoundation()
-        
         self.menuTableView.reloadData()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        self.unfoldMenu()
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -126,22 +151,23 @@ class MenuViewController: UIViewController {
 extension MenuViewController: EssentialViewMethods {
     func setViewFoundation() {
         // Backgroud color
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .clear
+        self.view.isOpaque = false
         
-        // Navigation bar appearance
-        let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.configureWithDefaultBackground()
-        navigationBarAppearance.backgroundColor = .white
-        navigationBarAppearance.titleTextAttributes = [
-            .foregroundColor : UIColor.black,
-            .font : UIFont.systemFont(ofSize: 17, weight: .semibold)
-        ]
-        
-        self.navigationController?.navigationBar.scrollEdgeAppearance = navigationBarAppearance
-        self.navigationController?.navigationBar.standardAppearance = navigationBarAppearance
-        self.navigationController?.navigationBar.compactAppearance = navigationBarAppearance
-        
-        self.navigationController?.setNavigationBarHidden(true, animated: true);
+//        // Navigation bar appearance
+//        let navigationBarAppearance = UINavigationBarAppearance()
+//        navigationBarAppearance.configureWithDefaultBackground()
+//        navigationBarAppearance.backgroundColor = .white
+//        navigationBarAppearance.titleTextAttributes = [
+//            .foregroundColor : UIColor.black,
+//            .font : UIFont.systemFont(ofSize: 17, weight: .semibold)
+//        ]
+//
+//        self.navigationController?.navigationBar.scrollEdgeAppearance = navigationBarAppearance
+//        self.navigationController?.navigationBar.standardAppearance = navigationBarAppearance
+//        self.navigationController?.navigationBar.compactAppearance = navigationBarAppearance
+//
+//        self.navigationController?.setNavigationBarHidden(true, animated: true);
     }
     
     func initializeObjects() {
@@ -162,69 +188,97 @@ extension MenuViewController: EssentialViewMethods {
     
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
-            self.topView,
-            self.menuTableView
+            self.baseView,
+            self.movingView
         ], to: self.view)
         
         SupportingMethods.shared.addSubviews([
-            self.dismissButton,
             self.menuMarkLabel,
-            self.topViewBottomLineView
-        ], to: self.topView)
+            self.foldMenuButton,
+            self.menuTableView
+        ], to: self.movingView)
     }
     
     func setLayouts() {
-        let safeArea = self.view.safeAreaLayoutGuide
-        
-        // topView
+        // baseView
         NSLayoutConstraint.activate([
-            self.topView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-            self.topView.heightAnchor.constraint(equalToConstant: 96),
-            self.topView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.topView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+            self.baseView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.baseView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            self.baseView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            self.baseView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)
         ])
         
-        // dismissButton
+        // movingView
+        self.movingViewleadingAnchor = self.movingView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: -295)
         NSLayoutConstraint.activate([
-            self.dismissButton.topAnchor.constraint(equalTo: self.topView.topAnchor),
-            self.dismissButton.heightAnchor.constraint(equalToConstant: 44),
-            self.dismissButton.trailingAnchor.constraint(equalTo: self.topView.trailingAnchor, constant: -5),
-            self.dismissButton.widthAnchor.constraint(equalToConstant: 44)
+            self.movingView.topAnchor.constraint(equalTo: self.baseView.topAnchor),
+            self.movingView.bottomAnchor.constraint(equalTo: self.baseView.bottomAnchor),
+            self.movingViewleadingAnchor,
+            self.movingView.widthAnchor.constraint(equalToConstant: 295)
         ])
         
         // menuMarkLabel
         NSLayoutConstraint.activate([
-            self.menuMarkLabel.bottomAnchor.constraint(equalTo: self.topView.bottomAnchor, constant: -8),
-            self.menuMarkLabel.leadingAnchor.constraint(equalTo: self.topView.leadingAnchor, constant: 16)
+            self.menuMarkLabel.topAnchor.constraint(equalTo: self.movingView.safeAreaLayoutGuide.topAnchor, constant: 16),
+            self.menuMarkLabel.heightAnchor.constraint(equalToConstant: 41),
+            self.menuMarkLabel.leadingAnchor.constraint(equalTo: self.movingView.safeAreaLayoutGuide.leadingAnchor, constant: 16)
         ])
         
-        // topViewBottomLineView
+        // foldMenuButton
         NSLayoutConstraint.activate([
-            self.topViewBottomLineView.bottomAnchor.constraint(equalTo: self.topView.bottomAnchor),
-            self.topViewBottomLineView.heightAnchor.constraint(equalToConstant: 0.5),
-            self.topViewBottomLineView.leadingAnchor.constraint(equalTo: self.topView.leadingAnchor),
-            self.topViewBottomLineView.trailingAnchor.constraint(equalTo: self.topView.trailingAnchor)
+            self.foldMenuButton.centerYAnchor.constraint(equalTo: self.menuMarkLabel.centerYAnchor),
+            self.foldMenuButton.heightAnchor.constraint(equalToConstant: 41),
+            self.foldMenuButton.trailingAnchor.constraint(equalTo: self.movingView.trailingAnchor),
+            self.foldMenuButton.widthAnchor.constraint(equalToConstant: 72)
         ])
         
         // menuTableView
         NSLayoutConstraint.activate([
-            self.menuTableView.topAnchor.constraint(equalTo: self.topView.bottomAnchor),
-            self.menuTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            self.menuTableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.menuTableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+            self.menuTableView.topAnchor.constraint(equalTo: self.menuMarkLabel.bottomAnchor, constant: 32),
+            self.menuTableView.bottomAnchor.constraint(equalTo: self.movingView.bottomAnchor),
+            self.menuTableView.leadingAnchor.constraint(equalTo: self.movingView.leadingAnchor),
+            self.menuTableView.trailingAnchor.constraint(equalTo: self.movingView.trailingAnchor)
         ])
     }
 }
 
 // MARK: - Extension for methods added
 extension MenuViewController {
+    func foldMenu() {
+        self.movingView.isUserInteractionEnabled = false
+        self.baseView.backgroundColor = .clear
+        self.movingViewleadingAnchor.constant = -295
+        
+        UIView.animate(withDuration: 0.2) {
+            self.view.layoutIfNeeded()
+            
+        } completion: { isFinished in
+            self.dismiss(animated: false)
+        }
+    }
     
+    func unfoldMenu() {
+        self.movingView.isUserInteractionEnabled = false
+        self.movingViewleadingAnchor.constant = 0
+        
+        UIView.animate(withDuration: 0.2) {
+            self.baseView.backgroundColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.2)
+            self.view.layoutIfNeeded()
+            
+        } completion: { isFinished in
+            self.movingView.isUserInteractionEnabled = true
+        }
+    }
 }
 
 // MARK: - Extension for Selector methods
 extension MenuViewController {
-    @objc func dismiss(_ sender: UIButton) {
-        self.dismiss(animated: true)
+    @objc func baseViewTapGesture(_ gesture: UITapGestureRecognizer) {
+        self.foldMenu()
+    }
+    
+    @objc func foldMenuButton(_ sender: UIButton) {
+        self.foldMenu()
     }
     
     @objc func changeLeavingDate(_ sender: UIButton) {
@@ -250,15 +304,22 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 38
+        return 27
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 0
+        if section == 2 {
+            return 0
+        }
+        
+        return 27
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return nil
+        if section == 2 {
+            return nil
+        }
+        return UIView()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -277,10 +338,17 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
             if indexPath.section == 2 && indexPath.row == 2 {
                 let menuLargeCell = tableView.dequeueReusableCell(withIdentifier: "MenuLargeCell", for: indexPath) as! MenuLargeCell
                 if todayDateId > leavingDateId {
-                    menuLargeCell.setCell(.button(.withSubText), itemText: "퇴직 취소", subTexts: (upperText: "마지막 근무일", lowerText: infoDateFormatter.string(from: leavingDate)))
+                    menuLargeCell.setCell(.button(.withSubText),
+                                          iconName: ReferenceValues.ImageName.Menu.leaveCompany,
+                                          itemText: "퇴직 취소",
+                                          subTexts: (upperText: "마지막 근무일", lowerText: infoDateFormatter.string(from: leavingDate)))
                     
                 } else {
-                    menuLargeCell.setCell(.button(.withSubButton), itemText: "퇴직예정 취소", subTexts: (upperText: nil, lowerText: infoDateFormatter.string(from: leavingDate)), subUpperButtonTarger: (target: self, action: #selector(changeLeavingDate(_:)), for: .touchUpInside))
+                    menuLargeCell.setCell(.button(.withSubButton),
+                                          iconName: ReferenceValues.ImageName.Menu.leaveCompany,
+                                          itemText: "퇴직예정 취소",
+                                          subTexts: (upperText: nil, lowerText: infoDateFormatter.string(from: leavingDate)),
+                                          subUpperButtonTarget: (target: self, action: #selector(changeLeavingDate(_:)), for: .touchUpInside))
                 }
                 
                 cell = menuLargeCell
@@ -288,8 +356,9 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
             } else {
                 let menuCell = tableView.dequeueReusableCell(withIdentifier: "MenuCell", for: indexPath) as! MenuCell
                 menuCell.setCell(self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
-                             itemText: self.menuArray[indexPath.section].items[indexPath.row].menuText,
-                             isEnable: todayDateId <= leavingDateId ||
+                                 iconName: self.menuArray[indexPath.section].items[indexPath.row].menuIconName,
+                                 itemText: self.menuArray[indexPath.section].items[indexPath.row].menuText,
+                                 isEnable: todayDateId <= leavingDateId ||
                                  (indexPath.section == 2 && indexPath.row == 0) ||
                                  (indexPath.section == 2 && indexPath.row == 1))
                 
@@ -299,8 +368,9 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
             let menuCell = tableView.dequeueReusableCell(withIdentifier: "MenuCell", for: indexPath) as! MenuCell
             menuCell.setCell(self.menuArray[indexPath.section].items[indexPath.row].menuStyle,
-                         itemText: self.menuArray[indexPath.section].items[indexPath.row].menuText,
-                         isEnable: true)
+                             iconName: self.menuArray[indexPath.section].items[indexPath.row].menuIconName,
+                             itemText: self.menuArray[indexPath.section].items[indexPath.row].menuText,
+                             isEnable: true)
             
             cell = menuCell
         }

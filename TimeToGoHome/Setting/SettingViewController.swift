@@ -209,7 +209,7 @@ class SettingViewController: UIViewController {
     
     weak var mainVC: MainViewController?
     
-    var settingArray: [(header: String, items:[(style: MenuSettingCellType, text: String)])] {
+    var settingArray: [(header: String, items:[(style: SettingCellType, text: String)])] {
         let workType = WorkType(rawValue: ReferenceValues.initialSetting[InitialSetting.workType.rawValue] as! String)!
         
         return [

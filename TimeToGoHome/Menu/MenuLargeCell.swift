@@ -9,10 +9,18 @@ import UIKit
 
 class MenuLargeCell: UITableViewCell {
     
+    lazy var menuIconImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
     lazy var itemTextLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = .systemFont(ofSize: 17, weight: .bold)
+        label.font = .systemFont(ofSize: 20, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -33,24 +41,6 @@ class MenuLargeCell: UITableViewCell {
         
         return view
     }()
-    
-//    lazy var subUpperButton: UIButton = {
-//        let paragraphStyle = NSMutableParagraphStyle()
-//        paragraphStyle.alignment = .center
-//        let attributedTitle: NSAttributedString = NSAttributedString(string: "예정일 변경", attributes: [
-//            .foregroundColor:UIColor.black,
-//            .font:UIFont.systemFont(ofSize: 15, weight: .bold),
-//            .paragraphStyle:paragraphStyle,
-//            .underlineStyle:NSUnderlineStyle.single.rawValue,
-//            .underlineColor:UIColor.black
-//        ])
-//
-//        let button = UIButton()
-//        button.setAttributedTitle(attributedTitle, for: .normal)
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//
-//        return button
-//    }()
     
     lazy var subUpperButtonLabel: UILabel = {
         let label = UILabel()
@@ -84,14 +74,6 @@ class MenuLargeCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
-    }()
-    
-    lazy var bottomLineView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .useRGB(red: 60, green: 60, blue: 67, alpha: 0.29)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -133,11 +115,11 @@ extension MenuLargeCell: EssentialCellHeaderMethods {
     
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
+            self.menuIconImageView,
             self.itemTextLabel,
             self.subUpperTextLabel,
             self.subUpperButtonBaseView,
-            self.subLowerTextLabel,
-            self.bottomLineView
+            self.subLowerTextLabel
         ], to: self)
         
         SupportingMethods.shared.addSubviews([
@@ -150,27 +132,34 @@ extension MenuLargeCell: EssentialCellHeaderMethods {
     func setLayouts() {
         let safeArea = self.safeAreaLayoutGuide
         
+        // menuIconImageView
+        NSLayoutConstraint.activate([
+            self.menuIconImageView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
+            self.menuIconImageView.heightAnchor.constraint(equalTo: safeArea.heightAnchor),
+            self.menuIconImageView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
+            self.menuIconImageView.widthAnchor.constraint(equalToConstant: 19)
+        ])
+        
         // itemTextLabel
         NSLayoutConstraint.activate([
-            self.itemTextLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 19),
-            self.itemTextLabel.heightAnchor.constraint(equalToConstant: 22),
-            self.itemTextLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -19),
-            self.itemTextLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
-            //self.itemTextLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -46)
+            self.itemTextLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 16),
+            self.itemTextLabel.heightAnchor.constraint(equalToConstant: 24),
+            self.itemTextLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -16),
+            self.itemTextLabel.leadingAnchor.constraint(equalTo: self.menuIconImageView.trailingAnchor, constant: 16)
         ])
         
         // subUpperTextLabel
         NSLayoutConstraint.activate([
-            self.subUpperTextLabel.bottomAnchor.constraint(equalTo: safeArea.centerYAnchor),
-            self.subUpperTextLabel.heightAnchor.constraint(equalToConstant: 25),
-            self.subUpperTextLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -31)
+            self.subUpperTextLabel.bottomAnchor.constraint(equalTo: safeArea.centerYAnchor, constant: -2),
+            self.subUpperTextLabel.heightAnchor.constraint(equalToConstant: 17),
+            self.subUpperTextLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16)
         ])
         
         // subUpperButtonBaseView
         NSLayoutConstraint.activate([
-            self.subUpperButtonBaseView.bottomAnchor.constraint(equalTo: safeArea.centerYAnchor),
-            self.subUpperButtonBaseView.heightAnchor.constraint(equalToConstant: 25),
-            self.subUpperButtonBaseView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -31),
+            self.subUpperButtonBaseView.bottomAnchor.constraint(equalTo: safeArea.centerYAnchor, constant: -2),
+            self.subUpperButtonBaseView.heightAnchor.constraint(equalToConstant: 17),
+            self.subUpperButtonBaseView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16),
             self.subUpperButtonBaseView.widthAnchor.constraint(greaterThanOrEqualToConstant: 10)
         ])
         
@@ -184,7 +173,7 @@ extension MenuLargeCell: EssentialCellHeaderMethods {
         
         // subUpperButtonBottomLineView
         NSLayoutConstraint.activate([
-            self.subUpperButtonBottomLineView.bottomAnchor.constraint(equalTo: self.subUpperButtonLabel.lastBaselineAnchor),
+            self.subUpperButtonBottomLineView.bottomAnchor.constraint(equalTo: self.subUpperButtonLabel.bottomAnchor),
             self.subUpperButtonBottomLineView.heightAnchor.constraint(equalToConstant: 0.5),
             self.subUpperButtonBottomLineView.leadingAnchor.constraint(equalTo: self.subUpperButtonLabel.leadingAnchor),
             self.subUpperButtonBottomLineView.trailingAnchor.constraint(equalTo: self.subUpperButtonLabel.trailingAnchor)
@@ -200,33 +189,27 @@ extension MenuLargeCell: EssentialCellHeaderMethods {
         
         // subLowerTextLabel
         NSLayoutConstraint.activate([
-            self.subLowerTextLabel.topAnchor.constraint(equalTo: safeArea.centerYAnchor),
-            self.subLowerTextLabel.heightAnchor.constraint(equalToConstant: 25),
-            self.subLowerTextLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -31)
-        ])
-        
-        // bottomLineView
-        NSLayoutConstraint.activate([
-            self.bottomLineView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
-            self.bottomLineView.heightAnchor.constraint(equalToConstant: 0.5),
-            self.bottomLineView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.bottomLineView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+            self.subLowerTextLabel.topAnchor.constraint(equalTo: safeArea.centerYAnchor, constant: 2),
+            self.subLowerTextLabel.heightAnchor.constraint(equalToConstant: 17),
+            self.subLowerTextLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16)
         ])
     }
 }
 
 // MARK: - Extension for methods added
 extension MenuLargeCell {
-    func setCell(_ style: MenuSettingCellType,
+    func setCell(_ style: MenuCellType,
+                 iconName: String,
                  itemText text: String,
                  subTexts: (upperText: String?, lowerText: String),
-                 subUpperButtonTarger: (target: Any?, action: Selector, for: UIControl.Event)? = nil) {
+                 subUpperButtonTarget: (target: Any?, action: Selector, for: UIControl.Event)? = nil) {
         
+        self.menuIconImageView.image = UIImage(named: iconName)
         self.itemTextLabel.text = text
         self.subUpperTextLabel.text = subTexts.upperText
         self.subLowerTextLabel.text = subTexts.lowerText
-        if let subUpperButtonTarger = subUpperButtonTarger {
-            self.subUpperButton.addTarget(subUpperButtonTarger.target, action: subUpperButtonTarger.action, for: subUpperButtonTarger.for)
+        if let subUpperButtonTarget = subUpperButtonTarget {
+            self.subUpperButton.addTarget(subUpperButtonTarget.target, action: subUpperButtonTarget.action, for: subUpperButtonTarget.for)
         }
         
         if case .button(let buttonStyle) = style, case .withSubText = buttonStyle {

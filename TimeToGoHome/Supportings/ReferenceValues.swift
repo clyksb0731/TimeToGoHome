@@ -23,6 +23,20 @@ struct ReferenceValues {
     }()
 }
 
+// MARK: - Extension of referenceValues for image name
+extension ReferenceValues {
+    struct ImageName {
+        struct Menu {
+            static let workRecord = "menuWorkRecord"
+            static let workStatistics = "menuWorkStatistics"
+            static let vacationUsage = "menuVacationUsage"
+            static let joiningDate = "menuJoiningDate"
+            static let career = "menuCareer"
+            static let leaveCompany = "menuLeaveCompany"
+        }
+    }
+}
+
 // MARK: - Extension of referenceValues for size
 extension ReferenceValues {
     struct Size {

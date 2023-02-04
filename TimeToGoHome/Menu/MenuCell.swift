@@ -7,10 +7,9 @@
 
 import UIKit
 
-enum MenuSettingCellType {
-    case openVC
-    case `switch`(Bool)
-    case label(String)
+enum MenuCellType {
+    case normal
+    case sideLabel(String)
     case button(MenuButtonType)
 }
 
@@ -21,31 +20,21 @@ enum MenuButtonType {
 }
 
 class MenuCell: UITableViewCell {
-    
-    lazy var itemTextLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .black
-        label.font = .systemFont(ofSize: 17, weight: .regular)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        return label
-    }()
-    
-    lazy var openVCImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "openVCImage"))
+    lazy var menuIconImageView: UIImageView = {
+        let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
-        
     }()
     
-    lazy var switchButton: UISwitch = {
-        let switchButton = UISwitch()
-        switchButton.isHidden = true
-        switchButton.translatesAutoresizingMaskIntoConstraints = false
+    lazy var itemTextLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.translatesAutoresizingMaskIntoConstraints = false
         
-        return switchButton
+        return label
     }()
     
     lazy var sideLabel: UILabel = {
@@ -56,14 +45,6 @@ class MenuCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
-    }()
-    
-    lazy var bottomLineView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .useRGB(red: 60, green: 60, blue: 67, alpha: 0.29)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -105,95 +86,68 @@ extension MenuCell: EssentialCellHeaderMethods {
     
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
+            self.menuIconImageView,
             self.itemTextLabel,
-            self.openVCImageView,
-            self.switchButton,
             self.sideLabel,
-            self.bottomLineView
         ], to: self)
     }
     
     func setLayouts() {
         let safeArea = self.safeAreaLayoutGuide
         
+        // menuIconImageView
+        NSLayoutConstraint.activate([
+            self.menuIconImageView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
+            self.menuIconImageView.heightAnchor.constraint(equalTo: safeArea.heightAnchor),
+            self.menuIconImageView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
+            self.menuIconImageView.widthAnchor.constraint(equalToConstant: 19)
+        ])
+        
         // itemTextLabel
         NSLayoutConstraint.activate([
-            self.itemTextLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 14),
-            self.itemTextLabel.heightAnchor.constraint(equalToConstant: 22),
-            self.itemTextLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -14),
-            self.itemTextLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
+            self.itemTextLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 13),
+            self.itemTextLabel.heightAnchor.constraint(equalToConstant: 24),
+            self.itemTextLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -13),
+            self.itemTextLabel.leadingAnchor.constraint(equalTo: self.menuIconImageView.trailingAnchor, constant: 16),
             self.itemTextLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -46)
-        ])
-        
-        // openVCImageView
-        NSLayoutConstraint.activate([
-            self.openVCImageView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
-            self.openVCImageView.heightAnchor.constraint(equalToConstant: 44),
-            self.openVCImageView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
-            self.openVCImageView.widthAnchor.constraint(equalToConstant: 44)
-        ])
-        
-        // switchButton
-        NSLayoutConstraint.activate([
-            self.switchButton.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
-            self.switchButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16)
         ])
         
         // sideLabel
         NSLayoutConstraint.activate([
             self.sideLabel.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
-            self.sideLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -31)
-        ])
-        
-        // bottomLineView
-        NSLayoutConstraint.activate([
-            self.bottomLineView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
-            self.bottomLineView.heightAnchor.constraint(equalToConstant: 0.5),
-            self.bottomLineView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.bottomLineView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+            self.sideLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -32)
         ])
     }
 }
 
 // MARK: Extension for methods added
 extension MenuCell {
-    func setCell(_ style: MenuSettingCellType, itemText text: String, isEnable: Bool = true) {
+    func setCell(_ style: MenuCellType, iconName: String, itemText text: String, isEnable: Bool = true) {
         self.selectionStyle = isEnable ? .default : .none
         
-        self.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
-        self.openVCImageView.alpha = isEnable ? 1.0 : 0.5
-        
-        self.itemTextLabel.font = .systemFont(ofSize: 17, weight: .regular)
+        self.menuIconImageView.image = UIImage(named: iconName)
         self.itemTextLabel.text = text
         
+        self.menuIconImageView.alpha = isEnable ? 1.0 : 0.5
+        self.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
+        
         switch style {
-        case .openVC:
-            self.openVCImageView.isHidden = false
-            self.switchButton.isHidden = true
+        case .normal:
+            self.itemTextLabel.font = .systemFont(ofSize: 20, weight: .bold)
+            
             self.sideLabel.isHidden = true
             
-        case .switch(let isOn):
-            self.openVCImageView.isHidden = true
-            self.switchButton.isHidden = false
-            self.sideLabel.isHidden = true
-            
-            self.switchButton.isOn = isOn
-            
-        case .label(let text):
-            self.openVCImageView.isHidden = true
-            self.switchButton.isHidden = true
-            self.sideLabel.isHidden = false
-            
+        case .sideLabel(let text):
+            self.itemTextLabel.font = .systemFont(ofSize: 20, weight: .regular)
             self.sideLabel.text = text
             
-            self.selectionStyle = .none
+            self.sideLabel.isHidden = false
+            self.selectionStyle = .none // for joiningDate and side label element would be just label.
             
         case .button:
-            self.openVCImageView.isHidden = true
-            self.switchButton.isHidden = true
-            self.sideLabel.isHidden = true
+            self.itemTextLabel.font = .systemFont(ofSize: 20, weight: .bold)
             
-            self.itemTextLabel.font = .systemFont(ofSize: 17, weight: .bold)
+            self.sideLabel.isHidden = true
         }
     }
 }

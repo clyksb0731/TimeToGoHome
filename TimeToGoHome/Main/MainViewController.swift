@@ -2622,10 +2622,14 @@ extension MainViewController {
 extension MainViewController {
     @objc func menuButton(_ sender: UIButton) {
         let menuVC = MenuViewController()
+        menuVC.modalPresentationStyle = .overCurrentContext
         menuVC.mainVC = self
-        let menuNaviVC = CustomizedNavigationController(rootViewController: menuVC)
         
-        self.present(menuNaviVC, animated: true, completion: nil)
+//        let menuNaviVC = CustomizedNavigationController(rootViewController: menuVC)
+//
+//        self.present(menuNaviVC, animated: true, completion: nil)
+        
+        self.present(menuVC, animated: false)
     }
     
     @objc func settingButton(_ sender: UIButton) {

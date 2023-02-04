@@ -7,6 +7,13 @@
 
 import UIKit
 
+enum SettingCellType {
+    case openVC
+    case `switch`(Bool)
+    case label(String)
+    case button
+}
+
 class SettingCell: UITableViewCell {
     
     lazy var itemTextLabel: UILabel = {
@@ -145,7 +152,7 @@ extension SettingCell: EssentialCellHeaderMethods {
 
 // MARK: Extension for methods added
 extension SettingCell {
-    func setCell(_ style: MenuSettingCellType, itemText text: String, indexPath: IndexPath, isEnable: Bool = true) {
+    func setCell(_ style: SettingCellType, itemText text: String, indexPath: IndexPath, isEnable: Bool = true) {
         self.selectionStyle = isEnable ? .default : .none
         
         self.itemTextLabel.alpha = isEnable ? 1.0 : 0.5
