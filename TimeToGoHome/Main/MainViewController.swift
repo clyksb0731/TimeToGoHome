@@ -568,29 +568,29 @@ extension MainViewController {
         // Backgroud color
         self.view.backgroundColor = .white
         
-        /*
-        // Navigation item appearance
+        // Navigation
         let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.configureWithTransparentBackground()
+        navigationBarAppearance.configureWithDefaultBackground()
         navigationBarAppearance.backgroundColor = .white
         navigationBarAppearance.titleTextAttributes = [
             .foregroundColor : UIColor.black,
-            .font : UIFont.systemFont(ofSize: 22, weight: .bold)
+            .font : UIFont.systemFont(ofSize: 17, weight: .semibold)
         ]
         
-        self.navigationItem.scrollEdgeAppearance = navigationBarAppearance
-        self.navigationItem.standardAppearance = navigationBarAppearance
-        self.navigationItem.compactAppearance = navigationBarAppearance
+        self.navigationController?.navigationBar.scrollEdgeAppearance = navigationBarAppearance
+        self.navigationController?.navigationBar.standardAppearance = navigationBarAppearance
+        self.navigationController?.navigationBar.compactAppearance = navigationBarAppearance
         
-        self.navigationController?.setNavigationBarHidden(false, animated: true);
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
         
+        /*
         self.navigationItem.title = "오늘의 일정"
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "menuBarButton"), style: .plain, target: self, action: #selector(menuBarButtonItem(_:)))
         self.navigationItem.leftBarButtonItem?.tintColor = UIColor.useRGB(red: 151, green: 151, blue: 151)
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "settingBarButton"), style: .plain, target: self, action: #selector(settingBarButtonItem(_:)))
         self.navigationItem.rightBarButtonItem?.tintColor = .black
-         */
+        */
     }
     
     // Initialize views
@@ -2660,7 +2660,23 @@ extension MainViewController {
         let now = SupportingMethods.getCurrentTimeSeconds()
         
         if (now >= self.tomorrowTimeValue) {
-            if let presentedVC = self.presentedViewController {
+            if self.navigationController!.viewControllers.count > 1 {
+                self.navigationController?.popToRootViewController(animated: true)
+                
+                DispatchQueue.main.async {
+                    if self.isEditingMode {
+                        if let schedule = self.tempSchedule {
+                            self.schedule = schedule
+                        }
+                        
+                        self.mainTimeCoverView.isHidden = true
+                        self.isEditingMode = false
+                    }
+                    
+                    SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "날이 바뀌어 메인화면으로 돌아왔습니다.")
+                }
+                
+            } else if let presentedVC = self.presentedViewController {
                 if self.isEditingMode {
                     if let schedule = self.tempSchedule {
                         self.schedule = schedule

@@ -51,7 +51,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // MARK: Determine root view controller
     func determineRootVC() {
         if !ReferenceValues.initialSetting.isEmpty {
-            self.window?.rootViewController = MainViewController()
+            self.window?.rootViewController = CustomizedNavigationController(rootViewController: MainViewController())
             
         } else {
             self.window?.rootViewController = InitialViewController()

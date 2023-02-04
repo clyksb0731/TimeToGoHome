@@ -21,7 +21,24 @@ class MenuViewController: UIViewController {
     
     lazy var movingView: UIView = {
         let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var movingLeftView: UIView = {
+        let view = UIView()
         view.backgroundColor = .white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var movingBaseView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 20
+        view.clipsToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -193,10 +210,15 @@ extension MenuViewController: EssentialViewMethods {
         ], to: self.view)
         
         SupportingMethods.shared.addSubviews([
+            self.movingLeftView,
+            self.movingBaseView
+        ], to: self.movingView)
+        
+        SupportingMethods.shared.addSubviews([
             self.menuMarkLabel,
             self.foldMenuButton,
             self.menuTableView
-        ], to: self.movingView)
+        ], to: self.movingBaseView)
     }
     
     func setLayouts() {
@@ -217,11 +239,27 @@ extension MenuViewController: EssentialViewMethods {
             self.movingView.widthAnchor.constraint(equalToConstant: 295)
         ])
         
+        // movingLeftView
+        NSLayoutConstraint.activate([
+            self.movingLeftView.topAnchor.constraint(equalTo: self.movingView.topAnchor),
+            self.movingLeftView.bottomAnchor.constraint(equalTo: self.movingView.bottomAnchor),
+            self.movingLeftView.leadingAnchor.constraint(equalTo: self.movingView.leadingAnchor),
+            self.movingLeftView.trailingAnchor.constraint(equalTo: self.movingView.centerXAnchor)
+        ])
+        
+        //
+        NSLayoutConstraint.activate([
+            self.movingBaseView.topAnchor.constraint(equalTo: self.movingView.topAnchor),
+            self.movingBaseView.bottomAnchor.constraint(equalTo: self.movingView.bottomAnchor),
+            self.movingBaseView.leadingAnchor.constraint(equalTo: self.movingView.leadingAnchor),
+            self.movingBaseView.trailingAnchor.constraint(equalTo: self.movingView.trailingAnchor)
+        ])
+        
         // menuMarkLabel
         NSLayoutConstraint.activate([
-            self.menuMarkLabel.topAnchor.constraint(equalTo: self.movingView.safeAreaLayoutGuide.topAnchor, constant: 16),
+            self.menuMarkLabel.topAnchor.constraint(equalTo: self.movingBaseView.safeAreaLayoutGuide.topAnchor, constant: 16),
             self.menuMarkLabel.heightAnchor.constraint(equalToConstant: 41),
-            self.menuMarkLabel.leadingAnchor.constraint(equalTo: self.movingView.safeAreaLayoutGuide.leadingAnchor, constant: 16)
+            self.menuMarkLabel.leadingAnchor.constraint(equalTo: self.movingBaseView.safeAreaLayoutGuide.leadingAnchor, constant: 16)
         ])
         
         // foldMenuButton
@@ -235,9 +273,9 @@ extension MenuViewController: EssentialViewMethods {
         // menuTableView
         NSLayoutConstraint.activate([
             self.menuTableView.topAnchor.constraint(equalTo: self.menuMarkLabel.bottomAnchor, constant: 32),
-            self.menuTableView.bottomAnchor.constraint(equalTo: self.movingView.bottomAnchor),
-            self.menuTableView.leadingAnchor.constraint(equalTo: self.movingView.leadingAnchor),
-            self.menuTableView.trailingAnchor.constraint(equalTo: self.movingView.trailingAnchor)
+            self.menuTableView.bottomAnchor.constraint(equalTo: self.movingBaseView.bottomAnchor),
+            self.menuTableView.leadingAnchor.constraint(equalTo: self.movingBaseView.leadingAnchor),
+            self.menuTableView.trailingAnchor.constraint(equalTo: self.movingBaseView.trailingAnchor)
         ])
     }
 }
@@ -249,7 +287,7 @@ extension MenuViewController {
         self.baseView.backgroundColor = .clear
         self.movingViewleadingAnchor.constant = -295
         
-        UIView.animate(withDuration: 0.2) {
+        UIView.animate(withDuration: 0.25) {
             self.view.layoutIfNeeded()
             
         } completion: { isFinished in
@@ -261,7 +299,7 @@ extension MenuViewController {
         self.movingView.isUserInteractionEnabled = false
         self.movingViewleadingAnchor.constant = 0
         
-        UIView.animate(withDuration: 0.2) {
+        UIView.animate(withDuration: 0.25) {
             self.baseView.backgroundColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.2)
             self.view.layoutIfNeeded()
             
@@ -387,7 +425,8 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == 2 && indexPath.row == 1 {
             let careerVC = CareerViewController()
 
-            self.navigationController?.pushViewController(careerVC, animated: true)
+            self.mainVC?.navigationController?.pushViewController(careerVC, animated: true)
+            self.foldMenu()
         }
         
         if indexPath.section == 2 && indexPath.row == 2 {
@@ -425,17 +464,22 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
             let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
             let workRecordVC = WorkRecordViewController(companyModel: companyModel)
             
-            self.navigationController?.pushViewController(workRecordVC, animated: true)
+            self.mainVC?.navigationController?.pushViewController(workRecordVC, animated: true)
+            self.foldMenu()
         }
         
         if indexPath.section == 0 && indexPath.row == 1 {
             // WorkStatisticsViewController
+            
+//            self.mainVC?.navigationController?.pushViewController(workRecordVC, animated: true)
+//            self.foldMenu()
         }
         
         if indexPath.section == 1 && indexPath.row == 0 {
             let vacationUsageVC = VacationUsageViewController()
             
-            self.navigationController?.pushViewController(vacationUsageVC, animated: true)
+            self.mainVC?.navigationController?.pushViewController(vacationUsageVC, animated: true)
+            self.foldMenu()
         }
     }
 }
