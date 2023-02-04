@@ -432,17 +432,24 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         if indexPath.section == 2 && indexPath.row == 2 {
-            if self.leavingDate != nil {
+            if let leavingDate = self.leavingDate {
                 SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 취소", andMessage: "퇴직처리를 취소할까요?", okAction: UIAlertAction(title: "예", style: .default, handler: { action in
                     let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
                     companyModel.setLeavingDate(nil)
                     ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.leavingDate.rawValue)
+                    SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
                     
                     self.menuTableView.reloadData()
                     
-                    self.mainVC?.schedule = .today
-                    self.mainVC?.determineToday()
-                    self.mainVC?.activateTimer()
+                    let orderingDateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+                    let leavingDateId = Int(orderingDateFormatter.string(from: leavingDate))!
+                    let todayDateId = Int(orderingDateFormatter.string(from: Date()))!
+                    
+                    if todayDateId > leavingDateId {
+                        self.mainVC?.schedule = .today
+                        self.mainVC?.determineToday()
+                        self.mainVC?.activateTimer()
+                    }
                     
                 }), cancelAction: UIAlertAction(title: "아니오", style: .cancel), completion: nil)
                 
