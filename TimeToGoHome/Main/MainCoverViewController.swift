@@ -647,7 +647,7 @@ extension MainCoverViewController {
             let presentingVC = self.presentingViewController
             let tempSelf = self
             self.dismiss(animated: false) {
-                if let mainVC = presentingVC as? MainViewController {
+                if let mainNaviVC = presentingVC as? CustomizedNavigationController, let mainVC = mainNaviVC.viewControllers.first as? MainViewController {
                     mainVC.isEditingMode = tempSelf.isEditingBeforePresented!
                 }
             }
