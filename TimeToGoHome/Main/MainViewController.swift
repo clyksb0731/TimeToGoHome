@@ -2880,7 +2880,27 @@ extension MainViewController {
                 }
                 
             } else {
-                self.schedule = self.tempSchedule!
+                if case .morning(let scheduleWorkTimeType) = self.schedule.morning,
+                   case .morning(let tempScheduleWorkTimeType) = self.tempSchedule?.morning,
+                   scheduleWorkTimeType != tempScheduleWorkTimeType {
+                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
+                    
+                } else if case .afternoon(let scheduleWorkTimeType) = self.schedule.afternoon,
+                   case .afternoon(let tempScheduleWorkTimeType) = self.tempSchedule?.afternoon,
+                          scheduleWorkTimeType != tempScheduleWorkTimeType {
+                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
+                    
+                } else if (self.schedule.overtime == nil && self.tempSchedule?.overtime != nil) ||
+                            (self.schedule.overtime != nil && self.tempSchedule?.overtime == nil) {
+                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
+                    
+                } else if case .overtime(let scheduleOvertime) = self.schedule.overtime,
+                            case .overtime(let tempScheduleOvertime) = self.tempSchedule?.overtime, scheduleOvertime != tempScheduleOvertime {
+                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
+                    
+                } else {
+                    self.schedule = self.tempSchedule!
+                }
             }
             
             self.mainTimeCoverView.isHidden = true
@@ -3375,6 +3395,28 @@ extension MainViewController: MainCoverDelegate {
                     } else {
                         // No need to reset main time view values
                     }
+                }
+                
+                self.scheduleTableView.reloadData()
+                self.determineScheduleButtonState(for: self.schedule)
+                
+                DispatchQueue.main.async {
+                    self.determineIfHalfDay()
+                }
+                
+            } else {
+                if case .morning(let scheduleWorkTimeType) = self.schedule.morning,
+                   case .morning(let tempScheduleWorkTimeType) = self.tempSchedule?.morning,
+                   scheduleWorkTimeType != tempScheduleWorkTimeType {
+                    self.schedule = self.tempSchedule!
+                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
+                }
+                
+                if case .afternoon(let scheduleWorkTimeType) = self.schedule.afternoon,
+                   case .afternoon(let tempScheduleWorkTimeType) = self.tempSchedule?.afternoon,
+                   scheduleWorkTimeType != tempScheduleWorkTimeType {
+                    self.schedule = self.tempSchedule!
+                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
                 }
                 
                 self.scheduleTableView.reloadData()
