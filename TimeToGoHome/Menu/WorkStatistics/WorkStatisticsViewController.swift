@@ -33,7 +33,13 @@ class WorkStatisticsViewController: UIViewController {
 // MARK: - Extension for essential methods
 extension WorkStatisticsViewController: EssentialViewMethods {
     func setViewFoundation() {
+        self.view.backgroundColor = .white
         
+        self.navigationController?.setNavigationBarHidden(false, animated: true);
+        
+        self.navigationItem.title = "근무 통계"
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "backButtonItemImage"), style: .plain, target: self, action: #selector(leftBarButtonItem(_:)))
+        self.navigationItem.leftBarButtonItem?.tintColor = .black
     }
     
     func initializeObjects() {
@@ -59,6 +65,16 @@ extension WorkStatisticsViewController: EssentialViewMethods {
     func setLayouts() {
         
     }
+}
+
+// MARK: Extension for methods added
+extension WorkStatisticsViewController {
     
-    
+}
+
+// MARK: - Extension for selector methods
+extension WorkStatisticsViewController {
+    @objc func leftBarButtonItem(_ sender: UIBarButtonItem) {
+        self.navigationController?.popViewController(animated: true)
+    }
 }
