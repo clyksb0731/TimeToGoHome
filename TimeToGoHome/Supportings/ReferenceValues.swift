@@ -86,19 +86,19 @@ extension ReferenceValues {
 extension UIColor {
     struct Schedule {
         static var work: UIColor {
-            return .useRGB(red: 65, green: 167, blue: 183)
+            return .useRGB(red: 37, green: 131, blue: 146)
         }
         
         static var overtime: UIColor {
-            return .useRGB(red: 237, green: 148, blue: 167)
+            return .useRGB(red: 250, green: 138, blue: 162)
         }
         
         static var vacation: UIColor {
-            return .useRGB(red: 250, green: 211, blue: 93)
+            return .useRGB(red: 251, green: 205, blue: 68)
         }
         
         static var holiday: UIColor {
-            return .useRGB(red: 252, green: 156, blue: 76)
+            return .useRGB(red: 255, green: 151, blue: 64)
         }
         
         static var scheduling: UIColor {
@@ -116,19 +116,19 @@ extension UIColor {
     
     struct Record {
         static var work: UIColor {
-            return .useRGB(red: 65, green: 167, blue: 183)
+            return .useRGB(red: 37, green: 131, blue: 146)
         }
         
         static var overtime: UIColor {
-            return .useRGB(red: 237, green: 148, blue: 167)
+            return .useRGB(red: 250, green: 138, blue: 162)
         }
         
         static var vacation: UIColor {
-            return .useRGB(red: 250, green: 211, blue: 93)
+            return .useRGB(red: 251, green: 205, blue: 68)
         }
         
         static var holiday: UIColor {
-            return .useRGB(red: 252, green: 156, blue: 76)
+            return .useRGB(red: 255, green: 151, blue: 64)
         }
         
         static var scheduling: UIColor {
