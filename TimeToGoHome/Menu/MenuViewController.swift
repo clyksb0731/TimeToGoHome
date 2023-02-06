@@ -478,10 +478,11 @@ extension MenuViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         if indexPath.section == 0 && indexPath.row == 1 {
-            // WorkStatisticsViewController
+            let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
+            let workStatistics = WorkStatisticsViewController(companyModel: companyModel)
             
-//            self.mainVC?.navigationController?.pushViewController(workRecordVC, animated: true)
-//            self.foldMenu()
+            self.mainVC?.navigationController?.pushViewController(workStatistics, animated: true)
+            self.foldMenu()
         }
         
         if indexPath.section == 1 && indexPath.row == 0 {

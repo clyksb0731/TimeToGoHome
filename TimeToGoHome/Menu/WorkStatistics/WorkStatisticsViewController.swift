@@ -8,6 +8,18 @@
 import UIKit
 
 class WorkStatisticsViewController: UIViewController {
+    
+    var companyModel: CompanyModel
+    
+    init(companyModel: CompanyModel) {
+        self.companyModel = companyModel
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,6 +31,12 @@ class WorkStatisticsViewController: UIViewController {
         self.setNotificationCenters()
         self.setSubviews()
         self.setLayouts()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {

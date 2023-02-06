@@ -228,6 +228,24 @@ struct CompanyModel {
         return schedules
     }
     
+    enum StatisticsPeriod {
+        case week
+        case month
+        case year
+    }
+    
+    func calculateStatistics(_ period: StatisticsPeriod) -> (regularWorkTime: Int, overtime: Int, vacation: Int) {
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+        
+        let today: Date = Date()
+        let todayTimeInterval = today.timeIntervalSinceReferenceDate
+        let weekdayOfToday = SupportingMethods.shared.getWeekdayOfDate(today)
+        let todayId: Int = Int(dateFormatter.string(from: today))!
+        //let thisSundayId: Int =
+        
+        return (regularWorkTime: 0, overtime: 0, vacation: 0) // FIXME: Not completed
+    }
+    
 //    func setSchedule(_ schedule: Schedule) {
 //        let realm = try! Realm()
 //
