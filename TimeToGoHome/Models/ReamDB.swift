@@ -234,16 +234,64 @@ struct CompanyModel {
         case year
     }
     
-    func calculateStatistics(_ period: StatisticsPeriod) -> (regularWorkTime: Int, overtime: Int, vacation: Int) {
+    func calculateStatistics(_ period: StatisticsPeriod, today: Date) -> (regularWorkTime: Int, overtime: Int, vacation: Int)? {
         let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
         
-        let today: Date = Date()
-        let todayTimeInterval = today.timeIntervalSinceReferenceDate
+        let todayYear = SupportingMethods.shared.getYearMonthAndDayOf(today).year
+        let todayMonth = SupportingMethods.shared.getYearMonthAndDayOf(today).month
+        let todayTimeInterval = Int(today.timeIntervalSinceReferenceDate)
         let weekdayOfToday = SupportingMethods.shared.getWeekdayOfDate(today)
         let todayId: Int = Int(dateFormatter.string(from: today))!
-        //let thisSundayId: Int =
+        let thisSundayId: Int = Int(dateFormatter.string(from: Date(timeIntervalSinceReferenceDate: Double(todayTimeInterval - 86400 * (weekdayOfToday - 1)))))!
         
-        return (regularWorkTime: 0, overtime: 0, vacation: 0) // FIXME: Not completed
+        var allRegularTime: Int = 0
+        var allOvertime: Int = 0
+        var allVacation: Int = 0
+        
+        var schedules: Results<Schedule>?
+        
+        switch period {
+        case .week:
+            schedules = self.schedules?.where {
+                $0.dateId >= thisSundayId && $0.dateId <= todayId
+            }
+            
+        case .month:
+            schedules = self.schedules?.where {
+                $0.year == todayYear &&
+                $0.month == todayMonth
+            }
+            
+        case .year:
+            schedules = self.schedules?.where {
+                $0.year == todayYear
+            }
+        }
+        
+        if let schedules = schedules {
+            for schedule in schedules {
+                if schedule.morning == WorkTimeType.work.rawValue {
+                    allRegularTime += 4*60
+                }
+                if schedule.afternoon == WorkTimeType.work.rawValue {
+                    allRegularTime += 4*60
+                }
+                if let overtime = schedule.overtime {
+                    allOvertime += overtime
+                }
+                if schedule.morning == WorkTimeType.vacation.rawValue {
+                    allVacation += 4*60
+                }
+                if schedule.afternoon == WorkTimeType.vacation.rawValue {
+                    allVacation += 4*60
+                }
+            }
+            
+            return (regularWorkTime: allRegularTime, overtime: allOvertime, vacation: allVacation)
+            
+        } else {
+            return nil
+        }
     }
     
 //    func setSchedule(_ schedule: Schedule) {
