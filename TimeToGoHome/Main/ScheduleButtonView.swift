@@ -354,7 +354,7 @@ extension ScheduleButtonView {
         }()
         
         let addHolidayButtonImageView: UIImageView = {
-            let imageView = UIImageView(image: UIImage(named: "addScheduleGrayButtonImage"))
+            let imageView = UIImageView(image: UIImage(named: "addScheduleWhiteButtonImage"))
             imageView.contentMode = .scaleAspectFit
             imageView.translatesAutoresizingMaskIntoConstraints = false
             
@@ -364,10 +364,10 @@ extension ScheduleButtonView {
         let holidayButtonViewLabel: UILabel = {
             let label = UILabel()
             label.layer.cornerRadius = 7
-            label.layer.borderColor = UIColor.useRGB(red: 130, green: 130, blue: 130).cgColor
+            label.layer.borderColor = UIColor.white.cgColor
             label.layer.borderWidth = 1
             label.font = .systemFont(ofSize: 10)
-            label.textColor = .useRGB(red: 130, green: 130, blue: 130)
+            label.textColor = .white
             label.textAlignment = .center
             label.text = "휴일"
             label.translatesAutoresizingMaskIntoConstraints = false
@@ -879,7 +879,7 @@ extension ScheduleButtonView {
         }()
         
         let addHolidayButtonImageView: UIImageView = {
-            let imageView = UIImageView(image: UIImage(named: "addScheduleGrayButtonImage"))
+            let imageView = UIImageView(image: UIImage(named: "addScheduleWhiteButtonImage"))
             imageView.contentMode = .scaleAspectFit
             imageView.translatesAutoresizingMaskIntoConstraints = false
             
@@ -889,10 +889,10 @@ extension ScheduleButtonView {
         let holidayButtonViewLabel: UILabel = {
             let label = UILabel()
             label.layer.cornerRadius = 7
-            label.layer.borderColor = UIColor.useRGB(red: 130, green: 130, blue: 130).cgColor
+            label.layer.borderColor = UIColor.white.cgColor
             label.layer.borderWidth = 1
             label.font = .systemFont(ofSize: 10)
-            label.textColor = .useRGB(red: 130, green: 130, blue: 130)
+            label.textColor = .white
             label.textAlignment = .center
             label.text = "휴일"
             label.translatesAutoresizingMaskIntoConstraints = false
@@ -1747,7 +1747,7 @@ extension ScheduleButtonView {
         }
         
         if case .replaceOvertimeOrFinishWork = buttonViewType {
-            self.replaceOvertimeOrFinishWorkOvertimeLabel?.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(overtime))"
+            self.replaceOvertimeOrFinishWorkOvertimeLabel?.text = "\(SupportingMethods.shared.determineReplacingHourAndMinuteUsingSecond(overtime))"
             
             timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(replaceOvertimeOrFinishWorkTimer(_:)), userInfo: nil, repeats: true)
         }
@@ -1928,7 +1928,7 @@ extension ScheduleButtonView {
             self.replaceOvertimeOrFinishWorkOvertimeLabel?.textColor = .yellow
         }
         
-        self.replaceOvertimeOrFinishWorkOvertimeLabel?.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(self.calculateOvertime()!))"
+        self.replaceOvertimeOrFinishWorkOvertimeLabel?.text = "\(SupportingMethods.shared.determineReplacingHourAndMinuteUsingSecond(self.calculateOvertime()!))"
     }
 }
 

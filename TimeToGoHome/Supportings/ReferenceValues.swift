@@ -86,19 +86,19 @@ extension ReferenceValues {
 extension UIColor {
     struct Schedule {
         static var work: UIColor {
-            return .useRGB(red: 125, green: 243, blue: 110)
+            return .useRGB(red: 65, green: 167, blue: 183)
         }
         
         static var overtime: UIColor {
-            return .useRGB(red: 239, green: 119, blue: 119)
+            return .useRGB(red: 237, green: 148, blue: 167)
         }
         
         static var vacation: UIColor {
-            return .useRGB(red: 120, green: 223, blue: 238)
+            return .useRGB(red: 250, green: 211, blue: 93)
         }
         
         static var holiday: UIColor {
-            return .useRGB(red: 252, green: 247, blue: 143)
+            return .useRGB(red: 252, green: 156, blue: 76)
         }
         
         static var scheduling: UIColor {
@@ -116,19 +116,19 @@ extension UIColor {
     
     struct Record {
         static var work: UIColor {
-            return .useRGB(red: 125, green: 243, blue: 110)
+            return .useRGB(red: 65, green: 167, blue: 183)
         }
         
         static var overtime: UIColor {
-            return .useRGB(red: 239, green: 119, blue: 119)
+            return .useRGB(red: 237, green: 148, blue: 167)
         }
         
         static var vacation: UIColor {
-            return .useRGB(red: 120, green: 223, blue: 238)
+            return .useRGB(red: 250, green: 211, blue: 93)
         }
         
         static var holiday: UIColor {
-            return .useRGB(red: 252, green: 247, blue: 143)
+            return .useRGB(red: 252, green: 156, blue: 76)
         }
         
         static var scheduling: UIColor {
@@ -142,7 +142,7 @@ extension UIColor {
     
     struct Calendar {
         static var vacation: UIColor {
-            return .useRGB(red: 110, green: 217, blue: 228)
+            return .useRGB(red: 255, green: 201, blue: 6)
         }
         
         static var todayMark: UIColor {

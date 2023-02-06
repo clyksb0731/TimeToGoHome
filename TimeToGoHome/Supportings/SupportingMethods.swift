@@ -393,6 +393,23 @@ extension SupportingMethods {
         }
     }
     
+    func determineReplacingHourAndMinuteUsingSecond(_ seconds: Int) -> String {
+        let hours = seconds / 3600
+        let minutesLeft = (seconds % 3600) / 60
+        
+        if hours > 0 {
+            if minutesLeft == 0 {
+                return "⇡ \(hours)시간"
+                
+            } else {
+                return "⇡ \(hours)시간 \(minutesLeft)분"
+            }
+            
+        } else {
+            return "⇡ \(minutesLeft)분"
+        }
+    }
+    
     func makeHourAndMinuteAttributedStringUsingSecond(_ seconds: Int, withValueAttributes valueAttributes: [NSAttributedString.Key : Any], andWithMarkAttributes markAttributes: [NSAttributedString.Key : Any]) -> NSAttributedString {
         let hours = seconds / 3600
         let minutesLeft = (seconds % 3600) / 60

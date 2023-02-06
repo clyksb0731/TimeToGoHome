@@ -130,7 +130,7 @@ class MainCoverViewController: UIViewController {
     lazy var holidayButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .Schedule.holiday
-        button.setTitleColor(.useRGB(red: 130, green: 130, blue: 130), for: .normal)
+        button.setTitleColor(.white, for: .normal)
         button.setTitleColor(.useRGB(red: 200, green: 200, blue: 200), for: .disabled)
         button.setTitle("휴일", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 24, weight: .semibold)

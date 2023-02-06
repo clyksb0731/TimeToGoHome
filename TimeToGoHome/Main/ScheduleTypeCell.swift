@@ -185,9 +185,9 @@ extension ScheduleTypeCell {
             switch workTimeType {
             case .holiday:
                 self.scheduleView.backgroundColor = .Schedule.holiday
-                self.timeTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
-                self.removeScheduleButton.setImage(UIImage(named: "removeScheduleButtonGrayImage"), for: .normal)
-                self.scheduleTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
+                self.timeTypeLabel.textColor = .white
+                self.removeScheduleButton.setImage(UIImage(named: "removeScheduleButtonWhiteImage"), for: .normal)
+                self.scheduleTypeLabel.textColor = .white
                 self.scheduleTypeLabel.text = "휴일"
                 
             case .work:
@@ -213,9 +213,9 @@ extension ScheduleTypeCell {
             switch workTimeType {
             case .holiday:
                 self.scheduleView.backgroundColor = .Schedule.holiday
-                self.timeTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
-                self.removeScheduleButton.setImage(UIImage(named: "removeScheduleButtonGrayImage"), for: .normal)
-                self.scheduleTypeLabel.textColor = .useRGB(red: 130, green: 130, blue: 130)
+                self.timeTypeLabel.textColor = .white
+                self.removeScheduleButton.setImage(UIImage(named: "removeScheduleButtonWhiteImage"), for: .normal)
+                self.scheduleTypeLabel.textColor = .white
                 self.scheduleTypeLabel.text = "휴일"
                 
             case .work:
