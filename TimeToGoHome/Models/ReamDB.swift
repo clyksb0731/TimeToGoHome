@@ -239,9 +239,15 @@ struct CompanyModel {
         
         let todayYear = SupportingMethods.shared.getYearMonthAndDayOf(today).year
         let todayMonth = SupportingMethods.shared.getYearMonthAndDayOf(today).month
-        let todayTimeInterval = Int(today.timeIntervalSinceReferenceDate)
         let weekdayOfToday = SupportingMethods.shared.getWeekdayOfDate(today)
-        let todayId: Int = Int(dateFormatter.string(from: today))!
+        let todayTimeInterval = Int(today.timeIntervalSinceReferenceDate)
+        //let todayId: Int = Int(dateFormatter.string(from: today))!
+        
+        let yesterday = Date(timeIntervalSinceReferenceDate: Double(todayTimeInterval - 86400))
+        //let yesterdayYear = SupportingMethods.shared.getYearMonthAndDayOf(yesterday).year
+        //let yesterdayMonth = SupportingMethods.shared.getYearMonthAndDayOf(yesterday).month
+        let yesterdayId: Int = Int(dateFormatter.string(from: yesterday))!
+        
         let thisSundayId: Int = Int(dateFormatter.string(from: Date(timeIntervalSinceReferenceDate: Double(todayTimeInterval - 86400 * (weekdayOfToday - 1)))))!
         
         var allRegularTime: Int = 0
@@ -253,18 +259,20 @@ struct CompanyModel {
         switch period {
         case .week:
             schedules = self.schedules?.where {
-                $0.dateId >= thisSundayId && $0.dateId <= todayId
+                $0.dateId >= thisSundayId && $0.dateId <= yesterdayId
             }
             
         case .month:
             schedules = self.schedules?.where {
                 $0.year == todayYear &&
-                $0.month == todayMonth
+                $0.month == todayMonth &&
+                $0.dateId <= yesterdayId
             }
             
         case .year:
             schedules = self.schedules?.where {
-                $0.year == todayYear
+                $0.year == todayYear &&
+                $0.dateId <= yesterdayId
             }
         }
         
@@ -287,7 +295,7 @@ struct CompanyModel {
                 }
             }
             
-            return (regularWorkTime: allRegularTime, overtime: allOvertime, vacation: allVacation)
+            return (regularWorkTime: allRegularTime, overtime: allOvertime / 60, vacation: allVacation)
             
         } else {
             return nil

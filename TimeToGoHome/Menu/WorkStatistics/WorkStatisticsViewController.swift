@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Charts
 
 class WorkStatisticsViewController: UIViewController {
     
@@ -13,7 +14,7 @@ class WorkStatisticsViewController: UIViewController {
         let scrollView = UIScrollView()
         scrollView.bounces = false
         scrollView.contentSize = CGSize(width: ReferenceValues.keyWindow.screen.bounds.width,
-                                        height: 48 + ReferenceValues.keyWindow.screen.bounds.width + 215) // 16 + 32 + width + 32 + 32 + 19 + 24 + 24 + 8 + 24 + 8 + 24 + 20
+                                        height: 16 + ReferenceValues.keyWindow.screen.bounds.width + 247) // 16 + width + 16 + 32 + 16 + 32 + 19 + 24 + 24 + 8 + 24 + 8 + 24 + 20
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
         return scrollView
@@ -24,15 +25,6 @@ class WorkStatisticsViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
-    }()
-    
-    lazy var segmentControl: UISegmentedControl = {
-        let segmentControl = UISegmentedControl(items: ["주", "월", "년"])
-        segmentControl.selectedSegmentIndex = 1
-        segmentControl.addTarget(self, action: #selector(statisticsSegmentControl(_:)), for: .valueChanged)
-        segmentControl.translatesAutoresizingMaskIntoConstraints = false
-        
-        return segmentControl
     }()
     
     lazy var statisticsScrollView: UIScrollView = {
@@ -57,34 +49,131 @@ class WorkStatisticsViewController: UIViewController {
     
     lazy var weekView: UIView = {
         let view = UIView()
-        view.backgroundColor = .yellow
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
+    }()
+    
+    lazy var weekPieChartView: PieChartView = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .percent
+        formatter.maximumFractionDigits = 2
+        formatter.multiplier = 1.0
+        
+        let statisticsValues = self.companyModel.calculateStatistics(.week, today: self.today)
+        
+        let dataEntries: [PieChartDataEntry] = [
+            PieChartDataEntry(value: Double(statisticsValues?.regularWorkTime ?? 0), label: "정규 근무"),
+            PieChartDataEntry(value: Double(statisticsValues?.overtime ?? 0), label: "초과 근무"),
+            PieChartDataEntry(value: Double(statisticsValues?.vacation ?? 0), label: "휴가")
+        ]
+        let dataSet: PieChartDataSet = PieChartDataSet(entries: dataEntries, label: "")
+        dataSet.colors = [
+            .Schedule.work,
+            .Schedule.overtime,
+            .Schedule.vacation
+        ]
+        let data = PieChartData(dataSet: dataSet)
+        
+        let chartView = PieChartView()
+        chartView.usePercentValuesEnabled = true
+        chartView.data = data
+        chartView.data?.setValueFormatter(DefaultValueFormatter(formatter: formatter)) // MARK: The 'setValueFormatter' must be called after inserting data into chartView's data
+        chartView.data?.setValueTextColor(.white)
+        chartView.holeColor = .clear
+        chartView.isHidden = statisticsValues == nil || (statisticsValues?.regularWorkTime == 0 && statisticsValues?.overtime == 0 && statisticsValues?.vacation == 0)
+        chartView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return chartView
     }()
     
     lazy var monthView: UIView = {
         let view = UIView()
-        view.backgroundColor = .blue
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
+    }()
+    
+    lazy var monthPieChartView: PieChartView = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .percent
+        formatter.maximumFractionDigits = 2
+        formatter.multiplier = 1.0
+        
+        let statisticsValues = self.companyModel.calculateStatistics(.month, today: self.today)
+        
+        let dataEntries: [PieChartDataEntry] = [
+            PieChartDataEntry(value: Double(statisticsValues?.regularWorkTime ?? 0), label: "정규 근무"),
+            PieChartDataEntry(value: Double(statisticsValues?.overtime ?? 0), label: "초과 근무"),
+            PieChartDataEntry(value: Double(statisticsValues?.vacation ?? 0), label: "휴가")
+        ]
+        let dataSet: PieChartDataSet = PieChartDataSet(entries: dataEntries, label: "")
+        dataSet.colors = [
+            .Schedule.work,
+            .Schedule.overtime,
+            .Schedule.vacation
+        ]
+        let data = PieChartData(dataSet: dataSet)
+        
+        let chartView = PieChartView()
+        chartView.usePercentValuesEnabled = true
+        chartView.data = data
+        chartView.data?.setValueFormatter(DefaultValueFormatter(formatter: formatter)) // MARK: The 'setValueFormatter' must be called after inserting data into chartView's data
+        chartView.data?.setValueTextColor(.white)
+        chartView.holeColor = .clear
+        chartView.isHidden = statisticsValues == nil || (statisticsValues?.regularWorkTime == 0 && statisticsValues?.overtime == 0 && statisticsValues?.vacation == 0)
+        chartView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return chartView
     }()
     
     lazy var yearView: UIView = {
         let view = UIView()
-        view.backgroundColor = .green
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
     
-    lazy var separatorLineView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .useRGB(red: 151, green: 151, blue: 151)
-        view.translatesAutoresizingMaskIntoConstraints = false
+    lazy var yearPieChartView: PieChartView = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .percent
+        formatter.maximumFractionDigits = 2
+        formatter.multiplier = 1.0
         
-        return view
+        let statisticsValues = self.companyModel.calculateStatistics(.year, today: self.today)
+        
+        let dataEntries: [PieChartDataEntry] = [
+            PieChartDataEntry(value: Double(statisticsValues?.regularWorkTime ?? 0), label: "정규 근무"),
+            PieChartDataEntry(value: Double(statisticsValues?.overtime ?? 0), label: "초과 근무"),
+            PieChartDataEntry(value: Double(statisticsValues?.vacation ?? 0), label: "휴가")
+        ]
+        let dataSet: PieChartDataSet = PieChartDataSet(entries: dataEntries, label: "")
+        dataSet.colors = [
+            .Schedule.work,
+            .Schedule.overtime,
+            .Schedule.vacation
+        ]
+        let data = PieChartData(dataSet: dataSet)
+        
+        let chartView = PieChartView()
+        chartView.usePercentValuesEnabled = true
+        chartView.data = data
+        chartView.data?.setValueFormatter(DefaultValueFormatter(formatter: formatter)) // MARK: The 'setValueFormatter' must be called after inserting data into chartView's data
+        chartView.data?.setValueTextColor(.white)
+        chartView.holeColor = .clear
+        chartView.isHidden = statisticsValues == nil || (statisticsValues?.regularWorkTime == 0 && statisticsValues?.overtime == 0 && statisticsValues?.vacation == 0)
+        chartView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return chartView
+    }()
+    
+    lazy var segmentControl: UISegmentedControl = {
+        let segmentControl = UISegmentedControl(items: ["주", "월", "년"])
+        segmentControl.selectedSegmentIndex = 1
+        segmentControl.addTarget(self, action: #selector(statisticsSegmentControl(_:)), for: .valueChanged)
+        segmentControl.translatesAutoresizingMaskIntoConstraints = false
+        
+        return segmentControl
     }()
     
     lazy var periodLabel: UILabel = {
@@ -205,11 +294,7 @@ extension WorkStatisticsViewController: EssentialViewMethods {
     }
     
     func initializeObjects() {
-        let statisticsValues = self.companyModel.calculateStatistics(.month, today: self.today)
-        
-        self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
-        self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
-        self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
+        self.determineInformationView(.month) // initial value
     }
     
     func setDelegates() {
@@ -234,9 +319,8 @@ extension WorkStatisticsViewController: EssentialViewMethods {
         ], to: self.scrollView)
         
         SupportingMethods.shared.addSubviews([
-            self.segmentControl,
             self.statisticsScrollView,
-            self.separatorLineView,
+            self.segmentControl,
             self.periodLabel,
             self.informationView
         ], to: self.contentView)
@@ -250,6 +334,18 @@ extension WorkStatisticsViewController: EssentialViewMethods {
             self.monthView,
             self.yearView
         ], to: self.statisticsContentView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.weekPieChartView
+        ], to: self.weekView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.monthPieChartView
+        ], to: self.monthView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.yearPieChartView
+        ], to: self.yearView)
         
         SupportingMethods.shared.addSubviews([
             self.regularWorkTimeMarkView,
@@ -280,17 +376,9 @@ extension WorkStatisticsViewController: EssentialViewMethods {
             self.contentView.widthAnchor.constraint(equalTo: self.scrollView.widthAnchor)
         ])
         
-        // statisticsSegmentControl
-        NSLayoutConstraint.activate([
-            self.segmentControl.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 16),
-            self.segmentControl.heightAnchor.constraint(equalToConstant: 32),
-            self.segmentControl.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
-            self.segmentControl.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8)
-        ])
-        
         // statisticsScrollView
         NSLayoutConstraint.activate([
-            self.statisticsScrollView.topAnchor.constraint(equalTo: self.segmentControl.bottomAnchor),
+            self.statisticsScrollView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 16),
             self.statisticsScrollView.heightAnchor.constraint(equalToConstant: ReferenceValues.keyWindow.screen.bounds.width),
             self.statisticsScrollView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
             self.statisticsScrollView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor)
@@ -312,6 +400,8 @@ extension WorkStatisticsViewController: EssentialViewMethods {
             self.weekView.widthAnchor.constraint(equalToConstant: ReferenceValues.keyWindow.screen.bounds.width)
         ])
         
+        SupportingMethods.shared.makeConstraintsOf(self.weekPieChartView, sameAs: self.weekView)
+        
         // monthView
         NSLayoutConstraint.activate([
             self.monthView.topAnchor.constraint(equalTo: self.statisticsContentView.topAnchor),
@@ -319,6 +409,8 @@ extension WorkStatisticsViewController: EssentialViewMethods {
             self.monthView.leadingAnchor.constraint(equalTo: self.weekView.trailingAnchor),
             self.monthView.widthAnchor.constraint(equalToConstant: ReferenceValues.keyWindow.screen.bounds.width)
         ])
+        
+        SupportingMethods.shared.makeConstraintsOf(self.monthPieChartView, sameAs: self.monthView)
         
         // yearView
         NSLayoutConstraint.activate([
@@ -328,17 +420,19 @@ extension WorkStatisticsViewController: EssentialViewMethods {
             self.yearView.widthAnchor.constraint(equalToConstant: ReferenceValues.keyWindow.screen.bounds.width)
         ])
         
-        // separatorLineView
+        SupportingMethods.shared.makeConstraintsOf(self.yearPieChartView, sameAs: self.yearView)
+        
+        // statisticsSegmentControl
         NSLayoutConstraint.activate([
-            self.separatorLineView.topAnchor.constraint(equalTo: self.statisticsScrollView.bottomAnchor, constant: 32),
-            self.separatorLineView.heightAnchor.constraint(equalToConstant: 0.5),
-            self.separatorLineView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 40),
-            self.separatorLineView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -40)
+            self.segmentControl.topAnchor.constraint(equalTo: self.statisticsScrollView.bottomAnchor, constant: 16),
+            self.segmentControl.heightAnchor.constraint(equalToConstant: 32),
+            self.segmentControl.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8),
+            self.segmentControl.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8)
         ])
         
         // periodLabel
         NSLayoutConstraint.activate([
-            self.periodLabel.topAnchor.constraint(equalTo: self.separatorLineView.bottomAnchor, constant: 32),
+            self.periodLabel.topAnchor.constraint(equalTo: self.segmentControl.bottomAnchor, constant: 32),
             self.periodLabel.heightAnchor.constraint(equalToConstant: 19),
             self.periodLabel.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor)
         ])
@@ -498,6 +592,72 @@ extension WorkStatisticsViewController {
     func calculateVacationTimeToDays(_ minutes: Int) -> Double {
         return minutes % 480 > 0 ? Double(minutes / 480) + 0.5 : Double(minutes / 480)
     }
+    
+    func determineInformationView(_ period: CompanyModel.StatisticsPeriod) {
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyy년 M월 d일")
+        let todayTimeInterval = Int(self.today.timeIntervalSinceReferenceDate)
+        
+        switch period {
+        case .week:
+            self.statisticsScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+            
+            let weekdayOfToday = SupportingMethods.shared.getWeekdayOfDate(self.today)
+            let thisSundayDate = Date(timeIntervalSinceReferenceDate: Double(todayTimeInterval - 86400 * (weekdayOfToday - 1)))
+            guard weekdayOfToday != 1 else {
+                self.periodLabel.text = "근무 내역이 없습니다."
+                self.informationView.isHidden = true
+                
+                return
+            }
+            
+            self.periodLabel.text = "\(dateFormatter.string(from: thisSundayDate)) ~ 어제"
+            
+            let statisticsValues = self.companyModel.calculateStatistics(.week, today: self.today)
+            self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
+            self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
+            self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
+            
+        case .month:
+            self.statisticsScrollView.setContentOffset(CGPoint(x: ReferenceValues.keyWindow.screen.bounds.width, y: 0), animated: true)
+            
+            let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(self.today)
+            let theFirstDateOfThisMonth = SupportingMethods.shared.makeDateWithYear(yearMonthDay.year, month: yearMonthDay.month)
+            
+            guard yearMonthDay.day != 1 else {
+                self.periodLabel.text = "근무 내역이 없습니다."
+                self.informationView.isHidden = true
+                
+                return
+            }
+            
+            self.periodLabel.text = "\(dateFormatter.string(from: theFirstDateOfThisMonth)) ~ 어제"
+            
+            let statisticsValues = self.companyModel.calculateStatistics(.month, today: self.today)
+            self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
+            self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
+            self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
+            
+        case .year:
+            self.statisticsScrollView.setContentOffset(CGPoint(x: ReferenceValues.keyWindow.screen.bounds.width * 2, y: 0), animated: true)
+            
+            let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(self.today)
+            let theFirstDateOfThisYear = SupportingMethods.shared.makeDateWithYear(yearMonthDay.year, month: 1)
+            
+            guard yearMonthDay.month != 1 || yearMonthDay.day != 1 else {
+                self.periodLabel.text = "근무 내역이 없습니다."
+                self.informationView.isHidden = true
+                
+                return
+            }
+            
+            self.periodLabel.text = "\(dateFormatter.string(from: theFirstDateOfThisYear)) ~ 어제"
+            
+            let statisticsValues = self.companyModel.calculateStatistics(.year, today: self.today)
+            self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
+            self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
+            self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
+        }
+    }
 }
 
 // MARK: - Extension for selector methods
@@ -510,43 +670,15 @@ extension WorkStatisticsViewController {
         print("selectedSegmentIndex: \(sender.selectedSegmentIndex)")
         
         if sender.selectedSegmentIndex == 0 {
-            self.statisticsScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
-            
-            let weekdayOfToday = SupportingMethods.shared.getWeekdayOfDate(self.today)
-            let todayTimeInterval = Int(self.today.timeIntervalSinceReferenceDate)
-            let thisSundayDate = Date(timeIntervalSinceReferenceDate: Double(todayTimeInterval - 86400 * (weekdayOfToday - 1)))
-            self.periodLabel.text = "\(SupportingMethods.shared.makeDateFormatter("yyyy년 M월 d일").string(from: thisSundayDate)) ~ 오늘"
-            
-            let statisticsValues = self.companyModel.calculateStatistics(.week, today: self.today)
-            self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
-            self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
-            self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
+            self.determineInformationView(.week)
         }
         
         if sender.selectedSegmentIndex == 1 {
-            self.statisticsScrollView.setContentOffset(CGPoint(x: ReferenceValues.keyWindow.screen.bounds.width, y: 0), animated: true)
-            
-            let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(self.today)
-            let theFirstDateOfThisMonth = SupportingMethods.shared.makeDateWithYear(yearMonthDay.year, month: yearMonthDay.month)
-            self.periodLabel.text = "\(SupportingMethods.shared.makeDateFormatter("yyyy년 M월 d일").string(from: theFirstDateOfThisMonth)) ~ 오늘"
-            
-            let statisticsValues = self.companyModel.calculateStatistics(.month, today: self.today)
-            self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
-            self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
-            self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
+            self.determineInformationView(.month)
         }
         
         if sender.selectedSegmentIndex == 2 {
-            self.statisticsScrollView.setContentOffset(CGPoint(x: ReferenceValues.keyWindow.screen.bounds.width * 2, y: 0), animated: true)
-            
-            let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(self.today)
-            let theFirstDateOfThisYear = SupportingMethods.shared.makeDateWithYear(yearMonthDay.year, month: 1)
-            self.periodLabel.text = "\(SupportingMethods.shared.makeDateFormatter("yyyy년 M월 d일").string(from: theFirstDateOfThisYear)) ~ 오늘"
-            
-            let statisticsValues = self.companyModel.calculateStatistics(.year, today: self.today)
-            self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
-            self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
-            self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
+            self.determineInformationView(.year)
         }
     }
 }

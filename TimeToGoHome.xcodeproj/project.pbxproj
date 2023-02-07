@@ -44,6 +44,7 @@
 		CAA3B24D2801758200FFF892 /* CalendarHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */; };
 		CAA3B24F28018ED600FFF892 /* VacationButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24E28018ED600FFF892 /* VacationButtonView.swift */; };
 		CAA65B1327E50899000ECC40 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = CAA65B1227E50899000ECC40 /* Alamofire */; };
+		CAB07D442991F8460025E4D9 /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = CAB07D432991F8460025E4D9 /* Charts */; };
 		CAB661532974D71800F01500 /* PublicHolidayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB661522974D71800F01500 /* PublicHolidayModel.swift */; };
 		CAB6C93927FA9A9E00B67F1A /* StaggeredWorkTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6C93827FA9A9E00B67F1A /* StaggeredWorkTypeViewController.swift */; };
 		CAB6C93B27FA9AAC00B67F1A /* NormalWorkTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6C93A27FA9AAC00B67F1A /* NormalWorkTypeViewController.swift */; };
@@ -159,6 +160,7 @@
 				CAC2625728367F0C0074A599 /* RealmSwift in Frameworks */,
 				CAC2625528367F0C0074A599 /* Realm in Frameworks */,
 				CAA65B1327E50899000ECC40 /* Alamofire in Frameworks */,
+				CAB07D442991F8460025E4D9 /* Charts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -412,6 +414,7 @@
 				CAA65B1227E50899000ECC40 /* Alamofire */,
 				CAC2625428367F0C0074A599 /* Realm */,
 				CAC2625628367F0C0074A599 /* RealmSwift */,
+				CAB07D432991F8460025E4D9 /* Charts */,
 			);
 			productName = TimeToGoHome;
 			productReference = CA22675E274402D50035663D /* TimeToGoHome.app */;
@@ -444,6 +447,7 @@
 			packageReferences = (
 				CAA65B1127E50899000ECC40 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				CAC2625328367F0C0074A599 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				CAB07D422991F8450025E4D9 /* XCRemoteSwiftPackageReference "Charts" */,
 			);
 			productRefGroup = CA22675F274402D50035663D /* Products */;
 			projectDirPath = "";
@@ -769,6 +773,14 @@
 				minimumVersion = 5.5.0;
 			};
 		};
+		CAB07D422991F8450025E4D9 /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielgindi/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.1.0;
+			};
+		};
 		CAC2625328367F0C0074A599 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift.git";
@@ -784,6 +796,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CAA65B1127E50899000ECC40 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		CAB07D432991F8460025E4D9 /* Charts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CAB07D422991F8450025E4D9 /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = Charts;
 		};
 		CAC2625428367F0C0074A599 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
