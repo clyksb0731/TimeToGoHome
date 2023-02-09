@@ -1168,17 +1168,6 @@ extension MainViewController {
                     } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
                         remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
                     }
-                    
-//                    if currentTimeSeconds < atLunchTimeSeconds {
-//                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - WorkScheduleModel.secondsOfLunchTime
-//
-//                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
-//                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
-//                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - lunchTimeSecondsLeft
-//
-//                    } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
-//                        remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds
-//                    }
                 }
             }
             
@@ -1310,18 +1299,6 @@ extension MainViewController {
                     } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
                         progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
                     }
-                    
-                    
-//                    if currentTimeSeconds < atLunchTimeSeconds {
-//                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
-//
-//                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
-//                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
-//                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - lunchTimeSecondsPassed
-//
-//                    } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
-//                        progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
-//                    }
                     
                     maximumProgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
                 }
@@ -1463,18 +1440,6 @@ extension MainViewController {
                         progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
                     }
                     
-                    
-//                    if currentTimeSeconds < atLunchTimeSeconds {
-//                        progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds
-//
-//                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
-//                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
-//                        progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds - lunchTimeSecondsPassed
-//
-//                    } else { // currentTimeSeconds >= atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime
-//                        progressTimeSeconds = (currentTimeSeconds > endingTimeSeconds ? endingTimeSeconds : currentTimeSeconds) - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
-//                    }
-                    
                     maximumProgressTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
                 }
             }
@@ -1535,8 +1500,6 @@ extension MainViewController {
         } else {
             // FIXME: For totally vacation or holiday
         }
-        
-        
         
         let rate = Double(progressTimeSeconds) / Double(maximumProgressTimeSeconds)
 //        let rate = Double(progressTimeSeconds) / Double(maximumPrgressTimeSeconds) < 1.0 ? Double(progressTimeSeconds) / Double(maximumPrgressTimeSeconds) : 1.0
@@ -2761,6 +2724,8 @@ extension MainViewController {
     @objc func remainingTimeButtonView(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
+        self.determineRemainingTimeOnMainTimeView()
+        
         self.remainingTimeButtonView.isSelected = true
         self.progressTimeButtonView.isSelected = false
         self.progressRateButtonView.isSelected = false
@@ -2774,6 +2739,8 @@ extension MainViewController {
     @objc func progressTimeButtonView(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
+        self.determineProgressTimeOnMainTimeView()
+        
         self.remainingTimeButtonView.isSelected = false
         self.progressTimeButtonView.isSelected = true
         self.progressRateButtonView.isSelected = false
@@ -2786,6 +2753,8 @@ extension MainViewController {
     
     @objc func progressRateButtonView(_ sender: UIButton) {
         UIDevice.lightHaptic()
+        
+        self.determineProgressRateOnMainTimeView()
         
         self.remainingTimeButtonView.isSelected = false
         self.progressTimeButtonView.isSelected = false
