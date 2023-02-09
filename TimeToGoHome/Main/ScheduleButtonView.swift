@@ -1167,7 +1167,7 @@ extension ScheduleButtonView {
         let overtimeLabel: UILabel = {
             let label = UILabel()
             label.font = .systemFont(ofSize: 13)
-            label.textColor = .red
+            label.textColor = .white
             label.textAlignment = .right
             label.adjustsFontSizeToFitWidth = true
             label.minimumScaleFactor = 0.5
@@ -1300,7 +1300,7 @@ extension ScheduleButtonView {
             label.font = .systemFont(ofSize: 10)
             label.textColor = .white
             label.textAlignment = .center
-            label.text = "추가 근무"
+            label.text = "추가 시간 변경"
             label.translatesAutoresizingMaskIntoConstraints = false
             
             return label
@@ -1309,7 +1309,7 @@ extension ScheduleButtonView {
         let overtimeLabel: UILabel = {
             let label = UILabel()
             label.font = .systemFont(ofSize: 13)
-            label.textColor = .red
+            label.textColor = .white
             label.textAlignment = .right
             label.adjustsFontSizeToFitWidth = true
             label.minimumScaleFactor = 0.5
@@ -1384,7 +1384,7 @@ extension ScheduleButtonView {
             overtimeButtonViewLabel.centerYAnchor.constraint(equalTo: overtimeButtonView.centerYAnchor),
             overtimeButtonViewLabel.heightAnchor.constraint(equalToConstant: 21),
             overtimeButtonViewLabel.leadingAnchor.constraint(equalTo: overtimeButtonView.leadingAnchor, constant: 20),
-            overtimeButtonViewLabel.widthAnchor.constraint(equalToConstant: 51)
+            overtimeButtonViewLabel.widthAnchor.constraint(equalToConstant: 65)
         ])
         
         // Overtime label layout
@@ -1909,26 +1909,16 @@ extension ScheduleButtonView {
     // MARK: Timers
     // addOvertimeOrFinishWork timer
     @objc func addOvertimeOrFinishWorkTimer(_ timer: Timer) {
-        if self.addOvertimeOrFinishWorkOvertimeLabel?.textColor == .yellow {
-            self.addOvertimeOrFinishWorkOvertimeLabel?.textColor = .red
-            
-        } else {
-            self.addOvertimeOrFinishWorkOvertimeLabel?.textColor = .yellow
-        }
-        
         self.addOvertimeOrFinishWorkOvertimeLabel?.text = "\(SupportingMethods.shared.determineAdditionalHourAndMinuteUsingSecond(self.calculateOvertime()!))"
+        
+        self.addOvertimeOrFinishWorkOvertimeLabel?.isHidden.toggle()
     }
     
     // replaceOvertimeOrFinishWork timer
     @objc func replaceOvertimeOrFinishWorkTimer(_ timer: Timer) {
-        if self.replaceOvertimeOrFinishWorkOvertimeLabel?.textColor == .yellow {
-            self.replaceOvertimeOrFinishWorkOvertimeLabel?.textColor = .red
-            
-        } else {
-            self.replaceOvertimeOrFinishWorkOvertimeLabel?.textColor = .yellow
-        }
-        
         self.replaceOvertimeOrFinishWorkOvertimeLabel?.text = "\(SupportingMethods.shared.determineReplacingHourAndMinuteUsingSecond(self.calculateOvertime()!))"
+        
+        self.replaceOvertimeOrFinishWorkOvertimeLabel?.isHidden.toggle()
     }
 }
 

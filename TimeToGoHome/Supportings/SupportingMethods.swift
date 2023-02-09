@@ -399,14 +399,14 @@ extension SupportingMethods {
         
         if hours > 0 {
             if minutesLeft == 0 {
-                return "⇡ \(hours)시간"
+                return "⇪ \(hours)시간"
                 
             } else {
-                return "⇡ \(hours)시간 \(minutesLeft)분"
+                return "⇪ \(hours)시간 \(minutesLeft)분"
             }
             
         } else {
-            return "⇡ \(minutesLeft)분"
+            return "⇪ \(minutesLeft)분"
         }
     }
     
