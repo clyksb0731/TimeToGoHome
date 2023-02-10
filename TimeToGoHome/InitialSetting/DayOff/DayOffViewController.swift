@@ -1631,18 +1631,10 @@ extension DayOffViewController {
         
         self.completeInitialSettings()
         
-        let mainVC = MainViewController()
-        mainVC.modalPresentationStyle = .fullScreen
-        // let mainNaviVC = CustomizedNavigationController(rootViewController: mainVC)
+        let mainNaviVC = CustomizedNavigationController(rootViewController: MainViewController())
+        mainNaviVC.modalPresentationStyle = .fullScreen
         
-//        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-//            windowScene.windows.first?.rootViewController = mainNaviVC
-//            windowScene.windows.first?.makeKeyAndVisible()
-//        }
-        
-        // self.present(mainNaviVC, animated: true)
-        
-        self.present(mainVC, animated: true)
+        self.present(mainNaviVC, animated: true)
         
         self.vacationNotification?.invalidate()
     }
