@@ -42,7 +42,7 @@ class MainViewController: UIViewController {
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = .systemFont(ofSize: 22, weight: .bold)
+        label.font = .systemFont(ofSize: 26, weight: .bold)
         label.text = "오늘의 일정"
         
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -993,13 +993,14 @@ extension MainViewController {
            todayDateId > leavingDateId {
             self.stopTimer() // This(self) view shouldn't work because new timer on new main view would work for new company.
             
+            self.settingButton.isEnabled = false
             self.leavingDateCoverView.isHidden = false
             
-            self.navigationItem.rightBarButtonItem?.isEnabled = false
             SupportingMethods.shared.turnOffAndRemoveLocalPush()
             SupportingMethods.shared.setAppSetting(with: nil, for: .isIgnoredLunchTimeToday)
             
         } else {
+            self.settingButton.isEnabled = true
             self.leavingDateCoverView.isHidden = true
         }
         
@@ -2965,15 +2966,14 @@ extension MainViewController {
     }
     
     @objc func initializeNewCompanyButton(_ sender: UIButton) {
+        VacationModel.removeAllVacations()
+        
         let initialVC = InitialViewController()
         initialVC.tempInitialSetting = ReferenceValues.initialSetting
         initialVC.modalPresentationStyle = .fullScreen
         
-        self.present(initialVC, animated: true) {
-            ReferenceValues.initialSetting = [:]
-            
-            VacationModel.removeAllVacations()
-        }
+        ReferenceValues.initialSetting = [:]
+        self.present(initialVC, animated: true)
     }
 }
 

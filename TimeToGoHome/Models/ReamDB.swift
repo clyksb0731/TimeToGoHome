@@ -666,7 +666,8 @@ struct VacationModel {
         let realm = try! Realm()
         
         try! realm.write {
-            realm.delete(self.vacations)
+            let allVacation = realm.objects(Vacation.self)
+            realm.delete(allVacation)
         }
     }
 }

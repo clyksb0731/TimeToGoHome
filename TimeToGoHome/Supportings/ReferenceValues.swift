@@ -168,7 +168,7 @@ extension UIColor {
         }
         
         static var initializeNewCompany: UIColor {
-            return .useRGB(red: 120, green: 223, blue: 238)
+            return .useRGB(red: 26, green: 54, blue: 52) //.useRGB(red: 120, green: 223, blue: 238)
         }
     }
 }

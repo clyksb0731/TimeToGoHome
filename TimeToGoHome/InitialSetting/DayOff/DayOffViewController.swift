@@ -428,8 +428,7 @@ class DayOffViewController: UIViewController {
     
     lazy var minusButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "minusNormalButton"), for: .normal)
-        button.setImage(UIImage(named: "minusDisableButton"), for: .disabled)
+        button.setImage(UIImage(named: "minusButton"), for: .normal)
         button.addTarget(self, action: #selector(minusButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
@@ -1025,7 +1024,7 @@ extension DayOffViewController {
             self.settingNumberOfTotalVacationView.topAnchor.constraint(equalTo: self.settingVacationButtonsView.bottomAnchor, constant: 48),
             self.settingNumberOfTotalVacationView.heightAnchor.constraint(equalToConstant: 48),
             self.settingNumberOfTotalVacationView.centerXAnchor.constraint(equalTo: self.settingVacationView.centerXAnchor),
-            self.settingNumberOfTotalVacationView.widthAnchor.constraint(equalToConstant: 152)
+            self.settingNumberOfTotalVacationView.widthAnchor.constraint(equalToConstant: 172)
         ])
         
         // minusButton layout
@@ -1560,18 +1559,26 @@ extension DayOffViewController {
     @objc func minusButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
-        self.numberOfAnnualPaidHolidays -= 1
+        guard Double(self.numberOfAnnualPaidHolidays - 1) >= self.numberOfVacationsHold else {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "연차 일수", andMessage: "예약된 휴가보다 적은 연차 일수를 설정할 수 없습니다.")
+            
+            return
+        }
         
-        self.minusButton.isEnabled = Double(self.numberOfAnnualPaidHolidays - 1) >= self.numberOfVacationsHold
+        self.numberOfAnnualPaidHolidays -= 1
         self.numberOfAnnualPaidHolidaysLabel.text = "\(self.numberOfAnnualPaidHolidays)"
     }
     
     @objc func plusButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
-        self.numberOfAnnualPaidHolidays += 1
+        guard self.numberOfAnnualPaidHolidays + 1 < 100 else {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "연차 일수", andMessage: "설정 가능한 연차 일수는 최대 99일입니다.")
+            
+            return
+        }
         
-        self.minusButton.isEnabled = Double(self.numberOfAnnualPaidHolidays - 1) >= self.numberOfVacationsHold
+        self.numberOfAnnualPaidHolidays += 1
         self.numberOfAnnualPaidHolidaysLabel.text = "\(self.numberOfAnnualPaidHolidays)"
     }
     
