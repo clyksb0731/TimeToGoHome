@@ -241,7 +241,12 @@ extension CareerViewController: UITableViewDelegate, UITableViewDataSource {
                 CompanyModel.removeCompany(self.companiesClassified[indexPath.section].companies[indexPath.row])
                 
                 if let lastCompany = CompanyModel.getLastCompany() {
-                    let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(lastCompany.dateId))!
+                    guard Int(dateFormatter.string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date))! != lastCompany.dateId else {
+                        
+                        return
+                    }
+                    
+                    let joiningDate = dateFormatter.date(from: String(lastCompany.dateId))!
                     
                     ReferenceValues.initialSetting.updateValue(joiningDate, forKey: InitialSetting.joiningDate.rawValue)
                     ReferenceValues.initialSetting.updateValue(lastCompany.name, forKey: InitialSetting.companyName.rawValue)
@@ -277,14 +282,14 @@ extension CareerViewController: UITableViewDelegate, UITableViewDataSource {
                     SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
                     
                 } else {
+                    ReferenceValues.initialSetting = [:]
+                    SupportingMethods.shared.setAppSetting(with: nil, for: .initialSetting)
+                    
                     SupportingMethods.shared.makeAlert(on: self, withTitle: "새 회사 설정", andMessage: "경력 사항이 없습니다.\n새로운 회사 설정이 필요합니다.", okAction: UIAlertAction(title: "확인", style: .default, handler: { action in
                         
                         let initialVC = InitialViewController()
                         initialVC.modalPresentationStyle = .fullScreen
-                        self.present(initialVC, animated: true) {
-                            ReferenceValues.initialSetting = [:]
-                            SupportingMethods.shared.setAppSetting(with: nil, for: .initialSetting)
-                        }
+                        self.present(initialVC, animated: true)
                         
                     }), cancelAction: nil, completion: nil)
                 }

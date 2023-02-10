@@ -36,8 +36,8 @@ enum InitialSetting: String {
     // 근무 정보
     case workType // 근무형태
     case morningStartingWorkTimeValueRange // 출근시간범위 (빠른/늦은)
-    case morningStartingWorkTimeValue // 출근시간 (그냥 출근시간)
     case afternoonStartingWorkTimeValueRange // 오후 출근시간범위 (빠른/늦은)
+    case morningStartingWorkTimeValue // 출근시간 (그냥 출근시간)
     case afternoonStartingWorkTimeValue // 오후 출근시간 (그냥 오후 출근시간)
     case lunchTimeValue // 점심시간
     case isIgnoredLunchTimeOfStaggeredWorkType // 반차 시 점심시간 무시 여부 (전체 설정, 시차 출근제)
