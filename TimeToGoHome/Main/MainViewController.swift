@@ -748,7 +748,7 @@ extension MainViewController {
         
         // Main time view remaining time value view layout
         NSLayoutConstraint.activate([
-            self.mainTimeViewRemainingTimeValueView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 77),
+            self.mainTimeViewRemainingTimeValueView.topAnchor.constraint(equalTo: self.remainingTimeButtonView.bottomAnchor, constant: 25.5),
             self.mainTimeViewRemainingTimeValueView.heightAnchor.constraint(equalToConstant: 52),
             self.mainTimeViewRemainingTimeValueView.centerXAnchor.constraint(equalTo: self.mainTimeView.centerXAnchor),
             self.mainTimeViewRemainingTimeValueView.widthAnchor.constraint(equalToConstant: 182)
@@ -796,7 +796,7 @@ extension MainViewController {
         
         // Main time view progress time value view layout
         NSLayoutConstraint.activate([
-            self.mainTimeViewProgressTimeValueView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 77),
+            self.mainTimeViewProgressTimeValueView.centerYAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.centerYAnchor),
             self.mainTimeViewProgressTimeValueView.heightAnchor.constraint(equalToConstant: 52),
             self.mainTimeViewProgressTimeValueView.centerXAnchor.constraint(equalTo: self.mainTimeView.centerXAnchor),
             self.mainTimeViewProgressTimeValueView.widthAnchor.constraint(equalToConstant: 182)
@@ -844,7 +844,7 @@ extension MainViewController {
         
         // Main time view rate value view layout
         NSLayoutConstraint.activate([
-            self.mainTimeViewProgressRateValueView.topAnchor.constraint(equalTo: self.mainTimeView.topAnchor, constant: 77),
+            self.mainTimeViewProgressRateValueView.centerYAnchor.constraint(equalTo: self.mainTimeViewRemainingTimeValueView.centerYAnchor),
             self.mainTimeViewProgressRateValueView.heightAnchor.constraint(equalToConstant: 52),
             self.mainTimeViewProgressRateValueView.centerXAnchor.constraint(equalTo: self.mainTimeView.centerXAnchor),
             self.mainTimeViewProgressRateValueView.widthAnchor.constraint(equalToConstant: 75+43)
