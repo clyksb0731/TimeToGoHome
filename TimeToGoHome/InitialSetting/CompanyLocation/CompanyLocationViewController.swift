@@ -10,15 +10,16 @@ import CoreLocation
 
 class CompanyLocationViewController: UIViewController {
 
-    var dismissButton: UIButton = {
+    lazy var dismissButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "dismissButtonImage"), for: .normal)
+        button.addTarget(self, action: #selector(dismissButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
     }()
     
-    var titleLabel: UILabel = {
+    lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.useRGB(red: 109, green: 114, blue: 120, alpha: 0.4)
         label.textAlignment = .left
@@ -29,7 +30,7 @@ class CompanyLocationViewController: UIViewController {
         return label
     }()
     
-    var searchTextField: UITextField = {
+    lazy var searchTextField: UITextField = {
         let textField = UITextField()
         textField.textAlignment = .left
         textField.textColor = UIColor.useRGB(red: 0, green: 0, blue: 0)
@@ -38,15 +39,18 @@ class CompanyLocationViewController: UIViewController {
         textField.returnKeyType = .search
         //textField.textContentType = .fullStreetAddress
         textField.enablesReturnKeyAutomatically = true
+        textField.delegate = self
+        textField.addTarget(self, action: #selector(searchTextField(_:)), for: .editingChanged)
         textField.translatesAutoresizingMaskIntoConstraints = false
         
         return textField
     }()
     
-    var deleteSearchTextButton: UIButton = {
+    lazy var deleteSearchTextButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "deleteSearchText"), for: .normal)
         button.isHidden = true
+        button.addTarget(self, action: #selector(deleteSearchTextButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -61,7 +65,7 @@ class CompanyLocationViewController: UIViewController {
 //        return button
 //    }()
     
-    var searchLineView: UIView = {
+    lazy var searchLineView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.useRGB(red: 151, green: 151, blue: 151)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -69,15 +73,43 @@ class CompanyLocationViewController: UIViewController {
         return view
     }()
     
-    var addressTableView: UITableView!
+    lazy var tapGestureBaseView: UIView = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewBaseGesture(_:)))
+        
+        let view = UIView()
+        view.addGestureRecognizer(tapGesture)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
     
-    var noResultTextLabel: UILabel = {
+    lazy var addressTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.separatorStyle = .none
+        tableView.bounces = false
+        tableView.register(CompanyAddressCell.self, forCellReuseIdentifier: "CompanyAddressCell")
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 60
+        tableView.keyboardDismissMode = .onDrag
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.isHidden = true
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return tableView
+    }()
+    
+    lazy var noResultTextLabel: UILabel = {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableViewBaseGesture(_:)))
+        
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 30, weight: .bold)
         label.textAlignment = .center
         label.textColor = UIColor.useRGB(red: 191, green: 191, blue: 191)
         label.isHidden = true
         label.text = "검색 결과 없음"
+        label.addGestureRecognizer(tapGesture)
+        label.isUserInteractionEnabled = true
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -111,7 +143,7 @@ class CompanyLocationViewController: UIViewController {
         return button
     }()
     
-    var nextButtonView: UIView = {
+    lazy var nextButtonView: UIView = {
         let view = UIView()
         view.backgroundColor = .Buttons.initialInactiveBottom
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -119,16 +151,17 @@ class CompanyLocationViewController: UIViewController {
         return view
     }()
     
-    var nextButtonImageView: UIImageView = {
+    lazy var nextButtonImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "nextNormalImage"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
     }()
     
-    var nextButton: UIButton = {
+    lazy var nextButton: UIButton = {
         let button = UIButton()
         button.isEnabled = false
+        button.addTarget(self, action: #selector(nextButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -218,27 +251,12 @@ extension CompanyLocationViewController {
     
     // Initialize views
     func initializeViews() {
-        // Address table view
-        self.addressTableView = {
-            let tableView = UITableView()
-            tableView.separatorStyle = .none
-            tableView.bounces = false
-            tableView.register(CompanyAddressCell.self, forCellReuseIdentifier: "CompanyAddressCell")
-            tableView.rowHeight = UITableView.automaticDimension
-            tableView.estimatedRowHeight = 60
-            tableView.keyboardDismissMode = .onDrag
-            tableView.translatesAutoresizingMaskIntoConstraints = false
-            
-            return tableView
-        }()
+        
     }
     
     // Set targets
     func setTargets() {
-        self.dismissButton.addTarget(self, action: #selector(dismissButton(_:)), for: .touchUpInside)
-        self.deleteSearchTextButton.addTarget(self, action: #selector(deleteSearchTextButton(_:)), for: .touchUpInside)
-        self.searchTextField.addTarget(self, action: #selector(searchTextField(_:)), for: .editingChanged)
-        self.nextButton.addTarget(self, action: #selector(nextButton(_:)), for: .touchUpInside)
+        
     }
     
     // Set gestures
@@ -249,10 +267,6 @@ extension CompanyLocationViewController {
     // Set delegates
     func setDelegates() {
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
-        
-        self.searchTextField.delegate = self
-        self.addressTableView.delegate = self
-        self.addressTableView.dataSource = self
     }
     
     // Set notificationCenters
@@ -268,6 +282,7 @@ extension CompanyLocationViewController {
             self.searchLineView,
             self.searchTextField,
             self.deleteSearchTextButton,
+            self.tapGestureBaseView,
             self.addressTableView,
             self.noResultTextLabel,
             self.jumpButtonView,
@@ -337,6 +352,14 @@ extension CompanyLocationViewController {
             self.searchLineView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16)
         ])
         
+        // tapGestureBaseView
+        NSLayoutConstraint.activate([
+            self.tapGestureBaseView.topAnchor.constraint(equalTo: self.searchLineView.bottomAnchor),
+            self.tapGestureBaseView.bottomAnchor.constraint(equalTo: self.nextButtonView.topAnchor),
+            self.tapGestureBaseView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            self.tapGestureBaseView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+        ])
+        
         // Address table view layout
         NSLayoutConstraint.activate([
             self.addressTableView.topAnchor.constraint(equalTo: self.searchLineView.bottomAnchor, constant: 20),
@@ -397,6 +420,8 @@ extension CompanyLocationViewController {
 // MARK: - Extension for methods added
 extension CompanyLocationViewController {
     func searchAddress(_ text: String) {
+        self.addressTableView.isHidden = false
+        
         SupportingMethods.shared.turnCoverView(.on, on: self.view)
         self.companyLocationModel.searchAddressWithText(text) {
             self.addressTableView.reloadData()
@@ -457,8 +482,6 @@ extension CompanyLocationViewController {
     }
     
     @objc func deleteSearchTextButton(_ sender: UIButton) {
-        //self.searchTextField.becomeFirstResponder()
-        
         sender.isHidden = true
         self.searchTextField.text = ""
         
@@ -467,6 +490,7 @@ extension CompanyLocationViewController {
         self.nextButtonImageView.image = UIImage(named: "nextNormalImage")
         
         self.noResultTextLabel.isHidden = true
+        self.addressTableView.isHidden = true
         
         self.selectedLocationIndex = nil
         
@@ -485,6 +509,10 @@ extension CompanyLocationViewController {
 //
 //        self.searchAddress(self.searchTextField.text!)
 //    }
+    
+    @objc func tableViewBaseGesture(_ gesture: UITapGestureRecognizer) {
+        self.searchTextField.resignFirstResponder()
+    }
     
     @objc func searchTextField(_ textField: UITextField) {
         //self.searchButton.isEnabled = textField.text != "" && textField.text?.trimmingCharacters(in: .whitespacesAndNewlines) != ""

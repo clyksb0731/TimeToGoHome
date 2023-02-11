@@ -307,6 +307,8 @@ extension SettingViewController: EssentialViewMethods {
         self.navigationController?.navigationBar.standardAppearance = navigationBarAppearance
         self.navigationController?.navigationBar.compactAppearance = navigationBarAppearance
         
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        
         self.navigationController?.setNavigationBarHidden(true, animated: true);
     }
     
@@ -789,6 +791,19 @@ extension SettingViewController {
         }
         
         self.coverView.isHidden = true
+    }
+}
+
+// MARK: - Extension for UIGestureRecognizerDelegate
+extension SettingViewController: UIGestureRecognizerDelegate {
+    // For swipe gesture
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    // For swipe gesture, prevent working on the root view of navigation controller
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return self.navigationController!.viewControllers.count > 1 ? true : false
     }
 }
 
