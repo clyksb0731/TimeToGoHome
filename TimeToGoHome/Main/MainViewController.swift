@@ -42,7 +42,7 @@ class MainViewController: UIViewController {
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = .systemFont(ofSize: 26, weight: .bold)
+        label.font = .systemFont(ofSize: 24, weight: .semibold)
         label.text = "오늘의 일정"
         
         label.translatesAutoresizingMaskIntoConstraints = false

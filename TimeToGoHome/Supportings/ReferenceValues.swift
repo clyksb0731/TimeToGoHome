@@ -94,11 +94,11 @@ extension UIColor {
         }
         
         static var vacation: UIColor {
-            return .useRGB(red: 251, green: 205, blue: 68)
+            return .useRGB(red: 255, green: 197, blue: 63)
         }
         
         static var holiday: UIColor {
-            return .useRGB(red: 255, green: 151, blue: 64)
+            return .useRGB(red: 243, green: 55, blue: 71)
         }
         
         static var scheduling: UIColor {
@@ -124,11 +124,11 @@ extension UIColor {
         }
         
         static var vacation: UIColor {
-            return .useRGB(red: 251, green: 205, blue: 68)
+            return .useRGB(red: 255, green: 197, blue: 63)
         }
         
         static var holiday: UIColor {
-            return .useRGB(red: 255, green: 151, blue: 64)
+            return .useRGB(red: 243, green: 55, blue: 71)
         }
         
         static var scheduling: UIColor {
