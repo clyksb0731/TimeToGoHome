@@ -499,10 +499,14 @@ extension MenuViewController: MenuCoverDelegate {
     func menuCoverDidDetermineLastDate(_ date: Date) {
         let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
         
-        let dateFormatted = SupportingMethods.shared.makeDateFormatter("yyyy년 M월 d일").string(from: date)
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+        let todayId = Int(dateFormatter.string(from: Date()))!
+        let leavingDateId = Int(dateFormatter.string(from: date))!
         
-        if let schedules = companyModel.getSchedulesAfter(date), !schedules.isEmpty {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(dateFormatted) 이후에 기록된 일정이 있습니다. 퇴직 처리 시 해당 일정이 삭제됩니다. 퇴직 처리할까요?", okAction: UIAlertAction(title: "퇴직 처리", style: .default, handler: { _ in
+        let dateFormattedToday = SupportingMethods.shared.makeDateFormatter("yyyy년 M월 d일").string(from: date)
+        
+        if todayId > leavingDateId {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(dateFormattedToday) 이후에 기록된 일정이 있습니다. 퇴직 처리 시 해당 일정이 삭제됩니다. 퇴직 처리할까요?", okAction: UIAlertAction(title: "퇴직 처리", style: .default, handler: { _ in
                 self.mainVC?.stopTimer()
                 
                 SupportingMethods.shared.turnOffAndRemoveLocalPush()
@@ -512,7 +516,9 @@ extension MenuViewController: MenuCoverDelegate {
                 SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
                 
                 companyModel.setLeavingDate(date)
-                companyModel.removeSchedules(schedules)
+                if let schedules = companyModel.getSchedulesAfter(date), !schedules.isEmpty {
+                    companyModel.removeSchedules(schedules)
+                }
                 
                 self.menuTableView.reloadData()
                 
@@ -522,7 +528,7 @@ extension MenuViewController: MenuCoverDelegate {
             }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)
             
         } else {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(dateFormatted)부로 퇴직 처리할까요?", okAction: UIAlertAction(title: "퇴직 처리", style: .default, handler: { _ in
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "퇴직 처리", andMessage: "\(dateFormattedToday)부로 퇴직 처리할까요?", okAction: UIAlertAction(title: "퇴직 처리", style: .default, handler: { _ in
                 companyModel.setLeavingDate(date)
                 
                 ReferenceValues.initialSetting.updateValue(date, forKey: InitialSetting.leavingDate.rawValue)
