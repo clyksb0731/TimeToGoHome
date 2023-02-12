@@ -229,7 +229,7 @@ extension SupportingMethods {
         case .on:
             // Cover View
             let coverView = UIView()
-            coverView.backgroundColor = UIColor.useRGB(red: 0, green: 0, blue: 0, alpha: 0.3)
+            coverView.backgroundColor = .clear //UIColor.useRGB(red: 0, green: 0, blue: 0, alpha: 0.3)
             coverView.translatesAutoresizingMaskIntoConstraints = false
             
             // Activity Indicator View
