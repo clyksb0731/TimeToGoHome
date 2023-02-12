@@ -375,7 +375,7 @@ class MainViewController: UIViewController {
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 14, weight: .bold)
         label.textColor = .useRGB(red: 221, green: 221, blue: 221)
-        label.text = "점심시간 무시 (오늘)"
+        label.text = "오늘 점심시간 무시"
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -574,7 +574,7 @@ extension MainViewController {
         navigationBarAppearance.backgroundColor = .white
         navigationBarAppearance.titleTextAttributes = [
             .foregroundColor : UIColor.black,
-            .font : UIFont.systemFont(ofSize: 17, weight: .semibold)
+            .font : UIFont.systemFont(ofSize: 20, weight: .semibold)
         ]
         
         self.navigationController?.navigationBar.scrollEdgeAppearance = navigationBarAppearance

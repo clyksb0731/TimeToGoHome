@@ -300,7 +300,7 @@ extension SettingViewController: EssentialViewMethods {
         navigationBarAppearance.backgroundColor = .white
         navigationBarAppearance.titleTextAttributes = [
             .foregroundColor : UIColor.black,
-            .font : UIFont.systemFont(ofSize: 17, weight: .semibold)
+            .font : UIFont.systemFont(ofSize: 20, weight: .semibold)
         ]
         
         self.navigationController?.navigationBar.scrollEdgeAppearance = navigationBarAppearance

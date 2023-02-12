@@ -145,9 +145,9 @@ extension CompanyAddressCell {
         // Address map button layout
         NSLayoutConstraint.activate([
             self.addressMapButton.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
-            self.addressMapButton.heightAnchor.constraint(equalToConstant: 35),
-            self.addressMapButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
-            self.addressMapButton.widthAnchor.constraint(equalToConstant: 29)
+            self.addressMapButton.heightAnchor.constraint(equalToConstant: 30),
+            self.addressMapButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16),
+            self.addressMapButton.widthAnchor.constraint(equalToConstant: 24)
         ])
         
         // Bottom line view layout
