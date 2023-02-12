@@ -429,11 +429,15 @@ extension DayWorkRecordViewController {
             self.tempRecordedSchedule = self.recordedSchedule
             
         } else { // After '완료'
-            // Calculate annualPaidHolidays and vacation hold before changing schedule.
-            if self.checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(recordedSchedule: self.recordedSchedule, tempRecordedSchedule: self.tempRecordedSchedule) {
-                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 일수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+            if let lastCompany = CompanyModel.getLastCompany(),
+               Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date))! == lastCompany.dateId {
                 
-                return
+                // Calculate annualPaidHolidays and vacation hold before changing schedule.
+                if self.checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(recordedSchedule: self.recordedSchedule, tempRecordedSchedule: self.tempRecordedSchedule) {
+                    SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 일수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+                    
+                    return
+                }
             }
         }
         
@@ -764,11 +768,15 @@ extension DayWorkRecordViewController: MenuCoverDelegate {
     }
     
     func menuCoverDidDetermineInsertNormalSchedule(_ scheduleType: RecordScheduleType) {
-        // Calculate annualPaidHolidays and vacation hold before inserting schedule.
-        if self.checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(insertNormalSchedule: scheduleType, recordedSchedule: self.recordedSchedule) {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 일수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+        if let lastCompany = CompanyModel.getLastCompany(),
+           Int(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date))! == lastCompany.dateId {
             
-            return
+            // Calculate annualPaidHolidays and vacation hold before inserting schedule.
+            if self.checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(insertNormalSchedule: scheduleType, recordedSchedule: self.recordedSchedule) {
+                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 일수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+                
+                return
+            }
         }
         
         // After calculateing, inserting schedule.

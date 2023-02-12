@@ -215,7 +215,7 @@ extension WorkScheduleModel {
                     self.afternoon = .afternoon(.holiday)
                     
                     // No need to make schedule onto DB because it is regular holiday. So this code was removed.
-                    //let schedule = Schedule(date: self.self.date, morningType: WorkTimeType.holiday, afternoonType: WorkTimeType.holiday)
+                    //let schedule = Schedule(date: self.date, morningType: WorkTimeType.holiday, afternoonType: WorkTimeType.holiday)
                     //companyModel.applySchedule(schedule)
                     
                 } else {
