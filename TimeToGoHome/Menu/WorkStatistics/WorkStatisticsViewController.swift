@@ -54,6 +54,14 @@ class WorkStatisticsViewController: UIViewController {
         return view
     }()
     
+    lazy var noWorkStatisticsOfWeekImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "noWorkStatistics"))
+        imageView.contentMode = .center
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
     lazy var weekPieChartView: PieChartView = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .percent
@@ -94,6 +102,14 @@ class WorkStatisticsViewController: UIViewController {
         return view
     }()
     
+    lazy var noWorkStatisticsOfMonthImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "noWorkStatistics"))
+        imageView.contentMode = .center
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
     lazy var monthPieChartView: PieChartView = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .percent
@@ -132,6 +148,14 @@ class WorkStatisticsViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
+    }()
+    
+    lazy var noWorkStatisticsOfYearImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "noWorkStatistics"))
+        imageView.contentMode = .center
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
     }()
     
     lazy var yearPieChartView: PieChartView = {
@@ -336,14 +360,17 @@ extension WorkStatisticsViewController: EssentialViewMethods {
         ], to: self.statisticsContentView)
         
         SupportingMethods.shared.addSubviews([
+            self.noWorkStatisticsOfWeekImageView,
             self.weekPieChartView
         ], to: self.weekView)
         
         SupportingMethods.shared.addSubviews([
+            self.noWorkStatisticsOfMonthImageView,
             self.monthPieChartView
         ], to: self.monthView)
         
         SupportingMethods.shared.addSubviews([
+            self.noWorkStatisticsOfYearImageView,
             self.yearPieChartView
         ], to: self.yearView)
         
@@ -400,6 +427,10 @@ extension WorkStatisticsViewController: EssentialViewMethods {
             self.weekView.widthAnchor.constraint(equalToConstant: ReferenceValues.keyWindow.screen.bounds.width)
         ])
         
+        // noWorkStatisticsOfWeekImageView
+        SupportingMethods.shared.makeConstraintsOf(self.noWorkStatisticsOfWeekImageView, sameAs: self.weekView)
+        
+        // weekPieChartView
         SupportingMethods.shared.makeConstraintsOf(self.weekPieChartView, sameAs: self.weekView)
         
         // monthView
@@ -410,6 +441,10 @@ extension WorkStatisticsViewController: EssentialViewMethods {
             self.monthView.widthAnchor.constraint(equalToConstant: ReferenceValues.keyWindow.screen.bounds.width)
         ])
         
+        // noWorkStatisticsOfMonthImageView
+        SupportingMethods.shared.makeConstraintsOf(self.noWorkStatisticsOfMonthImageView, sameAs: self.monthView)
+        
+        // monthPieChartView
         SupportingMethods.shared.makeConstraintsOf(self.monthPieChartView, sameAs: self.monthView)
         
         // yearView
@@ -420,6 +455,10 @@ extension WorkStatisticsViewController: EssentialViewMethods {
             self.yearView.widthAnchor.constraint(equalToConstant: ReferenceValues.keyWindow.screen.bounds.width)
         ])
         
+        // noWorkStatisticsOfYearImageView
+        SupportingMethods.shared.makeConstraintsOf(self.noWorkStatisticsOfYearImageView, sameAs: self.yearView)
+        
+        // yearPieChartView
         SupportingMethods.shared.makeConstraintsOf(self.yearPieChartView, sameAs: self.yearView)
         
         // statisticsSegmentControl
@@ -599,69 +638,79 @@ extension WorkStatisticsViewController {
         
         switch period {
         case .week:
-            self.statisticsScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
-            
             let weekdayOfToday = SupportingMethods.shared.getWeekdayOfDate(self.today)
             let thisSundayDate = Date(timeIntervalSinceReferenceDate: Double(todayTimeInterval - 86400 * (weekdayOfToday - 1)))
-            guard weekdayOfToday != 1 else {
+            
+            let statisticsValues = self.companyModel.calculateStatistics(.week, today: self.today)
+            
+            self.statisticsScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+            
+            if statisticsValues == nil || (statisticsValues?.regularWorkTime == 0 && statisticsValues?.overtime == 0 && statisticsValues?.vacation == 0) {
+                self.weekPieChartView.isHidden = true
+                self.noWorkStatisticsOfWeekImageView.isHidden = false
                 self.periodLabel.text = "근무 내역이 없습니다."
                 self.informationView.isHidden = true
                 
-                return
+            } else {
+                self.weekPieChartView.isHidden = false
+                self.noWorkStatisticsOfWeekImageView.isHidden = true
+                self.periodLabel.text = "\(dateFormatter.string(from: thisSundayDate)) ~ 어제"
+                
+                self.informationView.isHidden = false
+                self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
+                self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
+                self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
             }
             
-            self.periodLabel.text = "\(dateFormatter.string(from: thisSundayDate)) ~ 어제"
-            
-            let statisticsValues = self.companyModel.calculateStatistics(.week, today: self.today)
-            self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
-            self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
-            self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
-            
-            self.informationView.isHidden = false
-            
         case .month:
-            self.statisticsScrollView.setContentOffset(CGPoint(x: ReferenceValues.keyWindow.screen.bounds.width, y: 0), animated: true)
-            
             let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(self.today)
             let theFirstDateOfThisMonth = SupportingMethods.shared.makeDateWithYear(yearMonthDay.year, month: yearMonthDay.month)
             
-            guard yearMonthDay.day != 1 else {
+            let statisticsValues = self.companyModel.calculateStatistics(.month, today: self.today)
+            
+            self.statisticsScrollView.setContentOffset(CGPoint(x: ReferenceValues.keyWindow.screen.bounds.width, y: 0), animated: true)
+            
+            if statisticsValues == nil || (statisticsValues?.regularWorkTime == 0 && statisticsValues?.overtime == 0 && statisticsValues?.vacation == 0) {
+                self.monthPieChartView.isHidden = true
+                self.noWorkStatisticsOfMonthImageView.isHidden = false
                 self.periodLabel.text = "근무 내역이 없습니다."
                 self.informationView.isHidden = true
                 
-                return
+            } else {
+                self.monthPieChartView.isHidden = false
+                self.noWorkStatisticsOfMonthImageView.isHidden = true
+                self.periodLabel.text = "\(dateFormatter.string(from: theFirstDateOfThisMonth)) ~ 어제"
+                
+                self.informationView.isHidden = false
+                self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
+                self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
+                self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
             }
             
-            self.periodLabel.text = "\(dateFormatter.string(from: theFirstDateOfThisMonth)) ~ 어제"
-            
-            let statisticsValues = self.companyModel.calculateStatistics(.month, today: self.today)
-            self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
-            self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
-            self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
-            
-            self.informationView.isHidden = false
-            
         case .year:
-            self.statisticsScrollView.setContentOffset(CGPoint(x: ReferenceValues.keyWindow.screen.bounds.width * 2, y: 0), animated: true)
-            
             let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(self.today)
             let theFirstDateOfThisYear = SupportingMethods.shared.makeDateWithYear(yearMonthDay.year, month: 1)
             
-            guard yearMonthDay.month != 1 || yearMonthDay.day != 1 else {
+            let statisticsValues = self.companyModel.calculateStatistics(.year, today: self.today)
+            
+            self.statisticsScrollView.setContentOffset(CGPoint(x: ReferenceValues.keyWindow.screen.bounds.width * 2, y: 0), animated: true)
+            
+            if statisticsValues == nil || (statisticsValues?.regularWorkTime == 0 && statisticsValues?.overtime == 0 && statisticsValues?.vacation == 0) {
+                self.yearPieChartView.isHidden = true
+                self.noWorkStatisticsOfYearImageView.isHidden = false
                 self.periodLabel.text = "근무 내역이 없습니다."
                 self.informationView.isHidden = true
                 
-                return
+            } else {
+                self.yearPieChartView.isHidden = false
+                self.noWorkStatisticsOfYearImageView.isHidden = true
+                self.periodLabel.text = "\(dateFormatter.string(from: theFirstDateOfThisYear)) ~ 어제"
+                
+                self.informationView.isHidden = false
+                self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
+                self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
+                self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
             }
-            
-            self.periodLabel.text = "\(dateFormatter.string(from: theFirstDateOfThisYear)) ~ 어제"
-            
-            let statisticsValues = self.companyModel.calculateStatistics(.year, today: self.today)
-            self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
-            self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
-            self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
-            
-            self.informationView.isHidden = false
         }
     }
 }
@@ -691,5 +740,21 @@ extension WorkStatisticsViewController {
 
 // MARK: - Extension for UIScrollViewDelegate
 extension WorkStatisticsViewController: UIScrollViewDelegate {
-    
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        print("scrollViewDidEndScrollingAnimation")
+        
+        if scrollView.contentOffset.x >= 0 && scrollView.contentOffset.x <= 1 {
+            print("1")
+        }
+        
+        if scrollView.contentOffset.x >= ReferenceValues.keyWindow.screen.bounds.width - 1 &&
+            scrollView.contentOffset.x <= ReferenceValues.keyWindow.screen.bounds.width + 1 {
+            print("2")
+        }
+        
+        if scrollView.contentOffset.x >= ReferenceValues.keyWindow.screen.bounds.width * 2 - 1 &&
+            scrollView.contentOffset.x <= ReferenceValues.keyWindow.screen.bounds.width * 2 + 1 {
+            print("3")
+        }
+    }
 }
