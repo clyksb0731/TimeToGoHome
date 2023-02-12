@@ -136,7 +136,7 @@ class SettingNumberOfPaidHolidaysViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.annualPaidHolidaysPickerView.selectRow(self.annualPaidHolidays.firstIndex(of: self.numberOfAnnualPaidHolidays)!, inComponent: 0, animated: false)
+        self.annualPaidHolidaysPickerView.selectRow(self.annualPaidHolidays.firstIndex(of: self.numberOfAnnualPaidHolidays > 99 ? 99 : self.numberOfAnnualPaidHolidays)!, inComponent: 0, animated: false)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -295,17 +295,17 @@ extension SettingNumberOfPaidHolidaysViewController {
     }
     
     @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
-        let calculatedDateRange = VacationModel.calculateVacationScheduleDateRange(self.annualPaidHolidaysType)
-        
-        let calculatedNumberOfVacationHold = VacationModel.calculateNumberOfVacationHold(startDate: calculatedDateRange.startDate, endDate: calculatedDateRange.endDate)
-        
-        if calculatedNumberOfVacationHold > self.numberOfAnnualPaidHolidays * 2 {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "휴가기준을 \(self.annualPaidHolidaysType == .fiscalYear ? "회계연도":"입사날짜")로 변경하면 연차 일수보다 예정(혹은 사용)된 휴가 일수가 많아집니다. 휴가 일수를 조정 후 휴가기준을 변경하세요.")
-            
-            return
-        }
-        
         if self.annualPaidHolidaysType != self.tempAnnualPaidHolidaysType {
+            let calculatedDateRange = VacationModel.calculateVacationScheduleDateRange(self.annualPaidHolidaysType)
+            
+            let calculatedNumberOfVacationHold = VacationModel.calculateNumberOfVacationHold(startDate: calculatedDateRange.startDate, endDate: calculatedDateRange.endDate)
+            
+            if calculatedNumberOfVacationHold > self.numberOfAnnualPaidHolidays * 2 {
+                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "휴가기준을 \(self.annualPaidHolidaysType == .fiscalYear ? "회계연도":"입사날짜")로 변경하면 연차 일수보다 예정(혹은 사용)된 휴가 일수가 많아집니다. 휴가 일수를 조정 후 휴가기준을 변경하세요.")
+                
+                return
+            }
+            
             VacationModel.annualPaidHolidaysType = self.annualPaidHolidaysType
         }
         

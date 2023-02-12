@@ -14,7 +14,7 @@ enum AnnualPaidHolidaysType: String {
 }
 
 class DayOffViewController: UIViewController {
-
+    
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.tag = 1
@@ -191,31 +191,8 @@ class DayOffViewController: UIViewController {
     }()
     
     lazy var numberOfVacationLabel: UILabel = {
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
-        
-        let attributedText = NSMutableAttributedString()
-        let usedVacationText = NSAttributedString(string: "\((Int(self.numberOfVacationsHold * 10)) % 10 == 0 ? "\(Int(self.numberOfVacationsHold))" : "\(self.numberOfVacationsHold)")일 | ", attributes: [
-            .font:UIFont.systemFont(ofSize: 16),
-            .foregroundColor:UIColor.black,
-            .paragraphStyle:paragraphStyle
-        ])
-//        let usedVacationText = NSAttributedString(string: "\(self.numberOfVacationsHold == 0 ? "0" : "\(self.numberOfVacationsHold)")일 |", attributes: [
-//            .font:UIFont.systemFont(ofSize: 16),
-//            .foregroundColor:UIColor.black,
-//            .paragraphStyle:paragraphStyle
-//        ])
-        let totalOfVacationsText = NSAttributedString(string: "\(self.numberOfAnnualPaidHolidays)일", attributes: [
-            .font:UIFont.systemFont(ofSize: 16, weight: .bold),
-            .foregroundColor:UIColor.black,
-            .paragraphStyle:paragraphStyle,
-            .underlineStyle:NSUnderlineStyle.single.rawValue
-        ])
-        attributedText.append(usedVacationText)
-        attributedText.append(totalOfVacationsText)
-        
         let label = UILabel()
-        label.attributedText = attributedText
+        label.attributedText = self.makeVacationAttributedString()
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -441,7 +418,7 @@ class DayOffViewController: UIViewController {
         label.textAlignment = .center
         label.textColor = .black
         label.font = UIFont.systemFont(ofSize: 48, weight: .bold)
-        label.text = "15" // FIXME: need to be edited
+        //label.text = "15" // FIXME: need to be edited
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -488,47 +465,22 @@ class DayOffViewController: UIViewController {
     
     var targetYearMonthDate: Date = Date()
     
-    lazy var vacationScheduleDateRange: (startDate: Date, endDate: Date) = {
-        return self.determineVacationScheduleDateRange()
-    }()
+    var vacationScheduleDateRange: (startDate: Date, endDate: Date) {
+        VacationModel.calculateVacationScheduleDateRange(self.annualPaidHolidaysType)
+    }
     
-//    var calendarCollectionViewHeightAnchor: NSLayoutConstraint!
-//    var contentViewHeightAnchor: NSLayoutConstraint!
     var selectedIndexOfYearMonthAndDay: (year: Int, month: Int, day: Int)?
     var selectedIndexPath: IndexPath?
     
-    var numberOfAnnualPaidHolidays: Int = {
-        if let numberOfAnnualPaidHolidays = ReferenceValues.initialSetting[InitialSetting.annualPaidHolidays.rawValue] as? Int {
-            return numberOfAnnualPaidHolidays
-            
-        } else {
-            return 15
-        }
-    }()
+    var numberOfAnnualPaidHolidays: Int = VacationModel.numberOfAnnualPaidHolidays
+    var tempNumberOfAnnualPaidHolidays: Int = VacationModel.numberOfAnnualPaidHolidays
     
-    var tempNumberOfAnnualPaidHolidays: Int!
-    
-    lazy var numberOfVacationsHold: Double = {
-        return self.calculateVacationValue()
-        
-    }() {
-        didSet {
-            self.applyVacationsToLabel()
-        }
+    var numberOfVacationsHold: Int {
+        return VacationModel.calculateNumberOfVacationHold(startDate: self.vacationScheduleDateRange.startDate, endDate: self.vacationScheduleDateRange.endDate)
     }
     
-    var vacationNotification: NotificationToken?
-    
-    var vacations: Results<Vacation> = VacationModel.vacations
-    
     var annualPaidHolidaysType: AnnualPaidHolidaysType = {
-        if let annualPaidHolidaysType = ReferenceValues.initialSetting[InitialSetting.annualPaidHolidaysType.rawValue] as? String,
-            let annualPaidHolidaysType = AnnualPaidHolidaysType(rawValue: annualPaidHolidaysType) {
-            return annualPaidHolidaysType
-            
-        } else {
-            return .fiscalYear
-        }
+        return VacationModel.annualPaidHolidaysType
     }()
     lazy var tempAnnualPaidHolidaysType: AnnualPaidHolidaysType = self.annualPaidHolidaysType
     
@@ -588,46 +540,15 @@ extension DayOffViewController {
     
     // Initialize views
     func initializeViews() {
-        self.vacationNotification = self.vacations.observe({ [weak self] (changes: RealmCollectionChange) in
-            guard let self = self else {
-                SupportingMethods.shared.turnCoverView(.off, on: self?.view)
-                
-                return
-            }
+        VacationModel.observe {
+            self.calendarCollectionView.reloadData()
             
-            switch changes {
-            case .initial(_):
-                self.calendarCollectionView.reloadData()
+            DispatchQueue.main.async {
+                self.numberOfVacationLabel.attributedText = self.makeVacationAttributedString()
                 
-            case .update(_, deletions: _, insertions: _, modifications: _):
-                self.calendarCollectionView.reloadData()
-                
-                self.numberOfVacationsHold = self.calculateVacationValue()
-                
-//            case .update(_, deletions: let deletions, insertions: let insertions, modifications: let modifications):
-//                calendarCollectionView.performBatchUpdates {
-//                    if deletions.count > 0 {
-//                        calendarCollectionView.deleteItems(at: deletions.map({IndexPath(row: $0, section: 0)}))
-//                    }
-//
-//                    if insertions.count > 0 {
-//                        calendarCollectionView.insertItems(at: insertions.map({IndexPath(row: $0, section: 0)}))
-//                    }
-//
-//                    if modifications.count > 0 {
-//                        calendarCollectionView.reloadItems(at: modifications.map({IndexPath(row: $0, section: 0)}))
-//                    }
-//
-//                } completion: { finished in
-//                    // completion
-//                }
-                
-            case .error(let error):
-                fatalError("vacationNotification error: \(error.localizedDescription)")
+                SupportingMethods.shared.turnCoverView(.off, on: self.view)
             }
-            
-            SupportingMethods.shared.turnCoverView(.off, on: self.view)
-        })
+        }
     }
     
     // Set targets
@@ -1072,126 +993,32 @@ extension DayOffViewController {
 
 // MARK: - Extension for methods added
 extension DayOffViewController {
-    func determineVacationScheduleDateRange() -> (startDate: Date, endDate: Date) {
-        var calendar = Calendar.current
-        calendar.timeZone = .current
-        let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
-        
-        if self.annualPaidHolidaysType == .fiscalYear {
-            let yearMonthDayOfJoiningDate = SupportingMethods.shared.getYearMonthAndDayOf(ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
-            let joiningDateFromYearMonthDay = SupportingMethods.shared.makeDateWithYear(yearMonthDayOfJoiningDate.year, month: yearMonthDayOfJoiningDate.month, andDay: yearMonthDayOfJoiningDate.day)
-            
-            let firstDayOfYearDateComponents = DateComponents(year: todayDateComponents.year!, month: 1, day: 1)
-            let lastDayOfYearDateComponents = DateComponents(year: todayDateComponents.year!, month: 12, day: 31)
-            
-            let startDate = joiningDateFromYearMonthDay >= calendar.date(from: firstDayOfYearDateComponents)! ? joiningDateFromYearMonthDay : calendar.date(from: firstDayOfYearDateComponents)!
-            let endDate = calendar.date(from: lastDayOfYearDateComponents)!
-            
-            return (startDate, endDate)
-            
-        } else { // joiningDay
-            var firstDayOfVacationDate = ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date
-            let joiningDateComponents = calendar.dateComponents([.year, .month, .day], from: firstDayOfVacationDate)
-            var endDayOfVacationDate: Date
-            
-            if joiningDateComponents.month! < todayDateComponents.month! {
-                // First date of vacation
-                let firstDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year!, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
-                
-                firstDayOfVacationDate = calendar.date(from: firstDayOfVacationDateDateComponents)!
-                
-                // End date of vacation
-                let endDayAfterOneDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year! + 1, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
-                let endDayAfterOneDayOfVacationDate = calendar.date(from: endDayAfterOneDayOfVacationDateDateComponents)!
-                
-                endDayOfVacationDate = Date(timeIntervalSinceReferenceDate: endDayAfterOneDayOfVacationDate.timeIntervalSinceReferenceDate - 86400)
-                
-            } else if joiningDateComponents.month! == todayDateComponents.month! {
-                if joiningDateComponents.day! <= todayDateComponents.day! {
-                    // First date of vacation
-                    let firstDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year!, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
-                    
-                    firstDayOfVacationDate = calendar.date(from: firstDayOfVacationDateDateComponents)!
-                    
-                    // End date of vacation
-                    let endDayAfterOneDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year! + 1, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
-                    let endDayAfterOneDayOfVacationDate = calendar.date(from: endDayAfterOneDayOfVacationDateDateComponents)!
-                    
-                    endDayOfVacationDate = Date(timeIntervalSinceReferenceDate: endDayAfterOneDayOfVacationDate.timeIntervalSinceReferenceDate - 86400)
-                    
-                } else { // joiningDateComponents.day! > self.todayDateComponents.day!
-                    // First date of vacation
-                    let firstDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year! - 1, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
-                    
-                    firstDayOfVacationDate = calendar.date(from: firstDayOfVacationDateDateComponents)!
-                    
-                    // End date of vacation
-                    let endDayAfterOneDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year!, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
-                    let endDayAfterOneDayOfVacationDate = calendar.date(from: endDayAfterOneDayOfVacationDateDateComponents)!
-                    
-                    endDayOfVacationDate = Date(timeIntervalSinceReferenceDate: endDayAfterOneDayOfVacationDate.timeIntervalSinceReferenceDate - 86400)
-                }
-                
-            } else { // joiningDateComponents.month! > self.todayDateComponents.month!
-                // First date of vacation
-                let firstDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year! - 1, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
-                
-                firstDayOfVacationDate = calendar.date(from: firstDayOfVacationDateDateComponents)!
-                
-                // End date of vacation
-                let endDayAfterOneDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year!, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
-                let endDayAfterOneDayOfVacationDate = calendar.date(from: endDayAfterOneDayOfVacationDateDateComponents)!
-                
-                endDayOfVacationDate = Date(timeIntervalSinceReferenceDate: endDayAfterOneDayOfVacationDate.timeIntervalSinceReferenceDate - 86400)
-            }
-            
-            return (firstDayOfVacationDate, endDayOfVacationDate)
-        }
-    }
-    
-    func calculateVacationValue() -> Double {
-        let vacations = VacationModel.vacations
-        
-        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
-        
-        let periodVacations = vacations.where {
-            $0.dateId >= Int(dateFormatter.string(from: self.vacationScheduleDateRange.startDate))!
-            && $0.dateId <= Int(dateFormatter.string(from: self.vacationScheduleDateRange.endDate))!
-        }
-        
-        let fullDayVacations = periodVacations.where {
-            $0.vacationType == VacationType.fullDay.rawValue
-        }
-        
-        let halfDayVacations = periodVacations.where {
-            $0.vacationType == VacationType.morning.rawValue ||
-            $0.vacationType == VacationType.afternoon.rawValue
-        }
-        
-        return Double(fullDayVacations.count) * 1 + Double(halfDayVacations.count) * 0.5
-    }
-    
     func applyVacationsToLabel() {
         self.numberOfVacationMarkLabel.text = "휴가 (\(self.annualPaidHolidaysType == .fiscalYear ? "회계연도" : "입사날짜"))"
         
+        self.numberOfVacationLabel.attributedText = self.makeVacationAttributedString()
+    }
+    
+    func makeVacationAttributedString() -> NSAttributedString {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         
         let attributedText = NSMutableAttributedString()
-        let usedVacationText = NSAttributedString(string: "\(self.numberOfVacationsHold == 0 ? "0" : "\(self.numberOfVacationsHold)")일 |", attributes: [
+        let usedVacationText = NSAttributedString(string: "\((SupportingMethods.shared.makeStringOfFromVacationHold(self.numberOfVacationsHold)))일 | ", attributes: [
             .font:UIFont.systemFont(ofSize: 16),
             .foregroundColor:UIColor.black,
             .paragraphStyle:paragraphStyle
         ])
-        let totalOfVacationsText = NSAttributedString(string: " \(self.numberOfAnnualPaidHolidays)일", attributes: [
+        let totalOfVacationsText = NSAttributedString(string: "\(self.numberOfAnnualPaidHolidays)일", attributes: [
             .font:UIFont.systemFont(ofSize: 16, weight: .bold),
             .foregroundColor:UIColor.black,
+            .underlineStyle:NSUnderlineStyle.single.rawValue,
             .paragraphStyle:paragraphStyle
         ])
         attributedText.append(usedVacationText)
         attributedText.append(totalOfVacationsText)
         
-        self.numberOfVacationLabel.attributedText = attributedText
+        return attributedText
     }
     
     func moveToPreviousMonth() {
@@ -1293,56 +1120,62 @@ extension DayOffViewController {
     @objc func vacationButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
+        let buttonView = sender.superview as! VacationButtonView
+        
+        if !buttonView.isSelected, self.numberOfVacationsHold + 1 > self.numberOfAnnualPaidHolidays * 2 {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "휴가는 연차 일수를 초과할 수 없습니다.")
+            
+            return
+        }
+        
         SupportingMethods.shared.turnCoverView(.on, on: self.view)
         
-        if let buttonView = sender.superview as? VacationButtonView {
-            buttonView.isSelected.toggle()
+        buttonView.isSelected.toggle()
+        
+        var vacation: Vacation!
+        
+        if buttonView.tag == 1 {
+            print("morning")
             
-            var vacation: Vacation!
-            
-            if buttonView.tag == 1 {
-                print("morning")
-                
-                if buttonView.isSelected {
-                    if self.afternoonVacationButtonView.isSelected {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .fullDay)
-                        
-                    } else {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .morning)
-                    }
+            if buttonView.isSelected {
+                if self.afternoonVacationButtonView.isSelected {
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .fullDay)
                     
                 } else {
-                    if self.afternoonVacationButtonView.isSelected {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .afternoon)
-                        
-                    } else {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .none)
-                    }
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .morning)
                 }
                 
             } else {
-                print("afternoon")
-                
-                if buttonView.isSelected {
-                    if self.morningVacationButtonView.isSelected {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .fullDay)
-                        
-                    } else {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .afternoon)
-                    }
+                if self.afternoonVacationButtonView.isSelected {
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .afternoon)
                     
                 } else {
-                    if self.morningVacationButtonView.isSelected {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .morning)
-                        
-                    } else {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .none)
-                    }
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .none)
                 }
             }
             
-            VacationModel.addVacation(vacation)
+        } else {
+            print("afternoon")
+            
+            if buttonView.isSelected {
+                if self.morningVacationButtonView.isSelected {
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .fullDay)
+                    
+                } else {
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .afternoon)
+                }
+                
+            } else {
+                if self.morningVacationButtonView.isSelected {
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .morning)
+                    
+                } else {
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .none)
+                }
+            }
         }
+        
+        VacationModel.addVacation(vacation)
     }
     
     @objc func previousMonthSwipeGesture(_ sender: UISwipeGestureRecognizer) {
@@ -1446,6 +1279,106 @@ extension DayOffViewController {
         self.coverView.isHidden = false
     }
     
+    @objc func fiscalYearButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
+        self.annualPaidHolidaysType = .fiscalYear
+        
+        self.fiscalYearButton.isSelected = true
+        self.joiningDayButton.isSelected = false
+    }
+    
+    @objc func joiningDayButton(_ sender: UIButton) {
+        UIDevice.softHaptic()
+        
+        self.annualPaidHolidaysType = .joiningDay
+        
+        self.fiscalYearButton.isSelected = false
+        self.joiningDayButton.isSelected = true
+    }
+    
+    @objc func minusButton(_ sender: UIButton) {
+        guard self.numberOfAnnualPaidHolidays - 1 >= 0 else {
+            return
+        }
+        
+        UIDevice.lightHaptic()
+        
+        guard (self.numberOfAnnualPaidHolidays - 1) * 2 >= self.numberOfVacationsHold else {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "연차 일수", andMessage: "예약(혹은 사용)된 휴가보다 적은 연차 일수를 설정할 수 없습니다.")
+            
+            return
+        }
+        
+        self.numberOfAnnualPaidHolidays -= 1
+        self.numberOfAnnualPaidHolidaysLabel.text = "\(self.numberOfAnnualPaidHolidays)"
+    }
+    
+    @objc func plusButton(_ sender: UIButton) {
+        UIDevice.lightHaptic()
+        
+        guard self.numberOfAnnualPaidHolidays + 1 < 100 else {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "연차 일수", andMessage: "설정 가능한 연차 일수는 최대 99일입니다.")
+            
+            return
+        }
+        
+        self.numberOfAnnualPaidHolidays += 1
+        self.numberOfAnnualPaidHolidaysLabel.text = "\(self.numberOfAnnualPaidHolidays)"
+    }
+    
+    @objc func confirmButton(_ sender: UIButton) {
+        if self.annualPaidHolidaysType != self.tempAnnualPaidHolidaysType {
+            if self.numberOfVacationsHold > self.numberOfAnnualPaidHolidays * 2 {
+                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "휴가기준을 \(self.annualPaidHolidaysType == .fiscalYear ? "회계연도":"입사날짜")로 변경하면 연차 일수보다 예정(혹은 사용)된 휴가 일수가 많아집니다. 휴가 일수를 조정 후 휴가기준을 변경하세요.")
+                
+                return
+            }
+            
+            SupportingMethods.shared.turnCoverView(.on, on: self.view)
+            
+            let startingVacationRangeYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate)
+            let endingVacationRangeYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate)
+            
+            let yearMonth = SupportingMethods.shared.getYearMonthAndDayOf(Date())
+            self.targetYearMonthDate = SupportingMethods.shared.makeDateWithYear(yearMonth.year, month: yearMonth.month)
+            
+            // determine button state
+            self.yearMonthLabel.text = "\(yearMonth.year)년 \(yearMonth.month)월"
+            
+            self.previousMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(startingVacationRangeYearMonth.year, month: startingVacationRangeYearMonth.month)
+            self.nextMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(endingVacationRangeYearMonth.year, month: endingVacationRangeYearMonth.month)
+            
+            self.selectedIndexOfYearMonthAndDay = nil
+            self.selectedIndexPath = nil
+            
+            self.morningVacationButtonView.isEnable = false
+            self.morningVacationButtonView.isSelected = false
+            self.afternoonVacationButtonView.isEnable = false
+            self.afternoonVacationButtonView.isSelected = false
+            
+            self.calendarCollectionView.reloadData()
+            
+            DispatchQueue.main.async {
+                self.applyVacationsToLabel()
+                
+                SupportingMethods.shared.turnCoverView(.off, on: self.view)
+            }
+            
+        } else {
+            self.applyVacationsToLabel()
+        }
+        
+        self.coverView.isHidden = true
+    }
+    
+    @objc func declineButton(_ sender: UIButton) {
+        self.annualPaidHolidaysType = self.tempAnnualPaidHolidaysType
+        self.numberOfAnnualPaidHolidays = self.tempNumberOfAnnualPaidHolidays
+        
+        self.coverView.isHidden = true
+    }
+    
     @objc func holidayButtons(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
@@ -1539,99 +1472,6 @@ extension DayOffViewController {
         }
     }
     
-    @objc func fiscalYearButton(_ sender: UIButton) {
-        UIDevice.softHaptic()
-        
-        self.annualPaidHolidaysType = .fiscalYear
-        
-        self.fiscalYearButton.isSelected = true
-        self.joiningDayButton.isSelected = false
-    }
-    
-    @objc func joiningDayButton(_ sender: UIButton) {
-        UIDevice.softHaptic()
-        
-        self.annualPaidHolidaysType = .joiningDay
-        
-        self.fiscalYearButton.isSelected = false
-        self.joiningDayButton.isSelected = true
-    }
-    
-    @objc func minusButton(_ sender: UIButton) {
-        UIDevice.lightHaptic()
-        
-        guard Double(self.numberOfAnnualPaidHolidays - 1) >= self.numberOfVacationsHold else {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "연차 일수", andMessage: "예약(혹은 사용)된 휴가보다 적은 연차 일수를 설정할 수 없습니다.")
-            
-            return
-        }
-        
-        self.numberOfAnnualPaidHolidays -= 1
-        self.numberOfAnnualPaidHolidaysLabel.text = "\(self.numberOfAnnualPaidHolidays)"
-    }
-    
-    @objc func plusButton(_ sender: UIButton) {
-        UIDevice.lightHaptic()
-        
-        guard self.numberOfAnnualPaidHolidays + 1 < 100 else {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "연차 일수", andMessage: "설정 가능한 연차 일수는 최대 99일입니다.")
-            
-            return
-        }
-        
-        self.numberOfAnnualPaidHolidays += 1
-        self.numberOfAnnualPaidHolidaysLabel.text = "\(self.numberOfAnnualPaidHolidays)"
-    }
-    
-    @objc func confirmButton(_ sender: UIButton) {
-        self.coverView.isHidden = true
-        
-        if self.annualPaidHolidaysType != self.tempAnnualPaidHolidaysType {
-            SupportingMethods.shared.turnCoverView(.on, on: self.view)
-            
-            self.vacationScheduleDateRange = self.determineVacationScheduleDateRange()
-            self.numberOfVacationsHold = self.calculateVacationValue()
-            
-            let startingVacationRangeYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.startDate)
-            let endingVacationRangeYearMonth = SupportingMethods.shared.getYearMonthAndDayOf(self.vacationScheduleDateRange.endDate)
-            
-            let yearMonth = SupportingMethods.shared.getYearMonthAndDayOf(Date())
-            self.targetYearMonthDate = SupportingMethods.shared.makeDateWithYear(yearMonth.year, month: yearMonth.month)
-            
-            // determine button state
-            self.yearMonthLabel.text = "\(yearMonth.year)년 \(yearMonth.month)월"
-            
-            self.previousMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(startingVacationRangeYearMonth.year, month: startingVacationRangeYearMonth.month)
-            self.nextMonthButton.isEnabled = self.targetYearMonthDate != SupportingMethods.shared.makeDateWithYear(endingVacationRangeYearMonth.year, month: endingVacationRangeYearMonth.month)
-            
-            self.selectedIndexOfYearMonthAndDay = nil
-            self.self.selectedIndexPath = nil
-            
-            self.morningVacationButtonView.isEnable = false
-            self.morningVacationButtonView.isSelected = false
-            self.afternoonVacationButtonView.isEnable = false
-            self.afternoonVacationButtonView.isSelected = false
-            
-            self.calendarCollectionView.reloadData()
-            
-            DispatchQueue.main.async {
-                self.applyVacationsToLabel()
-                
-                SupportingMethods.shared.turnCoverView(.off, on: self.view)
-            }
-            
-        } else {
-            self.applyVacationsToLabel()
-        }
-    }
-    
-    @objc func declineButton(_ sender: UIButton) {
-        self.annualPaidHolidaysType = self.tempAnnualPaidHolidaysType
-        self.numberOfAnnualPaidHolidays = self.tempNumberOfAnnualPaidHolidays
-        
-        self.coverView.isHidden = true
-    }
-    
     @objc func startButton(_ sender: UIButton) {
         ReferenceValues.initialSetting.updateValue(self.annualPaidHolidaysType.rawValue, forKey: InitialSetting.annualPaidHolidaysType.rawValue)
         ReferenceValues.initialSetting.updateValue(self.numberOfAnnualPaidHolidays, forKey: InitialSetting.annualPaidHolidays.rawValue)
@@ -1644,7 +1484,7 @@ extension DayOffViewController {
         
         self.present(mainNaviVC, animated: true)
         
-        self.vacationNotification?.invalidate()
+        VacationModel.invalidateObserving()
     }
 }
 
