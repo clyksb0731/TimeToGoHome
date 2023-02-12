@@ -56,6 +56,13 @@ class CareerViewController: UIViewController {
         SupportingMethods.shared.makeInstantViewWithText("길게 눌러 수정할 수 있습니다.", duration: 2.5, on: self.careerTableView, withPosition: .bottom(constant: -30))
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        CompanyModel.invalidateObserving()
+        VacationModel.invalidateObserving()
+    }
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .default
     }
@@ -85,6 +92,38 @@ extension CareerViewController: EssentialViewMethods {
             self.companies = CompanyModel.companies.sorted(by: { $0.dateId > $1.dateId })
             
             self.careerTableView.reloadData()
+            
+            self.makeLatestCompanySetting { isNeedToMakeVacations in
+                if isNeedToMakeVacations {
+                    if let schedules = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date).schedules {
+                        VacationModel.addVacationFromSchedules(schedules) {
+                            ReferenceValues.initialSetting.updateValue(15, forKey: InitialSetting.annualPaidHolidays.rawValue)
+                            
+                            SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+                            
+                            SupportingMethods.shared.turnCoverView(.off, on: self.view)
+                        }
+                        
+                    } else {
+                        ReferenceValues.initialSetting.updateValue(15, forKey: InitialSetting.annualPaidHolidays.rawValue)
+                        
+                        SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+                        
+                        SupportingMethods.shared.turnCoverView(.off, on: self.view)
+                    }
+                    
+                } else {
+                    SupportingMethods.shared.turnCoverView(.off, on: self.view)
+                }
+            }
+        }
+        
+        VacationModel.observe {
+            ReferenceValues.initialSetting.updateValue(VacationModel.numberOfVacationsHold / 2 < 15 ? 15 : VacationModel.numberOfVacationsHold % 2 > 0 ? VacationModel.numberOfVacationsHold / 2 + 1 : VacationModel.numberOfVacationsHold / 2, forKey: InitialSetting.annualPaidHolidays.rawValue)
+            
+            SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+            
+            SupportingMethods.shared.turnCoverView(.off, on: self.view)
         }
     }
     
@@ -151,13 +190,75 @@ extension CareerViewController {
         
         return companiesClassified
     }
+    
+    func makeLatestCompanySetting(completion:((_ isNeedToMakeVacations: Bool) -> ())?) {
+        if let lastCompany = CompanyModel.getLastCompany() {
+            let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+            
+            guard Int(dateFormatter.string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date))! != lastCompany.dateId else {
+                
+                completion?(false)
+                
+                return
+            }
+            
+            let joiningDate = dateFormatter.date(from: String(lastCompany.dateId))!
+            
+            ReferenceValues.initialSetting.updateValue(joiningDate, forKey: InitialSetting.joiningDate.rawValue)
+            ReferenceValues.initialSetting.updateValue(lastCompany.name, forKey: InitialSetting.companyName.rawValue)
+            
+            // leaving date
+            if let leavingDate = lastCompany.leavingDate {
+                ReferenceValues.initialSetting.updateValue(leavingDate, forKey: InitialSetting.leavingDate.rawValue)
+            } else {
+                ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.leavingDate.rawValue)
+            }
+            
+            // address
+            if let address = lastCompany.address {
+                ReferenceValues.initialSetting.updateValue(address, forKey: InitialSetting.companyAddress.rawValue)
+            } else {
+                ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.companyAddress.rawValue)
+            }
+            
+            // latitude
+            if let latitude = lastCompany.latitude {
+                ReferenceValues.initialSetting.updateValue(latitude, forKey: InitialSetting.companyLatitude.rawValue)
+            } else {
+                ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.companyLatitude.rawValue)
+            }
+            
+            // longitude
+            if let longitude = lastCompany.longitude {
+                ReferenceValues.initialSetting.updateValue(longitude, forKey: InitialSetting.companyLongitude.rawValue)
+            } else {
+                ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.companyLongitude.rawValue)
+            }
+            
+            SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+            
+            completion?(!lastCompany.schedules.isEmpty)
+            
+        } else {
+            ReferenceValues.initialSetting = [:]
+            SupportingMethods.shared.setAppSetting(with: nil, for: .initialSetting)
+            
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "새 회사 설정", andMessage: "경력 사항이 없습니다.\n새로운 회사 설정이 필요합니다.", okAction: UIAlertAction(title: "확인", style: .default, handler: { action in
+                
+                let initialVC = InitialViewController()
+                initialVC.modalPresentationStyle = .fullScreen
+                self.present(initialVC, animated: true)
+                
+            }), cancelAction: nil, completion: nil)
+            
+            completion?(false)
+        }
+    }
 }
 
 // MARK: - Extension for selector methods
 extension CareerViewController {
     @objc func leftBarButtonItem(_ sender: UIBarButtonItem) {
-        CompanyModel.invalidateObserving()
-        
         self.navigationController?.popViewController(animated: true)
     }
     
@@ -238,61 +339,9 @@ extension CareerViewController: UITableViewDelegate, UITableViewDataSource {
             
             SupportingMethods.shared.makeAlert(on: self, withTitle: "회사 삭제", andMessage: "\(self.companiesClassified[indexPath.section].companies[indexPath.row].name) 회사를 삭제할까요?", okAction: UIAlertAction(title: "삭제", style: .destructive, handler: { action in
                 
-                CompanyModel.removeCompany(self.companiesClassified[indexPath.section].companies[indexPath.row])
+                SupportingMethods.shared.turnCoverView(.on, on: self.view)
                 
-                if let lastCompany = CompanyModel.getLastCompany() {
-                    guard Int(dateFormatter.string(from: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date))! != lastCompany.dateId else {
-                        
-                        return
-                    }
-                    
-                    let joiningDate = dateFormatter.date(from: String(lastCompany.dateId))!
-                    
-                    ReferenceValues.initialSetting.updateValue(joiningDate, forKey: InitialSetting.joiningDate.rawValue)
-                    ReferenceValues.initialSetting.updateValue(lastCompany.name, forKey: InitialSetting.companyName.rawValue)
-                    
-                    // leaving date
-                    if let leavingDate = lastCompany.leavingDate {
-                        ReferenceValues.initialSetting.updateValue(leavingDate, forKey: InitialSetting.leavingDate.rawValue)
-                    } else {
-                        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.leavingDate.rawValue)
-                    }
-                    
-                    // address
-                    if let address = lastCompany.address {
-                        ReferenceValues.initialSetting.updateValue(address, forKey: InitialSetting.companyAddress.rawValue)
-                    } else {
-                        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.companyAddress.rawValue)
-                    }
-                    
-                    // latitude
-                    if let latitude = lastCompany.latitude {
-                        ReferenceValues.initialSetting.updateValue(latitude, forKey: InitialSetting.companyLatitude.rawValue)
-                    } else {
-                        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.companyLatitude.rawValue)
-                    }
-                    
-                    // longitude
-                    if let longitude = lastCompany.longitude {
-                        ReferenceValues.initialSetting.updateValue(longitude, forKey: InitialSetting.companyLongitude.rawValue)
-                    } else {
-                        ReferenceValues.initialSetting.removeValue(forKey: InitialSetting.companyLongitude.rawValue)
-                    }
-                    
-                    SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
-                    
-                } else {
-                    ReferenceValues.initialSetting = [:]
-                    SupportingMethods.shared.setAppSetting(with: nil, for: .initialSetting)
-                    
-                    SupportingMethods.shared.makeAlert(on: self, withTitle: "새 회사 설정", andMessage: "경력 사항이 없습니다.\n새로운 회사 설정이 필요합니다.", okAction: UIAlertAction(title: "확인", style: .default, handler: { action in
-                        
-                        let initialVC = InitialViewController()
-                        initialVC.modalPresentationStyle = .fullScreen
-                        self.present(initialVC, animated: true)
-                        
-                    }), cancelAction: nil, completion: nil)
-                }
+                CompanyModel.removeCompany(self.companiesClassified[indexPath.section].companies[indexPath.row])
                 
             }), cancelAction: UIAlertAction(title: "취소", style: .cancel), completion: nil)
             

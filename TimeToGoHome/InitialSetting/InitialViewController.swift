@@ -342,7 +342,6 @@ extension InitialViewController {
     func setViewFoundation() {
         self.view.backgroundColor = .white
         
-        // FIXME: Check calendar init & method creation for this.
         var calendar = Calendar.current
         calendar.locale = Locale(identifier: "ko_KR")
         calendar.timeZone = TimeZone.current
@@ -354,11 +353,20 @@ extension InitialViewController {
         self.dayLabel.text = "\(todayDateComponents.day!)"
         
         self.joiningDatePicker.maximumDate = Date()
+        
+        if self.tempInitialSetting != nil {
+            VacationModel.observe {
+                SupportingMethods.shared.turnCoverView(.off, on: self.view)
+                VacationModel.invalidateObserving()
+                
+                self.dismiss(animated: true, completion: nil)
+            }
+        }
     }
     
     // Initialize views
     func initializeViews() {
-        //self.companyNameTextField.inputAccessoryView = self.companyNameToolbar
+        
     }
     
     // Set targets
@@ -758,9 +766,24 @@ extension InitialViewController {
 // MARK: - Extension for Selector methods
 extension InitialViewController {
     @objc func dismissButton(_ sender: UIButton) {
+        SupportingMethods.shared.turnCoverView(.on, on: self.view)
+        
         ReferenceValues.initialSetting = self.tempInitialSetting!
         
-        self.dismiss(animated: true, completion: nil)
+        if let schedules = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date).schedules {
+            VacationModel.addVacationFromSchedules(schedules) {
+                SupportingMethods.shared.turnCoverView(.off, on: self.view)
+                VacationModel.invalidateObserving()
+                
+                self.dismiss(animated: true, completion: nil)
+            }
+            
+        } else {
+            SupportingMethods.shared.turnCoverView(.off, on: self.view)
+            VacationModel.invalidateObserving()
+            
+            self.dismiss(animated: true, completion: nil)
+        }
     }
     
     @objc func resignTextFields(_ sender: Any) {
@@ -866,18 +889,7 @@ extension InitialViewController {
         }
         
         guard CompanyModel.checkIfJoiningDateIsNew(self.joiningDate) else {
-            let presentingVC = self.presentingViewController
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "신규 회사는 최종 경력보다 빠를 수 없습니다. 경력 사항을 수정할까요?", okAction: UIAlertAction(title: "경력 수정", style: .default, handler: { action in
-                if let tempInitialSetting = self.tempInitialSetting {
-                    ReferenceValues.initialSetting = tempInitialSetting
-                }
-                
-                presentingVC?.dismiss(animated: false) {
-                    let menuNaviVC = CustomizedNavigationController()
-                    menuNaviVC.viewControllers = [MenuViewController(), CareerViewController()] // FIXME: What happen at leavingDate ??
-                    presentingVC?.present(menuNaviVC, animated: false)
-                }
-            }), cancelAction: UIAlertAction(title: "취소", style: .cancel))
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "신규 회사는 최종 경력보다 빠를 수 없습니다.")
             
             return
         }
@@ -893,6 +905,10 @@ extension InitialViewController {
             self.upperViewTopAnchorConstant.constant = 0
             self.joiningDatePicker.alpha = 0
         })
+        
+        if tempInitialSetting != nil {
+            VacationModel.invalidateObserving()
+        }
     }
     
     @objc func keyboardWillAppear(_ notification: Notification) {

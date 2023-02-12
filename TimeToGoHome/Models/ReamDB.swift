@@ -571,6 +571,41 @@ struct VacationModel {
         }
     }
     
+    static func addVacationFromSchedules(_ schedules: List<Schedule>, forNoVacation: (() -> ())?) {
+        var vacations: [Vacation] = []
+        
+        for schedule in schedules {
+            var vacation: Vacation?
+            if schedule.morning == WorkTimeType.vacation.rawValue &&
+                schedule.afternoon == WorkTimeType.vacation.rawValue {
+                vacation = Vacation(date: SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(schedule.dateId))!, vacationType: .fullDay)
+            }
+            
+            if schedule.morning == WorkTimeType.vacation.rawValue {
+                vacation = Vacation(date: SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(schedule.dateId))!, vacationType: .morning)
+            }
+            
+            if schedule.afternoon == WorkTimeType.vacation.rawValue {
+                vacation = Vacation(date: SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(schedule.dateId))!, vacationType: .afternoon)
+            }
+            
+            if let vacation = vacation {
+                vacations.append(vacation)
+            }
+        }
+        
+        if vacations.isEmpty {
+            forNoVacation?()
+            
+        } else {
+            let realm = try! Realm()
+            
+            try! realm.write {
+                realm.add(vacations, update: .all)
+            }
+        }
+    }
+    
     static func calculateNumberOfVacationHold(startDate: Date, endDate: Date) -> Int {
         let vacations = VacationModel.vacations
         
