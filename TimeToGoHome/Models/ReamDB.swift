@@ -99,14 +99,14 @@ struct CompanyModel {
         }
     }
     
-    static func observe(_ closure: (() -> ())?) {
+    static func observe(initialize: (() -> ())?, update: (() -> ())?) {
         self.companyNotification = self.companies.observe({ changes in
             switch changes {
             case .initial(_):
-                closure?()
+                initialize?()
                 
             case .update(_, deletions: _, insertions: _, modifications: _):
-                closure?()
+                update?()
                 
             case .error(let error):
                 fatalError("vacationNotification error: \(error.localizedDescription)")
@@ -552,6 +552,21 @@ struct VacationModel {
                 
             case .update(_, deletions: _, insertions: _, modifications: _):
                 closure?()
+                
+            case .error(let error):
+                fatalError("vacationNotification error: \(error.localizedDescription)")
+            }
+        })
+    }
+    
+    static func observe(initialize: (() -> ())?, update: (() -> ())?) {
+        self.vacationNotification = self.vacations.observe({ changes in
+            switch changes {
+            case .initial(_):
+                initialize?()
+                
+            case .update(_, deletions: _, insertions: _, modifications: _):
+                update?()
                 
             case .error(let error):
                 fatalError("vacationNotification error: \(error.localizedDescription)")

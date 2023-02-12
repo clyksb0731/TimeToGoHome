@@ -356,6 +356,8 @@ extension InitialViewController {
         
         if self.tempInitialSetting != nil {
             VacationModel.observe {
+                // nothing
+            } update: {
                 SupportingMethods.shared.turnCoverView(.off, on: self.view)
                 VacationModel.invalidateObserving()
                 

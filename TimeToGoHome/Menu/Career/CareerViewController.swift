@@ -93,6 +93,11 @@ extension CareerViewController: EssentialViewMethods {
             
             self.careerTableView.reloadData()
             
+        } update: {
+            self.companies = CompanyModel.companies.sorted(by: { $0.dateId > $1.dateId })
+            
+            self.careerTableView.reloadData()
+            
             self.makeLatestCompanySetting { isNeedToMakeVacations in
                 if isNeedToMakeVacations {
                     if let schedules = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date).schedules {
@@ -119,6 +124,8 @@ extension CareerViewController: EssentialViewMethods {
         }
         
         VacationModel.observe {
+            // nothing
+        } update: {
             ReferenceValues.initialSetting.updateValue(VacationModel.numberOfVacationsHold / 2 < 15 ? 15 : VacationModel.numberOfVacationsHold % 2 > 0 ? VacationModel.numberOfVacationsHold / 2 + 1 : VacationModel.numberOfVacationsHold / 2, forKey: InitialSetting.annualPaidHolidays.rawValue)
             
             SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
