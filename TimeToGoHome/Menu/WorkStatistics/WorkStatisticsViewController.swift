@@ -560,7 +560,7 @@ extension WorkStatisticsViewController {
             ])
             
             if let minutes = minutes {
-                secondAttributedString = NSAttributedString(string: "\(Int(self.calculateVacationTimeToDays(minutes) * 10) % 10 > 0 ? "\(self.calculateVacationTimeToDays(minutes))" : "\(Int(self.calculateVacationTimeToDays(minutes)))") 일", attributes: [
+                secondAttributedString = NSAttributedString(string: "\(self.calculateVacationTimeToDays(minutes)) 일", attributes: [
                     .font:UIFont.systemFont(ofSize: 20, weight: .bold),
                     .foregroundColor:UIColor.black,
                     .paragraphStyle:paragraphStyle
@@ -589,8 +589,8 @@ extension WorkStatisticsViewController {
         return Double(Int((Double(minutes) / 60) * 100)) / 100
     }
     
-    func calculateVacationTimeToDays(_ minutes: Int) -> Double {
-        return minutes % 480 > 0 ? Double(minutes / 480) + 0.5 : Double(minutes / 480)
+    func calculateVacationTimeToDays(_ minutes: Int) -> String {
+        return minutes % 480 > 0 ? "\(minutes / 480).5" : "\(minutes / 480)"
     }
     
     func determineInformationView(_ period: CompanyModel.StatisticsPeriod) {
@@ -617,6 +617,8 @@ extension WorkStatisticsViewController {
             self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
             self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
             
+            self.informationView.isHidden = false
+            
         case .month:
             self.statisticsScrollView.setContentOffset(CGPoint(x: ReferenceValues.keyWindow.screen.bounds.width, y: 0), animated: true)
             
@@ -637,6 +639,8 @@ extension WorkStatisticsViewController {
             self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
             self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
             
+            self.informationView.isHidden = false
+            
         case .year:
             self.statisticsScrollView.setContentOffset(CGPoint(x: ReferenceValues.keyWindow.screen.bounds.width * 2, y: 0), animated: true)
             
@@ -656,6 +660,8 @@ extension WorkStatisticsViewController {
             self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
             self.overtimeLabel.attributedText = self.makeInformationAttributedString(.overtime, minutes: statisticsValues?.overtime)
             self.vacationLabel.attributedText = self.makeInformationAttributedString(.vacation, minutes: statisticsValues?.vacation)
+            
+            self.informationView.isHidden = false
         }
     }
 }

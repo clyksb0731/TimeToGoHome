@@ -44,18 +44,18 @@ class VacationButtonView: UIView {
             self.backgroundColor = {
                 if self.isEnable {
                     if self.isSelected {
-                        return .useRGB(red: 110, green: 217, blue: 228)
+                        return .Buttons.selectedVacation
                         
                     } else {
-                        return .useRGB(red: 216, green: 216, blue: 216)
+                        return .Buttons.deselectedVacation
                     }
                     
                 } else {
                     if self.isSelected {
-                        return .useRGB(red: 110, green: 217, blue: 228, alpha: 0.5)
+                        return .Buttons.disableSelectedVacation
                         
                     } else {
-                        return .useRGB(red: 216, green: 216, blue: 216, alpha: 0.5)
+                        return .Buttons.disabledDeselectedVacation
                     }
                 }
             }()

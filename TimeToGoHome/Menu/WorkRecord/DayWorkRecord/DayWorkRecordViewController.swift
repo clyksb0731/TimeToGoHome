@@ -329,20 +329,20 @@ extension DayWorkRecordViewController {
         let endDateIdOfVacation = Int(dateFormatter.string(from: vacationRange.endDate))!
         let thisRecordScheduleDateId = self.recordedSchedule.dateId
         
-        let numberOfAnnualPaidHolidays = Double(ReferenceValues.initialSetting[InitialSetting.annualPaidHolidays.rawValue] as! Int)
+        let numberOfAnnualPaidHolidays = VacationModel.numberOfAnnualPaidHolidays
         let numberOfVacationsHold = VacationModel.numberOfVacationsHold
         
         if thisRecordScheduleDateId >= startDateIdOfVacation && thisRecordScheduleDateId <= endDateIdOfVacation {
             if let tempRecordedSchedule = tempRecordedSchedule {
                 if recordedSchedule.morning == .vacation, recordedSchedule.afternoon == .vacation {
                     if tempRecordedSchedule.morning != .vacation, tempRecordedSchedule.afternoon != .vacation {
-                        if numberOfVacationsHold + 1.0 > numberOfAnnualPaidHolidays {
+                        if numberOfVacationsHold + 2 > numberOfAnnualPaidHolidays * 2 {
                             return true
                         }
                     }
                     
                     if tempRecordedSchedule.morning != .vacation || tempRecordedSchedule.afternoon != .vacation {
-                        if numberOfVacationsHold + 0.5 > numberOfAnnualPaidHolidays {
+                        if numberOfVacationsHold + 1 > numberOfAnnualPaidHolidays * 2 {
                             return true
                         }
                     }
@@ -350,7 +350,7 @@ extension DayWorkRecordViewController {
                 
                 if recordedSchedule.morning == .vacation {
                     if tempRecordedSchedule.morning != .vacation {
-                        if numberOfVacationsHold + 0.5 > numberOfAnnualPaidHolidays {
+                        if numberOfVacationsHold + 1 > numberOfAnnualPaidHolidays * 2 {
                             return true
                         }
                     }
@@ -358,7 +358,7 @@ extension DayWorkRecordViewController {
                 
                 if recordedSchedule.afternoon == .vacation {
                     if tempRecordedSchedule.afternoon != .vacation {
-                        if numberOfVacationsHold + 0.5 > numberOfAnnualPaidHolidays {
+                        if numberOfVacationsHold + 1 > numberOfAnnualPaidHolidays * 2 {
                             return true
                         }
                     }
@@ -366,13 +366,13 @@ extension DayWorkRecordViewController {
                 
             } else {
                 if recordedSchedule.morning == .vacation, recordedSchedule.afternoon == .vacation {
-                    if numberOfVacationsHold + 1.0 > numberOfAnnualPaidHolidays {
+                    if numberOfVacationsHold + 2 > numberOfAnnualPaidHolidays * 2 {
                         return true
                     }
                 }
                 
                 if recordedSchedule.morning == .vacation || recordedSchedule.afternoon == .vacation {
-                    if numberOfVacationsHold + 0.5 > numberOfAnnualPaidHolidays {
+                    if numberOfVacationsHold + 1 > numberOfAnnualPaidHolidays * 2 {
                         return true
                     }
                 }
@@ -390,7 +390,7 @@ extension DayWorkRecordViewController {
         let endDateIdOfVacation = Int(dateFormatter.string(from: vacationRange.endDate))!
         let thisRecordScheduleDateId = self.recordedSchedule.dateId
         
-        let numberOfAnnualPaidHolidays = Double(ReferenceValues.initialSetting[InitialSetting.annualPaidHolidays.rawValue] as! Int)
+        let numberOfAnnualPaidHolidays = VacationModel.numberOfAnnualPaidHolidays
         let numberOfVacationsHold = VacationModel.numberOfVacationsHold
         
         if thisRecordScheduleDateId >= startDateIdOfVacation && thisRecordScheduleDateId <= endDateIdOfVacation {
@@ -398,14 +398,14 @@ extension DayWorkRecordViewController {
             if case .morning(let workTimeType) = scheduleType,
                workTimeType == .vacation,
                 recordedSchedule.morning != .vacation {
-                if numberOfVacationsHold + 0.5 > numberOfAnnualPaidHolidays {
+                if numberOfVacationsHold + 1 > numberOfAnnualPaidHolidays * 2 {
                     return true
                 }
             }
             if case .afternoon(let workTimeType) = scheduleType,
                workTimeType == .vacation,
                 recordedSchedule.afternoon != .vacation {
-                if numberOfVacationsHold + 0.5 > numberOfAnnualPaidHolidays {
+                if numberOfVacationsHold + 1 > numberOfAnnualPaidHolidays * 2 {
                     return true
                 }
             }
@@ -431,7 +431,7 @@ extension DayWorkRecordViewController {
         } else { // After '완료'
             // Calculate annualPaidHolidays and vacation hold before changing schedule.
             if self.checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(recordedSchedule: self.recordedSchedule, tempRecordedSchedule: self.tempRecordedSchedule) {
-                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 일수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
                 
                 return
             }
@@ -766,7 +766,7 @@ extension DayWorkRecordViewController: MenuCoverDelegate {
     func menuCoverDidDetermineInsertNormalSchedule(_ scheduleType: RecordScheduleType) {
         // Calculate annualPaidHolidays and vacation hold before inserting schedule.
         if self.checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(insertNormalSchedule: scheduleType, recordedSchedule: self.recordedSchedule) {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 기간 내의 일정입니다. 연차 일수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
             
             return
         }

@@ -468,10 +468,10 @@ class MainViewController: UIViewController {
         return view
     }()
     
-    var numberOfAnnualPaidHolidays: Double {
-        return Double(ReferenceValues.initialSetting[InitialSetting.annualPaidHolidays.rawValue] as! Int)
+    var numberOfAnnualPaidHolidays: Int {
+        return VacationModel.numberOfAnnualPaidHolidays
     }
-    var numberOfVacationsHold: Double {
+    var numberOfVacationsHold: Int {
         return VacationModel.numberOfVacationsHold
     }
     
@@ -2489,19 +2489,19 @@ extension MainViewController {
            case .afternoon(let scheduleWorkType) = schedule.afternoon, scheduleWorkType == .vacation {
             if case .morning(let scheduleWorkType) = tempSchedule.morning, scheduleWorkType != .vacation,
                case .afternoon(let scheduleWorkType) = tempSchedule.afternoon, scheduleWorkType != .vacation {
-                if self.numberOfVacationsHold + 1.0 > self.numberOfAnnualPaidHolidays {
+                if self.numberOfVacationsHold + 2 > self.numberOfAnnualPaidHolidays * 2 {
                     return true
                 }
             }
             
             if case .morning(let scheduleWorkType) = tempSchedule.morning, scheduleWorkType == .vacation {
-                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                if self.numberOfVacationsHold + 1 > self.numberOfAnnualPaidHolidays * 2 {
                     return true
                 }
             }
             
             if case .afternoon(let scheduleWorkType) = tempSchedule.afternoon, scheduleWorkType == .vacation {
-                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                if self.numberOfVacationsHold + 1 > self.numberOfAnnualPaidHolidays * 2 {
                     return true
                 }
             }
@@ -2509,7 +2509,7 @@ extension MainViewController {
         
         if case .morning(let scheduleWorkType) = schedule.morning, scheduleWorkType == .vacation {
             if case .morning(let scheduleWorkType) = tempSchedule.morning, scheduleWorkType != .vacation {
-                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                if self.numberOfVacationsHold + 1 > self.numberOfAnnualPaidHolidays * 2 {
                     return true
                 }
             }
@@ -2517,7 +2517,7 @@ extension MainViewController {
         
         if case .afternoon(let scheduleWorkType) = schedule.afternoon, scheduleWorkType == .vacation {
             if case .afternoon(let scheduleWorkType) = tempSchedule.afternoon, scheduleWorkType != .vacation {
-                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                if self.numberOfVacationsHold + 1 > self.numberOfAnnualPaidHolidays * 2 {
                     return true
                 }
             }
@@ -2529,14 +2529,14 @@ extension MainViewController {
     func checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(insertNormalSchedule: ScheduleType, schedule: WorkScheduleModel) -> Bool {
         if case .morning(let workTimeType) = insertNormalSchedule, workTimeType == .vacation {
             if case .morning(let workTimeType) = schedule.morning, workTimeType != .vacation {
-                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                if self.numberOfVacationsHold + 1 > self.numberOfAnnualPaidHolidays * 2 {
                     return true
                 }
             }
         }
         if case .afternoon(let workTimeType) = insertNormalSchedule, workTimeType == .vacation {
             if case .afternoon(let workTimeType) = schedule.afternoon, workTimeType != .vacation {
-                if self.numberOfVacationsHold + 0.5 > self.numberOfAnnualPaidHolidays {
+                if self.numberOfVacationsHold + 1 > self.numberOfAnnualPaidHolidays * 2 {
                     return true
                 }
             }
@@ -2820,7 +2820,7 @@ extension MainViewController {
     @objc func completeChangingScheduleButtonView(_ sender: UIButton) {
         // Calculate annualPaidHolidays and vacation hold before changing schedule.
         if self.checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(schedule: self.schedule, tempSchedule: self.tempSchedule!) {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 일수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
             
             return
         }
@@ -3347,7 +3347,7 @@ extension MainViewController: MainCoverDelegate {
     func mainCoverDidDetermineNormalSchedule(_ schedule: ScheduleType) {
         // Calculate annualPaidHolidays and vacation hold before inserting schedule.
         if self.checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(insertNormalSchedule: schedule, schedule: self.schedule) {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 개수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 일수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
             
             return
         }

@@ -1561,7 +1561,7 @@ extension DayOffViewController {
         UIDevice.lightHaptic()
         
         guard Double(self.numberOfAnnualPaidHolidays - 1) >= self.numberOfVacationsHold else {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "연차 일수", andMessage: "예약된 휴가보다 적은 연차 일수를 설정할 수 없습니다.")
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "연차 일수", andMessage: "예약(혹은 사용)된 휴가보다 적은 연차 일수를 설정할 수 없습니다.")
             
             return
         }

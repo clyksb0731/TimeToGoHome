@@ -116,10 +116,10 @@ class SettingNumberOfPaidHolidaysViewController: UIViewController {
     }()
     var tempAnnualPaidHolidaysType: AnnualPaidHolidaysType!
     
-    var annualPaidHolidays: [Int] = Array(1...25)
+    var annualPaidHolidays: [Int] = Array(0...99)
     
-    var numberOfAnnualPaidHolidays: Int = ReferenceValues.initialSetting[InitialSetting.annualPaidHolidays.rawValue] as! Int
-    var tempNumberOfAnnualPaidHolidays: Int = ReferenceValues.initialSetting[InitialSetting.annualPaidHolidays.rawValue] as! Int
+    var numberOfAnnualPaidHolidays: Int = VacationModel.numberOfAnnualPaidHolidays
+    var tempNumberOfAnnualPaidHolidays: Int = VacationModel.numberOfAnnualPaidHolidays
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -295,13 +295,22 @@ extension SettingNumberOfPaidHolidaysViewController {
     }
     
     @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
+        let calculatedDateRange = VacationModel.calculateVacationScheduleDateRange(self.annualPaidHolidaysType)
+        
+        let calculatedNumberOfVacationHold = VacationModel.calculateNumberOfVacationHold(startDate: calculatedDateRange.startDate, endDate: calculatedDateRange.endDate)
+        
+        if calculatedNumberOfVacationHold > self.numberOfAnnualPaidHolidays * 2 {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "휴가기준을 \(self.annualPaidHolidaysType == .fiscalYear ? "회계연도":"입사날짜")로 변경하면 연차 일수보다 예정(혹은 사용)된 휴가 일수가 많아집니다. 휴가 일수를 조정 후 휴가기준을 변경하세요.")
+            
+            return
+        }
+        
         if self.annualPaidHolidaysType != self.tempAnnualPaidHolidaysType {
             VacationModel.annualPaidHolidaysType = self.annualPaidHolidaysType
         }
         
         if self.tempNumberOfAnnualPaidHolidays != self.numberOfAnnualPaidHolidays {
-            ReferenceValues.initialSetting.updateValue(self.numberOfAnnualPaidHolidays, forKey: InitialSetting.annualPaidHolidays.rawValue)
-            SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+            VacationModel.numberOfAnnualPaidHolidays = self.numberOfAnnualPaidHolidays
         }
         
         self.navigationController?.popViewController(animated: true)
@@ -340,10 +349,14 @@ extension SettingNumberOfPaidHolidaysViewController: UIPickerViewDelegate, UIPic
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        if VacationModel.numberOfVacationsHold > Double(self.annualPaidHolidays[row]) {
+        let calculatedDateRange = VacationModel.calculateVacationScheduleDateRange(self.annualPaidHolidaysType)
+        
+        let calculatedNumberOfVacationHold = VacationModel.calculateNumberOfVacationHold(startDate: calculatedDateRange.startDate, endDate: calculatedDateRange.endDate)
+        
+        if calculatedNumberOfVacationHold > self.annualPaidHolidays[row] * 2 {
             SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "사용한(혹은 사용할) 휴가 날 수보다 적게 설정할 수 없습니다.")
             
-            pickerView.selectRow(self.annualPaidHolidays.firstIndex(of: self.tempNumberOfAnnualPaidHolidays)!, inComponent: 0, animated: true)
+            pickerView.selectRow(self.annualPaidHolidays.firstIndex(of: calculatedNumberOfVacationHold > 99 * 2 ? 99 : calculatedNumberOfVacationHold % 2 > 0 ? calculatedNumberOfVacationHold / 2 + 1 : calculatedNumberOfVacationHold / 2)!, inComponent: 0, animated: true)
             
         } else {
             print("Number of annual paid holidays: \(self.annualPaidHolidays[row])")

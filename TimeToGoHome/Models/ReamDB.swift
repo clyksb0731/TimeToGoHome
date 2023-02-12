@@ -532,7 +532,7 @@ struct VacationModel {
         }
     }
     
-    static var numberOfVacationsHold: Double {
+    static var numberOfVacationsHold: Int {
         let vacations = VacationModel.vacations
         
         let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
@@ -551,7 +551,45 @@ struct VacationModel {
             $0.vacationType == VacationType.afternoon.rawValue
         }
         
-        return Double(fullDayVacations.count) * 1 + Double(halfDayVacations.count) * 0.5
+        return fullDayVacations.count * 2 + halfDayVacations.count
+    }
+    
+    static var numberOfAnnualPaidHolidays: Int {
+        get {
+            if let numberOfAnnualPaidHolidays = ReferenceValues.initialSetting[InitialSetting.annualPaidHolidays.rawValue] as? Int {
+                return numberOfAnnualPaidHolidays
+                
+            } else {
+                return 15
+            }
+        }
+        
+        set {
+            ReferenceValues.initialSetting.updateValue(newValue, forKey: InitialSetting.annualPaidHolidays.rawValue)
+            SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
+        }
+    }
+    
+    static func calculateNumberOfVacationHold(startDate: Date, endDate: Date) -> Int {
+        let vacations = VacationModel.vacations
+        
+        let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
+        
+        let periodVacations = vacations.where {
+            $0.dateId >= Int(dateFormatter.string(from: startDate))!
+            && $0.dateId <= Int(dateFormatter.string(from: endDate))!
+        }
+        
+        let fullDayVacations = periodVacations.where {
+            $0.vacationType == VacationType.fullDay.rawValue
+        }
+        
+        let halfDayVacations = periodVacations.where {
+            $0.vacationType == VacationType.morning.rawValue ||
+            $0.vacationType == VacationType.afternoon.rawValue
+        }
+        
+        return fullDayVacations.count * 2 + halfDayVacations.count
     }
     
     static func determineVacationScheduleDateRange() -> (startDate: Date, endDate: Date) {
@@ -560,6 +598,94 @@ struct VacationModel {
         let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
         
         if self.annualPaidHolidaysType == .fiscalYear {
+            let yearMonthDayOfJoiningDate = SupportingMethods.shared.getYearMonthAndDayOf(ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
+            let joiningDateFromYearMonthDay = SupportingMethods.shared.makeDateWithYear(yearMonthDayOfJoiningDate.year, month: yearMonthDayOfJoiningDate.month, andDay: yearMonthDayOfJoiningDate.day)
+            
+            let firstDayOfYearDateComponents = DateComponents(year: todayDateComponents.year!, month: 1, day: 1)
+            let lastDayOfYearDateComponents = DateComponents(year: todayDateComponents.year!, month: 12, day: 31)
+            
+            let startDate = joiningDateFromYearMonthDay >= calendar.date(from: firstDayOfYearDateComponents)! ? joiningDateFromYearMonthDay : calendar.date(from: firstDayOfYearDateComponents)!
+            let endDate = calendar.date(from: lastDayOfYearDateComponents)!
+            
+            if let leavingDate = ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date, leavingDate < endDate {
+                return (startDate, leavingDate)
+                
+            } else {
+                return (startDate, endDate)
+            }
+            
+            
+        } else { // joiningDay
+            var firstDayOfVacationDate = ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date
+            let joiningDateComponents = calendar.dateComponents([.year, .month, .day], from: firstDayOfVacationDate)
+            var endDayOfVacationDate: Date
+            
+            if joiningDateComponents.month! < todayDateComponents.month! {
+                // First date of vacation
+                let firstDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year!, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                
+                firstDayOfVacationDate = calendar.date(from: firstDayOfVacationDateDateComponents)!
+                
+                // End date of vacation
+                let endDayAfterOneDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year! + 1, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                let endDayAfterOneDayOfVacationDate = calendar.date(from: endDayAfterOneDayOfVacationDateDateComponents)!
+                
+                endDayOfVacationDate = Date(timeIntervalSinceReferenceDate: endDayAfterOneDayOfVacationDate.timeIntervalSinceReferenceDate - 86400)
+                
+            } else if joiningDateComponents.month! == todayDateComponents.month! {
+                if joiningDateComponents.day! <= todayDateComponents.day! {
+                    // First date of vacation
+                    let firstDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year!, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                    
+                    firstDayOfVacationDate = calendar.date(from: firstDayOfVacationDateDateComponents)!
+                    
+                    // End date of vacation
+                    let endDayAfterOneDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year! + 1, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                    let endDayAfterOneDayOfVacationDate = calendar.date(from: endDayAfterOneDayOfVacationDateDateComponents)!
+                    
+                    endDayOfVacationDate = Date(timeIntervalSinceReferenceDate: endDayAfterOneDayOfVacationDate.timeIntervalSinceReferenceDate - 86400)
+                    
+                } else { // joiningDateComponents.day! > self.todayDateComponents.day!
+                    // First date of vacation
+                    let firstDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year! - 1, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                    
+                    firstDayOfVacationDate = calendar.date(from: firstDayOfVacationDateDateComponents)!
+                    
+                    // End date of vacation
+                    let endDayAfterOneDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year!, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                    let endDayAfterOneDayOfVacationDate = calendar.date(from: endDayAfterOneDayOfVacationDateDateComponents)!
+                    
+                    endDayOfVacationDate = Date(timeIntervalSinceReferenceDate: endDayAfterOneDayOfVacationDate.timeIntervalSinceReferenceDate - 86400)
+                }
+                
+            } else { // joiningDateComponents.month! > self.todayDateComponents.month!
+                // First date of vacation
+                let firstDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year! - 1, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                
+                firstDayOfVacationDate = calendar.date(from: firstDayOfVacationDateDateComponents)!
+                
+                // End date of vacation
+                let endDayAfterOneDayOfVacationDateDateComponents = DateComponents(year: todayDateComponents.year!, month: joiningDateComponents.month!, day: joiningDateComponents.day!)
+                let endDayAfterOneDayOfVacationDate = calendar.date(from: endDayAfterOneDayOfVacationDateDateComponents)!
+                
+                endDayOfVacationDate = Date(timeIntervalSinceReferenceDate: endDayAfterOneDayOfVacationDate.timeIntervalSinceReferenceDate - 86400)
+            }
+            
+            if let leavingDate = ReferenceValues.initialSetting[InitialSetting.leavingDate.rawValue] as? Date, leavingDate < endDayOfVacationDate {
+                return (firstDayOfVacationDate, leavingDate)
+                
+            } else {
+                return (firstDayOfVacationDate, endDayOfVacationDate)
+            }
+        }
+    }
+    
+    static func calculateVacationScheduleDateRange(_ annualPaidHolidaysType: AnnualPaidHolidaysType) -> (startDate: Date, endDate: Date) {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let todayDateComponents = calendar.dateComponents([.year, .month, .day], from: Date())
+        
+        if annualPaidHolidaysType == .fiscalYear {
             let yearMonthDayOfJoiningDate = SupportingMethods.shared.getYearMonthAndDayOf(ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
             let joiningDateFromYearMonthDay = SupportingMethods.shared.makeDateWithYear(yearMonthDayOfJoiningDate.year, month: yearMonthDayOfJoiningDate.month, andDay: yearMonthDayOfJoiningDate.day)
             

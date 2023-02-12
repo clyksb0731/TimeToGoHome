@@ -114,7 +114,7 @@ class VacationUsageViewController: UIViewController {
         let label = UILabel()
         label.textColor = .black
         label.font = .systemFont(ofSize: 16, weight: .regular)
-        label.text = "\((Int(numberOfVacationsHold * 10)) % 10 == 0 ? "\(Int(numberOfVacationsHold))" : "\(numberOfVacationsHold)")일 | \(self.numberOfAnnualPaidHolidays)일"
+        label.text = "\(SupportingMethods.shared.makeStringOfFromVacationHold(self.numberOfVacationsHold))일 | \(self.numberOfAnnualPaidHolidays)일"
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -169,13 +169,12 @@ class VacationUsageViewController: UIViewController {
     }()
     
     var numberOfAnnualPaidHolidays: Int = {
-        if let numberOfAnnualPaidHolidays = ReferenceValues.initialSetting[InitialSetting.annualPaidHolidays.rawValue] as? Int {
-            return numberOfAnnualPaidHolidays
-            
-        } else {
-            return 15
-        }
+        return VacationModel.numberOfAnnualPaidHolidays
     }()
+    
+    var numberOfVacationsHold: Int {
+        return VacationModel.numberOfVacationsHold
+    }
     
     var holidays: Set<Int> = {
         if let holidays = ReferenceValues.initialSetting[InitialSetting.regularHolidays.rawValue] as? [Int] {
@@ -224,8 +223,7 @@ extension VacationUsageViewController: EssentialViewMethods {
             self.calendarCollectionView.reloadData()
             
             DispatchQueue.main.async {
-                let numberOfVacationsHold = VacationModel.numberOfVacationsHold
-                self.numberOfVacationLabel.text = "\((Int(numberOfVacationsHold * 10)) % 10 == 0 ? "\(Int(numberOfVacationsHold))" : "\(numberOfVacationsHold)")일 | \(self.numberOfAnnualPaidHolidays)일"
+                self.numberOfVacationLabel.text = "\(SupportingMethods.shared.makeStringOfFromVacationHold(self.numberOfVacationsHold))일 | \(self.numberOfAnnualPaidHolidays)일"
                 
                 SupportingMethods.shared.turnCoverView(.off, on: self.view)
             }
@@ -540,56 +538,62 @@ extension VacationUsageViewController {
     @objc func vacationButton(_ sender: UIButton) {
         UIDevice.lightHaptic()
         
+        let buttonView = sender.superview as! VacationButtonView
+        
+        if !buttonView.isSelected, self.numberOfVacationsHold + 1 > self.numberOfAnnualPaidHolidays * 2 {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "휴가는 연차 일수를 초과할 수 없습니다.")
+            
+            return
+        }
+        
         SupportingMethods.shared.turnCoverView(.on, on: self.view)
         
-        if let buttonView = sender.superview as? VacationButtonView {
-            buttonView.isSelected.toggle()
+        buttonView.isSelected.toggle()
+        
+        var vacation: Vacation!
+        
+        if buttonView.tag == 1 {
+            print("morning")
             
-            var vacation: Vacation!
-            
-            if buttonView.tag == 1 {
-                print("morning")
-                
-                if buttonView.isSelected {
-                    if self.afternoonVacationButtonView.isSelected {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .fullDay)
-                        
-                    } else {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .morning)
-                    }
+            if buttonView.isSelected {
+                if self.afternoonVacationButtonView.isSelected {
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .fullDay)
                     
                 } else {
-                    if self.afternoonVacationButtonView.isSelected {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .afternoon)
-                        
-                    } else {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .none)
-                    }
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .morning)
                 }
                 
             } else {
-                print("afternoon")
-                
-                if buttonView.isSelected {
-                    if self.morningVacationButtonView.isSelected {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .fullDay)
-                        
-                    } else {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .afternoon)
-                    }
+                if self.afternoonVacationButtonView.isSelected {
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .afternoon)
                     
                 } else {
-                    if self.morningVacationButtonView.isSelected {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .morning)
-                        
-                    } else {
-                        vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .none)
-                    }
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .none)
                 }
             }
             
-            VacationModel.addVacation(vacation)
+        } else {
+            print("afternoon")
+            
+            if buttonView.isSelected {
+                if self.morningVacationButtonView.isSelected {
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .fullDay)
+                    
+                } else {
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .afternoon)
+                }
+                
+            } else {
+                if self.morningVacationButtonView.isSelected {
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .morning)
+                    
+                } else {
+                    vacation = Vacation(date: SupportingMethods.shared.makeDateWithYear(self.selectedIndexOfYearMonthAndDay!.year, month: self.selectedIndexOfYearMonthAndDay!.month, andDay: self.selectedIndexOfYearMonthAndDay!.day), vacationType: .none)
+                }
+            }
         }
+        
+        VacationModel.addVacation(vacation)
     }
 }
 

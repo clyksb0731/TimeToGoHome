@@ -116,19 +116,19 @@ extension UIColor {
     
     struct Record {
         static var work: UIColor {
-            return .useRGB(red: 37, green: 131, blue: 146)
+            return UIColor.Schedule.work
         }
         
         static var overtime: UIColor {
-            return .useRGB(red: 250, green: 138, blue: 162)
+            return UIColor.Schedule.overtime
         }
         
         static var vacation: UIColor {
-            return .useRGB(red: 255, green: 197, blue: 63)
+            return UIColor.Schedule.vacation
         }
         
         static var holiday: UIColor {
-            return .useRGB(red: 243, green: 55, blue: 71)
+            return UIColor.Schedule.holiday
         }
         
         static var scheduling: UIColor {
@@ -155,6 +155,22 @@ extension UIColor {
     }
     
     struct Buttons {
+        static var selectedVacation: UIColor {
+            return UIColor.Schedule.vacation
+        }
+        
+        static var deselectedVacation: UIColor {
+            return .useRGB(red: 216, green: 216, blue: 216)
+        }
+        
+        static var disableSelectedVacation: UIColor {
+            return UIColor.Schedule.vacation.withAlphaComponent(0.5)
+        }
+        
+        static var disabledDeselectedVacation: UIColor {
+            return .useRGB(red: 216, green: 216, blue: 216).withAlphaComponent(0.5)
+        }
+        
         static var initialActiveBottom: UIColor {
             return .useRGB(red: 146, green: 243, blue: 205)
         }

@@ -46,7 +46,7 @@ enum InitialSetting: String {
     // 휴무 정보
     case regularHolidays // 정기 휴무 요일
     case annualPaidHolidaysType // 휴가기준 (회계연도/입사날짜)
-    case annualPaidHolidays // 연차 개수
+    case annualPaidHolidays // 연차 일수
 }
 
 enum CoverViewState {
@@ -768,6 +768,14 @@ extension SupportingMethods {
         self.removeStartingWorkTimePush()
         self.removeTodayFinishingWorkTimePush()
         self.removeCurrentCompanyLocationPush()
+    }
+    
+    // MARK: Vacation
+    func makeStringOfFromVacationHold(_ number: Int) -> String {
+        let firstValue = number / 2
+        let secondValue = number % 2
+        
+        return secondValue > 0 ? "\(firstValue).5" : "\(firstValue)"
     }
 }
 
