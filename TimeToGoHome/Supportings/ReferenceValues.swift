@@ -98,7 +98,7 @@ extension UIColor {
         }
         
         static var holiday: UIColor {
-            return .useRGB(red: 243, green: 55, blue: 71)
+            return .useRGB(red: 255, green: 92, blue: 92)
         }
         
         static var scheduling: UIColor {

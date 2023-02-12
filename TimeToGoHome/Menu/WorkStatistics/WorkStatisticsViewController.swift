@@ -56,7 +56,7 @@ class WorkStatisticsViewController: UIViewController {
     
     lazy var noWorkStatisticsOfWeekImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "noWorkStatistics"))
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
@@ -104,7 +104,7 @@ class WorkStatisticsViewController: UIViewController {
     
     lazy var noWorkStatisticsOfMonthImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "noWorkStatistics"))
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
@@ -152,7 +152,7 @@ class WorkStatisticsViewController: UIViewController {
     
     lazy var noWorkStatisticsOfYearImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "noWorkStatistics"))
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
@@ -428,7 +428,12 @@ extension WorkStatisticsViewController: EssentialViewMethods {
         ])
         
         // noWorkStatisticsOfWeekImageView
-        SupportingMethods.shared.makeConstraintsOf(self.noWorkStatisticsOfWeekImageView, sameAs: self.weekView)
+        NSLayoutConstraint.activate([
+            self.noWorkStatisticsOfWeekImageView.centerYAnchor.constraint(equalTo: self.weekView.centerYAnchor),
+            self.noWorkStatisticsOfWeekImageView.heightAnchor.constraint(equalToConstant: 200),
+            self.noWorkStatisticsOfWeekImageView.centerXAnchor.constraint(equalTo: self.weekView.centerXAnchor),
+            self.noWorkStatisticsOfWeekImageView.widthAnchor.constraint(equalToConstant: 200)
+        ])
         
         // weekPieChartView
         SupportingMethods.shared.makeConstraintsOf(self.weekPieChartView, sameAs: self.weekView)
@@ -442,7 +447,12 @@ extension WorkStatisticsViewController: EssentialViewMethods {
         ])
         
         // noWorkStatisticsOfMonthImageView
-        SupportingMethods.shared.makeConstraintsOf(self.noWorkStatisticsOfMonthImageView, sameAs: self.monthView)
+        NSLayoutConstraint.activate([
+            self.noWorkStatisticsOfMonthImageView.centerYAnchor.constraint(equalTo: self.monthView.centerYAnchor),
+            self.noWorkStatisticsOfMonthImageView.heightAnchor.constraint(equalToConstant: 200),
+            self.noWorkStatisticsOfMonthImageView.centerXAnchor.constraint(equalTo: self.monthView.centerXAnchor),
+            self.noWorkStatisticsOfMonthImageView.widthAnchor.constraint(equalToConstant: 200)
+        ])
         
         // monthPieChartView
         SupportingMethods.shared.makeConstraintsOf(self.monthPieChartView, sameAs: self.monthView)
@@ -456,7 +466,12 @@ extension WorkStatisticsViewController: EssentialViewMethods {
         ])
         
         // noWorkStatisticsOfYearImageView
-        SupportingMethods.shared.makeConstraintsOf(self.noWorkStatisticsOfYearImageView, sameAs: self.yearView)
+        NSLayoutConstraint.activate([
+            self.noWorkStatisticsOfYearImageView.centerYAnchor.constraint(equalTo: self.yearView.centerYAnchor),
+            self.noWorkStatisticsOfYearImageView.heightAnchor.constraint(equalToConstant: 200),
+            self.noWorkStatisticsOfYearImageView.centerXAnchor.constraint(equalTo: self.yearView.centerXAnchor),
+            self.noWorkStatisticsOfYearImageView.widthAnchor.constraint(equalToConstant: 200)
+        ])
         
         // yearPieChartView
         SupportingMethods.shared.makeConstraintsOf(self.yearPieChartView, sameAs: self.yearView)
