@@ -32,19 +32,10 @@ class LocationManager: NSObject {
 // MARK: - Methods added
 extension LocationManager {
     func requestAuthorization() {
-        if #available(iOS 14.0, *) {
-            if self.locationManager.authorizationStatus != .authorizedAlways &&
-                self.locationManager.authorizationStatus != .authorizedWhenInUse {
-                
-                self.locationManager.requestWhenInUseAuthorization()
-            }
+        if self.locationManager.authorizationStatus != .authorizedAlways &&
+            self.locationManager.authorizationStatus != .authorizedWhenInUse {
             
-        } else {
-            if CLLocationManager.authorizationStatus() != .authorizedAlways &&
-                CLLocationManager.authorizationStatus() != .authorizedWhenInUse {
-                
-                self.locationManager.requestWhenInUseAuthorization()
-            }
+            self.locationManager.requestWhenInUseAuthorization()
         }
     }
     
@@ -95,7 +86,6 @@ extension LocationManager {
 
 // MARK: - Extension for CLLocationManagerDelegate
 extension LocationManager: CLLocationManagerDelegate {
-    @available (iOS 14.0, *)
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .authorizedAlways:

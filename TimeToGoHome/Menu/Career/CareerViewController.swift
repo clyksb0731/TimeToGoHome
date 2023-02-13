@@ -22,9 +22,7 @@ class CareerViewController: UIViewController {
         tableView.addGestureRecognizer(longPressGesture)
         tableView.delegate = self
         tableView.dataSource = self
-        if #available(iOS 15.0, *) {
-            tableView.sectionHeaderTopPadding = 0
-        }
+        tableView.sectionHeaderTopPadding = 0
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         return tableView

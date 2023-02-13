@@ -75,9 +75,7 @@ class MenuViewController: UIViewController {
         tableView.register(MenuHeaderView.self, forHeaderFooterViewReuseIdentifier: "MenuHeaderView")
         tableView.delegate = self
         tableView.dataSource = self
-        if #available(iOS 15.0, *) {
-            tableView.sectionHeaderTopPadding = 0
-        }
+        tableView.sectionHeaderTopPadding = 0
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         return tableView

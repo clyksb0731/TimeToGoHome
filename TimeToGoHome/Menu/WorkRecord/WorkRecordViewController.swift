@@ -18,9 +18,7 @@ class WorkRecordViewController: UIViewController {
         tableView.register(WorkRecordHeaderView.self, forHeaderFooterViewReuseIdentifier: "WorkRecordHeaderView")
         tableView.delegate = self
         tableView.dataSource = self
-        if #available(iOS 15.0, *) {
-            tableView.sectionHeaderTopPadding = 0
-        }
+        tableView.sectionHeaderTopPadding = 0
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         return tableView
