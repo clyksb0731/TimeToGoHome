@@ -1710,17 +1710,14 @@ extension MainViewController {
         }
     }
     
-    func determineTodayScheduleAfterInsertingRegularScheduleTo(_ scheduleInserting: WorkScheduleModel, against currentRegularScheduleType: RegularScheduleType?, completion:((_ isChanged: Bool, _ forSchedule: (RegularScheduleType?, WorkScheduleModel)?) -> ())?) {
+    func determineTodayScheduleAfterInsertingRegularScheduleTo(_ scheduleInserting: WorkScheduleModel, against currentRegularScheduleType: RegularScheduleType?, completion:((_ isRegularScheduleChanged: Bool, _ forSchedule: (RegularScheduleType?, WorkScheduleModel)?) -> ())?) {
         var scheduleInserting = scheduleInserting
         
         guard let regularScheduleTypeUpdating = self.determineRegularSchedule(scheduleInserting) else {
             return
         }
         
-        if regularScheduleTypeUpdating == currentRegularScheduleType {
-            completion?(false, nil)
-            
-        } else {
+        if regularScheduleTypeUpdating != currentRegularScheduleType {
             switch regularScheduleTypeUpdating {
             case .fullWork: // MARK: .fullWork
                 if case .morningWork = currentRegularScheduleType {
@@ -1736,10 +1733,7 @@ extension MainViewController {
                                 
                                 completion?(true, (regularScheduleTypeUpdating, scheduleInserting))
                             }
-                            let cancelAction = UIAlertAction(title: "취소", style: .cancel) { action in
-                                
-                                completion?(false, nil) // Recovery schedule with original one.
-                            }
+                            let cancelAction = UIAlertAction(title: "취소", style: .cancel)
                             alertVC.addAction(okAction)
                             alertVC.addAction(cancelAction)
                             self.present(alertVC, animated: false)
@@ -1838,10 +1832,7 @@ extension MainViewController {
                                 
                                 completion?(true, (regularScheduleTypeUpdating, scheduleInserting))
                             }
-                            let cancelAction = UIAlertAction(title: "취소", style: .cancel) { action in
-                                
-                                completion?(false, nil) // Recovery schedule with original one.
-                            }
+                            let cancelAction = UIAlertAction(title: "취소", style: .cancel)
                             alertVC.addAction(okAction)
                             alertVC.addAction(cancelAction)
                             self.present(alertVC, animated: false)
@@ -1990,7 +1981,7 @@ extension MainViewController {
         }
     }
     
-    func determineTodayScheduleAfterModifyingRegularScheduleTo(_ scheduleModifying: WorkScheduleModel, against currentRegularScheduleType: RegularScheduleType?, completion:((_ isChanged: Bool, _ forSchedule: (RegularScheduleType?, WorkScheduleModel)?) -> ())?) {
+    func determineTodayScheduleAfterModifyingRegularScheduleTo(_ scheduleModifying: WorkScheduleModel, against currentRegularScheduleType: RegularScheduleType?, completion:((_ isRegularScheduleChanged: Bool, _ forSchedule: (RegularScheduleType?, WorkScheduleModel)?) -> ())?) {
         var scheduleModifying = scheduleModifying
         
         guard let regularScheduleTypeUpdating = self.determineRegularSchedule(scheduleModifying) else {
@@ -2826,8 +2817,8 @@ extension MainViewController {
         }
         
         // After calculateing, changing schedule.
-        self.determineTodayScheduleAfterModifyingRegularScheduleTo(self.schedule, against: self.todayRegularScheduleType) { (isChanged: Bool, scheduleDetermined: (scheduleType: RegularScheduleType?, schedule: WorkScheduleModel)?) in
-            if isChanged {
+        self.determineTodayScheduleAfterModifyingRegularScheduleTo(self.schedule, against: self.todayRegularScheduleType) { (isRegularScheduleChanged: Bool, scheduleDetermined: (scheduleType: RegularScheduleType?, schedule: WorkScheduleModel)?) in
+            if isRegularScheduleChanged {
                 self.schedule = scheduleDetermined!.schedule
                 self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
                 
@@ -2852,17 +2843,7 @@ extension MainViewController {
                 }
                 
             } else {
-                if case .morning(let scheduleWorkTimeType) = self.schedule.morning,
-                   case .morning(let tempScheduleWorkTimeType) = self.tempSchedule?.morning,
-                   scheduleWorkTimeType != tempScheduleWorkTimeType {
-                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
-                    
-                } else if case .afternoon(let scheduleWorkTimeType) = self.schedule.afternoon,
-                   case .afternoon(let tempScheduleWorkTimeType) = self.tempSchedule?.afternoon,
-                          scheduleWorkTimeType != tempScheduleWorkTimeType {
-                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
-                    
-                } else if (self.schedule.overtime == nil && self.tempSchedule?.overtime != nil) ||
+                if (self.schedule.overtime == nil && self.tempSchedule?.overtime != nil) ||
                             (self.schedule.overtime != nil && self.tempSchedule?.overtime == nil) {
                     self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
                     
@@ -3356,8 +3337,8 @@ extension MainViewController: MainCoverDelegate {
         self.tempSchedule = self.schedule
         self.tempSchedule!.insertSchedule(schedule)
         
-        self.determineTodayScheduleAfterInsertingRegularScheduleTo(self.tempSchedule!, against: self.todayRegularScheduleType) {(isChanged: Bool, scheduleDetermined: (scheduleType: RegularScheduleType?, schedule: WorkScheduleModel)?) in
-            if isChanged {
+        self.determineTodayScheduleAfterInsertingRegularScheduleTo(self.tempSchedule!, against: self.todayRegularScheduleType) {(isRegularScheduleChanged: Bool, scheduleDetermined: (scheduleType: RegularScheduleType?, schedule: WorkScheduleModel)?) in
+            if isRegularScheduleChanged {
                 self.schedule = scheduleDetermined!.schedule
                 self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
                 
@@ -3379,28 +3360,6 @@ extension MainViewController: MainCoverDelegate {
                     } else {
                         // No need to reset main time view values
                     }
-                }
-                
-                self.scheduleTableView.reloadData()
-                self.determineScheduleButtonState(for: self.schedule)
-                
-                DispatchQueue.main.async {
-                    self.determineIfHalfDay()
-                }
-                
-            } else {
-                if case .morning(let scheduleWorkTimeType) = self.schedule.morning,
-                   case .morning(let tempScheduleWorkTimeType) = self.tempSchedule?.morning,
-                   scheduleWorkTimeType != tempScheduleWorkTimeType {
-                    self.schedule = self.tempSchedule!
-                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
-                }
-                
-                if case .afternoon(let scheduleWorkTimeType) = self.schedule.afternoon,
-                   case .afternoon(let tempScheduleWorkTimeType) = self.tempSchedule?.afternoon,
-                   scheduleWorkTimeType != tempScheduleWorkTimeType {
-                    self.schedule = self.tempSchedule!
-                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
                 }
                 
                 self.scheduleTableView.reloadData()
