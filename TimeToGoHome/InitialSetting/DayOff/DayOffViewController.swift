@@ -1305,7 +1305,7 @@ extension DayOffViewController {
         UIDevice.lightHaptic()
         
         guard (self.numberOfAnnualPaidHolidays - 1) * 2 >= self.numberOfVacationsHold else {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "연차 일수", andMessage: "예약(혹은 사용)된 휴가보다 적은 연차 일수를 설정할 수 없습니다.")
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "연차 일수", andMessage: "사용한(혹은 사용할) 휴가 일수보다 적게 설정할 수 없습니다.")
             
             return
         }
@@ -1330,7 +1330,7 @@ extension DayOffViewController {
     @objc func confirmButton(_ sender: UIButton) {
         if self.annualPaidHolidaysType != self.tempAnnualPaidHolidaysType {
             if self.numberOfVacationsHold > self.numberOfAnnualPaidHolidays * 2 {
-                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "휴가기준을 \(self.annualPaidHolidaysType == .fiscalYear ? "회계연도":"입사날짜")로 변경하면 연차 일수보다 예정(혹은 사용)된 휴가 일수가 많아집니다. 휴가 일수를 조정 후 휴가기준을 변경하세요.")
+                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "휴가기준을 \(self.annualPaidHolidaysType == .fiscalYear ? "회계연도":"입사날짜")로 변경하면 연차 일수보다 사용한(혹은 사용할) 휴가 일수가 많아집니다. 휴가 일수를 조정 후 휴가기준을 변경하세요.")
                 
                 return
             }

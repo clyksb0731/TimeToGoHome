@@ -301,7 +301,7 @@ extension SettingNumberOfPaidHolidaysViewController {
             let calculatedNumberOfVacationHold = VacationModel.calculateNumberOfVacationHold(startDate: calculatedDateRange.startDate, endDate: calculatedDateRange.endDate)
             
             if calculatedNumberOfVacationHold > self.numberOfAnnualPaidHolidays * 2 {
-                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "휴가기준을 \(self.annualPaidHolidaysType == .fiscalYear ? "회계연도":"입사날짜")로 변경하면 연차 일수보다 예정(혹은 사용)된 휴가 일수가 많아집니다. 휴가 일수를 조정 후 휴가기준을 변경하세요.")
+                SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "휴가기준을 \(self.annualPaidHolidaysType == .fiscalYear ? "회계연도":"입사날짜")로 변경하면 연차 일수보다 사용한(혹은 사용할) 휴가 일수가 많아집니다. 휴가 일수를 조정 후 휴가기준을 변경하세요.")
                 
                 return
             }
@@ -354,7 +354,7 @@ extension SettingNumberOfPaidHolidaysViewController: UIPickerViewDelegate, UIPic
         let calculatedNumberOfVacationHold = VacationModel.calculateNumberOfVacationHold(startDate: calculatedDateRange.startDate, endDate: calculatedDateRange.endDate)
         
         if calculatedNumberOfVacationHold > self.annualPaidHolidays[row] * 2 {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "사용한(혹은 사용할) 휴가 날 수보다 적게 설정할 수 없습니다.")
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "사용한(혹은 사용할) 휴가 일수보다 적게 설정할 수 없습니다.")
             
             pickerView.selectRow(self.annualPaidHolidays.firstIndex(of: calculatedNumberOfVacationHold > 99 * 2 ? 99 : calculatedNumberOfVacationHold % 2 > 0 ? calculatedNumberOfVacationHold / 2 + 1 : calculatedNumberOfVacationHold / 2)!, inComponent: 0, animated: true)
             
