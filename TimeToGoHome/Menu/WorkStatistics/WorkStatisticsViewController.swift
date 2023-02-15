@@ -571,13 +571,13 @@ extension WorkStatisticsViewController {
             ])
             
             if let minutes = minutes {
-                secondAttributedString = NSAttributedString(string: "\(self.calculateRegularTimeToHours(minutes)) 시간", attributes: [
+                secondAttributedString = NSAttributedString(string: "\(self.calculateRegularTimeToHours(minutes))시간", attributes: [
                     .font:UIFont.systemFont(ofSize: 20, weight: .bold),
                     .foregroundColor:UIColor.black,
                     .paragraphStyle:paragraphStyle
                 ])
             } else {
-                secondAttributedString = NSAttributedString(string: "0 시간", attributes: [
+                secondAttributedString = NSAttributedString(string: "0시간", attributes: [
                     .font:UIFont.systemFont(ofSize: 20, weight: .bold),
                     .foregroundColor:UIColor.black,
                     .paragraphStyle:paragraphStyle
@@ -592,14 +592,14 @@ extension WorkStatisticsViewController {
             ])
             
             if let minutes = minutes {
-                secondAttributedString = NSAttributedString(string: "\(self.calculateOvertimeToHours(minutes) < 0.01 ? "0" : "\(self.calculateOvertimeToHours(minutes))") 시간", attributes: [
+                secondAttributedString = NSAttributedString(string: self.calculateOvertimeToHours(minutes), attributes: [
                     .font:UIFont.systemFont(ofSize: 20, weight: .bold),
                     .foregroundColor:UIColor.black,
                     .paragraphStyle:paragraphStyle
                 ])
                 
             } else {
-                secondAttributedString = NSAttributedString(string: "0 시간", attributes: [
+                secondAttributedString = NSAttributedString(string: "0시간", attributes: [
                     .font:UIFont.systemFont(ofSize: 20, weight: .bold),
                     .foregroundColor:UIColor.black,
                     .paragraphStyle:paragraphStyle
@@ -614,14 +614,14 @@ extension WorkStatisticsViewController {
             ])
             
             if let minutes = minutes {
-                secondAttributedString = NSAttributedString(string: "\(self.calculateVacationTimeToDays(minutes)) 일", attributes: [
+                secondAttributedString = NSAttributedString(string: "\(self.calculateVacationTimeToDays(minutes))일", attributes: [
                     .font:UIFont.systemFont(ofSize: 20, weight: .bold),
                     .foregroundColor:UIColor.black,
                     .paragraphStyle:paragraphStyle
                 ])
                 
             } else {
-                secondAttributedString = NSAttributedString(string: "0 일", attributes: [
+                secondAttributedString = NSAttributedString(string: "0일", attributes: [
                     .font:UIFont.systemFont(ofSize: 20, weight: .bold),
                     .foregroundColor:UIColor.black,
                     .paragraphStyle:paragraphStyle
@@ -639,8 +639,21 @@ extension WorkStatisticsViewController {
         return minutes / 60
     }
     
-    func calculateOvertimeToHours(_ minutes: Int) -> Double {
-        return Double(Int((Double(minutes) / 60) * 100)) / 100
+    func calculateOvertimeToHours(_ minutes: Int) -> String {
+        let hours = minutes / 60
+        let minutesLeft = minutes % 60
+        
+        if hours > 0 {
+            if minutesLeft == 0 {
+                return "\(hours)시간"
+                
+            } else {
+                return "\(hours)시간 \(minutesLeft)분"
+            }
+            
+        } else {
+            return "\(minutesLeft)분"
+        }
     }
     
     func calculateVacationTimeToDays(_ minutes: Int) -> String {
