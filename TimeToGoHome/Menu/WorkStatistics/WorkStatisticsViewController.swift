@@ -652,7 +652,12 @@ extension WorkStatisticsViewController {
             }
             
         } else {
-            return "\(minutesLeft)분"
+            if minutesLeft == 0 {
+                return "0시간"
+                
+            } else {
+                return "\(minutesLeft)분"
+            }
         }
     }
     
