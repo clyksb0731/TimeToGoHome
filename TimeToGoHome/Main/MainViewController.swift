@@ -1029,7 +1029,7 @@ extension MainViewController {
             self.startWorkingTimeButton.isEnabled = false
             
         } else {
-            self.startWorkingTimeButton.isEnabled = true
+            self.startWorkingTimeButton.isEnabled = self.schedule.dateOfFinishedSchedule == nil
         }
         
         self.editScheduleButton.setTitle(self.schedule.dateOfFinishedSchedule == nil ? "추가 | 제거" : "업무 재개", for: .normal)
@@ -1207,11 +1207,13 @@ extension MainViewController {
                     
                 } else { // startingWorkTimeSeconds < self.lunchTimeSecondsSinceReferenceDate
                     //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
-                    if currentTimeSeconds < atLunchTimeSeconds {
+                    if currentTimeSeconds < startingWorkTimeSeconds {
+                        remainingTimeSeconds = endingTimeSeconds - startingWorkTimeSeconds - WorkScheduleModel.secondsOfLunchTime
+                        
+                    } else if currentTimeSeconds >= startingWorkTimeSeconds && currentTimeSeconds < atLunchTimeSeconds {
                         remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - WorkScheduleModel.secondsOfLunchTime
                         
-                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
-                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                    } else if currentTimeSeconds >= atLunchTimeSeconds && currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
                         remainingTimeSeconds = endingTimeSeconds - currentTimeSeconds - lunchTimeSecondsLeft
                         
                     } else {
@@ -1345,11 +1347,13 @@ extension MainViewController {
                     
                 } else { // startingWorkTimeSeconds < self.lunchTimeSecondsSinceReferenceDate
                     //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
-                    if currentTimeSeconds < atLunchTimeSeconds {
+                    if currentTimeSeconds < startingWorkTimeSeconds {
+                        progressTimeSeconds = 0
+                        
+                    } else if currentTimeSeconds >= startingWorkTimeSeconds && currentTimeSeconds < atLunchTimeSeconds {
                         progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
                         
-                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
-                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                    } else if currentTimeSeconds >= atLunchTimeSeconds && currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
                         progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - lunchTimeSecondsPassed
                         
                     } else {
@@ -1485,11 +1489,13 @@ extension MainViewController {
                     
                 } else { // startingWorkTimeSeconds < self.lunchTimeSecondsSinceReferenceDate
                     //self.finishingRegularWorkTimeSecondsSinceReferenceDate = startingWorkTimeSeconds + type(of: self).secondsOfLunchTime + type(of: self).secondsOfWorkTime
-                    if currentTimeSeconds < atLunchTimeSeconds {
+                    if currentTimeSeconds < startingWorkTimeSeconds {
+                        progressTimeSeconds = 0
+                        
+                    } else if currentTimeSeconds >= startingWorkTimeSeconds && currentTimeSeconds < atLunchTimeSeconds {
                         progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds
                         
-                    } else if currentTimeSeconds >= atLunchTimeSeconds &&
-                                currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
+                    } else if currentTimeSeconds >= atLunchTimeSeconds && currentTimeSeconds < atLunchTimeSeconds + WorkScheduleModel.secondsOfLunchTime {
                         progressTimeSeconds = currentTimeSeconds - startingWorkTimeSeconds - lunchTimeSecondsPassed
                         
                     } else {
@@ -1505,7 +1511,6 @@ extension MainViewController {
         }
         
         let rate = Double(progressTimeSeconds) / Double(maximumProgressTimeSeconds)
-//        let rate = Double(progressTimeSeconds) / Double(maximumPrgressTimeSeconds) < 1.0 ? Double(progressTimeSeconds) / Double(maximumPrgressTimeSeconds) : 1.0
         
         self.mainTimeViewProgressRateIntegerValueLabel.text = "\(Int(rate * 100))"
         self.mainTimeViewProgressRateFloatValueLabel.text = "\(Int(rate * 1000) % 10)"

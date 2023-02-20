@@ -162,6 +162,8 @@ struct WorkScheduleModel {
         didSet {
             let dateId = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").string(from: Date())
             SupportingMethods.shared.setAppSetting(with: [dateId:self.isIgnoringLunchTime], for: .isIgnoredLunchTimeToday)
+            
+            self.determineFinishingRegularWorkTime()
         }
     }
     

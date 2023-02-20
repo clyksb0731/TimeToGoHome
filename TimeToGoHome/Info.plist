@@ -7,8 +7,6 @@
 		<string>en</string>
 		<string>ko</string>
 	</array>
-	<key>Localization native development region</key>
-	<string>Korea</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
