@@ -1722,7 +1722,10 @@ extension MainViewController {
             return
         }
         
-        if regularScheduleTypeUpdating != currentRegularScheduleType {
+        if regularScheduleTypeUpdating == currentRegularScheduleType {
+            completion?(false, nil)
+            
+        } else if regularScheduleTypeUpdating != currentRegularScheduleType {
             switch regularScheduleTypeUpdating {
             case .fullWork: // MARK: .fullWork
                 if case .morningWork = currentRegularScheduleType {
@@ -2853,7 +2856,18 @@ extension MainViewController {
                     self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
                     
                 } else if case .overtime(let scheduleOvertime) = self.schedule.overtime,
-                            case .overtime(let tempScheduleOvertime) = self.tempSchedule?.overtime, scheduleOvertime != tempScheduleOvertime {
+                            case .overtime(let tempScheduleOvertime) = self.tempSchedule?.overtime,
+                            scheduleOvertime != tempScheduleOvertime {
+                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
+                    
+                } else if case .morning(let scheduleWorkTimeType) = self.schedule.morning,
+                   case .morning(let tempScheduleWorkTimeType) = self.tempSchedule?.morning,
+                   scheduleWorkTimeType != tempScheduleWorkTimeType {
+                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
+                    
+                } else if case .afternoon(let scheduleWorkTimeType) = self.schedule.afternoon,
+                   case .afternoon(let tempScheduleWorkTimeType) = self.tempSchedule?.afternoon,
+                          scheduleWorkTimeType != tempScheduleWorkTimeType {
                     self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
                     
                 } else {
@@ -3367,12 +3381,27 @@ extension MainViewController: MainCoverDelegate {
                     }
                 }
                 
-                self.scheduleTableView.reloadData()
-                self.determineScheduleButtonState(for: self.schedule)
-                
-                DispatchQueue.main.async {
-                    self.determineIfHalfDay()
+            } else {
+                if case .morning(let scheduleWorkTimeType) = self.schedule.morning,
+                   case .morning(let tempScheduleWorkTimeType) = self.tempSchedule?.morning,
+                   scheduleWorkTimeType != tempScheduleWorkTimeType {
+                    self.schedule = self.tempSchedule!
+                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
                 }
+                
+                if case .afternoon(let scheduleWorkTimeType) = self.schedule.afternoon,
+                   case .afternoon(let tempScheduleWorkTimeType) = self.tempSchedule?.afternoon,
+                   scheduleWorkTimeType != tempScheduleWorkTimeType {
+                    self.schedule = self.tempSchedule!
+                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
+                }
+            }
+            
+            self.scheduleTableView.reloadData()
+            self.determineScheduleButtonState(for: self.schedule)
+            
+            DispatchQueue.main.async {
+                self.determineIfHalfDay()
             }
         }
     }
