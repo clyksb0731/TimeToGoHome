@@ -2881,8 +2881,18 @@ extension MainViewController {
     }
     
     @objc func ignoreLunchSwitch(_ sender: YSBlueSwitch) {
-        self.schedule.isIgnoringLunchTime = sender.isOn
-        self.ignoreLunchDescriptionLabel.textColor = sender.isOn ? .black : .useRGB(red: 221, green: 221, blue: 221)
+        if self.schedule.overtime == nil {
+            self.schedule.isIgnoringLunchTime = sender.isOn
+            self.ignoreLunchDescriptionLabel.textColor = sender.isOn ? .black : .useRGB(red: 221, green: 221, blue: 221)
+            
+        } else {
+            let alertVC = UIAlertController(title: "변경 불가", message: "추가근무 제거 후 변경해 주세요.", preferredStyle: .alert)
+            let action = UIAlertAction(title: "확인", style: .default)
+            alertVC.addAction(action)
+            self.present(alertVC, animated: true)
+            
+            self.ignoreLunchSwitch.setOn(self.schedule.isIgnoringLunchTime, animated: false)
+        }
     }
     
     @objc func removeScheduleButton(_ sender: UIButton) {
