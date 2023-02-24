@@ -1569,7 +1569,7 @@ extension MainViewController {
                                 self.scheduleButtonView.setScheduleButtonView(.noButton)
                                 
                             } else if SupportingMethods.getCurrentTimeSeconds() > regularWorkSeconds &&
-                                        SupportingMethods.getCurrentTimeSeconds() <= Int(overtime.timeIntervalSinceReferenceDate) { // in overtime
+                                        SupportingMethods.getCurrentTimeSeconds() <= Int(overtime.timeIntervalSinceReferenceDate) + 60 { // in overtime + 1 minute
                                 self.scheduleButtonView.setScheduleButtonView(.finishWorkWithOvertime(nil), with: self.schedule)
                                 
                             } else { // after overtime
