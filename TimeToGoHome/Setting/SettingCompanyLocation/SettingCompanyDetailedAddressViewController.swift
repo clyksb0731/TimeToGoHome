@@ -1,14 +1,14 @@
 //
-//  CompanyDetailedAddressViewController.swift
+//  SettingCompanyDetailedAddressViewController.swift
 //  TimeToGoHome
 //
-//  Created by Yongseok Choi on 2021/11/26.
+//  Created by Yongseok Choi on 2023/02/25.
 //
 
 import UIKit
 import CoreLocation
 
-class CompanyDetailedAddressViewController: UIViewController {
+class SettingCompanyDetailedAddressViewController: UIViewController {
 
     // Instead of navigation bar line
     var topLineView: UIView = {
@@ -110,7 +110,7 @@ class CompanyDetailedAddressViewController: UIViewController {
 }
 
 // MARK: - Extension for essential methods
-extension CompanyDetailedAddressViewController {
+extension SettingCompanyDetailedAddressViewController {
     // Set view foundation
     func setViewFoundation() {
         self.view.backgroundColor = .white
@@ -207,41 +207,41 @@ extension CompanyDetailedAddressViewController {
 }
 
 // MARK: - Extension for methods added
-extension CompanyDetailedAddressViewController {
-    func completeInitialLocationSetting() {
-        ReferenceValues.initialSetting.updateValue(self.selectedCenter.latitude, forKey: InitialSetting.companyLatitude.rawValue)
-        ReferenceValues.initialSetting.updateValue(self.selectedCenter.longitude, forKey: InitialSetting.companyLongitude.rawValue)
+extension SettingCompanyDetailedAddressViewController {
+    func updateCompanyLocation() {
+        let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
+        companyModel.setCompanyLocation(address: String(format: "%@ %@", self.selectedAddress, self.detailAddressTextField.text!), latitude: self.selectedCenter.latitude, longitude: self.selectedCenter.longitude)
+        
+        ReferenceValues.initialSetting.updateValue(selectedCenter.latitude, forKey: InitialSetting.companyLatitude.rawValue)
+        ReferenceValues.initialSetting.updateValue(selectedCenter.longitude, forKey: InitialSetting.companyLongitude.rawValue)
         
         ReferenceValues.initialSetting.updateValue(String(format: "%@ %@", self.selectedAddress, self.detailAddressTextField.text!), forKey: InitialSetting.companyAddress.rawValue)
         
-        let staggeredWorkTypeVC = StaggeredWorkTypeViewController()
-        let normalWorkTypeVC = NormalWorkTypeViewController()
-        let tabBarVC = CustomizedTabBarController()
-        tabBarVC.viewControllers = [staggeredWorkTypeVC, normalWorkTypeVC]
-        tabBarVC.modalPresentationStyle = .fullScreen
+        SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
         
-        self.present(tabBarVC, animated: true, completion: nil)
+        SupportingMethods.shared.determineCurrentCompanyLocationPush()
+        
+        self.navigationController?.popToRootViewController(animated: true)
     }
 }
 
 // MARK: - Extension for UITextFieldDelegate
-extension CompanyDetailedAddressViewController: UITextFieldDelegate {
+extension SettingCompanyDetailedAddressViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        
-        self.completeInitialLocationSetting()
         
         return true
     }
 }
 
 // MARK: - Extension for Selector methods
-extension CompanyDetailedAddressViewController {
+extension SettingCompanyDetailedAddressViewController {
     @objc func leftBarButtonItem(_ sender: UIBarButtonItem) {
         self.navigationController?.popViewController(animated: true)
     }
     
     @objc func rightBarButtonItem(_ sender: UIBarButtonItem) {
-        self.completeInitialLocationSetting()
+        self.updateCompanyLocation()
     }
 }
+

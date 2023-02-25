@@ -58,7 +58,6 @@ class CompanyLocationAlertViewController: UIViewController {
         label.textColor = .black
         label.adjustsFontSizeToFitWidth = true
         label.minimumScaleFactor = 0.3
-        label.text = "주소:"
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -154,7 +153,7 @@ class CompanyLocationAlertViewController: UIViewController {
         switch alertType {
         case .companyLocationMap(let jibeon, let road):
             self.alertTitleLabel.text = "이 위치로 지정"
-            self.jibeonAddressLabel.text = jibeon != "" ? "주소: \(jibeon)" : "주소: \(road)"
+            self.jibeonAddressLabel.text = jibeon != "" ? jibeon : road
             self.roadAddressLabel.text = road != "" ? "(도로명) \(road)" : ""
             
         case .companyAddressDetail:

@@ -943,12 +943,14 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         
         if indexPath.section == 1 && indexPath.row == 1 {
             let companyMapVC = SettingCompanyMapViewController()
-            if let addressName =
-                ReferenceValues.initialSetting[InitialSetting.companyAddress.rawValue] as? String,
-               let latitude =
-                ReferenceValues.initialSetting[InitialSetting.companyLatitude.rawValue] as? Double,
+            if let companyName = ReferenceValues.initialSetting[InitialSetting.companyName.rawValue] as? String,
+               let addressName = ReferenceValues.initialSetting[InitialSetting.companyAddress.rawValue] as? String,
+               let latitude = ReferenceValues.initialSetting[InitialSetting.companyLatitude.rawValue] as? Double,
                let longitude = ReferenceValues.initialSetting[InitialSetting.companyLongitude.rawValue] as? Double {
-                companyMapVC.address = (addressName: addressName, latitude: latitude, longitude: longitude)
+                companyMapVC.address = (companyName: companyName,
+                                        addressName: addressName,
+                                        latitude: latitude,
+                                        longitude: longitude)
             }
             
             self.navigationController?.pushViewController(companyMapVC, animated: true)

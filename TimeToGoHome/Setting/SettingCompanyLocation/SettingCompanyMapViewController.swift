@@ -18,7 +18,6 @@ class SettingCompanyMapViewController: UIViewController {
     lazy var mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.showsUserLocation = true
-        mapView.delegate = self
         mapView.translatesAutoresizingMaskIntoConstraints = false
         
         return mapView
@@ -151,8 +150,9 @@ class SettingCompanyMapViewController: UIViewController {
     //var searchedAddress: [KeywordResult.Document] = []
     
     var currentLocation: CLLocationCoordinate2D!
-    var address: (addressName: String, latitude: Double, longitude: Double)?
+    var address: (companyName: String, addressName: String, latitude: Double, longitude: Double)?
     var selectedCenter: CLLocationCoordinate2D?
+    var selectedAddressTitle: String?
     var selectedAddress: String?
     
     var companyLocationModel: CompanyLocationModel = CompanyLocationModel()
@@ -173,8 +173,12 @@ class SettingCompanyMapViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        self.mapView.delegate = self
+        self.mapView.removeAnnotations(self.mapView.annotations)
+        
         if let initializeCenter = self.initializeCenter() {
-            self.initializePointAnnotation(center: initializeCenter.center, title: initializeCenter.address)
+            self.initializePointAnnotation(center: initializeCenter.center,
+                                           title: initializeCenter.title)
             self.setRegion(center: initializeCenter.center)
         }
         
@@ -374,11 +378,14 @@ extension SettingCompanyMapViewController: EssentialViewMethods {
 
 // MARK: - Extension for methods added
 extension SettingCompanyMapViewController {
-    func initializeCenter() -> (center: CLLocationCoordinate2D, address: String)? {
-        if let address = self.address {
+    func initializeCenter() -> (center: CLLocationCoordinate2D, title: String, address: String)? {
+        if let selectedCenter = self.selectedCenter, let selectedAddressTitle = self.selectedAddressTitle, let selectedAddress = self.selectedAddress {
+            return (selectedCenter, selectedAddressTitle, selectedAddress)
+            
+        } else if let address = self.address {
             let center = CLLocationCoordinate2D(latitude: address.latitude, longitude: address.longitude)
             
-            return (center, address.addressName)
+            return (center, address.companyName, address.addressName)
             
         } else {
             return nil
@@ -392,14 +399,15 @@ extension SettingCompanyMapViewController {
         self.mapView.addAnnotation(pin)
     }
     
-    func setPointAnnotation(center: CLLocationCoordinate2D, title: String) {
+    func setPointAnnotation(center: CLLocationCoordinate2D, title: String, address: String) {
         let pin = MKPointAnnotation()
         pin.coordinate = center
         pin.title = title
         self.mapView.addAnnotation(pin)
         
         self.selectedCenter = center
-        self.selectedAddress = title
+        self.selectedAddressTitle = title
+        self.selectedAddress = address
         
         self.navigationItem.rightBarButtonItem?.isEnabled = true
     }
@@ -454,7 +462,7 @@ extension SettingCompanyMapViewController {
                 let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: jibeonAddress, road: roadAddress)) {
                     self.mapView.removeAnnotations(self.mapView.annotations)
                     
-                    self.setPointAnnotation(center: center, title: roadAddress)
+                    self.setPointAnnotation(center: center, title: roadAddress, address: roadAddress)
                 }
 
                 self.present(alertVC, animated: false) {
@@ -465,7 +473,7 @@ extension SettingCompanyMapViewController {
                 let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: jibeonAddress, road: "")) {
                     self.mapView.removeAnnotations(self.mapView.annotations)
                     
-                    self.setPointAnnotation(center: center, title: jibeonAddress)
+                    self.setPointAnnotation(center: center, title: jibeonAddress, address: jibeonAddress)
                 }
                 
                 self.present(alertVC, animated: false) {
@@ -476,7 +484,7 @@ extension SettingCompanyMapViewController {
                 let alertVC = CompanyLocationAlertViewController(.companyLocationMap(jibeon: "", road: roadAddress)) {
                     self.mapView.removeAnnotations(self.mapView.annotations)
                     
-                    self.setPointAnnotation(center: center, title: roadAddress)
+                    self.setPointAnnotation(center: center, title: roadAddress, address: roadAddress)
                 }
                 
                 self.present(alertVC, animated: false) {
@@ -547,20 +555,11 @@ extension SettingCompanyMapViewController {
             return
         }
         
-        let companyModel = CompanyModel(joiningDate: ReferenceValues.initialSetting[InitialSetting.joiningDate.rawValue] as! Date)
-        companyModel.setCompanyLocation(address: selectedAddress,
-                                        latitude: selectedCenter.latitude,
-                                        longitude: selectedCenter.longitude)
+        let detailCompanyAddressVC = SettingCompanyDetailedAddressViewController(selectedCenter: selectedCenter, selectedAddress: selectedAddress)
         
-        ReferenceValues.initialSetting.updateValue(selectedAddress, forKey: InitialSetting.companyAddress.rawValue)
-        ReferenceValues.initialSetting.updateValue(selectedCenter.latitude, forKey: InitialSetting.companyLatitude.rawValue)
-        ReferenceValues.initialSetting.updateValue(selectedCenter.longitude, forKey: InitialSetting.companyLongitude.rawValue)
+        self.mapView.delegate = nil
         
-        SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
-        
-        SupportingMethods.shared.determineCurrentCompanyLocationPush()
-        
-        self.navigationController?.popViewController(animated: true)
+        self.navigationController?.pushViewController(detailCompanyAddressVC, animated: true)
     }
     
     @objc func currentLocationButton(_ sender: UIButton) {
@@ -706,7 +705,13 @@ extension SettingCompanyMapViewController: UITableViewDelegate, UITableViewDataS
             let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
             
             self.mapView.removeAnnotations(self.mapView.annotations)
-            self.setPointAnnotation(center: center, title: self.companyLocationModel.searchedAddress.address[indexPath.row].roadAddress ?? self.companyLocationModel.searchedAddress.address[indexPath.row].jibeonAddress!)
+            self.setPointAnnotation(center: center, title:
+                self.companyLocationModel.searchedAddress.address[indexPath.row].placeName ??
+                self.companyLocationModel.searchedAddress.address[indexPath.row].roadAddress ??
+                self.companyLocationModel.searchedAddress.address[indexPath.row].jibeonAddress!,
+            address:
+                self.companyLocationModel.searchedAddress.address[indexPath.row].roadAddress ??
+                self.companyLocationModel.searchedAddress.address[indexPath.row].jibeonAddress!)
             self.setRegion(center: center)
         }
     }

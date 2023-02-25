@@ -40,6 +40,7 @@
 		CA95E146296ADF4700F95FF9 /* SettingCompanyMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA95E145296ADF4700F95FF9 /* SettingCompanyMapViewController.swift */; };
 		CA95E148296ADF9D00F95FF9 /* SettingCompanyAddressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA95E147296ADF9D00F95FF9 /* SettingCompanyAddressCell.swift */; };
 		CA95E14B296ADFCE00F95FF9 /* SettingHolidaysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA95E14A296ADFCE00F95FF9 /* SettingHolidaysViewController.swift */; };
+		CA97575C29AA2E80002F60C1 /* SettingCompanyDetailedAddressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA97575B29AA2E80002F60C1 /* SettingCompanyDetailedAddressViewController.swift */; };
 		CAA3B24B2801755D00FFF892 /* CalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24A2801755D00FFF892 /* CalendarDayCell.swift */; };
 		CAA3B24D2801758200FFF892 /* CalendarHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */; };
 		CAA3B24F28018ED600FFF892 /* VacationButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA3B24E28018ED600FFF892 /* VacationButtonView.swift */; };
@@ -116,6 +117,7 @@
 		CA95E145296ADF4700F95FF9 /* SettingCompanyMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingCompanyMapViewController.swift; sourceTree = "<group>"; };
 		CA95E147296ADF9D00F95FF9 /* SettingCompanyAddressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingCompanyAddressCell.swift; sourceTree = "<group>"; };
 		CA95E14A296ADFCE00F95FF9 /* SettingHolidaysViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingHolidaysViewController.swift; sourceTree = "<group>"; };
+		CA97575B29AA2E80002F60C1 /* SettingCompanyDetailedAddressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingCompanyDetailedAddressViewController.swift; sourceTree = "<group>"; };
 		CAA3B24A2801755D00FFF892 /* CalendarDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayCell.swift; sourceTree = "<group>"; };
 		CAA3B24C2801758200FFF892 /* CalendarHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeaderView.swift; sourceTree = "<group>"; };
 		CAA3B24E28018ED600FFF892 /* VacationButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VacationButtonView.swift; sourceTree = "<group>"; };
@@ -228,6 +230,7 @@
 			children = (
 				CA95E145296ADF4700F95FF9 /* SettingCompanyMapViewController.swift */,
 				CA95E147296ADF9D00F95FF9 /* SettingCompanyAddressCell.swift */,
+				CA97575B29AA2E80002F60C1 /* SettingCompanyDetailedAddressViewController.swift */,
 			);
 			path = SettingCompanyLocation;
 			sourceTree = "<group>";
@@ -519,6 +522,7 @@
 				CAB7CF352750C084005C9232 /* CompanyLocationViewController.swift in Sources */,
 				CA7696FB296A6DD500F36A1D /* SettingStaggeredWorkViewController.swift in Sources */,
 				CAB9AD6E2926765F006AB951 /* SettingHeaderView.swift in Sources */,
+				CA97575C29AA2E80002F60C1 /* SettingCompanyDetailedAddressViewController.swift in Sources */,
 				CAF5E49929650E0A00038290 /* YSBlueSwitch.swift in Sources */,
 				CAB6C93B27FA9AAC00B67F1A /* NormalWorkTypeViewController.swift in Sources */,
 				CA4EC696293647290079CFBE /* RecordSchedulingCell.swift in Sources */,
