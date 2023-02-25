@@ -164,6 +164,9 @@ struct WorkScheduleModel {
             SupportingMethods.shared.setAppSetting(with: [dateId:self.isIgnoringLunchTime], for: .isIgnoredLunchTimeToday)
             
             self.determineFinishingRegularWorkTime()
+            
+            // After setting today's lunch time ignored.
+            SupportingMethods.shared.determineTodayFinishingWorkTimePush(self)
         }
     }
     
