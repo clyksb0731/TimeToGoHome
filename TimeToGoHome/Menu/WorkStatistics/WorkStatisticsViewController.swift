@@ -68,7 +68,9 @@ class WorkStatisticsViewController: UIViewController {
         formatter.maximumFractionDigits = 2
         formatter.multiplier = 1.0
         
-        let statisticsValues = self.companyModel.calculateStatistics(.week, today: self.today)
+        let todayTimeInterval = Int(self.today.timeIntervalSinceReferenceDate)
+        let yesterday = Date(timeIntervalSinceReferenceDate: Double(todayTimeInterval - 86400))
+        let statisticsValues = self.companyModel.calculateStatistics(.week, date: yesterday)
         
         let dataEntries: [PieChartDataEntry] = [
             PieChartDataEntry(value: Double(statisticsValues?.regularWorkTime ?? 0), label: "정규 근무"),
@@ -116,7 +118,9 @@ class WorkStatisticsViewController: UIViewController {
         formatter.maximumFractionDigits = 2
         formatter.multiplier = 1.0
         
-        let statisticsValues = self.companyModel.calculateStatistics(.month, today: self.today)
+        let todayTimeInterval = Int(self.today.timeIntervalSinceReferenceDate)
+        let yesterday = Date(timeIntervalSinceReferenceDate: Double(todayTimeInterval - 86400))
+        let statisticsValues = self.companyModel.calculateStatistics(.month, date: yesterday)
         
         let dataEntries: [PieChartDataEntry] = [
             PieChartDataEntry(value: Double(statisticsValues?.regularWorkTime ?? 0), label: "정규 근무"),
@@ -164,7 +168,9 @@ class WorkStatisticsViewController: UIViewController {
         formatter.maximumFractionDigits = 2
         formatter.multiplier = 1.0
         
-        let statisticsValues = self.companyModel.calculateStatistics(.year, today: self.today)
+        let todayTimeInterval = Int(self.today.timeIntervalSinceReferenceDate)
+        let yesterday = Date(timeIntervalSinceReferenceDate: Double(todayTimeInterval - 86400))
+        let statisticsValues = self.companyModel.calculateStatistics(.year, date: yesterday)
         
         let dataEntries: [PieChartDataEntry] = [
             PieChartDataEntry(value: Double(statisticsValues?.regularWorkTime ?? 0), label: "정규 근무"),
@@ -667,14 +673,17 @@ extension WorkStatisticsViewController {
     
     func determineInformationView(_ period: CompanyModel.StatisticsPeriod) {
         let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyy년 M월 d일")
+        
         let todayTimeInterval = Int(self.today.timeIntervalSinceReferenceDate)
+        let yesterday = Date(timeIntervalSinceReferenceDate: Double(todayTimeInterval - 86400))
         
         switch period {
         case .week:
-            let weekdayOfToday = SupportingMethods.shared.getWeekdayOfDate(self.today)
-            let thisSundayDate = Date(timeIntervalSinceReferenceDate: Double(todayTimeInterval - 86400 * (weekdayOfToday - 1)))
+            let yesterdayInterval = Int(yesterday.timeIntervalSinceReferenceDate)
+            let weekdayOfYesterday = SupportingMethods.shared.getWeekdayOfDate(yesterday)
+            let sundayOfYesterdayWeek = Date(timeIntervalSinceReferenceDate: Double(yesterdayInterval - 86400 * (weekdayOfYesterday - 1)))
             
-            let statisticsValues = self.companyModel.calculateStatistics(.week, today: self.today)
+            let statisticsValues = self.companyModel.calculateStatistics(.week, date: yesterday)
             
             self.statisticsScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
             
@@ -687,7 +696,8 @@ extension WorkStatisticsViewController {
             } else {
                 self.weekPieChartView.isHidden = false
                 self.noWorkStatisticsOfWeekImageView.isHidden = true
-                self.periodLabel.text = "\(dateFormatter.string(from: thisSundayDate)) ~ 어제"
+                
+                self.periodLabel.text = "\(dateFormatter.string(from: sundayOfYesterdayWeek)) ~ 어제"
                 
                 self.informationView.isHidden = false
                 self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
@@ -696,10 +706,10 @@ extension WorkStatisticsViewController {
             }
             
         case .month:
-            let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(self.today)
-            let theFirstDateOfThisMonth = SupportingMethods.shared.makeDateWithYear(yearMonthDay.year, month: yearMonthDay.month)
+            let yearMonthDayOfYesterday = SupportingMethods.shared.getYearMonthAndDayOf(yesterday)
+            let theFirstDateOfYesterdayMonth = SupportingMethods.shared.makeDateWithYear(yearMonthDayOfYesterday.year, month: yearMonthDayOfYesterday.month)
             
-            let statisticsValues = self.companyModel.calculateStatistics(.month, today: self.today)
+            let statisticsValues = self.companyModel.calculateStatistics(.month, date: yesterday)
             
             self.statisticsScrollView.setContentOffset(CGPoint(x: ReferenceValues.keyWindow.screen.bounds.width, y: 0), animated: true)
             
@@ -712,7 +722,8 @@ extension WorkStatisticsViewController {
             } else {
                 self.monthPieChartView.isHidden = false
                 self.noWorkStatisticsOfMonthImageView.isHidden = true
-                self.periodLabel.text = "\(dateFormatter.string(from: theFirstDateOfThisMonth)) ~ 어제"
+                
+                self.periodLabel.text = "\(dateFormatter.string(from: theFirstDateOfYesterdayMonth)) ~ 어제"
                 
                 self.informationView.isHidden = false
                 self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)
@@ -721,10 +732,10 @@ extension WorkStatisticsViewController {
             }
             
         case .year:
-            let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(self.today)
-            let theFirstDateOfThisYear = SupportingMethods.shared.makeDateWithYear(yearMonthDay.year, month: 1)
+            let yearMonthDayOfYesterday = SupportingMethods.shared.getYearMonthAndDayOf(yesterday)
+            let theFirstDateOfYesterdayYear = SupportingMethods.shared.makeDateWithYear(yearMonthDayOfYesterday.year, month: 1)
             
-            let statisticsValues = self.companyModel.calculateStatistics(.year, today: self.today)
+            let statisticsValues = self.companyModel.calculateStatistics(.year, date: yesterday)
             
             self.statisticsScrollView.setContentOffset(CGPoint(x: ReferenceValues.keyWindow.screen.bounds.width * 2, y: 0), animated: true)
             
@@ -737,7 +748,7 @@ extension WorkStatisticsViewController {
             } else {
                 self.yearPieChartView.isHidden = false
                 self.noWorkStatisticsOfYearImageView.isHidden = true
-                self.periodLabel.text = "\(dateFormatter.string(from: theFirstDateOfThisYear)) ~ 어제"
+                self.periodLabel.text = "\(dateFormatter.string(from: theFirstDateOfYesterdayYear)) ~ 어제"
                 
                 self.informationView.isHidden = false
                 self.regularWorkTimeLabel.attributedText = self.makeInformationAttributedString(.regularWorkTime, minutes: statisticsValues?.regularWorkTime)

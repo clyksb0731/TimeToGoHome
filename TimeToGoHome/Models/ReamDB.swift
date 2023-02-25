@@ -234,21 +234,15 @@ struct CompanyModel {
         case year
     }
     
-    func calculateStatistics(_ period: StatisticsPeriod, today: Date) -> (regularWorkTime: Int, overtime: Int, vacation: Int)? {
+    func calculateStatistics(_ period: StatisticsPeriod, date: Date) -> (regularWorkTime: Int, overtime: Int, vacation: Int)? {
         let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
         
-        let todayYear = SupportingMethods.shared.getYearMonthAndDayOf(today).year
-        let todayMonth = SupportingMethods.shared.getYearMonthAndDayOf(today).month
-        let weekdayOfToday = SupportingMethods.shared.getWeekdayOfDate(today)
-        let todayTimeInterval = Int(today.timeIntervalSinceReferenceDate)
-        //let todayId: Int = Int(dateFormatter.string(from: today))!
-        
-        let yesterday = Date(timeIntervalSinceReferenceDate: Double(todayTimeInterval - 86400))
-        //let yesterdayYear = SupportingMethods.shared.getYearMonthAndDayOf(yesterday).year
-        //let yesterdayMonth = SupportingMethods.shared.getYearMonthAndDayOf(yesterday).month
-        let yesterdayId: Int = Int(dateFormatter.string(from: yesterday))!
-        
-        let thisSundayId: Int = Int(dateFormatter.string(from: Date(timeIntervalSinceReferenceDate: Double(todayTimeInterval - 86400 * (weekdayOfToday - 1)))))!
+        let year = SupportingMethods.shared.getYearMonthAndDayOf(date).year
+        let month = SupportingMethods.shared.getYearMonthAndDayOf(date).month
+        let weekday = SupportingMethods.shared.getWeekdayOfDate(date)
+        let timeIntervalOfDate = Int(date.timeIntervalSinceReferenceDate)
+        let dateId: Int = Int(dateFormatter.string(from: date))!
+        let sundayId: Int = Int(dateFormatter.string(from: Date(timeIntervalSinceReferenceDate: Double(timeIntervalOfDate - 86400 * (weekday - 1)))))!
         
         var allRegularTime: Int = 0
         var allOvertime: Int = 0
@@ -259,20 +253,20 @@ struct CompanyModel {
         switch period {
         case .week:
             schedules = self.schedules?.where {
-                $0.dateId >= thisSundayId && $0.dateId <= yesterdayId
+                $0.dateId >= sundayId && $0.dateId <= dateId
             }
             
         case .month:
             schedules = self.schedules?.where {
-                $0.year == todayYear &&
-                $0.month == todayMonth &&
-                $0.dateId <= yesterdayId
+                $0.year == year &&
+                $0.month == month &&
+                $0.dateId <= dateId
             }
             
         case .year:
             schedules = self.schedules?.where {
-                $0.year == todayYear &&
-                $0.dateId <= yesterdayId
+                $0.year == year &&
+                $0.dateId <= dateId
             }
         }
         
