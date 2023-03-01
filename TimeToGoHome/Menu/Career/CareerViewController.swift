@@ -376,6 +376,7 @@ extension CareerViewController: MenuCoverDelegate {
             if let lastCompany = CompanyModel.getLastCompany() {
                 let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: String(lastCompany.dateId))!
                 ReferenceValues.initialSetting.updateValue(joiningDate, forKey: InitialSetting.joiningDate.rawValue)
+                ReferenceValues.initialSetting.updateValue(lastCompany.name, forKey: InitialSetting.companyName.rawValue)
                 SupportingMethods.shared.setAppSetting(with: ReferenceValues.initialSetting, for: .initialSetting)
             }
             
