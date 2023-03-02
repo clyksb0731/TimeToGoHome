@@ -122,8 +122,8 @@ extension WorkRecordViewController {
         self.workRecords = self.companyModel.convertSchedulesToWorkRecords()
         self.workRecordTableView.reloadData()
         
-        guard !self.isThisVcSeen, self.workRecords.count > 1,
-                self.workRecords[self.workRecords.count - 1].schedules.count > 1 else {
+        guard !self.isThisVcSeen, self.workRecords.count >= 1,
+                self.workRecords[self.workRecords.count - 1].schedules.count >= 1 else {
             return
         }
         
