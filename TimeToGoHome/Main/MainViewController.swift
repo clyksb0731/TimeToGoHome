@@ -2483,6 +2483,70 @@ extension MainViewController {
         self.timer = nil
     }
     
+    func completeChangingSchedule() {
+        // Calculate annualPaidHolidays and vacation hold before changing schedule.
+        if self.checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(schedule: self.schedule, tempSchedule: self.tempSchedule!) {
+            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 일수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
+            
+            return
+        }
+        
+        // After calculateing, changing schedule.
+        self.determineTodayScheduleAfterModifyingRegularScheduleTo(self.schedule, against: self.todayRegularScheduleType) { (isRegularScheduleChanged: Bool, scheduleDetermined: (scheduleType: RegularScheduleType?, schedule: WorkScheduleModel)?) in
+            if isRegularScheduleChanged {
+                self.schedule = scheduleDetermined!.schedule
+                self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
+                
+                if self.schedule.workType == .normal {
+                    self.schedule.updateStartingWorkTime()
+                }
+                
+                self.todayRegularScheduleType = scheduleDetermined!.scheduleType
+                
+                if self.schedule.startingWorkTime == nil {
+                    self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
+                    self.resetMainTimeViewValues(scheduleDetermined!.scheduleType)
+
+                } else {
+                    if self.schedule.startingWorkTimeSecondsSinceReferenceDate! >= SupportingMethods.getCurrentTimeSeconds() {
+                        self.startWorkingTimeButton.setTitle("출근전", for: .normal)
+                        self.resetMainTimeViewValues(scheduleDetermined!.scheduleType)
+                        
+                    } else {
+                        // No need to reset main time view values
+                    }
+                }
+                
+            } else {
+                if (self.schedule.overtime == nil && self.tempSchedule?.overtime != nil) ||
+                            (self.schedule.overtime != nil && self.tempSchedule?.overtime == nil) {
+                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
+                    
+                } else if case .overtime(let scheduleOvertime) = self.schedule.overtime,
+                            case .overtime(let tempScheduleOvertime) = self.tempSchedule?.overtime,
+                            scheduleOvertime != tempScheduleOvertime {
+                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
+                    
+                } else if case .morning(let scheduleWorkTimeType) = self.schedule.morning,
+                   case .morning(let tempScheduleWorkTimeType) = self.tempSchedule?.morning,
+                   scheduleWorkTimeType != tempScheduleWorkTimeType {
+                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
+                    
+                } else if case .afternoon(let scheduleWorkTimeType) = self.schedule.afternoon,
+                   case .afternoon(let tempScheduleWorkTimeType) = self.tempSchedule?.afternoon,
+                          scheduleWorkTimeType != tempScheduleWorkTimeType {
+                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
+                    
+                } else {
+                    self.schedule = self.tempSchedule!
+                }
+            }
+            
+            self.mainTimeCoverView.isHidden = true
+            self.isEditingMode = false
+        }
+    }
+    
     func checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(schedule: WorkScheduleModel, tempSchedule: WorkScheduleModel) -> Bool {
         if case .morning(let scheduleWorkType) = schedule.morning, scheduleWorkType == .vacation,
            case .afternoon(let scheduleWorkType) = schedule.afternoon, scheduleWorkType == .vacation {
@@ -2817,67 +2881,7 @@ extension MainViewController {
     }
     
     @objc func completeChangingScheduleButtonView(_ sender: UIButton) {
-        // Calculate annualPaidHolidays and vacation hold before changing schedule.
-        if self.checkIfVacationIsOverTheNumberOfAnnualPaidHolidays(schedule: self.schedule, tempSchedule: self.tempSchedule!) {
-            SupportingMethods.shared.makeAlert(on: self, withTitle: "알림", andMessage: "연차 일수를 넘는 휴가 설정은 불가합니다. 휴가 일정 조정이 필요합니다.")
-            
-            return
-        }
-        
-        // After calculateing, changing schedule.
-        self.determineTodayScheduleAfterModifyingRegularScheduleTo(self.schedule, against: self.todayRegularScheduleType) { (isRegularScheduleChanged: Bool, scheduleDetermined: (scheduleType: RegularScheduleType?, schedule: WorkScheduleModel)?) in
-            if isRegularScheduleChanged {
-                self.schedule = scheduleDetermined!.schedule
-                self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
-                
-                if self.schedule.workType == .normal {
-                    self.schedule.updateStartingWorkTime()
-                }
-                
-                self.todayRegularScheduleType = scheduleDetermined!.scheduleType
-                
-                if self.schedule.startingWorkTime == nil {
-                    self.startWorkingTimeButton.setTitle("시간설정", for: .normal)
-                    self.resetMainTimeViewValues(scheduleDetermined!.scheduleType)
-
-                } else {
-                    if self.schedule.startingWorkTimeSecondsSinceReferenceDate! >= SupportingMethods.getCurrentTimeSeconds() {
-                        self.startWorkingTimeButton.setTitle("출근전", for: .normal)
-                        self.resetMainTimeViewValues(scheduleDetermined!.scheduleType)
-                        
-                    } else {
-                        // No need to reset main time view values
-                    }
-                }
-                
-            } else {
-                if (self.schedule.overtime == nil && self.tempSchedule?.overtime != nil) ||
-                            (self.schedule.overtime != nil && self.tempSchedule?.overtime == nil) {
-                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
-                    
-                } else if case .overtime(let scheduleOvertime) = self.schedule.overtime,
-                            case .overtime(let tempScheduleOvertime) = self.tempSchedule?.overtime,
-                            scheduleOvertime != tempScheduleOvertime {
-                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
-                    
-                } else if case .morning(let scheduleWorkTimeType) = self.schedule.morning,
-                   case .morning(let tempScheduleWorkTimeType) = self.tempSchedule?.morning,
-                   scheduleWorkTimeType != tempScheduleWorkTimeType {
-                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
-                    
-                } else if case .afternoon(let scheduleWorkTimeType) = self.schedule.afternoon,
-                   case .afternoon(let tempScheduleWorkTimeType) = self.tempSchedule?.afternoon,
-                          scheduleWorkTimeType != tempScheduleWorkTimeType {
-                    self.schedule.updateTodayIntoDB(self.schedule.workType == .staggered)
-                    
-                } else {
-                    self.schedule = self.tempSchedule!
-                }
-            }
-            
-            self.mainTimeCoverView.isHidden = true
-            self.isEditingMode = false
-        }
+        self.completeChangingSchedule()
     }
     
     @objc func ignoreLunchSwitch(_ sender: YSBlueSwitch) {
@@ -3228,7 +3232,7 @@ extension MainViewController: ScheduleButtonViewDelegate {
             
             if self.schedule.startingWorkTime == nil {
                 print("Not possible to add overtime")
-                let alertVC = UIAlertController(title: "알림", message: "출근시간을 설정해 주세요.", preferredStyle: .alert)
+                let alertVC = UIAlertController(title: "알림", message: "출근 시간을 설정해 주세요.", preferredStyle: .alert)
                 let action = UIAlertAction(title: "확인", style: .default)
                 alertVC.addAction(action)
                 
@@ -3237,13 +3241,26 @@ extension MainViewController: ScheduleButtonViewDelegate {
             } else {
                 if case .fullWork = self.todayRegularScheduleType {
                     if case .afternoonWork = self.determineRegularSchedule(self.schedule) {
-                        let alertVC = UIAlertController(title: "알림", message: "출근시간을 오후로 변경한 후 추가해 주세요.", preferredStyle: .alert)
-                        let action = UIAlertAction(title: "확인", style: .default)
-                        alertVC.addAction(action)
+                        if self.schedule.workType == .staggered {
+                            let alertVC = UIAlertController(title: "알림", message: "출근 시간을 오후로 변경한 후 추가해 주세요.", preferredStyle: .alert)
+                            let action = UIAlertAction(title: "확인", style: .default)
+                            alertVC.addAction(action)
+                            
+                            self.present(alertVC, animated: false)
+                            
+                        } else { // normal
+                            let alertVC = UIAlertController(title: "알림", message: "현재 일정은 오전 출근 일정입니다. 오후 출근 일정으로 변경 후 추가해 주세요. 지금 오후 출근 일정으로 변경할 까요?", preferredStyle: .alert)
+                            let okAction = UIAlertAction(title: "확인", style: .default) { _ in
+                                self.completeChangingSchedule()
+                            }
+                            let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+                            alertVC.addAction(okAction)
+                            alertVC.addAction(cancelAction)
+                            
+                            self.present(alertVC, animated: false)
+                        }
                         
-                        self.present(alertVC, animated: false)
-                        
-                    } else {
+                    } else { // .fullWork
                         let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.finishingRegularWorkTimeSecondsSinceReferenceDate!)), overtime: nil, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
                         
                         self.present(mainCoverVC, animated: false) {
@@ -3254,13 +3271,26 @@ extension MainViewController: ScheduleButtonViewDelegate {
                 
                 if case .morningWork = self.todayRegularScheduleType {
                     if case .afternoonWork = self.determineRegularSchedule(self.schedule) {
-                        let alertVC = UIAlertController(title: "알림", message: "출근시간을 오전으로 변경한 후 추가해 주세요.", preferredStyle: .alert)
-                        let action = UIAlertAction(title: "확인", style: .default)
-                        alertVC.addAction(action)
+                        if self.schedule.workType == .staggered {
+                            let alertVC = UIAlertController(title: "알림", message: "출근 시간을 오후로 변경한 후 추가해 주세요.", preferredStyle: .alert)
+                            let action = UIAlertAction(title: "확인", style: .default)
+                            alertVC.addAction(action)
+                            
+                            self.present(alertVC, animated: false)
+                            
+                        } else { // normal
+                            let alertVC = UIAlertController(title: "알림", message: "현재 일정은 오전 출근 일정입니다. 오후 출근 일정으로 변경 후 추가해 주세요. 지금 오후 출근 일정으로 변경할 까요?", preferredStyle: .alert)
+                            let okAction = UIAlertAction(title: "확인", style: .default) { _ in
+                                self.completeChangingSchedule()
+                            }
+                            let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+                            alertVC.addAction(okAction)
+                            alertVC.addAction(cancelAction)
+                            
+                            self.present(alertVC, animated: false)
+                        }
                         
-                        self.present(alertVC, animated: false)
-                        
-                    } else {
+                    } else { // .fullWork
                         let mainCoverVC = MainCoverViewController(.overtimeSchedule(finishingRegularTime: Date(timeIntervalSinceReferenceDate: Double(self.schedule.finishingRegularWorkTimeSecondsSinceReferenceDate!)), overtime: nil, isEditingModeBeforPresented: self.isEditingMode), delegate: self)
                         
                         self.present(mainCoverVC, animated: false) {
@@ -3277,12 +3307,25 @@ extension MainViewController: ScheduleButtonViewDelegate {
                             self.isEditingMode = true
                         }
                         
-                    } else {
-                        let alertVC = UIAlertController(title: "알림", message: "출근시간을 오전으로 변경한 후 추가해 주세요.", preferredStyle: .alert)
-                        let action = UIAlertAction(title: "확인", style: .default)
-                        alertVC.addAction(action)
-                        
-                        self.present(alertVC, animated: false)
+                    } else { // .fullWork
+                        if self.schedule.workType == .staggered {
+                            let alertVC = UIAlertController(title: "알림", message: "출근 시간을 오전으로 변경한 후 추가해 주세요.", preferredStyle: .alert)
+                            let action = UIAlertAction(title: "확인", style: .default)
+                            alertVC.addAction(action)
+                            
+                            self.present(alertVC, animated: false)
+                            
+                        } else { // normal
+                            let alertVC = UIAlertController(title: "알림", message: "현재 일정은 오후 출근 일정입니다. 오전 출근 일정으로 변경 후 추가해 주세요. 지금 오전 출근 일정으로 변경할 까요?", preferredStyle: .alert)
+                            let okAction = UIAlertAction(title: "확인", style: .default) { _ in
+                                self.completeChangingSchedule()
+                            }
+                            let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+                            alertVC.addAction(okAction)
+                            alertVC.addAction(cancelAction)
+                            
+                            self.present(alertVC, animated: false)
+                        }
                     }
                 }
             }
