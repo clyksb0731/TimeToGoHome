@@ -507,13 +507,11 @@ class MainViewController: UIViewController {
                 
                 self.changeScheduleDescriptionLabel.isHidden = self.isEditingMode
                 
-                DispatchQueue.main.async {
-                    if self.isEditingMode {
-                        self.foldHalfDayMode()
-                        
-                    } else {
-                        self.determineIfHalfDay()
-                    }
+                if self.isEditingMode {
+                    self.foldHalfDayMode()
+                    
+                } else {
+                    self.determineIfHalfDay()
                 }
             }
         }
@@ -2627,22 +2625,12 @@ extension MainViewController {
         self.makeHalfDayModeOn(isHalfDay)
     }
     
-    func foldHalfDayMode(withAnimation animationMode: Bool = true) {
-        self.makeHalfDayModeOn(false, withAnimation: animationMode)
+    func foldHalfDayMode() {
+        self.makeHalfDayModeOn(false)
     }
     
-    func makeHalfDayModeOn(_ isOn: Bool, withAnimation animationMode: Bool = true) {
+    func makeHalfDayModeOn(_ isOn: Bool) {
         self.scheduleTableViewTopAnchor.constant = isOn ? 40 : 10
-        
-        if animationMode {
-            UIView.animate(withDuration: 0.1) {
-                self.view.layoutIfNeeded()
-                
-            } completion: { isFinished in
-                
-            }
-        }
-        
         self.ignoreLunchBaseView.isHidden = !isOn
     }
 }
@@ -3453,9 +3441,7 @@ extension MainViewController: MainCoverDelegate {
             self.scheduleTableView.reloadData()
             self.determineScheduleButtonState(for: self.schedule)
             
-            DispatchQueue.main.async {
-                self.determineIfHalfDay()
-            }
+            self.determineIfHalfDay()
         }
     }
     
