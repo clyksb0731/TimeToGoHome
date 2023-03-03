@@ -546,6 +546,8 @@ class MenuCoverViewController: UIViewController {
     var joiningDate: Date? = nil {
         didSet {
             if let date = self.joiningDate {
+                self.datePicker.minimumDate = self.joiningDate
+                
                 let yearMonthDay = SupportingMethods.shared.getYearMonthAndDayOf(date)
                 
                 self.joiningYearLabel.text = "\(yearMonthDay.year)"
@@ -565,6 +567,8 @@ class MenuCoverViewController: UIViewController {
     var leavingDate: Date? = nil {
         didSet {
             if let date = self.leavingDate {
+                self.datePicker.maximumDate = self.leavingDate
+                
                 let dateFormatter = SupportingMethods.shared.makeDateFormatter("yyyyMMdd")
                 
                 if Int(dateFormatter.string(from: date))! < Int(dateFormatter.string(from: Date()))! {
@@ -1690,11 +1694,15 @@ extension MenuCoverViewController {
             self.titleLabel.isHidden = false
             
             if self.datePicker.tag == 1 {
+                self.datePicker.minimumDate = self.joiningDate
+                
                 self.popUpPanelView.isHidden = true
                 self.careerBaseView.isHidden = false
             }
             
             if self.datePicker.tag == 2 {
+                self.datePicker.maximumDate = self.leavingDate
+                
                 self.popUpPanelView.isHidden = true
                 self.careerBaseView.isHidden = false
             }
@@ -1844,9 +1852,12 @@ extension MenuCoverViewController {
         self.datePicker.tag = 1
         if let dateId = self.companyModelForCareerManagement?.company?.dateId, let joiningDate = SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: "\(dateId)") {
             self.datePicker.setDate(joiningDate, animated: false)
+            
         } else {
             self.datePicker.setDate(Date(), animated: false)
         }
+        self.datePicker.minimumDate = nil
+        
         self.careerBaseView.isHidden = true
         self.popUpPanelView.isHidden = false
     }
@@ -1860,6 +1871,7 @@ extension MenuCoverViewController {
         self.popUpPanelTitleLabel.text = "입사 일자"
         self.datePicker.tag = 1
         self.datePicker.setDate(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: "\(self.joiningYearLabel.text!)\(self.joiningMonthLabel.text!)\(self.joiningDayLabel.text!)")!, animated: false)
+        self.datePicker.minimumDate = nil
         
         self.careerBaseView.isHidden = true
         self.popUpPanelView.isHidden = false
@@ -1874,6 +1886,7 @@ extension MenuCoverViewController {
         self.popUpPanelTitleLabel.text = "퇴사 일자"
         self.datePicker.tag = 2
         self.datePicker.setDate(self.companyModelForCareerManagement?.company?.leavingDate ?? Date(), animated: false)
+        self.datePicker.maximumDate = Date()
         
         self.careerBaseView.isHidden = true
         self.popUpPanelView.isHidden = false
@@ -1888,6 +1901,7 @@ extension MenuCoverViewController {
         self.popUpPanelTitleLabel.text = "퇴사 일자"
         self.datePicker.tag = 2
         self.datePicker.setDate(SupportingMethods.shared.makeDateFormatter("yyyyMMdd").date(from: "\(self.leavingYearLabel.text!)\(self.leavingMonthLabel.text!)\(self.leavingDayLabel.text!)")!, animated: false)
+        self.datePicker.maximumDate = Date()
         
         self.careerBaseView.isHidden = true
         self.popUpPanelView.isHidden = false
