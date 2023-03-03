@@ -157,7 +157,6 @@ class MainCoverViewController: UIViewController {
         datePicker.datePickerMode = .time
         datePicker.timeZone = TimeZone.current
         datePicker.locale = Locale(identifier: "ko_KR")
-        //datePicker.addTarget(self, action: #selector(startingWorkTimeDatePicker(_:)), for: .valueChanged)
         datePicker.translatesAutoresizingMaskIntoConstraints = false
         
         return datePicker
@@ -304,15 +303,15 @@ extension MainCoverViewController {
                 let morningEarliestTimeValue = morningStartingWorkTimeValueRange["earliestTime"]!
                 let morningLatestTime = morningStartingWorkTimeValueRange["latestTime"]!
                 
-                self.datePicker.minimumDate = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)
-                self.datePicker.maximumDate = SupportingMethods.shared.makeTimeDateWithValue(morningLatestTime)
-                
                 if let startingWorkTime = schedule.startingWorkTime {
                     self.datePicker.date = startingWorkTime
                     
                 } else {
                     self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)!
                 }
+                
+                self.datePicker.minimumDate = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)
+                self.datePicker.maximumDate = SupportingMethods.shared.makeTimeDateWithValue(morningLatestTime)
                 
             } else if case .morning(let workTimeType) = schedule.morning, case .work = workTimeType {
                 let morningStartingWorkTimeValueRange = ReferenceValues.initialSetting[InitialSetting.morningStartingWorkTimeValueRange.rawValue] as! [String:Double]
@@ -320,9 +319,6 @@ extension MainCoverViewController {
                 let morningEarliestTimeValue = morningStartingWorkTimeValueRange[TimeRange.earliestTime.rawValue]!
                 let morningLatestTime = morningStartingWorkTimeValueRange[TimeRange.latestTime.rawValue]!
                 
-                self.datePicker.minimumDate = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)
-                self.datePicker.maximumDate = SupportingMethods.shared.makeTimeDateWithValue(morningLatestTime)
-                
                 if let startingWorkTime = schedule.startingWorkTime {
                     self.datePicker.date = startingWorkTime
                     
@@ -330,14 +326,14 @@ extension MainCoverViewController {
                     self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)!
                 }
                 
+                self.datePicker.minimumDate = SupportingMethods.shared.makeTimeDateWithValue(morningEarliestTimeValue)
+                self.datePicker.maximumDate = SupportingMethods.shared.makeTimeDateWithValue(morningLatestTime)
+                
             } else if case .afternoon(let workTimeType) = schedule.afternoon, case .work = workTimeType {
                 let afternoonStartingWorkTimeValueRage = ReferenceValues.initialSetting[InitialSetting.afternoonStartingWorkTimeValueRange.rawValue] as! [String:Double]
                 
                 let afternoonEarliestTimeValue = afternoonStartingWorkTimeValueRage[TimeRange.earliestTime.rawValue]!
                 let afternoonLatestTime = afternoonStartingWorkTimeValueRage[TimeRange.latestTime.rawValue]!
-                
-                self.datePicker.minimumDate = SupportingMethods.shared.makeTimeDateWithValue(afternoonEarliestTimeValue)
-                self.datePicker.maximumDate = SupportingMethods.shared.makeTimeDateWithValue(afternoonLatestTime)
                 
                 if let startingWorkTime = schedule.startingWorkTime {
                     self.datePicker.date = startingWorkTime
@@ -346,7 +342,8 @@ extension MainCoverViewController {
                     self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(afternoonEarliestTimeValue)!
                 }
                 
-                self.datePicker.addTarget(self, action: #selector(datePicker(_:)), for: .valueChanged)
+                self.datePicker.minimumDate = SupportingMethods.shared.makeTimeDateWithValue(afternoonEarliestTimeValue)
+                self.datePicker.maximumDate = SupportingMethods.shared.makeTimeDateWithValue(afternoonLatestTime)
                 
             } else {
                 // vaction, holiday
@@ -655,25 +652,6 @@ extension MainCoverViewController {
         
         if case .startingWorkTime = self.mainCoverType {
             self.dismiss(animated: false)
-        }
-    }
-    
-    @objc func datePicker(_ datePicker: UIDatePicker) {
-        guard let lunchTimeValue = ReferenceValues.initialSetting[InitialSetting.lunchTimeValue.rawValue] as? Double,
-              let afternoonStartingWorkTimeValueRage = ReferenceValues.initialSetting[InitialSetting.afternoonStartingWorkTimeValueRange.rawValue] as? [String:Double] else {
-            return
-        }
-        
-        let dateInterval = Int(datePicker.date.timeIntervalSinceReferenceDate)
-        let lunchTimeDateInterval = Int(SupportingMethods.shared.makeTimeDateWithValue(lunchTimeValue)!.timeIntervalSinceReferenceDate)
-        
-        if dateInterval >= lunchTimeDateInterval && dateInterval < lunchTimeDateInterval + 3600 {
-            self.confirmButton.isEnabled = false
-            self.datePicker.date = SupportingMethods.shared.makeTimeDateWithValue(afternoonStartingWorkTimeValueRage["earliestTime"]!)!
-            
-            self.showInstanceMessage {
-                self.confirmButton.isEnabled = true
-            }
         }
     }
 }
